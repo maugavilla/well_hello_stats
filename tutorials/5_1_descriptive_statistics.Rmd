@@ -1,0 +1,264 @@
+---
+title: "Descriptive Statistics"
+author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+
+
+# Setup the R session
+
+When we start working in R, we always need to setup our session. For this we need to set our working directory, in this case I am doing that for the folder that holds the downloaded [World Values Survey (WVS)](https://www.worldvaluessurvey.org/) ```SPSS``` data set
+
+```{r, eval=F, error=F}
+setwd("~path_to_your_file")
+```
+
+
+The next step for setting up our session will be to load the packages that we will be using
+
+```{r, eval=T}
+library(rio)
+library(summarytools)
+```
+
+
+# Import the data set
+
+Here we will be importing the ```.sav``` WVS data set
+
+```{r, eval=T}
+dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+```
+
+Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. 
+
+## Select variables of interest
+
+In cases with large data sets like this we might want to select a subset of variables that we want to work with. Since it is not easy to see 548 variables. 
+
+```{r, eval=T}
+vars <- c("Q275", "Q260", "Q262", "Y001", "B_COUNTRY_ALPHA", "SACSECVAL")
+dat2 <- dat[,vars]
+dim(dat2)
+head(dat2)
+```
+
+Here we are first creating a vector with the variable names for the ones I want to keep. You can see all variable names for the full data set as well:
+
+```{r, eval=F}
+colnames(dat)
+```
+
+After identifying which variables we will work with, we create a new data set **dat2** with only these 7 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
+
+
+# Continuous items
+
+When talking about descriptive statistics, we first need to know what type of variable each item is. For continuous items, the type of descriptive statistics we present are related to central tendency and variability measures. We will use the ```descr()``` function from the ```summarytools``` package. 
+
+Be aware that this function will give you resutls if you use them with categorical variables, but these would not be meaningful.
+
+From the selected variables the only ones that are truly continuous are *age*
+```{r}
+attributes(dat2$Q262)
+```
+
+and *Secular values*
+```{r}
+attributes(dat2$SACSECVAL)
+```
+
+
+For their descriptive statistics, we just need to identify the data set, and specify only the continuous items. 
+```{r, eval=T}
+descr(dat2[,c("SACSECVAL","Q262")])
+```
+
+This function provides a lot of useful information. The *N.valid* is the total non missing answers for each variable, follow by a series of descriptive statistics like the *Mean*, *standard deviation*, *median*, *minimum*, *maximum*, and others. You can also transpose the table, depending on which direction you prefer the table
+
+```{r}
+descr(dat2[,c("SACSECVAL","Q262")], transpose = T)
+```
+
+You can save this information into a table object by putting it inside the ```tb()``` function
+```{r}
+desc1 <- tb(descr(dat2[,c("SACSECVAL","Q262")], 
+                  transpose = T))
+desc1
+```
+
+
+## Descritive for multiple groups
+
+We have already presented the basic descriptive information for continuous variables. But a common next step is to evaluate these descriptive information for multiple groups. We can do this with the ```stby()``` function. In the first argument you specify the data set, with all the continuous variables, in the INDICES argument you specify the group variable. 
+
+```{r}
+stby(data = dat2[,c("SACSECVAL","Q262")], 
+     INDICES   = dat2$Q260, 
+     FUN = descr, 
+     stats = "common", 
+     transpose = TRUE)
+```
+
+
+
+If you want to save this information as a matrix, to be able to manipulate it or something else, it is best to export as a table with the ```tb()``` function
+
+```{r}
+desc2 <- tb(stby(data = dat2[,c("SACSECVAL","Q262")], 
+     INDICES   = dat2$Q260, 
+     FUN = descr, 
+     stats = "common", 
+     transpose = TRUE))
+desc2
+```
+
+
+This was a simple example with descriptive across 2 groups, but you can also estimate this for a large number of groups. For example, for across all countries in the data set
+
+```{r, eval=F}
+desc_C <- tb(stby(data = dat2[,c("SACSECVAL","Q262")], 
+     INDICES   = dat2$B_COUNTRY_ALPHA, 
+     FUN = descr, 
+     stats = "common", 
+     transpose = TRUE))
+desc_C
+```
+
+
+And if you want to go in more detail, you can estimate this across sex and country. You can do this by expanding the INDICES argument, by adding multiple variables as a list. 
+
+```{r, eval=F}
+desc_SC <- tb(stby(data = dat2[,c("SACSECVAL","Q262")], 
+     INDICES   = list(dat2$Q260,dat2$B_COUNTRY_ALPHA), 
+     FUN = descr, 
+     stats = "common", 
+     transpose = TRUE))
+desc_SC
+```
+
+
+# Categorical items
+
+For categorical variables the *mean* and previously presented statistics are not meaningful. We need to describe them in a different way. For this we will use the ```summarytools``` package. 
+
+Of the categorical variables, we will focus on *education* 
+```{r}
+attributes(dat2$Q275)
+```
+
+,*post-materialistic* index
+```{r}
+attributes(dat2$Y001)
+```
+
+and *sex*
+```{r}
+attributes(dat2$Q260)
+```
+
+
+## Frequency tables
+The ```freq()``` function generates **frequency tables** with counts, proportions, as well as missing data information.
+
+```{r}
+freq(dat2$Q275, plain.ascii = FALSE, style = "rmarkdown")
+```
+
+With this function, the first argument is the variable from which we want to get a frequency table, and the following 2 arguments are related to how the table looks. We try the following to see the difference in presentation:
+
+```{r, eval=F}
+freq(dat2$Q275, plain.ascii = T, style = "simple")
+```
+
+
+Now, notice that the function recognizes the variable as *Numeric*, that is because as far as **R** knows, the variable has only numbers. The *education* variables is stored as integers, but each integer represents a level of education. For this reason we see the numbers on the first column, even though we want to represent education levels. 
+
+We can change this with the ```factor()``` function, and specify the ```labels``` as the desired education values we want
+
+```{r}
+dat2$edu_fac <- factor(dat2$Q275, 
+                       levels = 0:8,
+                       labels = c("Early childhood",
+                                  "Primary",
+                                  "Lower secondary",
+                                  "Upper secondary",
+                                  "Post-secondary non-tertiary",
+                                  "Short-cycle tertiary",
+                                  "Bachelor or equivalent",
+                                  "Master or equivalent",
+                                  "Doctoral or equivalent") )
+attributes(dat2$edu_fac)
+```
+
+And now we can look at the frequency table of the new factor education variable
+```{r}
+freq(dat2$edu_fac, plain.ascii = FALSE, style = "rmarkdown")
+```
+
+You can save the frequency table as table object as well, with the ```tb()``` function
+```{r}
+fq1 <- tb(freq(dat2$edu_fac, plain.ascii = FALSE, style = "rmarkdown"))
+fq1
+```
+
+
+Lets also modify the *sex* variable with ```factor()``` function
+```{r}
+dat2$sex_fac <- factor(dat2$Q260, 
+                       levels = 1:2,
+                       labels = c("Male","Female") )
+attributes(dat2$sex_fac)
+```
+
+
+We see this table presents the absolute frequency counts, percentage of valid answers, valid cumulative percentage, total percentage, and total cumulative percentage. 
+
+We can also use the same function, and provide multiple variables at once, getting the frequency tables for each specify variable
+```{r}
+freq(dat2[,c("edu_fac","Y001","sex_fac")], plain.ascii = FALSE, style = "rmarkdown")
+```
+
+
+## Cross-tables
+
+For categorical variables, if we want to estimate frequency tables across multiple other groups, we estimate cross-tables. These present the frequency of variable 1 at each level of variable 2, and vice versa, depending on which direction you want to read the table. 
+
+To do this we use the function ```ctable()```. Here we see the cross-table between sex and education level. For this the main 2 arguments we have to provide are 2 categorical variables of interest. You also include the ```prop``` argument, which specifies which proportions you want to show. In this first example we include *don't include any*:
+```{r}
+ctable(dat2$edu_fac, dat2$sex_fac, prop="n", style = "simple")
+```
+
+
+Here we include *row* proportions:
+```{r}
+ctable(dat2$edu_fac, dat2$sex_fac, prop="r", style = "simple")
+```
+
+Here we include *column* proportions:
+```{r}
+ctable(dat2$edu_fac, dat2$sex_fac, prop="c", style = "simple")
+```
+
+Or you can include *total* proportions:
+```{r, eval=F}
+ctable(dat2$edu_fac, dat2$sex_fac, prop="t", style = "simple")
+```
+
+
+# Data frame Summary
+
+We can use use the ```dfSummary()``` function to get a full report of the data. Be careful as this will take the default settings of your variables, and some information may not make sense (e.g. categorical variables stored as integers.) For example:
+```{r,eval=F}
+view(dfSummary(dat2))
+```
+
+
+

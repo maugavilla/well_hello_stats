@@ -1,0 +1,369 @@
+Importing data sets – short version
+================
+Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
+Matre
+01 September, 2022
+
+-   <a href="#introduction" id="toc-introduction">Introduction</a>
+-   <a href="#intoduction-to-data-formats"
+    id="toc-intoduction-to-data-formats">Intoduction to data formats</a>
+-   <a href="#the-rio-package" id="toc-the-rio-package">The <code>rio</code>
+    package</a>
+    -   <a href="#importing-text-files" id="toc-importing-text-files">Importing
+        text files</a>
+    -   <a href="#importing-spss-files" id="toc-importing-spss-files">Importing
+        SPSS files</a>
+    -   <a href="#importing-sas-files" id="toc-importing-sas-files">Importing
+        SAS files</a>
+    -   <a href="#importing-stata-files"
+        id="toc-importing-stata-files">Importing Stata files</a>
+-   <a href="#additional-information"
+    id="toc-additional-information">Additional information</a>
+    -   <a href="#need-more-detail-about-the-functions"
+        id="toc-need-more-detail-about-the-functions">Need more detail about the
+        functions</a>
+    -   <a href="#file-paths" id="toc-file-paths">File paths</a>
+    -   <a href="#choosefile" id="toc-choosefile"><code>choose.file()</code></a>
+    -   <a href="#general-recommendations"
+        id="toc-general-recommendations">General recommendations</a>
+
+# Introduction
+
+In this short version of the *importing data sets tutorial*, we focus on
+the the `import()` function from the `rio` package. A major advantage of
+the `import()` function is that it works with many file types. Because
+of this simplicity, we will use `import()` throughout the remaining
+tutorials.
+
+# Intoduction to data formats
+
+A common characteristic across the different methods is that all the
+data sets are located in the folder that is **set as working
+directory**. But if you have them in another folder we will also show
+how to set the file path.
+
+Not every data set is the same. Depending on the format, a data set can
+be a *simpler* or more *complex* format to import and work with. Data
+can be shared in many format. The simpler ones are text types (like
+`.csv`, `.txt`), and more complex formats are the ones that are software
+specific (like `.sav` from `SPSS` and `.dta` from `Stata`). The text
+types only have the data set in a simple structure, like values
+separated by commas (`.csv` = comma-separated values) or values
+separated by blank spaces or tabs (`.txt`). The software data types, in
+contrast, include the data, and a series of code that defines the
+specific software structure behind it.
+
+In general terms, we suggest to export and share data in a text format,
+as these ones are easier to open and share across platforms and software
+programs.
+
+Different data formats require specific methods to import them into
+**R**. Therefore, it is important to be aware of the format that your
+data is saved in. The easiest way to figure that out is to look at the
+file extension of your data file. For example, The `.csv` extension of
+the `data_set.csv` file shows that this file is saved in the
+comma-separated values (`csv`) format. A problem is that most computers
+will hide the file extensions by default, but you easily look up it up
+online how to show the file extensions in your operating system.
+
+Below, we show you how to import data sets in different formats into
+**R**. We will use the different data formats in which the [World Value
+Survey (WVS)](https://www.worldvaluessurvey.org/) can be downloaded.
+These include the most common formats you will encounter, namely
+`text (.csv)`, `SPSS (.sav)`, `SAS (.sas7bdat)`, and `Stata (.dta)`. The
+data sharing rules of the WVS forbid us to upload the data, but you can
+simply download it from the [WVS
+website](https://www.worldvaluessurvey.org/). Tutorial 3.1 shows you how
+to do this.
+
+# The `rio` package
+
+The `rio` package is designed to make data importing, exporting as user
+friendly as possible. It will automatically decide which functions is
+best to use for importing data, depending on the file type. The user
+only needs to know one function that works with many file types. As
+always, we need to start by loading the `rio` package (assuming that it
+is already installed).
+
+``` r
+library(rio)
+```
+
+As stated on its [support
+page](https://cran.r-project.org/web/packages/rio/vignettes/rio.html)
+the `rio` package supports a variety of file formats for import and
+export. To keep the package slim, non-essential formats are not
+installed (or loaded) by default. To ensure `rio` is fully functional,
+install these packages the first time you use `rio` via:
+
+``` r
+install_formats()
+```
+
+The main functionality of the `rio` package is provided by the
+`import()` function. This function does not actually import the file,
+but it identifies the file format and chooses the function from another
+package to import it. You can see the packages used to import each file
+format with
+
+``` r
+?import
+```
+
+## Importing text files
+
+To import text files, we simply need to give the file name in quotes to
+the `import()` function, and specify possible missing value codes. In
+the case of the WVS, some missing values are coded as -999 and -9999
+(because these are unlikely to occur in real data). To make sure that
+these are read as missing values, we provide
+`na.strings = c("-999", "-9999")` as the second argument to the
+`import()` function, as you can see below
+
+``` r
+dat <- import("WVS_Cross-National_Wave_7_csv_v2_0.csv", na.strings = c("-999", "-9999"))
+dim(dat)
+```
+
+    ## [1] 76897   548
+
+``` r
+is(dat)
+```
+
+    ## [1] "data.frame" "list"       "oldClass"   "vector"
+
+In the next line we are using the function `dim()` to see the size of
+each dimension of the data set. As this is a rectangular data set it has
+2 dimensions, and the `dim()` function tells us that the data set has
+76897 rows (subjects) and 548 columns (variables). Notice that the order
+in R will always be `rows/columns`. Lastly, we are using the function
+`is()` to ask R what type of object the imported data set now is in R.
+In this case, it is imported as a `data.frame`.
+
+The `attributes()` function shows potential additional information about
+the data you just imported. As the text file has no additional
+information, it keeps no information in the variable attributes. You can
+check this using the `attributes()` function
+
+``` r
+attributes(dat$Q60)
+```
+
+    ## NULL
+
+## Importing SPSS files
+
+As the `import()` function does the decisions how to import data for us,
+we simply need to provide it with the new file name to import data in
+the `.sav` format from SPSS. By default, it is using the function from
+the `haven` package.
+
+``` r
+dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+```
+
+    ## [1] 76897   548
+
+``` r
+is(dat)
+```
+
+    ## [1] "data.frame" "list"       "oldClass"   "vector"
+
+Again, we use `dim()` to check the dimensions of the data set, and
+`is()` to check the type of object that the data is stored as. An
+advantage of using a data format other than text is that the file can
+include additional information. For example we see the details about
+each variable with the strcuture fuction `str()`
+
+``` r
+str(dat)
+```
+
+The output of this function is too long to show here but you can try for
+yourself. `str()` shows the data type of each each variable (e.g.,
+integer or character, see tutorial 2), and the values it takes. Again,
+we can check for additional information using the `attributes()`
+function, in this case additional information read from the variable
+information in SPSS
+
+``` r
+attributes(dat$Q60)
+```
+
+    ## $label
+    ## [1] "Trust: People you know personally"
+    ## 
+    ## $format.spss
+    ## [1] "F3.0"
+    ## 
+    ## $labels
+    ## Other missing; Multiple answers Mail (EVS) 
+    ##                                         -5 
+    ##                                  Not asked 
+    ##                                         -4 
+    ##                                  No answer 
+    ##                                         -2 
+    ##                                 Don´t know 
+    ##                                         -1 
+    ##                           Trust completely 
+    ##                                          1 
+    ##                             Trust somewhat 
+    ##                                          2 
+    ##                     Do not trust very much 
+    ##                                          3 
+    ##                        Do not trust at all 
+    ##                                          4
+
+We ask for the attributes of the variable `Q60`, which shows for example
+the variable label *Trust: People you know personally*, the values the
+variable takes, and corresponding value labels that are specified in the
+`.sav` file created in SPSS.
+
+## Importing SAS files
+
+For SAS files in the `.sas7bdat` format, the `import()` function will
+also pick the right package for the import of files.
+
+``` r
+dat <- import("WVS_CrossNat_W7_v2_0.sas7bdat")
+dim(dat)
+```
+
+    ## [1] 76897   548
+
+``` r
+is(dat)
+```
+
+    ## [1] "data.frame" "list"       "oldClass"   "vector"
+
+When looking at the saved attributes, we see that from the SAS file, we
+are only saving the item label, but not the value labels
+
+``` r
+attributes(dat$Q60)
+```
+
+    ## $label
+    ## [1] "Trust: People you know personally"
+
+## Importing Stata files
+
+Finally, the same goes for the Stata files in the `.dta` format. Simply
+use the `import()` function which will choose the right package and
+function to import the data in the background.
+
+``` r
+dat <- import("WVS_Cross-National_Wave_7_stata_v2_0.dta")
+dim(dat)
+```
+
+    ## [1] 76897   548
+
+``` r
+is(dat)
+```
+
+    ## [1] "data.frame" "list"       "oldClass"   "vector"
+
+As it is using the `haven` functions, we keep the same information in
+the variable attributes
+
+``` r
+attributes(dat$Q60)
+```
+
+    ## $label
+    ## [1] "Trust: People you know personally"
+    ## 
+    ## $format.stata
+    ## [1] "%8.0g"
+    ## 
+    ## $labels
+    ## Other missing; Multiple answers Mail (EVS) 
+    ##                                         -5 
+    ##                                  Not asked 
+    ##                                         -4 
+    ##                                  No answer 
+    ##                                         -2 
+    ##                                DonÂ´t know 
+    ##                                         -1 
+    ##                           Trust completely 
+    ##                                          1 
+    ##                             Trust somewhat 
+    ##                                          2 
+    ##                     Do not trust very much 
+    ##                                          3 
+    ##                        Do not trust at all 
+    ##                                          4
+
+# Additional information
+
+In the previous examples, we have use defaults that work well for
+general use cases. Here we present a few uses and cases you might ran
+into
+
+## Need more detail about the functions
+
+So far in our examples we used the defaults or minimal number of
+arguments for each function. You might run into a case that requires to
+manipulate the functions further. When this comes to be, go to the help
+page of a specific function to identify the detail on how it works, and
+other arguments on how to modify how it works
+
+``` r
+## for example
+?import
+```
+
+## File paths
+
+In the previous examples we assumed that the data file you want to
+import was in the working directory. If that is not the case, you can
+still import the file, but just requires to specify the full path for
+the file location, like this
+
+``` r
+dat <- import("C:/Users/Admin/Dropbox/Magic Briefcase/Vrije/R_tutorials/git/WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+is(dat)
+```
+
+Here is important to make sure the slash is this direction /, some
+operating system tend to change the direction on the file manager.
+
+## `choose.file()`
+
+So far we have used the import functions with the full file name (or
+path), but some people don’t like this or are too use to browsing for a
+file. We can do this if we change the file name and ask R to search for
+a file in the browser
+
+``` r
+### WVS_Cross-National_Wave_7_sav_v2_0.sav
+dat <- import(file.choose())
+dim(dat)
+is(dat)
+```
+
+When using the `file.choose()` function instead of the file name, R will
+open a browse window where you can look for the respective file in your
+computer. If you choose to use this approach, we strongly recommend to
+add the file name, or some identifier for the imported file. This is so
+we can keep track of which data set was imported for the future and
+reproducibility.
+
+## General recommendations
+
+Some recommendations for general practice are:
+
+-   Use the `import()` function from the `rio` package, this works well
+    for most common data types, and it is user friendly.
+-   Save the data sets in the working directory folder, for facility to
+    have all files for a respective analysis in a single place.
+-   Specify the full file name in the functions reading in the data.
+    This would give us more tractability of the data analysis process
+    and ease to reproduce it.

@@ -1,0 +1,245 @@
+---
+title: "Correlation"
+author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+
+
+
+
+# Setup the R session
+
+When we start working in R, we always need to setup our session. For this we need to set our working directory, in this case I am doing that for the folder that holds the downloaded [World Values Survey (WVS)](https://www.worldvaluessurvey.org/) ```SPSS``` data set
+
+```{r, eval=F, error=F}
+setwd("~path_to_your_file")
+```
+
+
+The next step for setting up our session will be to load the packages that we will be using
+
+```{r, eval=T}
+library(rio)
+library(psych)
+library(corrplot)
+library(ggplot2)
+library(GGally)
+```
+
+
+# Import the data set
+
+Here we will be importing the ```.sav``` WVS data set
+
+```{r, eval=T}
+dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+```
+
+Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. 
+
+## Select variables of interest
+
+In cases with large data sets like this we might want to select a subset of variables that we want to work with. Since it is not easy to see 548 variables. 
+
+```{r, eval=T}
+vars <- c("Q260","Q262", "Y001", "SACSECVAL", "Q112", "Q113", "Q114", "Q115", "Q116", "Q117", "Q118", "Q119", "Q120", "Q65", "Q69", "Q71", "Q72", "Q73")
+dat2 <- dat[,vars]
+dim(dat2)
+head(dat2)
+```
+
+Here we are first creating a vector with the variable names for the ones I want to keep. You can see all variable names for the full data set as well:
+
+```{r, eval=F}
+colnames(dat)
+```
+
+After identifying which variables we will work with, we create a new data set **dat2** with only these 17 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
+
+The variables we will use here are:
+
+* Q260: sex, 1 = Male, 2 = Female
+* Q262: age in years
+* Y001: post-materialism index
+* SACSECVAL: secular values
+* Q112-Q120: Corruption Perception Index
+* Q65-Q73: Lack of Confidence in the government
+
+## Create composite scores
+
+We will be using the composite scores for *Corruption Perception Index* and *Lack of Confidence in the government* instead of their single items. So, we first need to compute them, we will use the mean across all items for each composite
+
+```{r, eval=T}
+dat2$Corrup <- rowMeans(dat2[,c("Q112", "Q113", "Q114", "Q115", "Q116", "Q117", "Q118", "Q119", "Q120")], na.rm=T)
+dat2$LCGov <- rowMeans(dat2[,c("Q65", "Q69", "Q71", "Q72", "Q73")], na.rm=T)
+head(dat2)
+```
+With the ```rowmeans()``` we compute the mean across the specified variables, for each subject. Remember to include the ```na.rm=T``` argument, so the missing values are properly ignored.   
+
+Now, we will exclude the single indicators from the data set, for easiness to have only the variables of interest
+
+```{r}
+dat2 <- dat2[,c("Q260", "Q262", "Y001", "SACSECVAL", "Corrup", "LCGov")]
+head(dat2)
+```
+The new ```dat2``` data set only include the 5 continuous variables of interest
+
+# Scatter-plot
+
+When looking at correlations, is recommended to first look at the bivariate scatter-plot between the two variables of interest. We can do this with the ```ggplot2``` package
+
+```{r, warning=FALSE}
+ggplot(data=dat2, aes(x=SACSECVAL, y=LCGov))+
+  geom_point()+
+  geom_smooth(method = "lm", se=T)
+```
+
+
+Now, in the ```ggplot()``` function we need to specify the data set, and with the ```aes()``` argument we specify which variable goes in the *x* and *y* axis respectively. Then we add the ```geom_point()``` to get the points across both variables. Lastly, we add the predicted regression line between these variables with ```geom_smooth(method = "lm", se=T)```
+
+
+# Pearson correlation
+
+For estimating the correlations for multiple pairs of variables we are using the ```corr.test()``` function from the ```psych``` package. To estimate all correlations in the data set, 
+
+```{r}
+cor_pear1 <- corr.test(dat2[,-1], method = "pearson", adjust = "holm")
+cor_pear1
+```
+
+In this case we are excluding the first column, with the ```[,-1]```, this way we are not including *sex* in the correlation estimates. 
+
+When we provide the full data set, it will estimate the correlations between *all* the variables. With the ```method``` argument we specify the type of correlation we want to estimate, in this case *pearson*. And the ```adjust``` argument specifies which method we want to use to adjust the *p-values* for multiple tests, here we choose *holm*. 
+
+The correlation results are presented in 3 tables, first we see the correlation matrix which presents the correlation coefficients. Second, we see the sample size matrix, since we have missing data each estimated correlation did not included the same subjects, here we can see how many subjects were included for each correlation. The last table include the *p-values* for each correlation, the the lower diagonal presents the un-adjusted ones, and the ones on the upper diagonal are the adjusted (*holm*) *p-values*. In this case, we see no practical difference when adjusting the *p-values*, as all of them are lower than *0.001*.
+
+
+## Subset of variables
+
+In most cases, you will not want to estimate all possible correlations, you will want to only estimate this for a subset of variables. You can do this by selecting the variables that you want
+
+
+```{r, warning=FALSE}
+cor_pear2 <- corr.test(dat2[,c("SACSECVAL","Corrup","LCGov")], method = "pearson", adjust = "holm")
+cor_pear2
+```
+
+This way we can see only the three correlations we want (in this example). 
+
+## Confidence Intervals
+
+The default ```print``` does not include the the respective confidence intervals. To see them we need to ask for it, like this
+
+```{r}
+print(cor_pear2, short=F)
+```
+
+Now we can see the respective CI in the last fourth table, in the *raw.lower* and *raw.upper* columns. In this case we see very small CI, this is mostly due to the large sample size. 
+
+The default is to present the 95% CI, but you can adjust it with the```alpha``` argument, for example for a 99% CI we would do this
+
+```{r, warning=FALSE}
+cor_pear3 <- corr.test(dat2[,c("SACSECVAL","Corrup","LCGov")], method = "pearson", adjust = "holm", alpha = 0.01)
+print(cor_pear3, short=F)
+```
+
+
+# Spearman correlation
+
+We can ask for other correlations coefficients, like the *non-parametric* Spearman correlation, which is estimated based on the variable ranks, instead of the metric of the observed data. This method makes it less sensitive to outliers. We can estimate this by changing the ```method``` argument
+
+
+```{r, warning=FALSE}
+cor_spear1 <- corr.test(dat2[,c("SACSECVAL","Corrup","LCGov")], method = "spearman", adjust = "holm")
+print(cor_spear1, short=F)
+```
+
+
+# Kendall-tau correlation
+
+Another *non-parametric* correlation method we can use if Kendall-tau. Which is also based on variable ranks, but deals with ties in adifferent way. In general, between these two non-parameteric correlation methods, Kendall-tau is more robust and recommended. We can again specify this with the ```method``` argument.
+
+```{r, eval=T, warning=FALSE}
+cor_kend1 <- corr.test(dat2[,c("SACSECVAL","Corrup","LCGov")], method = "kendall", adjust = "holm")
+print(cor_kend1, short=F)
+```
+
+
+# Extracting the different matrices
+
+We see that from this function we get multiple matrices with the needed information. All of these matrices are saved in the object that the ```corr.test``` function give us. I will use the correlation results from the pearson coefficient here, we can extract only the correlation matrix by
+
+```{r}
+cor_pear2$r
+```
+
+the *p-values* with
+
+```{r}
+cor_pear2$p
+```
+
+and the Confidence Intervals with
+
+```{r}
+cor_pear2$ci
+```
+
+The names show us all the different pieces of information we can ask from it
+
+```{r}
+names(cor_pear2)
+```
+
+
+# Correlogram
+
+There are different ways to plot multiple correlations at the same time. One of this is the **correlogram**, we will use the ```corrplot``` package for this. The ```corrplot()``` function requires the correlation matrix. 
+
+The default settings represent the direction of each correlation by color, with *blue* meaning positive, and *red* meaning negative. And the magnitude of the correlation is represented by the size of the cicles.
+
+
+```{r, eval=T, warning=FALSE}
+corrplot(cor_pear1$r)
+```
+
+
+
+# Pairs plot
+
+Another way to present the multiple correlations is with the *pairs* plots. For this we can use the ```GGally``` package and its ```ggpairs()``` functions. 
+
+```{r, eval=T, warning=FALSE}
+ggpairs(dat2, columns=2:6)
+```
+
+The pairs plot presents the density plot for each variable in the diagonal, the scatter-plot in the lower triangle, and the pearson correlation on the upper diagonal. You can also select which variables to plot with the ```columns``` argument
+
+```{r, warning=FALSE}
+ggpairs(dat2, columns=4:6)
+```
+
+One last plot modification we want to show is to the pairs plots for multiple groups. Girst we need to change the sex variable into a categorical variable
+
+```{r}
+dat2$Sex <- factor(dat2$Q260, 
+                       levels = 1:2,
+                       labels = c("Male","Female") )
+```
+
+Then we can include the new *Sex* variable in the ```aes()``` argument. This way we can see the pairs plots for the whole sample, and for each group. 
+
+```{r, eval=T, warning=FALSE}
+ggpairs(dat2, 
+        columns=4:6,
+        aes(color = Sex,  # Color by group (cat. variable)
+            alpha = 0.5))  # Transparency
+```
+

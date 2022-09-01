@@ -1,0 +1,212 @@
+---
+title: "Reliability analysis"
+author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+  
+# What is reliability analysis?
+
+In many areas of the social sciences, variables of interest are not directly observable. These (latent) variables are therefore measured with scales comprised of a set of items (e.g., questions in a survey). These items indirectly measure the variable of interest by inferring that the underlying construct manifests itself through these items (McNeish, 2018). Broadly defined, measures of reliability are used to demonstrate that "the scores based on the items are reasonably consistent, the responses to the scale are reproducible, and that responses are not simply comprised of random noise. Put another way, a reliability analysis provides evidence that the scale is consistently measuring the same thing (although, this is distinct from concluding that the scale is measuring the intended construct—that is a question of scale validity)." (McNeish, 2018, p. 413). In this tutorial, we will look at two measures of reliability: *Cronbach's alpha* $\alpha$ and *McDonald's omega total* $\omega_t$.
+
+# Preparation
+
+## Setup the R session
+  
+Starting a new session, we should first set our working directory. Here, we set it to the the folder that contains the [World Values Survey (WVS)](https://www.worldvaluessurvey.org/) ```SPSS``` data set in `.sav` format.
+
+```{r, eval=F, error=F}
+setwd("~path_to_your_file")
+```
+
+
+The next step for our session will be to load the packages that we will be using. For reliability analysis, we will use the [`psych`](https://cran.r-project.org/web/packages/psych/index.html) package. If you have not yet installed the package, you can use `install.packages("psych")` to install the `psych` package and then load it via `library()`. Additionally, we use the `rio` package to import our data (see the tutorial *Importing Data Sets*), and the `car` package for recoding items (see the tutorial *Data Management 1*).
+
+```{r eval=T, warning=FALSE}
+# install.packages("psych") # if you have not yet installed the psych package
+library(psych)
+library(rio)
+library(car)
+```
+
+
+## Import the data set
+
+We import the WVS data set.
+
+```{r, eval=T}
+dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+```
+
+We name the data set **dat** and ask **R** to show us its dimensions using `dim()`. We see that the data set has 84638 rows (in this case respondents), and 563 columns (in this case variables).
+
+### Select variables of interest
+
+With a large data set like the WVS, we usually want to select only a subset of variables that we need for our analysis. This makes the data set more overseeable. We want to use questions from the WVS to create a scale of confidence in the government. To create this scale, we use five items from the survey that measure confidence in armed forces, the police, the government (in your nation’s capital), in political parties, and in the parliament. The variable names are Q65, Q69, Q71, Q72, and Q73. 
+
+To select these variables, we first create a vector named `vars` containing the names of the variables that we want to keep.
+ 
+```{r, eval=T}
+vars <- c("Q65", "Q69", "Q71", "Q72", "Q73")
+```
+
+Next, we tell **R** to create a data set **dat2** which only contains the columns with the names in the vector `vars`. In `dat[, vars]`, the argument before the comma specifies which rows to keep (here, we keep it empty to keep all rows/respondents in the data). The argument after the comma tells r which columns/variables to keep, and we tell R to keep the columns with the names stored in the vector `vars`. We check the dimensions (`dim(dat2)`) and the first few rows of the data set (`head(dat2)`). This is a quick check whether everything went well and that we now have a data frame with just the 9 variables we wanted to select.
+
+```{r}
+dat2 <- dat[, vars]            
+dim(dat2)
+head(dat2)
+```
+
+### Data preparation
+
+Let's first have a look at the items that make up the scale of confidence in the government. Using `attributes()`, we can see that the variable Q65 measures confidence in the armed forces. We can also see that 1 means that they have a great deal of confidence and that 4 means that they have no confidence at all. So, we see that the higher the score the less confidence they have in the government.
+
+```{r}
+attributes(dat2$Q65) ## Confidence: Armed Forces
+```
+
+We can also check that this is also true for the other items (output not shown).
+
+```{r eval=FALSE}
+attributes(dat2$Q69) ## Confidence: The Police
+attributes(dat2$Q71) ## Confidence: The Government
+attributes(dat2$Q72) ## Confidence: The Political Parties
+attributes(dat2$Q73) ## Confidence: Parliament
+```
+
+This is not really intuitive. Instead, we would like to have higher values represent more confidence in the government. To do that, we reverse code the items such that higher values on the items mean *more* confidence in the government (you can find more details on this procedure in the tutorial *Data management 1*).
+
+First, we check which values actually occur in the data. To do this, we request descriptive statistics for the items. We previously use the `descr()` function from the `summarytools` package (see the tutorial on *Descriptive Statistics*). The `psych` package has a similar function called `describe()`, which provides almost the same information. Here, we will use the `describe()` function, since we already have the `psych` package loaded.
+
+```{r}
+# descr(dat2) # use this if you are using the 'summarytools' package
+describe(dat2)
+```
+
+From the description of the items we can see that the values 1, 2, 3, and 4 occur in the data for these variables. This means that all other responses have correctly been coded as missing `NA`. 
+
+To reverse code the variables, will use the `recode()` function from the `car` package.
+
+```{r}
+dat2$Q65_r <- recode(dat2$Q65, "1=4; 2=3; 3=2; 4=1")
+dat2$Q69_r <- recode(dat2$Q69, "1=4; 2=3; 3=2; 4=1")
+dat2$Q71_r <- recode(dat2$Q71, "1=4; 2=3; 3=2; 4=1")
+dat2$Q72_r <- recode(dat2$Q72, "1=4; 2=3; 3=2; 4=1")
+dat2$Q73_r <- recode(dat2$Q73, "1=4; 2=3; 3=2; 4=1")
+```
+
+We give the new items a name ending with ```_r```, indicating that is the same item as before but reverse coded. We do a quick check that the recoding went well by looking at a cross-table between the original variable, and the new one. We can see that the variable values follow the diagonal, indicating that values were recoded correctly. Only the ```NA``` is the same, because we want to keep the same missing values.
+
+```{r}
+table(dat2$Q65, dat2$Q65_r, useNA="always")
+table(dat2$Q69, dat2$Q69_r, useNA="always")
+table(dat2$Q71, dat2$Q71_r, useNA="always")
+table(dat2$Q72, dat2$Q72_r, useNA="always")
+table(dat2$Q73, dat2$Q73_r, useNA="always")
+```
+
+As the last step for data preparation, we create a new data set that only contains the recoded items. This makes the relibility analysis below a little bit easier.
+
+```{r}
+reverse_coded <- c("Q65_r", "Q69_r", "Q71_r", "Q72_r", "Q73_r")
+dat3 <- dat2[, reverse_coded] 
+```
+
+
+# Reliability analysis
+
+Now that our data is well prepared, getting the reliability estimates is actually super easy. We look at Cronbach's alpha and McDonald's omega total as two measures of reliability. Cronbach's alpha is not a measure of reliability, but a measure of inter-item correlation, that approximates reliability when *tau-equivalence* assumption is met. On the other side, McDonald's omega is an improved measure of reliability based on the congeneric measurement model (Cho & Kim, 2015)  
+
+## Cronbach's alpha 
+
+To get Cronbach's alpha, we simply use the `alpha()` function from the `psych` package, and give it the name of the data set that contains the reverse coded items (`dat3`).
+
+```{r}
+alpha(dat3)               # note that ggplot2 also has a function called `alpha`. If you also have the ggplot2 package loaded, you have to specify which of these you want to use. To use the alpha function from the `psych` package you can type `psych::alpha()`
+```
+
+### Interpreting the output
+The main thing we are looking for in the output of the alpha function is *alpha_raw*, which is the value for Cronbach’s alpha. 
+
+Another interesting piece of information is summarized under the heading *Reliability if an item is dropped:*. Here, each of the rows indicates what Cronbach’s alpha would be if that specific item was dropped from the scale. In our example, Cronbach's alpha slightly increases from 0.83 to 0.84 if we drop the first item `Q65_r`. For all the other items, Cronbach's alpha would be lower if they were dropped from the scale. Here, it is important to keep in mind that dropping items also has implications for scale validity, that is, whether the scale is measuring the intended construct. So you should not exclude items simply based on Cronbach's alpha, but also consider how that might affect scale validity at the same time.
+
+Under *Item statistics* we also get results for the item-total correlation. Item-total correlation is a measure for how strongly a single item correlates with the total scale. *raw.r*, *std.r*, *r.drop*, and *r.cor* are all slightly different estimates of item-total correlation. You can find out more about the different measures by typing `?alpha` in the console. Here, we focus on the *corrected item-total correlation* given by *r.cor*, which is the most reliable of these estimates. In our example, we can see in the output for *r.cor* that the items Q65 (confidence in armed forces) and Q69 (confidence in the police) have much lower correlations with a scale made up of the remaining 4 items than the remaining items Q71 (confidence in the government), Q72 (confidence in political parties), and Q73 (confidence in the parliament).
+
+
+### Mix of positively and negatively scored items
+
+If you have a mix of positively and negatively scored items in your data (e.g., if you forgot to reverse code some items of the scale), you can still use the `alpha` function with that data, but you need to specify an extra argument. First, lets see what happens if you simply apply `alpha()` to such data. To test that, we create a new data set (`dat4`) that contains two items in their original coding, and three items that we reverse coded above.
+
+```{r}
+forgot_reverse <- c("Q65", "Q69", "Q71_r", "Q72_r", "Q73_r")
+dat4 <- dat2[, forgot_reverse] 
+alpha(dat4)
+```
+
+In the output, you can now first see a warning *'Some items ( Q65 Q69 ) were negatively correlated with the total scale and probably should be reversed.'*. We still get an estimate for alpha and the other output of the `alpha()` function, but we should ignore it if we see such a warning. The warning also tells us that we can use the `check.keys=TRUE` option to get around this problem, so let's try that:  
+```{r}
+alpha(dat4, check.keys = TRUE)
+```
+
+We now get a warning saying that *'Some items were negatively correlated with total scale and were automatically reversed. This is indicated by a negative sign for the variable name.'*. Now, the function automatically reverse codes the affected items. The output is correct again, and is the same as when applying `alpha()` to items that are all scored in the same direction.
+
+If we do not want to rely on this automatic reverse coding of the `alpha()` function, we can also manually specify which items are negatively coded by using the `keys` option. We specify that the items Q65 and Q69, which are the first and the second variable in the dat4 data set, are negatively scored by giving `-1` in the first and second position to the keys option.
+
+```{r eval=FALSE}
+alpha(dat4, keys = c(-1, -1, 1, 1, 1)) 
+```
+
+We don't show the output because it is the same as in the first example where all items are reverse coded by hand. We no longer get the warning, and get the same correct result of $\alpha = 0.83$ and remaining output as before.
+
+
+### Squared multiple correlation (SMC)
+
+The `smc()` function gives us the squared multiple correlation (think $R^2$) for each of the items with all other items.
+
+```{r}
+smc(dat3)
+```
+Here, we can see that the SCM for items Q65_r and Q69_r are low in comparison to the SCM of the remaining three items. This is in line with the results for the corrected item-total correlation from above. 
+
+## McDonald's omega
+
+The `omega()` function from the `psych` package gives use McDonald's omega total $\omega_t$. We provide the name of the data set `dat3` to the function.
+
+```{r}
+omega(dat3)
+```
+
+### Interpreting the output
+
+The omega function provides quite a lot of output. First, we get actually get a visual representation of the model that the function fits to the data. This can be helpful, but you can also request not to get the figure by specifying `omega(dat3, plot =FALSE)` instead. 
+
+The main thing we are looking for in the output is *Omega Total*, which in this case is 0.88. You can see that the `omega()` functiona also provides the value for Cronbach's alpha above that, so you can just use the `omega()` function to get output for both of the reliability measures. 
+
+For the moment, we are not insterested in the remaining output, but you can get a helpful and detailed description of the output of the `omega()` function by typing typing `?omega` in the console.
+
+### Mix of positively and negatively scored items
+
+For the `omega()` fuction, you can also provide a mix of positively and negatively scored items, and you will get the same reliability estimate for omega total. You can check by using the `dat4` data set from above. `omega()` assumes that any negative correlations between singe items and the latent factor are due to reverse coding and 'corrects' that without printing a warning. Items that were automatically reverse coded are indicated by a small minus sign after their name under the heading *Schmid Leiman Factor loadings greater than 0.2*.
+
+
+# References
+
+Chan C, Chan GC, Leeper TJ, Becker J (2021). rio: A Swiss-army knife for data file I/O. R package version 0.5.29. https://cran.r-project.org/web/packages/rio/
+
+Cho, E., & Kim, S. (2015). Cronbach’s Coefficient Alpha: Well Known but Poorly Understood. Organizational Research Methods, 18(2), 207–230. https://doi.org/10.1177/1094428114555994
+
+Fox J, Weisberg S (2019). An R Companion to Applied Regression, Third edition. Sage, Thousand Oaks CA. https://socialsciences.mcmaster.ca/jfox/Books/Companion/.
+
+McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. Psychological Methods, 23(3), 412–433. https://doi.org/10.1037/met0000144
+
+Revelle W (2022). psych: Procedures for Psychological, Psychometric, and Personality Research. Northwestern University, Evanston, Illinois. R package version 2.2.3, https://CRAN.R-project.org/package=psych.
+
+
+

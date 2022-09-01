@@ -1,0 +1,137 @@
+---
+title: "Data management 2: variable types, and factors"
+author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+
+# Setup the R session
+
+When we start up we always need to setup our session. For this wee need to set our working directory, in this case I am doing that for the folder that holds the downloaded [World Values Survey (WVS)](https://www.worldvaluessurvey.org/) ```SPSS``` data set
+
+```{r, eval=F, error=F}
+setwd("~path_to_your_file")
+```
+
+
+The next step for our session will be to load the packages that we will be using
+
+```{r, eval=T}
+library(rio)
+```
+
+
+# Import the data set
+
+Here we will be importing the ```.sav``` WVS data set
+
+```{r, eval=T}
+dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
+dim(dat)
+```
+
+Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. 
+
+## Select variables of interest
+
+In cases with large data sets like this we might want to select a subset of variables that we want to work with. Since it is not easy to see 548 variables. 
+
+```{r, eval=T}
+vars <- c("Q275", "Q260", "Q262")
+dat2 <- dat[,vars]
+dim(dat2)
+head(dat2)
+```
+
+Here we are first creating a vector with the variable names for the ones I want to keep. You can see all variable names for the full data set as well
+
+```{r, eval=F}
+colnames(dat)
+```
+
+After writing which variables we want to work with, we create a new data set **dat2** with only these 7 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)** and looking at the first 6 rows of it **head(dat2)**. These are quick checks that we have done this correctly. 
+
+# Variable types
+
+When working with data, need to be clear on what type of data is provided by each variable. From these selected items, we will look at 3 types, binary (Sex, Q260), ordered categorical (Highest education level Q275), and continuous (Age Q262).
+
+For all of these variables, the data is imported as numerical because even for the categorical variables we have stated that some numbers mean something other than the number. For this reason, we could ask something that makes no sense, like the mean of the education level
+
+```{r}
+mean(dat2$Q275, na.rm=T)
+```
+
+And R will give us a value, but this is meaningless because we have categorical levels of education, so this 3.5 cannot be interpreted. 
+
+We can see the attributes and basix frequency table of a variable like this
+
+```{r}
+attributes(dat2$Q275)
+table(dat2$Q275, useNA = "always")
+```
+
+In this case we can see the possible answer labels, and that the actual answers are between 0 (*Early childhood education*) and 8 (*Doctoral or equivalent*). 
+
+The same applies for the Sex variable, we can see that we have some missing value attributes, and possible valid answers of Male (1) and Female (2), and looking at the frequency table we see that there are more women than men in the sample. 
+
+```{r}
+attributes(dat2$Q260)
+table(dat2$Q260, useNA = "always")
+```
+
+It is worth noting that research in general has failed the area of diversity, as very few data sets include variables accounting for gender diversity, and we still see only variables with options of Male and Female. We expect for this dversity to be accounted in future data sets. 
+
+On the other side, we can also have real continuous variables like Age. For which the mean is a meaningful metric
+
+```{r}
+attributes(dat2$Q262)
+mean(dat2$Q262, na.rm=T)
+median(dat2$Q262, na.rm=T)
+```
+
+Here we can see that the average age of the sample is 43.02 years old, and the median age is 41. 
+
+Clearly, depending of the type of variable is the type of information that we should ask R to give us. R doesn't know what the numbers mean for us. 
+
+# ```factor```
+
+As we said, R doesn't know what the numbers in the data are. But you can tell it, for example you can tell it that a variable is categorical by specifying as a ```factor()```. With this function we can specify to treat a variable as categorical. 
+
+```{r}
+dat2$sex_fac <- factor(dat2$Q260)
+attributes(dat2$sex_fac)
+mean(dat2$sex_fac, na.rm=T)
+```
+
+When we use the ```factor()``` function, we can create a new factor variable for the sex variable. When we do this we see in attributes that the ```class``` specifies that it is a factor, and we have a ```levels``` attribute that tell us the possible answers. And when we try to estimate mean, now we get an ```NA``` for it, as R cannot estimate a mean for a categorical variable. 
+
+We can also extend the use of the factor function. Since it is already categorical, why keep using numbers, lets change those numerical codes for text that specifies what they mean.
+
+```{r}
+dat2$sex_fac <- factor(dat2$Q260, 
+                       levels = c(1,2),
+                       labels = c("Male", "Feamale"))
+attributes(dat2$sex_fac)
+table(dat2$Q260, dat2$sex_fac)
+```
+
+Here we use 2 new arguments in the ```factor()``` function. The ```levels``` argument are the *old* value for the sex variable, and the ```labels``` argument are the new text values that are meaningful. This way we are re-coding the values of the variable, and the type of the variable at the same time. 
+
+Now, lets see how that looks for the education variable, this one is a little more complicated for the larger number of categories. 
+
+```{r}
+dat2$eud_fac <- factor(dat2$Q275, 
+                       levels = 0:8,
+                       labels = names(attributes(dat2$Q275)$labels)[5:13] )
+attributes(dat2$eud_fac)
+table(dat2$eud_fac)
+```
+
+With this we are changing the levels to ```0:8``` to specify that we have values from 0 to 8. For the ```labels```, I did not wanted to write all the education categories, so I pulled these category names from the ```attributes()``` function. This way we now have a categorical variable, that R knows is categorical with meaningful labels. 
+
+
