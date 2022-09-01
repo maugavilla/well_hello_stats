@@ -2,7 +2,7 @@ R for Social Scientists: Welcome and introduction
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+02 September, 2022
 
 -   <a href="#welcome" id="toc-welcome">Welcome</a>
 -   <a href="#what-is-r-and-why-should-you-learn-it"
@@ -13,6 +13,16 @@ Matre
     id="toc-how-to-use-this-resource">How to use this resource</a>
 -   <a href="#the-tutorials" id="toc-the-tutorials">The tutorials</a>
     -   <a href="#set-up" id="toc-set-up">Set up</a>
+    -   <a href="#basics" id="toc-basics">Basics</a>
+    -   <a href="#initial-work-with-data"
+        id="toc-initial-work-with-data">Initial work with data</a>
+    -   <a href="#relations-betwen-variables"
+        id="toc-relations-betwen-variables">Relations betwen variables</a>
+    -   <a href="#scale-evaluation" id="toc-scale-evaluation">Scale
+        evaluation</a>
+    -   <a href="#general-linear-models" id="toc-general-linear-models">General
+        Linear Models</a>
+-   <a href="#progress" id="toc-progress">Progress</a>
 
 <div style="padding: 0.2em;">
 
@@ -22,12 +32,12 @@ Matre
 
 # Welcome
 
-Welcome to *R for Social Scientists*. *R for Social Scientists* is a
-series of tutorials that will teach you how to use R for research in the
-social sciences. Throughout the tutorials, you will learn how to install
-and set up R and RStudio, get your data into R, manage your data, and
-implement some of the most commonly used methods in quantitative social
-science research using R and RStudio.
+Welcome to **Well Hello Stats**. This is page to learn *R for Social
+Scientists*, is a series of tutorials that will teach you how to use R
+for research in the social sciences. Throughout the tutorials, you will
+learn how to install and set up R and RStudio, get your data into R,
+manage your data, and implement some of the most commonly used methods
+in quantitative social science research using R and RStudio.
 
 There are many great resources out there to learn R. This series of
 tutorials is set up to teach you the necessary skills in a consistent
@@ -123,3 +133,63 @@ description. They have been structure by increased complexity, kind of
 following a course.
 
 ## Set up
+
+-   [Install R and RStudio for
+    Mac](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_1_Installing_mac.md)
+-   [Install R and RStudio for
+    Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md)
+-   [Setting up
+    RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md)
+
+## Basics
+
+-   [R
+    Basics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_1_R_basics.md)
+-   [Download the WVS data
+    set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md)
+-   [Import data sets
+    (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md)
+-   [Import data sets
+    (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md)
+
+## Initial work with data
+
+-   [Data management
+    1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_1_Data_management_1.md)
+-   [Data management
+    2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_2_Data_management_2.md)
+-   [Descriptive
+    Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md)
+-   [Basic
+    plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md)
+
+## Relations betwen variables
+
+-   [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md)
+
+## Scale evaluation
+
+-   [Reliability](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/7_1_reliability.md)
+
+## General Linear Models
+
+-   [t-test](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_1_ttest.md)
+-   [Linear
+    regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md)
+-   [Moderation with
+    `lm`](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_1_moderation_lm.md)
+-   [Moderation with the PROCESS
+    macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md)
+-   [Mediation with path
+    analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
+-   [Mediation with the PROCESS
+    macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
+
+# Progress
+
+As must things in life, these tutorials as a work in progress. So we
+will continue updating and adding new tutorials.
+
+These tutorials started as a request from the Sociology department, as
+they are transitioning out of propietary software. But we expect this to
+go beyond the departmental needs.
