@@ -1,4 +1,4 @@
-R for Social Scientists: Welcome and introduction
+Well Hello Stats: Welcome and introduction
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
@@ -191,5 +191,7 @@ As must things in life, these tutorials as a work in progress. So we
 will continue updating and adding new tutorials.
 
 These tutorials started as a request from the Sociology department, as
-they are transitioning out of propietary software. But we expect this to
-go beyond the departmental needs.
+they are transitioning out of proprietary software. But we expect this
+to go beyond the departmental needs.
+
+You are welcome to suggest new tutorials, and/or collaborate one.
