@@ -1,4 +1,4 @@
-Well Hello Stats: Welcome and introduction
+Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
 05 September, 2022

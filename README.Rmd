@@ -1,5 +1,5 @@
 ---
-title: "Well Hello Stats: Welcome and introduction"
+title: "Well Hello Stats"
 author: "Mauricio Garnier-Villarreal"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:   
