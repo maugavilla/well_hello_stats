@@ -1,6 +1,6 @@
 ---
 title: "Well Hello Stats: Welcome and introduction"
-author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+author: "Mauricio Garnier-Villarreal"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:   
   github_document:

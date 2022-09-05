@@ -1,8 +1,7 @@
 Well Hello Stats: Welcome and introduction
 ================
-Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
-Matre
-02 September, 2022
+Mauricio Garnier-Villarreal
+05 September, 2022
 
 -   <a href="#welcome" id="toc-welcome">Welcome</a>
 -   <a href="#what-is-r-and-why-should-you-learn-it"
