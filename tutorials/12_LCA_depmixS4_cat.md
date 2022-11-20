@@ -7,8 +7,13 @@ Mauricio Garnier-Villarreal
 
 ## Quarto
 
-``` r
+```` markdown
+```{r}
+#| code-fold: false
+#| eval: true
+
 1+1
 ```
+````
 
     [1] 2
