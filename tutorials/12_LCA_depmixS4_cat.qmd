@@ -13,7 +13,7 @@ code-copy: true
 
 
 ```{r}
-#| echo: fenced
+#| echo: true
 #| code-fold: false
 #| eval: true
 
