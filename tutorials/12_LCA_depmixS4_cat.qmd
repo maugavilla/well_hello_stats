@@ -5,7 +5,6 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
-code-copy: true
 ---
 
 ## Quarto
@@ -13,13 +12,13 @@ code-copy: true
 
 
 ```{r}
-#| echo: fenced
+#| echo: true
 #| code-fold: false
-#| warning: false
-#| error: false
 #| eval: true
-#| output: true
 
 1+1
 ```
+
+
+
 
