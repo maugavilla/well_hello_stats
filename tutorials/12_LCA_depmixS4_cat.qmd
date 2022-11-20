@@ -1,0 +1,25 @@
+---
+title: "LCA with depmixS4 (categorical indicators)"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+## Quarto
+
+
+
+```{r}
+#| echo: fenced
+#| code-fold: false
+#| warning: false
+#| error: false
+#| eval: true
+#| output: true
+
+1+1
+```
+
