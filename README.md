@@ -1,27 +1,27 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-05 September, 2022
+21 November, 2022
 
--   <a href="#welcome" id="toc-welcome">Welcome</a>
--   <a href="#what-is-r-and-why-should-you-learn-it"
-    id="toc-what-is-r-and-why-should-you-learn-it">What is R and why should
-    you learn it?</a>
--   <a href="#prerequisites" id="toc-prerequisites">Prerequisites</a>
--   <a href="#how-to-use-this-resource"
-    id="toc-how-to-use-this-resource">How to use this resource</a>
--   <a href="#the-tutorials" id="toc-the-tutorials">The tutorials</a>
-    -   <a href="#set-up" id="toc-set-up">Set up</a>
-    -   <a href="#basics" id="toc-basics">Basics</a>
-    -   <a href="#initial-work-with-data"
-        id="toc-initial-work-with-data">Initial work with data</a>
-    -   <a href="#relations-betwen-variables"
-        id="toc-relations-betwen-variables">Relations betwen variables</a>
-    -   <a href="#scale-evaluation" id="toc-scale-evaluation">Scale
-        evaluation</a>
-    -   <a href="#general-linear-models" id="toc-general-linear-models">General
-        Linear Models</a>
--   <a href="#progress" id="toc-progress">Progress</a>
+- <a href="#welcome" id="toc-welcome">Welcome</a>
+- <a href="#what-is-r-and-why-should-you-learn-it"
+  id="toc-what-is-r-and-why-should-you-learn-it">What is R and why should
+  you learn it?</a>
+- <a href="#prerequisites" id="toc-prerequisites">Prerequisites</a>
+- <a href="#how-to-use-this-resource"
+  id="toc-how-to-use-this-resource">How to use this resource</a>
+- <a href="#the-tutorials" id="toc-the-tutorials">The tutorials</a>
+  - <a href="#set-up" id="toc-set-up">Set up</a>
+  - <a href="#basics" id="toc-basics">Basics</a>
+  - <a href="#initial-work-with-data"
+    id="toc-initial-work-with-data">Initial work with data</a>
+  - <a href="#relations-betwen-variables"
+    id="toc-relations-betwen-variables">Relations betwen variables</a>
+  - <a href="#scale-evaluation" id="toc-scale-evaluation">Scale
+    evaluation</a>
+  - <a href="#general-linear-models" id="toc-general-linear-models">General
+    Linear Models</a>
+- <a href="#progress" id="toc-progress">Progress</a>
 
 <div style="padding: 0.2em;">
 
@@ -49,27 +49,27 @@ among the most popular languages for research in the social sciences. In
 comparison to other popular software packages in social scientific
 research, such as SPSS and Stata, R has several notable advantages:
 
--   R is a programming language, which makes it much more versatile.
-    While R focuses on statistical analysis at heart, it facilitates a
-    wide-range of features, and virtually any tool for data analysis can
-    be implemented.
--   The range of things you can do with R is constantly being updated. R
-    is open-source, meaning that anyone can contribute to its
-    development. In particular, people can develop new *packages*, that
-    can easily and safely be installed from within R with a single
-    command. Since many scholars and industry professionals use R, it is
-    likely that any cutting-edge and bleeding-edge techniques that you
-    are interested in are already available. You can think of it as an
-    app-store for all your data-analysis needs!
--   R is free. While for students this is not yet a big deal due to free
-    or cheap student and university licences, this can be a big plus in
-    the commercial sector. Especially for small businesses and
-    free-lancers. Allowing to democratize the access to cutting data
-    analysis methods, for people in situations that otherwise would not
-    be able to have access to a proprietary program.
--   The use of syntax base software improves our ability to
-    reproduce/replicate our results, track down mistakes and fix them,
-    and we can save and reuse syntax for future projects.
+- R is a programming language, which makes it much more versatile. While
+  R focuses on statistical analysis at heart, it facilitates a
+  wide-range of features, and virtually any tool for data analysis can
+  be implemented.
+- The range of things you can do with R is constantly being updated. R
+  is open-source, meaning that anyone can contribute to its development.
+  In particular, people can develop new *packages*, that can easily and
+  safely be installed from within R with a single command. Since many
+  scholars and industry professionals use R, it is likely that any
+  cutting-edge and bleeding-edge techniques that you are interested in
+  are already available. You can think of it as an app-store for all
+  your data-analysis needs!
+- R is free. While for students this is not yet a big deal due to free
+  or cheap student and university licences, this can be a big plus in
+  the commercial sector. Especially for small businesses and
+  free-lancers. Allowing to democratize the access to cutting data
+  analysis methods, for people in situations that otherwise would not be
+  able to have access to a proprietary program.
+- The use of syntax base software improves our ability to
+  reproduce/replicate our results, track down mistakes and fix them, and
+  we can save and reuse syntax for future projects.
 
 RStudio is the most commonly used editor for working with R. RStudio
 makes it easy to write and save code (the instructions for the tasks you
@@ -133,56 +133,58 @@ following a course.
 
 ## Set up
 
--   [Install R and RStudio for
-    Mac](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_1_Installing_mac.md)
--   [Install R and RStudio for
-    Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md)
--   [Setting up
-    RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md)
+- [Install R and RStudio for
+  Mac](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_1_Installing_mac.md)
+- [Install R and RStudio for
+  Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md)
+- [Setting up
+  RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md)
 
 ## Basics
 
--   [R
-    Basics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_1_R_basics.md)
--   [Download the WVS data
-    set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md)
--   [Import data sets
-    (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md)
--   [Import data sets
-    (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md)
+- [R
+  Basics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_1_R_basics.md)
+- [Download the WVS data
+  set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md)
+- [Import data sets
+  (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md)
+- [Import data sets
+  (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md)
+- [Quick
+  R](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_2_Quick_R.md)
 
 ## Initial work with data
 
--   [Data management
-    1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_1_Data_management_1.md)
--   [Data management
-    2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_2_Data_management_2.md)
--   [Descriptive
-    Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md)
--   [Basic
-    plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md)
+- [Data management
+  1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_1_Data_management_1.md)
+- [Data management
+  2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_2_Data_management_2.md)
+- [Descriptive
+  Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md)
+- [Basic
+  plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md)
 
 ## Relations betwen variables
 
--   [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md)
+- [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md)
 
 ## Scale evaluation
 
--   [Reliability](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/7_1_reliability.md)
+- [Reliability](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/7_1_reliability.md)
 
 ## General Linear Models
 
--   [t-test](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_1_ttest.md)
--   [Linear
-    regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md)
--   [Moderation with
-    `lm`](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_1_moderation_lm.md)
--   [Moderation with the PROCESS
-    macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md)
--   [Mediation with path
-    analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
--   [Mediation with the PROCESS
-    macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
+- [t-test](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_1_ttest.md)
+- [Linear
+  regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md)
+- [Moderation with
+  `lm`](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_1_moderation_lm.md)
+- [Moderation with the PROCESS
+  macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md)
+- [Mediation with path
+  analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
+- [Mediation with the PROCESS
+  macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
 
 # Progress
 
