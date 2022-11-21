@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-21 November, 2022
+22 November, 2022
 
 - <a href="#welcome" id="toc-welcome">Welcome</a>
 - <a href="#what-is-r-and-why-should-you-learn-it"
@@ -21,6 +21,7 @@ Mauricio Garnier-Villarreal
     evaluation</a>
   - <a href="#general-linear-models" id="toc-general-linear-models">General
     Linear Models</a>
+  - <a href="#mixture-models" id="toc-mixture-models">Mixture models</a>
 - <a href="#progress" id="toc-progress">Progress</a>
 
 <div style="padding: 0.2em;">
@@ -185,6 +186,11 @@ following a course.
   analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
 - [Mediation with the PROCESS
   macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
+
+## Mixture models
+
+- [LCA with depmixS4 (categorical
+  indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md)
 
 # Progress
 

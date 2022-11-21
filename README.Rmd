@@ -92,6 +92,10 @@ Here you will find links for the respective tutorials, and a short description. 
 * [Mediation with path analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
 * [Mediation with the PROCESS macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
 
+## Mixture models
+
+* [LCA with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md)
+
 # Progress
 
 As must things in life, these tutorials as a work in progress. So we will continue updating and adding new tutorials.
