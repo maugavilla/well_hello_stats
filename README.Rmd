@@ -65,6 +65,7 @@ Here you will find links for the respective tutorials, and a short description. 
 * [Download the WVS data set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md)
 * [Import data sets (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md)
 * [Import data sets (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md)
+* [Quick R](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_2_Quick_R.md)
 
 ## Initial work with data
 
