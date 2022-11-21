@@ -1,0 +1,640 @@
+---
+title: "Intro_to_R"
+author: "Laura Eberlein, Santiago Gómez-Echeverry & Dimitris Pavlopoulos"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*\## Session 1: Introduction to R*
+
+In this seminar session, we introduce working with R. We illustrate some basic functionality and help you familiarize yourself with RStudio.
+
+*1 Getting to know R*
+
+*1.1 First steps in R*
+
+Let's go through some of the basics of R. We can use R as a simple calculator.
+
+```{r First steps: Calculate}
+
+2+6
+
+```
+
+Now that we know how to use the + sign for addition, let's try some other mathematical operations such as subtraction (-), multiplication (\*), and division (/).
+
+```{r First steps: Calculate 2}
+
+10-4
+5*3
+8/2
+
+```
+
+In R, we always use objects and functions. Functions are what other programs call commands, a set of instructions that carry out a specific task. Functions often require some input and generate some output. For example, instead of using the + operator for addition, we can use the sum function to add two or more numbers.
+
+```{r First steps 2: Functions}
+
+sum(2,6)
+
+```
+
+If you want to have a look at the online documentation of each function in R, you can use help() or ?function.
+
+```{r First steps 2: Help, echo=FALSE}
+
+help(sum)
+?sum
+
+```
+
+In the example above, 2 and 6 are the inputs and 8 is the output. A function always requires the use of parenthesis or round brackets (). Inputs to the function are called arguments and go inside the brackets. The output of a function is displayed on the screen. If we want to save the results of our output, we can assign it to an object. To assign our result to an object, we use the assignment operator "\<-". If we want to save our results of sum(2,6), we could do the following:
+
+```{r First steps 3: Assignment Operator}
+
+myresult <- sum(2,6)
+myresult
+
+```
+
+The line above creates a new object called myresult in our environment and saves the result of the function in it.
+
+*Sequences* Sequences are often needed when manipulating data. For instance, you might want to perform an operation on the first 10 rows of a data set so we need a way to select the range we are interested in. There are two ways to create a sequence. Let's try to create a sequence of numbers from 1 to 10 using the two methods:
+
+(1) Using the colon : operator. If you're familiar with spreadsheets then you migh have already used : to select cells, for example A1:A20. In R, you can use the : to create a sequence in a similar fashion:
+(2) Using the seq() function. The seq function has a number of options which control how the sequence is generated. For example, to create a sequence from 0 to 100 in increments of 5, we can use the optional "by" argument.
+
+```{r First steps 4: Sequences}
+
+1:10
+
+seq(from = 1,to = 10)
+seq(from = 0,to = 100, by = 5)
+
+```
+
+*1.2 Variables*
+
+There are basically four types of variables in R:
+
+1.  Numeric (Numbers)
+2.  Character (Text, sometimes also called 'strings')
+3.  Factor (Categorical data)
+4.  Logical (True or False)
+
+*Numeric*
+
+```{r Variables: Numeric}
+
+x <- 20
+x = 20 # There are different ways of assigning objects
+x
+class(x) # View the class of the value assigned to x
+
+```
+
+*Character*
+
+Textual data (recognizable by the quotes), either as single characters, entire words, or even full texts.
+
+```{r Variables: Character}
+
+chr <- "Some random text"
+chr
+
+xt <- "20"
+xt
+
+```
+
+Run the code below and see what happens.
+
+```{r Variables: Test}
+
+#sum(xt,x) # Why is there an error?
+
+```
+
+Naturally, you cannot perform math with character data. Using the wrong data type will generally yield an error. You can convert the value to a different type with the *as* command:
+
+```{r Variables: Test Solution}
+
+xt1 <- as.numeric(xt) # converts character into numeric
+sum(xt1,x)
+
+```
+
+*Factor*
+
+Factors are variables in R which take on a limited number of different values, and are employed to refer to categorical variables (nominal or ordinal).
+
+```{r Variables: Factor}
+
+f <- as.factor(1:10)
+f
+
+fac <- factor(c("SPSS", "Stata", "R"))
+fac
+
+```
+
+Note that although factors seem like typical numbers, they are not meant for standard algebra.
+
+```{r Variables: Factor 2}
+
+mean(f) 
+
+```
+
+Ordered factors can be created by setting the argument ordered=T
+
+```{r Variables: Factor 3}
+
+software <- factor(fac, levels = fac, ordered = T)
+software
+
+```
+
+*Logical*
+
+Logical is a factor that takes on the values TRUE (also abbreviated T) and FALSE (F). Logical vectors can be used in mathematical operations: TRUE is treated as 1 and FALSE as 0.
+
+```{r Variables: Logical}
+
+test <- ifelse(x<30,TRUE, FALSE)
+test
+
+```
+
+*1.3 Data Structures*
+
+There are different data structures in R. In the following, we will look at vectors and data frames.
+
+*Vectors*
+
+A vector in R is a sequence of one or more values of the same data type. From a social science background, it is very similar to what we often call a variable.
+
+We can create a vector in R using the *c()* function, where c stands for collect. A vector can have any of the data types discussed above.
+
+```{r Vectors}
+
+age <- c(27, 21, 23, 24)
+age
+
+master <- c("Sociology", "Psychology", "Economics", "Political Science")
+master
+
+```
+
+*class()* returns the type of a variable or in fact any object in R.
+
+```{r Vectors 2}
+
+class(age)
+
+class(master)
+
+```
+
+Let's see how many elements our vector contains using the length() function.
+
+```{r Vectors 3}
+
+length(age)
+
+```
+
+Next, we access the first element in our vector. We use square brackets to access a specific element. The number in the square brackets is the vector element that we access.
+
+```{r Vectors 4}
+
+age[2] # second vector element
+
+```
+
+To access all elements except the first element, we use the *-* operator.
+
+```{r Vectors 5}
+
+age[-2] # all elements except the second one
+
+```
+
+We can access elements 2 to 4 by using a colon.
+
+```{r Vectors 6}
+
+age[2:4]
+
+```
+
+Finally, we can also access two specific non-adjacent elements, by using the collect function c().
+
+```{r Vectors 7}
+
+age[c(2,4)] # second and fourth element
+
+```
+
+*Data frame*
+
+A data frame is an object that holds data in a tabular format similar to how spreadsheets work. Variables are generally kept in columns and observations are in rows. To create a data frame, we use the *data.frame()* function.
+
+```{r data frame}
+
+dat <- data.frame(id = 1:4, 
+                  age = age, 
+                  gender = c("Male", "Female", "Male", "Female"),
+                  master = master, 
+                  score = 6:9)
+dat
+```
+
+As you can see, we created a data frame by combining different vectors. We gave a name to each vector, so the variable names in the dataset correspond to our vector names.
+
+We can see the names of variables in our dataset with the names function.
+
+```{r data frame 1}
+
+names(dat)
+
+```
+
+We can also check the variable types in our data by using the *str()* function.
+
+```{r data frame 2}
+
+str(dat)
+
+```
+
+Maybe you have noticed the new data frame object in your global environment window. You can view the dataset in the spreadsheet form that we are all used to by clicking on the object name.
+
+The data structure clearly implies that there is a relation between the elements in the column vectors. In other words, that each row represents a case. In our example, these cases are participants, and the columns represent:
+
+-   the participant id
+-   demographic variables: age and gender
+-   their master studies
+-   grades
+
+*Selecting rows, columns and elements*
+
+Often we want to access certain observations (rows) or certain columns (variables) or a combination of the two without looking at the entire dataset all at once. A way to select one column of your data is to use the dollar sign (\$).
+
+```{r data frame 3}
+
+dat$age # select the age column using the dollar sign
+
+```
+
+Additionally, we can use square brackets to subset data frames. In square brackets we put a row and a column coordinate separated by a comma. The row coordinate goes first and the column coordinate second. For example:
+
+```{r data frame 4}
+
+dat[3,2] # returns the third row and the second column of the data frame.
+
+```
+
+If we leave the column coordinate empty this means we would like all columns. So, data[3,] returns the third row of the dataset.
+
+```{r data frame 5}
+
+dat[3,]
+
+dat[,2]
+
+```
+
+If we leave the row coordinate empty, R returns the entire column. data[,2] returns the second column of the dataset.
+
+```{r data frame 6}
+
+dat[,2]
+
+```
+
+We can also select all columns but the second one:
+
+```{r data frame 7}
+
+dat[,-2]
+
+```
+
+Or select only columns 1 and 4:
+
+```{r data frame 8}
+
+dat[,c(1,4)]
+
+```
+
+If you are working with larger data sets, it is often useful to look at the first columns in your data frame to get a better understanding of it. Below we only want to look at the first two rows of our data:
+
+```{r data frame 9}
+
+dat[1:2,]
+
+```
+
+A very useful additional trick is that you can use all the columns to make comparisons. For example, we can use the gender column to look up all elements for which the value is "Male", and use this to select rows.
+
+```{r data frame 10}
+
+dat[dat$gender == "Male",]
+
+```
+
+You can do the same selecting two columns:
+
+```{r data frame 11}
+
+dat[dat$gender == "Male" & dat$master == "Sociology",]
+
+```
+
+We can also use a condition, for example whether the students in our dataset passed the course.
+
+```{r data frame 12}
+
+dat[dat$score>6,]
+
+```
+
+And use these conditions to *create new variables*:
+
+```{r data frame 13}
+
+dat$pass <- dat$score>6
+dat
+
+```
+
+*Subsetting*
+
+Exercise 1: With the selection techniques you already learned how to create a subset of the data. Try to subset the data so that only students who passed their studies are included. Assign this subset to a new name.
+
+```{r data frame 14}
+
+dat_new <- dat[dat$score>6,]
+dat_new
+
+write.csv(dat_new, file = "test_data2.csv")
+
+```
+
+*2 Importing and saving data*
+
+*2.1 Working directory*
+
+Each R sessions is connected to a particular folder on your computer, your working directory. We can check where we are by using the function getwd() which stands for "get the current working directory". This resulting path is where the data will be stored.
+
+```{r working directory, echo=FALSE}
+
+# Ask R in which directory are we working
+getwd()
+
+# Set a working directory yourself
+sys <- Sys.info()
+setwd(paste0("C:/Users/",sys[7],"/OneDrive - Vrije Universiteit Amsterdam/Measurement Models in Quantitative Research/3 - Practicals/Week 1 - Introduction"))
+```
+
+*2.2 Saving data*
+
+To save a data frame, ▶ write.csv() writes a data.frame object to a CSV-file ▶ It takes an object and file path as input
+
+```{r save}
+
+write.csv(dat, file = "test_data.csv") # saves our previously created data frame
+
+```
+
+Have a look at the working directory you are currently using. After running the previous R code, it should contain a csv file called "test_data.csv".
+
+*2.3 Importing data*
+
+Before you load the dataset into R, you first download it and save it locally in your preferred working directory. We often load existing data sets into R for analysis. Data come in many different file formats such as .csv, .sav, .dta, etc.
+
+```{r import, echo=FALSE}
+
+#install.packages("haven") # you only need to install a package you would like to work with once
+library(rio) # You need to load the package every time you open R and need the package
+
+# Importing the ESS data using haven
+dat <- import("ESS10.sav")
+View(dat)
+
+# dat <- read.csv("ESS10.csv") if you important a csv file
+
+```
+
+You probably noticed that we installed a package before importing our data. Once we have installed a package, we need to load it with the library() function. After loading the package, we have access to the package functions.
+
+Let's have a first look at our data:
+
+```{r first glimpse, echo=FALSE}
+
+dim(dat) # returns row and column count
+
+nrow(dat) # returns the number of rows
+ncol(dat) # returns the number of columns
+
+# Let’s take a quick peek at the first 10 observations to see what the dataset looks like. By default the head() function returns the first 6 rows, but let’s tell it to return the first 10 rows instead.
+
+head(dat, n = 10) # returns the first parts of a data frame 
+
+summary(dat)
+colnames(dat)
+
+```
+
+In cases with large data sets like this we might want to *select a subset of variables* that we want to work with.
+
+```{r select variables, echo=FALSE}
+
+vars <- c("agea", "eisced", "gndr")
+dat2 <- dat[,vars]
+
+dim(dat2)
+head(dat2)
+
+```
+
+*3 Descriptive Statistics*
+
+When talking about descriptive statistics, we first need to know what type of variable each item is.
+
+*Continuous* For *continuous* items, the type of descriptive statistics we present are related to central tendency and variability measures. We will use the descr() function from the summarytools package.
+
+Be aware that this function will give you results if you use them with categorical variables, but these would not be meaningful. From the selected variables the only ones that are truly continuous are age.
+
+```{r continuous}
+
+#install.packages("summarytools")
+library(summarytools)
+
+descr(dat2$agea)
+```
+
+This function provides a lot of useful information. The N.valid is the total non missing answers for the variable, followed by a series of descriptive statistics like the mean, standard deviation, median, minimum, maximum, and others. You can also transpose the table, depending on which direction you prefer.
+
+```{r continuous 2}
+
+descr(dat2$agea, transpose = T)
+
+```
+
+You can also get the descriptive statistics of a continuous variable by group:
+
+```{r continuous 2.1}
+
+desc <- stby(data = dat2[,c("agea")], 
+     INDICES   = dat2$gndr, 
+     FUN = descr, 
+     stats = "common", 
+     transpose = TRUE)
+desc
+
+```
+
+*Missing values*
+
+Using the function above, we saw that our variable of interest (age) has a total of 17940 non missing answers. Since our data has 1806 entries, this means that the variable contains some missing values that R refers to as *"NA"*. There are different ways of dealing with NAs. In the following, we will delete missing values to keep the rectangular structure of our data.This means, when we delete a missing value from one variable, we delete it for the entire row of the dataset.
+
+First, we introduce the is.na() function. We supply a vector to the function and it checks for every element, whether it is missing or not. R returns true or false. Let's use the function on our variable.
+
+```{r continuous 3, echo=FALSE}
+
+is.na(dat2$agea)
+
+```
+
+To see the amount of missing values (NA in R) in our variable, we can combine is.na() with the table() function.
+
+```{r continuous 3.1, echo=FALSE}
+
+table(is.na(dat2$agea)) # We have 120 missing values in our variable
+
+# Note: If you run the mean function on a continuous variable which contains missing values, R will get you an error
+mean(dat2$agea) 
+
+# use na.rm=TRUE to exclude missing values 
+mean(dat2$agea, na.rm = TRUE) 
+sd(dat2$agea, na.rm = TRUE)
+```
+
+So, our variable has 120 missing values. Our dataset has 18060 rows. Check your global environment to confirm this or use the nrow() function. If we delete all missing values from agea, our dataset will lose 120 rows.
+
+Before we delete missing values, we introduce the which() function. It returns the row indexes (the rows in the dataset) where some condition is true. So if we use which() and is.na(), we get the row numbers in our dataset where values are missing on agea.
+
+```{r continuous 4, echo=FALSE}
+
+which(is.na(dat2$agea))
+
+```
+
+We said that our dataset will lose 120 rows. Let's use the length() function to confirm that this is the case.
+
+```{r continuous 5, echo=FALSE}
+
+length(which(is.na(dat2$agea)))
+
+```
+
+As we can see, we have indeed identified 120 rows that we would like to delete from our dataset.
+
+We now delete the rows with missing values on age by overwriting our original dataset with a new dataset that is a copy of the old without missing values on age. To subset our dataset, we use the square brackets. We can use the *!* operator, which means *"not"*. So the function returns "TRUE" if an observation is not missing.
+
+```{r continuous 6, echo=FALSE}
+
+dat2 <- dat2[!is.na(dat2$agea),] 
+
+```
+
+Confirm that our new dataset (dat2) has 17940 rows remaining.
+
+*Categorical*
+
+For categorical variables the mean and previously presented statistics are not meaningful. We need to describe them in a different way. For this we will use the summarytools package and focus on the variables education and gender.
+
+```{r categorical, echo=FALSE}
+
+attributes(dat2$eisced)
+table(dat2$eisced)
+
+# Create a new variable with more meaningful labels
+dat2$educ <- ifelse(dat2$eisced<56, dat$eisced, NA)
+dat2$educ <- factor(dat2$educ, 
+                       levels = c(1:7,55),
+                       labels = c("Less than lower secondary",
+                                  "Lower secondary",
+                                  "Lower tier upper secondary",
+                                  "Upper tier upper secondary",
+                                  "Advanced vocational",
+                                  "Lower tertiary education (BA)",
+                                  "Higher tertiary education (>=MA)",
+                                  "Other"
+                                  ))
+attributes(dat2$educ)
+
+```
+
+```{r categorical 2, echo=FALSE}
+
+attributes(dat2$gndr)
+dat2$gender <- factor(dat2$gndr,
+                     levels = c(1,2),
+                     labels = c("Male",
+                                "Female"))
+table(dat2$educ, dat2$gender)
+
+```
+
+*Frequency tables*
+
+The freq() function generates frequency tables with counts, proportions, as well as missing data information.
+
+```{r frequency, echo=FALSE}
+
+freq(dat2$educ)
+
+freq(dat2[,c("educ", "gender")], plain.ascii = FALSE, style = "rmarkdown")
+
+```
+
+We can also use the same function, and provide multiple variables at once, getting the frequency tables for each specific variable.
+
+```{r frequency 2, echo=FALSE}
+
+freq(dat2[,c("educ", "gender")], plain.ascii = FALSE, style = "rmarkdown")
+
+```
+
+*Cross-tables*
+
+For categorical variables, if we want to estimate frequency tables across multiple other groups, we estimate cross-tables. These present the frequency of variable 1 at each level of variable 2, and vice versa, depending on which direction you want to read the table.
+
+To do this we use the function *ctable()*. Here we see the cross-table between gender and education level. For this the main 2 arguments we have to provide are 2 categorical variables of interest. You also include the prop argument, which specifies which proportions you want to show. In this first example we include don't include any:
+
+```{r cross-table, echo=FALSE}
+
+ctable(dat2$educ,dat2$gender)
+
+```
+
+Here we include column proportions:
+
+```{r cross-table 2, echo=FALSE}
+
+ctable(dat2$educ,dat2$gender, prop = "c") # use prop = "r" for row proportions
+
+```
