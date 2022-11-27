@@ -1,7 +1,7 @@
 LCA with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-21 November, 2022
+27 November, 2022
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -308,7 +308,7 @@ and with the `summary()` we can see the results.
 lca1_fit <- fit(lca1_mod)
 ```
 
-    converged at iteration 140 with logLik: -3666.872 
+    converged at iteration 141 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -316,7 +316,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.5987577 0.4012423 
+    0.4012545 0.5987455 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -325,11 +325,11 @@ summary(lca1_fit)
     Resp 4 : multinomial 
     Resp 5 : multinomial 
             Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.3148140 0.6851860 0.5809841 0.41901593 0.5813224 0.4186776 0.2922848
-    St2 0.6771726 0.3228274 0.9785004 0.02149959 0.7343749 0.2656251 0.6094632
+    St1 0.6771667 0.3228333 0.9784956 0.02150444 0.7343726 0.2656274 0.6094588
+    St2 0.3148106 0.6851894 0.5809792 0.41902079 0.5813209 0.4186791 0.2922813
             Re4.2     Re5.1     Re5.2
-    St1 0.7077152 0.1708237 0.8291763
-    St2 0.3905368 0.6936977 0.3063023
+    St1 0.3905412 0.6936901 0.3063099
+    St2 0.7077187 0.1708181 0.8291819
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -568,11 +568,24 @@ assigned to the corresponding class. We want each individual’s posterior
 class probabilities to be high for one and low for the remaining latent
 classes. This is considered a high classification accuracy and means
 that the classes are distinct. To obtain posterior class probabilities,
-run the custon function`class_prob_dm()`. This function produces output
+run the custom function`class_prob_dm()`. This function produces output
 comprised of several elements:
+
+``` r
+cl_diag <- class_prob_dm(lca_res[[3]])
+```
 
 `$sum.posterior` is a summary table of the posterior class probabilities
 indicating what proportion of the data contributes to each class.
+
+``` r
+cl_diag$sum.posterior
+```
+
+      class    count proportion
+    1    S1 434.9742  0.3762753
+    2    S2 504.3635  0.4363006
+    3    S3 216.6623  0.1874242
 
 `$sum.mostlikely` is a summary table of the most likely class membership
 based on the highest posterior class probability. From this table, we
@@ -586,6 +599,15 @@ identified. It may be impossible to calculate descriptive statistics for
 such a small class. Estimating LCA parameters on small subsamples might
 lead to bias in the results. Therefore, we advise caution when dealing
 with small classes.
+
+``` r
+cl_diag$sum.mostlikely
+```
+
+      class count proportion
+    1    S1   448  0.3875433
+    2    S2   442  0.3823529
+    3    S3   266  0.2301038
 
 `$mostlikely.class` is a table with rows representing the class the
 person was assigned to, and the columns indicating the average posterior
@@ -604,12 +626,39 @@ who were assigned to that class have a high probability of being there.
 class with low posterior probabilities which could make one reconsider
 that class solution.
 
+``` r
+cl_diag$mostlikely.class
+```
+
+               [,1]        [,2]       [,3]
+    [1,] 0.81751977 0.137572473 0.04490775
+    [2,] 0.14061702 0.755380115 0.10400286
+    [3,] 0.09912915 0.005384321 0.89548652
+
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
 where k is the number of classes.
 
+``` r
+cl_diag$avg.mostlikely
+```
+
+                 S1        S2         S3
+    [1,] 0.79374995 0.1583111 0.04793897
+    [2,] 0.13538568 0.8619751 0.00263921
+    [3,] 0.07343501 0.1972037 0.72936127
+
 `$AvePP` presents the average posterior class probability (mean), and
 the respective standard deviation, minimum, and maximum.
+
+``` r
+cl_diag$AvePP
+```
+
+       mean   sd  min  max
+    S1 0.79 0.17 0.53 0.98
+    S2 0.86 0.12 0.60 0.99
+    S3 0.73 0.05 0.66 0.85
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes).
@@ -617,6 +666,18 @@ Additionally it includes the `predicted` class in function of the
 highest predicted probability. Individual class probabilities and/or
 predicted class are often useful for researchers who wish to do follow
 up analyses.
+
+``` r
+head(cl_diag$individual)
+```
+
+              S1        S2           S3 predicted
+    1 0.66804654 0.3315764 0.0003770987         1
+    2 0.66804654 0.3315764 0.0003770987         1
+    3 0.66804654 0.3315764 0.0003770987         1
+    4 0.09807081 0.9015248 0.0004044012         2
+    5 0.09807081 0.9015248 0.0004044012         2
+    6 0.09807081 0.9015248 0.0004044012         2
 
 Entropy is a summary measure of posterior class probabilities across
 classes and individuals. It ranges from 0 (model classification no
@@ -640,71 +701,6 @@ get_fits(lca_res[[3]])
      7527.9843139  7364.2445193  7390.1655816 -8033.2720411     0.5828541 
          prob_min      prob_max         n_min         n_max 
         0.7553801     0.8954865     0.2301038     0.3875433 
-
-And we can see the other classification diagnostics by calling
-
-``` r
-cl_diag <- class_prob_dm(lca_res[[3]])
-```
-
-And then acces each of the diagnistic tables
-
-``` r
-cl_diag$sum.posterior
-```
-
-      class    count proportion
-    1    S1 434.9742  0.3762753
-    2    S2 504.3635  0.4363006
-    3    S3 216.6623  0.1874242
-
-``` r
-cl_diag$sum.mostlikely
-```
-
-      class count proportion
-    1    S1   448  0.3875433
-    2    S2   442  0.3823529
-    3    S3   266  0.2301038
-
-``` r
-cl_diag$mostlikely.class
-```
-
-               [,1]        [,2]       [,3]
-    [1,] 0.81751977 0.137572473 0.04490775
-    [2,] 0.14061702 0.755380115 0.10400286
-    [3,] 0.09912915 0.005384321 0.89548652
-
-``` r
-cl_diag$avg.mostlikely
-```
-
-                 S1        S2         S3
-    [1,] 0.79374995 0.1583111 0.04793897
-    [2,] 0.13538568 0.8619751 0.00263921
-    [3,] 0.07343501 0.1972037 0.72936127
-
-``` r
-cl_diag$AvePP
-```
-
-       mean   sd  min  max
-    S1 0.79 0.17 0.53 0.98
-    S2 0.86 0.12 0.60 0.99
-    S3 0.73 0.05 0.66 0.85
-
-``` r
-head(cl_diag$individual)
-```
-
-              S1        S2           S3 predicted
-    1 0.66804654 0.3315764 0.0003770987         1
-    2 0.66804654 0.3315764 0.0003770987         1
-    3 0.66804654 0.3315764 0.0003770987         1
-    4 0.09807081 0.9015248 0.0004044012         2
-    5 0.09807081 0.9015248 0.0004044012         2
-    6 0.09807081 0.9015248 0.0004044012         2
 
 ### Interpreting the Final Class Solution
 
@@ -743,7 +739,7 @@ sum_list(lca_res[[3]], dat[,1:5])
 
     $Mix_probs
     Model of type multinomial (identity), formula: ~1
-    <environment: 0x00000000426279c0>
+    <environment: 0x0000000056945840>
     Coefficients: 
           pr1       pr2       pr3 
     0.3762753 0.4363006 0.1874242 
@@ -796,7 +792,7 @@ plot_prob(df,
           facet = "class")
 ```
 
-![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-17-1.png)
+![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-22-1.png)
 
 With this information we would *name* each class and describe the
 theoretical interpretation of what they mean and what characterize each

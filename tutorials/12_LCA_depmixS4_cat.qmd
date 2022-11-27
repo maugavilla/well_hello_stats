@@ -303,10 +303,29 @@ assigned to the corresponding class. We want each individual's posterior
 class probabilities to be high for one and low for the remaining latent
 classes. This is considered a high classification accuracy and means
 that the classes are distinct. To obtain posterior class probabilities,
-run the custon function```class_prob_dm()```. This function produces output comprised of several elements:
+run the custom function```class_prob_dm()```. This function produces output comprised of several elements:
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag <- class_prob_dm(lca_res[[3]])
+```
+
 
 `$sum.posterior` is a summary table of the posterior class probabilities
 indicating what proportion of the data contributes to each class.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$sum.posterior
+```
 
 `$sum.mostlikely` is a summary table of the most likely class membership
 based on the highest posterior class probability. From this table, we
@@ -320,6 +339,15 @@ identified. It may be impossible to calculate descriptive statistics for
 such a small class. Estimating LCA parameters on small subsamples might
 lead to bias in the results. Therefore, we advise caution when dealing
 with small classes.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$sum.mostlikely
+```
 
 `$mostlikely.class` is a table with rows representing the class the
 person was assigned to, and the columns indicating the average posterior
@@ -338,15 +366,51 @@ probability of being there. **prob_min** is especially important as it
 can diagnose if there is a class with low posterior probabilities which
 could make one reconsider that class solution.
 
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$mostlikely.class
+```
+
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
 where k is the number of classes.
 
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$avg.mostlikely
+```
+
 `$AvePP` presents the average posterior class probability (mean), and the respective standard deviation, minimum, and maximum.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$AvePP
+```
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes). Additionally it includes the `predicted` class in function of the highest predicted probability.
 Individual class probabilities and/or predicted class are often useful for researchers who wish to do follow up analyses. 
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+head(cl_diag$individual)
+```
 
 Entropy is a summary measure of posterior class probabilities across
 classes and individuals. It ranges from 0 (model classification no
@@ -369,32 +433,6 @@ can be obtained using ```get_fits()```.
 get_fits(lca_res[[3]])
 ```
 
-And we can see the other classification diagnostics by calling 
-
-```{r}
-#| echo: true
-#| code-fold: false
-#| eval: true
-#| warning: false
-
-cl_diag <- class_prob_dm(lca_res[[3]])
-```
-
-And then acces each of the diagnistic tables
-
-```{r}
-#| echo: true
-#| code-fold: false
-#| eval: true
-#| warning: false
-
-cl_diag$sum.posterior
-cl_diag$sum.mostlikely
-cl_diag$mostlikely.class
-cl_diag$avg.mostlikely
-cl_diag$AvePP
-head(cl_diag$individual)
-```
 
 
 ### Interpreting the Final Class Solution
