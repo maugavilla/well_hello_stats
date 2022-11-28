@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-22 November, 2022
+28 November, 2022
 
 - <a href="#welcome" id="toc-welcome">Welcome</a>
 - <a href="#what-is-r-and-why-should-you-learn-it"
@@ -191,6 +191,8 @@ following a course.
 
 - [LCA with depmixS4 (categorical
   indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md)
+- [LCA with tidySEM (categorical
+  indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_tidySEM_cat.md)
 
 # Progress
 
