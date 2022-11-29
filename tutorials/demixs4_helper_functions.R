@@ -248,7 +248,7 @@ res_cors <- function(x, dat, pv=F, method="pearson"){
 sum_list <- function(x, dat){
   y <- dat
   sm <- as.data.frame(sum_pars(x))
-  lns <- cumsum(apply(y, 2, FUN=function(M)length(unique(M))))
+  lns <- cumsum(apply(y, 2, FUN=function(M)length(table(M))))
   probs <- list()
   for(j in 1:ncol(y)){
     if(j == 1){
