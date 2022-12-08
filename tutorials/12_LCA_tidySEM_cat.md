@@ -1,7 +1,7 @@
 LCA with tidySEM (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-28 November, 2022
+08 December, 2022
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -422,10 +422,10 @@ table_fit(res[[2]])
 
       Minus2LogLikelihood    n Parameters observedStatistics    df TLI RMSEA
     1            7333.744 1156         11              11570 11559   1     0
-      RMSEASquared RMSEANull modelName      AIC      BIC   Entropy  prob_min
-    1            0      0.05      mix2 7355.744 7411.324 0.4729969 0.7744613
-       prob_max     n_min     n_max        LL
-    1 0.8799195 0.3814879 0.6185121 -3666.872
+      RMSEASquared RMSEANull modelName      AIC      BIC   saBIC   Entropy
+    1            0      0.05      mix2 7355.744 7411.324 7337.62 0.4729969
+       prob_min  prob_max     n_min     n_max        LL
+    1 0.7744613 0.8799195 0.3814879 0.6185121 -3666.872
 
 But we can use the same function to calculate these indices for all
 models in the list we are creating a data with the number of states and
@@ -450,20 +450,20 @@ fit_ind
     4           NA              NA                  NA                     NA
     5           NA              NA                  NA                     NA
     6           NA              NA                  NA                     NA
-      ChiDoF satDoF indDoF RMSEANull modelName      AIC      BIC   Entropy
-    1     15   5765   5775      0.05      mix1 7544.508 7569.772 1.0000000
-    2     NA     NA     NA      0.05      mix2 7355.744 7411.324 0.4729969
-    3     NA     NA     NA      0.05      mix3 7296.230 7382.127 0.5892915
-    4     NA     NA     NA      0.05      mix4 7292.168 7408.380 0.5840833
-    5     NA     NA     NA      0.05      mix5 7298.577 7445.106 0.6421228
-    6     NA     NA     NA      0.05      mix6 7309.131 7485.977 0.7127186
+      ChiDoF satDoF indDoF RMSEANull modelName      AIC      BIC    saBIC   Entropy
+    1     15   5765   5775      0.05      mix1 7544.508 7569.772 7538.385 1.0000000
+    2     NA     NA     NA      0.05      mix2 7355.744 7411.324 7337.620 0.4729969
+    3     NA     NA     NA      0.05      mix3 7296.230 7382.127 7266.107 0.5892915
+    4     NA     NA     NA      0.05      mix4 7292.168 7408.380 7250.044 0.5841009
+    5     NA     NA     NA      0.05      mix5 7298.577 7445.106 7244.453 0.6421219
+    6     NA     NA     NA      0.05      mix6 7309.131 7485.977 7243.008 0.7129370
        prob_min  prob_max      n_min     n_max        LL TLI RMSEA RMSEASquared
     1 1.0000000 1.0000000 1.00000000 1.0000000 -3767.254  NA    NA           NA
     2 0.7744613 0.8799195 0.38148789 0.6185121 -3666.872   1     0            0
     3 0.7549166 0.9014420 0.23010381 0.3875433 -3631.115   1     0            0
-    4 0.6008882 0.9107897 0.16089965 0.4160900 -3623.084   1     0            0
-    5 0.5974686 0.9014151 0.09688581 0.4247405 -3620.288   1     0            0
-    6 0.4992196 0.9999999 0.02076125 0.2448097 -3619.566   1     0            0
+    4 0.6009185 0.9107875 0.16089965 0.4160900 -3623.084   1     0            0
+    5 0.5974707 0.9014084 0.09688581 0.4247405 -3620.288   1     0            0
+    6 0.4994726 1.0000000 0.02076125 0.2448097 -3619.566   1     0            0
 
 Looking at AIC and BIC, we see that the model improves (smaller) as the
 number of classes increases between 1 and 3, and from 4 and above the
@@ -598,14 +598,15 @@ cl_diag$avg.mostlikely
     [2,] 6.207000e-10 0.8646084 0.13539157
     [3,] 4.726470e-02 0.1590972 0.79363815
 
-`$AvePP` presents the average posterior class probability (mean), and
-the respective standard deviation, minimum, and maximum.
+`AvePP` is presented as diagonal of `$avg.mostlikely`, the average
+posterior class probability (mean) for the subjects classified in the
+respective class.
 
 ``` r
-cl_diag$AvePP
+diag(cl_diag$avg.mostlikely)
 ```
 
-    NULL
+    [1] 0.7280801 0.8646084 0.7936381
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes).
@@ -644,10 +645,10 @@ table_fit(res[[3]])
 
       Minus2LogLikelihood    n Parameters observedStatistics    df TLI RMSEA
     1             7262.23 1156         17              17355 17338   1     0
-      RMSEASquared RMSEANull modelName     AIC      BIC   Entropy  prob_min
-    1            0      0.05      mix3 7296.23 7382.127 0.5892915 0.7549166
-      prob_max     n_min     n_max        LL
-    1 0.901442 0.2301038 0.3875433 -3631.115
+      RMSEASquared RMSEANull modelName     AIC      BIC    saBIC   Entropy
+    1            0      0.05      mix3 7296.23 7382.127 7266.107 0.5892915
+       prob_min prob_max     n_min     n_max        LL
+    1 0.7549166 0.901442 0.2301038 0.3875433 -3631.115
 
 ### Interpreting the Final Class Solution
 

@@ -364,7 +364,7 @@ where k is the number of classes.
 cl_diag$avg.mostlikely
 ```
 
-`$AvePP` presents the average posterior class probability (mean), and the respective standard deviation, minimum, and maximum.
+`AvePP` is presented as diagonal of `$avg.mostlikely`, the average posterior class probability (mean) for the subjects classified in the respective class.
 
 ```{r}
 #| echo: true
@@ -372,7 +372,7 @@ cl_diag$avg.mostlikely
 #| eval: true
 #| warning: false
 
-cl_diag$AvePP
+diag(cl_diag$avg.mostlikely)
 ```
 
 `$individual` is the individual posterior probability matrix, with

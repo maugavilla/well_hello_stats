@@ -104,7 +104,8 @@ sum_mostlikely <- function(model){
 class_prob_dm <- function(x, priors=NULL,
                           type = c("sum.posterior", "sum.mostlikely", 
                                       "mostlikely.class", "avg.mostlikely", 
-                                      "AvePP","individual"), ...){
+                                      #"AvePP",
+                                   "individual"), ...){
   post_probs <- x@posterior[,-1]
   post_probs_pred <- cbind(post_probs, predicted = apply(post_probs, 1, which.max) )
   
@@ -114,7 +115,7 @@ class_prob_dm <- function(x, priors=NULL,
            "avg.mostlikely" = tidySEM:::avgprobs_mostlikely(post_probs),
            "sum.posterior" = sum_postprob(x, priors=priors), ###
            "sum.mostlikely" = sum_mostlikely(x), ###
-           "AvePP"= avepp(post_probs_pred),
+           #"AvePP"= avepp(post_probs_pred),
            "individual"= post_probs_pred)
   })
   names(out) <- type

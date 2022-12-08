@@ -1,7 +1,7 @@
 LCA with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-27 November, 2022
+08 December, 2022
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -308,7 +308,7 @@ and with the `summary()` we can see the results.
 lca1_fit <- fit(lca1_mod)
 ```
 
-    converged at iteration 141 with logLik: -3666.872 
+    converged at iteration 137 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -316,7 +316,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.4012545 0.5987455 
+    0.4012745 0.5987255 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -325,11 +325,11 @@ summary(lca1_fit)
     Resp 4 : multinomial 
     Resp 5 : multinomial 
             Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.6771667 0.3228333 0.9784956 0.02150444 0.7343726 0.2656274 0.6094588
-    St2 0.3148106 0.6851894 0.5809792 0.41902079 0.5813209 0.4186791 0.2922813
+    St1 0.6771568 0.3228432 0.9784876 0.02151241 0.7343687 0.2656313 0.6094515
+    St2 0.3148051 0.6851949 0.5809712 0.41902877 0.5813184 0.4186816 0.2922755
             Re4.2     Re5.1     Re5.2
-    St1 0.3905412 0.6936901 0.3063099
-    St2 0.7077187 0.1708181 0.8291819
+    St1 0.3905485 0.6936775 0.3063225
+    St2 0.7077245 0.1708090 0.8291910
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -648,17 +648,15 @@ cl_diag$avg.mostlikely
     [2,] 0.13538568 0.8619751 0.00263921
     [3,] 0.07343501 0.1972037 0.72936127
 
-`$AvePP` presents the average posterior class probability (mean), and
-the respective standard deviation, minimum, and maximum.
+`AvePP` is presented as diagonal of `$avg.mostlikely`, the average
+posterior class probability (mean) for the subjects classified in the
+respective class.
 
 ``` r
-cl_diag$AvePP
+diag(cl_diag$avg.mostlikely)
 ```
 
-       mean   sd  min  max
-    S1 0.79 0.17 0.53 0.98
-    S2 0.86 0.12 0.60 0.99
-    S3 0.73 0.05 0.66 0.85
+    [1] 0.7937499 0.8619751 0.7293613
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes).
@@ -739,7 +737,7 @@ sum_list(lca_res[[3]], dat[,1:5])
 
     $Mix_probs
     Model of type multinomial (identity), formula: ~1
-    <environment: 0x0000000056945840>
+    <environment: 0x00000000572f6950>
     Coefficients: 
           pr1       pr2       pr3 
     0.3762753 0.4363006 0.1874242 
