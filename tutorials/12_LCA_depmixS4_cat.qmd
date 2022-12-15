@@ -55,6 +55,19 @@ library(summarytools)
 library(ggplot2)
 ```
 
+If you want to load the helper functions directly from this GitHub repository, you can do it with this URL 
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+source("https://raw.githubusercontent.com/maugavilla/well_hello_stats/main/tutorials/demixs4_helper_functions.R")
+
+```
+
+
 # Dichotomous indicator example
 
 Then we will import the **political.sav** example data set for analysis. 

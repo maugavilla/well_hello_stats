@@ -1,7 +1,7 @@
 LCA with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-08 December, 2022
+15 December, 2022
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -120,6 +120,13 @@ library(rio)
 library(sjlabelled)
 library(summarytools)
 library(ggplot2)
+```
+
+If you want to load the helper functions directly from this GitHub
+repository, you can do it with this URL
+
+``` r
+source("https://raw.githubusercontent.com/maugavilla/well_hello_stats/main/tutorials/demixs4_helper_functions.R")
 ```
 
 # Dichotomous indicator example
@@ -308,7 +315,7 @@ and with the `summary()` we can see the results.
 lca1_fit <- fit(lca1_mod)
 ```
 
-    converged at iteration 137 with logLik: -3666.872 
+    converged at iteration 142 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -316,7 +323,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.4012745 0.5987255 
+    0.4012414 0.5987586 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -325,11 +332,11 @@ summary(lca1_fit)
     Resp 4 : multinomial 
     Resp 5 : multinomial 
             Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.6771568 0.3228432 0.9784876 0.02151241 0.7343687 0.2656313 0.6094515
-    St2 0.3148051 0.6851949 0.5809712 0.41902877 0.5813184 0.4186816 0.2922755
+    St1 0.6771731 0.3228269 0.9785008 0.02149923 0.7343751 0.2656249 0.6094635
+    St2 0.3148143 0.6851857 0.5809844 0.41901557 0.5813226 0.4186774 0.2922851
             Re4.2     Re5.1     Re5.2
-    St1 0.3905485 0.6936775 0.3063225
-    St2 0.7077245 0.1708090 0.8291910
+    St1 0.3905365 0.6936983 0.3063017
+    St2 0.7077149 0.1708241 0.8291759
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -533,7 +540,7 @@ ggplot(elbow_plot, aes(x = n_states, y = Value, group = IC))+
   theme_minimal()
 ```
 
-![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-11-1.png)
+![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-12-1.png)
 
 Here we see that a meaningful decrease from 1 to 2 for all indices, them
 from 2 to 3 we see a decrease in 3 indices and basically equal for BIC.
@@ -737,7 +744,7 @@ sum_list(lca_res[[3]], dat[,1:5])
 
     $Mix_probs
     Model of type multinomial (identity), formula: ~1
-    <environment: 0x00000000572f6950>
+    <environment: 0x0000000056ad0768>
     Coefficients: 
           pr1       pr2       pr3 
     0.3762753 0.4363006 0.1874242 
@@ -790,7 +797,7 @@ plot_prob(df,
           facet = "class")
 ```
 
-![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-22-1.png)
+![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-23-1.png)
 
 With this information we would *name* each class and describe the
 theoretical interpretation of what they mean and what characterize each

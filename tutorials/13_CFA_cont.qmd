@@ -1,0 +1,535 @@
+---
+title: "Confirmatory Factor Analysis"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+# Introduction
+
+## Test theory
+
+In the social sciences, we are often interested in somewhat 'abstract' concepts (e.g., emotions, attitudes, literacy, personality,...). These concept cannot be measured *directly*, but have to be assessed *indirectly* using observable indicators (e.g., items in a questionnaire). We therefore create several items that are meant to provide information about the underlying trait.
+
+Test theory explains the relationships between the "latent variable" (e.g., a personality trait such as "extraversion") and the responses to several items (e.g., "I make friends easily", "I know how to captivate people"...). It defines the statistical relation between a measurement and the actual characteristic of interest.
+
+Test theory states that there is a measurement model, that describes the relation between indicators and latent variable. This allow us to test the strength of association between indicators and latent variable. While when working with composite scores (e.g., sum or mean scores across items) still assumes that there is an underlying latent variable, but it ignores the measurement model and assume all indicators are equally good.
+
+# Measurement model
+
+A basic assumption of test theory is thus that the trait explains response patterns in items. To investigate this relationship further, we need to differentiate the following concepts:
+
+<br>
+
+*Table 1: Important concepts in test theory*
+
+| Name                | Definition                                                                                                                                                                 |
+|--------------------|----------------------------------------------------|
+| Latent variables    | Not directly observable concepts - later also called 'factors' - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns...)      |
+| Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
+| True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
+| Measurement error   | Share of the measurement variance that is not linked to the latent variable (includes item-specific variance, systematic errors, and random errors)                        |
+
+<br>
+
+In test theory, we decompose the variance of each measurement of an manifest indicator: Every observable measurement $Y$ (e.g., an item) is composed of variance explained by the latent variable (true score: $\tau_a$) ), and the measurement error ($\epsilon$):
+
+$Y_i = \tau_{a,i} + \epsilon_i$
+
+Further, the measurement error represents all information that is not related to the latent variable. It can include *random error* variability ($\gamma_{a}$), method specific variance ($\gamma_{b}$) like how the items were asked, a second trait specific variance ($\gamma_{c}$) which can be information related to other factors (like anxiety when evaluating depression)
+
+$\epsilon_i = \gamma_{a,i} + \gamma_{b,i} + \gamma_{c,i}$
+
+The measurement error is thereby independent of the true score and varies randomly across persons and measurement occasions:
+
+$\rho(\tau_i, \epsilon_i) = 0$
+
+Measurement errors can be divided into components like: *random error* and *systematic error.* Random errors are errors in measurement that lead to measurable values being inconsistent when repeated measurements of a constant attribute or quantity are taken. Systematic errors are errors that are not determined by chance but are introduced by an inaccuracy (involving either the observation or measurement process). Systematic errors can be imperfect calibration of the instrument or interference of the environment.
+
+Not all measurement error is *bad* information, as the specific variances are true information in the indicators ($\gamma_{b}$, $\gamma_{c}$), but the error means that is not related to the latent variable of interest.
+
+## Illustrations
+
+In the first image, we see an example of a measurement model, when the indicators have true (*T*) latent variable information, item specific (*S*) information, and random error (*e*). As the only information in common is the true variance, that is what is pulled as the shared variance between indicators (defining the latent variable), while the specific and error are pull by the residual variance.
+
+![Measurement model 1](cfa_1.png)
+
+In the second image, we see an example of a measurement model, when the indicators have common (*C*) latent variable information, method shared (*M*) variance, other common (*O*) variance, item specific (*S*) information, and random error (*e*). As the indicators have in comon *C*, *M*, and *O*, that is what is pulled as the shared variance between indicators (defining the latent variable), while the specific and error are pull by the residual variance.
+
+![Measurement model 1](cfa_2.png)
+
+# Preparation
+
+We will use the package `psych` to get an example data set, `lavaan` to run the CFA models, and `semTools` to do some added calculations
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+library(psych)
+library(lavaan)
+library(semTools)
+library(car)
+library(tidyr)
+library(ggplot2)
+```
+
+## Getting some data
+
+For this tutorial, we will assess a classic measurement model of psychology: The Big Five Personality Model as assessed in the International Personality Item Pool (https://ipip.ori.org). Conveniently, it is included in the `psych` package and we can load it by simply calling `bfi`. Let's quickly open the respective documentation to assess the item formulations.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat <- bfi
+head(dat)
+?bfi
+```
+
+As we can see, the scale consists of 25 items. Based on the Big Five Model of Personality, we can assume that these items reflect five distinct dimensions:
+
+-   Agreeableness (e.g., "I inquire about others' well-being")
+-   Conscientiousness (e.g., "I continue until everything is perfect")
+-   Extraversion (e.g., "I don't talk a lot.")
+-   Neuroticism (e.g., "I get irritated easily.")
+-   Openness (e.g., "I am full of ideas.")
+
+All items are measure on 6-point likert scale from 1 = Very Inaccurate to 6 = Very Accurate.
+
+If we look at the item formulations, we can see that 8 items are reverse coded. We could reverse code these items, but is not necessary, as the factor analysis will estimate negative factor loadings indicating the direction of the relation between the indicators and the latent variable. Where this can have an effect is on the estimation of reliability measures, as some are sensitive to indicator directionality.
+
+Here we are recoding them with the `car` package function `recode()`, by running it in a loop, we are recoding as many variables we have in `vars_rev` with the same line of recode
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+vars_rev <- c("A1","C4","C5","E1","E2","O1","O3","O4")
+for (j in 1:length(vars_rev)) {
+  dat[,vars_rev[j]] <- recode(dat[,vars_rev[j]], 
+                              "1=6; 2=5; 3=4; 4=3; 5=2; 6=1")
+}
+
+```
+
+## Descriptive statistics
+
+We should always start by looking at the items descriptive statistics, since we are treating them as continuous (we can debate of that is correct or not later), the desired statistics are things like mean, median, and standard deviation. We can get that from the `describe()` function from `psych`
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+describe(dat)
+
+```
+
+Notice that this function will treat all the variables as continuous, even when it doesn't make sense, like with gender in this example. from here we can talk about the indicator characteristics.
+
+We can also plot the indicators, to visualize them. We first switch our data from wide to long form, then we can plot the respective histograms with `ggplot()`
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat_long <- pivot_longer(dat, cols = A1:O5,
+                         names_to = "key", values_to = "value")
+ggplot(dat_long, aes(x = value)) +
+  geom_histogram(bins = 6, 
+                 fill = "lightblue",
+                 color = "white") +
+  facet_wrap(~key) +
+  theme_minimal() +
+  labs(x = "Values (1 = Do not agree at all; 6 = Fully agree)",
+       y = "Number of responses")
+```
+
+We can see how must are close normally distributed. Remember that as with GLM, CFA does NOT assume that the data is normally distributed, it assumes that the residuals are normally distributed. For this reason, we are not making any test of normality on the data itself.
+
+# Confirmatory Factor Analysis
+
+## `lavaan`
+
+We will work with the `lavaan` package, which handles Structural Equation Models (SEM) in general. Remember that CFA is a subtype of SEM. You can find more information about it at https://lavaan.ugent.be/
+
+lavaan working in parts, first you need to define a model syntax, which is a string object (text object in between quotes), that specifies the relations between indicators and latent variables. Then that model syntax is pass to the `cfa()` function to estimate the model, there we can use the respective arguments to adjust the model estimation
+
+## `lavaan` syntax
+
+For the model syntax, the main elements are the latent variable, and which indicators defined it. We do this by specifying the name of the latent variable followed by the operator `=~` and after that we provide the list of indicators, such as
+
+`latent variable =~ indicator1 + indicator2 + ... + indicator_n`
+
+The indicators need to be separated by `+`, just like a regression. By default, `cfa()` will estimate all correlations between latent variables.
+
+Here is a list of the main operators in lavaan
+
+<br>
+
+*Table 2: lavaan operators*
+
+| Formula type            | Operator | Mnemonic           |
+|-------------------------|----------|--------------------|
+| Latent variable         | `=~`     | is manifested by   |
+| Regression              | `~`      | is regressed on    |
+| (Residual) (co)variance | `~~`     | is correlated with |
+| Intercept               | `~1`     | intercept          |
+| Defined parameter       | `:=`     | is defined as      |
+| Equality constraint     | `==`     | is equal to        |
+| Inequality constraint   | `<`      | is smaller than    |
+| Inequality constraint   | `>`      | is larger than     |
+
+<br>
+
+For the basic CFA, we would only required to use the latent variable definition operator.
+
+## Estimating the model
+
+Now, we can write the model syntax for the BFI
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cfa_model <- "
+   Agreeableness =~     A1 + A2 + A3 + A4 + A5
+   Conscientiousness =~ C1 + C2 + C3 + C4 + C5
+   Extraversion =~      E1 + E2 + E3 + E4 + E5
+   Neuroticism =~       N1 + N2 + N3 + N4 + N5
+   Openness =~          O1 + O2 + O3 + O4 + O5
+"
+# Estimate the model
+fit.cfa <- cfa(cfa_model, 
+               data = dat,
+               std.lv=T,
+               meanstructure=T,
+               missing="fiml")
+```
+
+Here we have the model syntax (`cfa_model`) defining the theoretically expected 5 factors, based on the respective personality characteristics. Each factor is defined by the respective 5 indicators.
+
+Then with `cfa` we estimate the model. The first argument is the model syntax, the second is the data set, the third is to specify the identification method. With `std.lv=T` we are using the fixed variance method of identification. Then we ask to show the means as part of the model. And last with the argument `missing="fiml"` we ask to use Full Information Maximum Likelihood (FIML) to handle the missing data.
+
+## Model parameters
+
+We would like to see the model parameters, for that we can use the `summary()` , we ask for the default output plus the standardized parameters, and the $R^2$. This first presents information about the estimation, sample size, number of parameters.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+summary(fit.cfa, standardized=T, rsquare=T)
+
+```
+
+Then we see the parameters split into a few sections:
+
+-   Latent variables: presents the factor loadings for every factor. The standardized (`Std.all`) are the fully standardized loadings.
+
+-    Covariances: the `Estimate` presents all the covariances, while the `Std.all` presents the correlation (standardized covariance)
+
+-   Intercepts: presents the indicator and factor intercepts (meanstructure)
+
+-   Variances: presents the (residual) variances, the `Std.all` is the proportion of unexplained variance (from 0 to 1).
+
+-   R-square: proportion of explained variance in each outcome in the model. For indicator, this is the proportion of variance that is related to the respective underlying factor.
+
+## Overall model fit
+
+In CFA, we are also testing if the theoretical structure is a good representation of the data. We do this by testing the fit of the model. There are different metrics of it. We will go over the most commonly use and recommendations.
+
+### Exact fit
+
+The test of exact fit is the Null Hypothesis Significance Test (NHST) for the overall model. Testing is the model reproduces the sample covariance matrix perfectly. We can see the observed summary statistics with `lavInspect` , the sample covariances and means for each variable
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+lavInspect(fit.cfa, "sampstat")
+
+```
+
+The test of exact fit compares this sample matrix against the covariance matrix and means reproduce by the model, called the model implied moments.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+lavInspect(fit.cfa, "implied")
+```
+
+This test between observed and implied sufficient statistics is done with a $\chi^2$ test
+
+$$
+\chi^2_\text{ML} = -2(\ell_\text{H} - \ell_\text{S})
+$$
+
+We can see this test with `fitMeasures()` function, and asking for just the needed information. Remember that this test tends to reject models even when the model misfit is small. As we see in this case we reject the null hypothesis of the model perfectly reproducing the sample sufficient statistics
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+fitMeasures(fit.cfa, c("chisq","df","pvalue"))
+
+```
+
+### Approximate fit
+
+As the exact fit test tends to reject models even when the misfit is small, we also use the approximate fit indices. These indices relay on the idea that all model fall within a continuum of perfect fit (observed covariances) and worst fit (all indicators are independent), and we try to approximate where in that continuum our model is.
+
+It is important t note, these indices are NOT hypothesis test to accept or reject a model, but they should be interpret as effect size of misfit.
+
+There are three types of approximate indices (Garnier-Villarreal, & Jorgensen, 2020):
+
+-   Noncentrality: use the noncentrality parameter ($\hat{\lambda}=\chi^2 - df$) to compare our model to the perfect model. These include RMSEA (Root Mean Square Error of approximation), $\hat{\Gamma}$. From these indices we recommend to use $\hat{\Gamma}$ over RMSEA, this is because $\hat{\Gamma}$ is less sensitive to model and sample characteristics, while RMSEA tends to prefer larger models.
+
+-   Incemental fit: these indices compare our model to the worst possible model. These include CFI (Comparative Fit Index), and TLI (Tucker and Lewis index). From these indices we recommend to use CFI over TLI, as it is less sensitive to model and sample characteristics, while TLI is more sensitive and TLI is not bounded by 1 which makes it harder to interpret.
+
+-   Residual based: these indexes compare the observed and reproduce correlations, and present the respective deviatons. These include the residual correlations, and SRMR (standardized root mean squared residual) . The residual correlations present respective residual correlation for all possible indicator correlations, while the SRMR is the average correlation bias of the model, for this reason we recommend the SRMR.
+
+$$
+\text{RMSEA} = \hat{\varepsilon} = \sqrt{\max\Bigg[0, \frac{\hat{\lambda}}{df \times N}\Bigg]} = \sqrt{\max\Bigg[0, \frac{\chi^2_\text{ML} - df}{df \times N}\Bigg]} = \sqrt{\max\Bigg[0, \frac{F_\text{ML}}{df} - \frac{1}{N}\Bigg]}
+$$
+
+$$
+\hat{\Gamma} = \frac{p}{p+2\frac{\hat{\lambda}}{N}}
+$$
+
+$$
+\text{TLI} = \text{NNFI} = \frac{\frac{\chi^2_0}{df_0} - \frac{\chi^2_\text{H}}{df_\text{H}}}{\frac{\chi^2_0}{df_0} - 1}
+$$
+
+$$
+\text{CFI} = \frac{\max(0, \hat{\lambda}_0) - \max(0, \hat{\lambda}_\text{H})}{\max(0, \hat{\lambda}_0)} = 1 - \frac{\max(0, \hat{\lambda}_\text{H})}{\max(0, \hat{\lambda}_0)}
+$$
+
+We can extract most of these indices from the `fitMeasures()` function, except $\hat{\Gamma}$ for which we need to use the `moreFitIndices()` function from semTools
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+fitMeasures(fit.cfa, c("rmsea","cfi","tli","srmr"))
+moreFitIndices(fit.cfa, "gammaHat")
+```
+
+Remember that we should not use these indices should not use to accept a model. But these indices look low for CFI and TLI in particular.
+
+## Local model fit
+
+After looking at overall model fit, we want to look at local fit. This looks at how the model fails to reproduce specific correlations, or is missing parameters, instead of looking at the whole model.
+
+For this we can use the residual correlations, as these present which pairwise correlation is failed to be reproduced. The general recommendations is to pay attention to residual correlations that are higher than $r=|0.1|$ (Kline, 2016), but this is a general guideline, not a hard rule.
+
+We can get the residual correlations with the `lavResiduals()` function. This will give the residual correlation matrix, the mean deviations, the z-score for the correlation and mean deviations (which can be use as a test), and summary statistics about all the residual correlations.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+lavResiduals(fit.cfa)
+
+```
+
+The mayor limitation of the residual correlations is that they tell us where the model fails to reproduce the data, but doesn't tell us how to fix it. For this we recommend to use modification indices, these approximate the expected improvement in model fit if we were to include a parameter that was include previously.
+
+We can use the `modindices()` function, here I am asking it to show me the ones with the highest likelihood of improving the model's $\chi^2$ , signal by the `mi` column.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+modindices(fit.cfa, sort. = T)[1:10,]
+
+```
+
+This show us the expected improvement in $\chi^2$ by the column `mi`, the expected unstandardized parameter change `epc` which is what it thinks the new parameter will be, and the expected standardized parameter change `sepc.all` which is what it thinks will be the standardized new parameter. Based on these we would decide to add one of these parameters.
+
+Here we see that the model is asking to include the residual covariance between `N1~~N2` variables. When you are testing for local fit, you would include the parameters that are theoretically defensibly to include. For a residual covariance, we would need to argue that there is something in common between these 2 indicators above and beyond the latent variables. Also, very important to test adding one parameter at the time.
+
+## Model modifications
+
+So, now we will include this parameter, and test if we should keep it, and continue adding parameters until we are satisfied. First, we add the new parameter into the model syntax, and estimate the model, and look at the parameter we just added, do we reject the null hypothesis? what is the standardized value?
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cfa_model_mod <- "
+   Agreeableness =~     A1 + A2 + A3 + A4 + A5
+   Conscientiousness =~ C1 + C2 + C3 + C4 + C5
+   Extraversion =~      E1 + E2 + E3 + E4 + E5
+   Neuroticism =~       N1 + N2 + N3 + N4 + N5
+   Openness =~          O1 + O2 + O3 + O4 + O5
+   ## model modifications
+   N1 ~~  N2
+"
+# Estimate the model
+fit.cfa2 <- cfa(cfa_model_mod, 
+               data = dat,
+               std.lv=T,
+               meanstructure=T,
+               missing="fiml")
+summary(fit.cfa2, standardized=T)
+```
+
+In this case we see that the added parameters presents a residual correlation of 0.481. Which is high. We can also compare the original model to the model with modifications, to test the improvement of the model
+
+The model comparison is done with the `lavTestLRT()` function, this will do a likelihood ratio test (LRT) between 2 models, with the null hypothesis of the 2 models being equally good.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+lavTestLRT(fit.cfa, fit.cfa2)
+
+```
+
+Then we can look at the overall model fit, and we see some improvement
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+fitMeasures(fit.cfa2, c("rmsea","cfi","tli","srmr"))
+moreFitIndices(fit.cfa2, "gammaHat")
+```
+
+As it seems we need the new added parameter, and the model fit is not great yet. We can look at the modification indices to continue editing the model
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+modindices(fit.cfa2, sort. = T)[1:10,]
+```
+
+And then we continue this iterative process, modifying the model until we are satisfied. Here I present what would be my final model after a few iterations.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cfa_model_mod <- "
+   Agreeableness =~     A1 + A2 + A3 + A4 + A5
+   Conscientiousness =~ C1 + C2 + C3 + C4 + C5
+   Extraversion =~      E1 + E2 + E3 + E4 + E5
+   Neuroticism =~       N1 + N2 + N3 + N4 + N5
+   Openness =~          O1 + O2 + O3 + O4 + O5
+   ## model modifications
+   N1 ~~  N2
+   Extraversion =~  N4
+   Openness =~  E3
+   Conscientiousness =~  E5
+   Extraversion =~  O4
+   Neuroticism =~  C5
+   Neuroticism =~  C4
+   O2 ~~  O5
+   Extraversion =~  A5
+"
+# Estimate the model
+fit.cfa3 <- cfa(cfa_model_mod, 
+               data = dat,
+               std.lv=T,
+               meanstructure=T,
+               missing="fiml")
+```
+
+Here we see that the original model needed several modifications (9), which is not a great sing for the original theoretical structure.
+
+Even after all these changes, more parameters could be added to improve it, but we considered that the next parameters would not add so much to the model, as the improvement in model fit was not small by adding each new parameter.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+lavTestLRT(fit.cfa, fit.cfa3)
+fitMeasures(fit.cfa3, c("rmsea","cfi","tli","srmr"))
+moreFitIndices(fit.cfa3, "gammaHat")
+modindices(fit.cfa3, sort. = T)[1:10,]
+```
+
+## Presenting the results
+
+For the presentation of the results, first you would need to describe your theoretical model, and process for deciding to add modifications.
+
+Then for your final model, you would report the overall model fit, such as $\chi^2(256) = 2940.349, p < .001, \text{CFI} = 0.864, \text{SRMR}=0.053, \hat{\Gamma}=0.929$
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+fitMeasures(fit.cfa3, c("chisq","df","pvalue","rmsea","cfi","tli","srmr"))
+moreFitIndices(fit.cfa3, "gammaHat")
+```
+
+Then you would need to report the model parameters, so from the `summary()` output you would report the estimate, std.err, p-value, and std.all columns. For the latent variable, and covariances sections. Lastly report the $R^2$
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+summary(fit.cfa3, standardized=T, rsquare=T)
+
+```
+
+# References
+
+Bollen, K. A. (1989). Structural Equations with Latent Variables. John Wiley & Sons, Inc.
+
+Brown, T. A. (2015). Confirmatory factor analysis for applied research (Second Edition). Guilford Press.
+
+Kline, R. B. (2016). Principles and practice of structural equation modeling (Fourth Edition). Guilford Press.
+
+Garnier-Villarreal, M., & Jorgensen, T. D. (2020). Adapting Fit Indices for Bayesian Structural Equation Modeling: Comparison to Maximum Likelihood. Psychological Methods, 25(1), 46--70. https://doi.org/doi.org/10.1037/met0000224
+
+Fan, X., & Sivo, S. A. (2007). Sensitivity of fit indices to model misspecification and model types. Multivariate Behavioral Research, 42(3), 509--529. https://doi.org/10.1080/00273170701382864

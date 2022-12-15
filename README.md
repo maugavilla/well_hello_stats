@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-28 November, 2022
+15 December, 2022
 
 - <a href="#welcome" id="toc-welcome">Welcome</a>
 - <a href="#what-is-r-and-why-should-you-learn-it"
@@ -22,6 +22,7 @@ Mauricio Garnier-Villarreal
   - <a href="#general-linear-models" id="toc-general-linear-models">General
     Linear Models</a>
   - <a href="#mixture-models" id="toc-mixture-models">Mixture models</a>
+  - <a href="#factor-analysis" id="toc-factor-analysis">Factor Analysis</a>
 - <a href="#progress" id="toc-progress">Progress</a>
 
 <div style="padding: 0.2em;">
@@ -193,6 +194,8 @@ following a course.
   indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md)
 - [LCA with tidySEM (categorical
   indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_tidySEM_cat.md)
+
+## Factor Analysis
 
 # Progress
 
