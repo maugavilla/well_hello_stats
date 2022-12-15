@@ -98,7 +98,7 @@ Here you will find links for the respective tutorials, and a short description. 
 * [LCA with tidySEM (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_tidySEM_cat.md)
 
 ## Factor Analysis
-
+* [Confirmatory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md)
 
 # Progress
 

@@ -29,6 +29,7 @@ Mauricio Garnier-Villarreal
   - <a href="#local-model-fit" id="toc-local-model-fit">Local model fit</a>
   - <a href="#model-modifications" id="toc-model-modifications">Model
     modifications</a>
+  - <a href="#reliability" id="toc-reliability">Reliability</a>
   - <a href="#presenting-the-results"
     id="toc-presenting-the-results">Presenting the results</a>
 - <a href="#references" id="toc-references">References</a>
@@ -1072,6 +1073,39 @@ modindices(fit.cfa3, sort. = T)[1:10,]
     269            A4 ~~  C2 57.539  0.214   0.214    0.168    0.168
     442            E4 ~~  O5 56.804  0.198   0.198    0.159    0.159
 
+## Reliability
+
+Here we use metrics to estimate the factor reliability, for this we will
+use the `compRelSEM()` function from semTools. With the default settings
+we are estimating the $\omega$ measure of reliability, for each factor
+in the model.
+
+``` r
+compRelSEM(fit.cfa3)
+```
+
+        Agreeableness Conscientiousness      Extraversion       Neuroticism 
+                0.639             0.652             0.653             0.559 
+             Openness 
+                0.437 
+
+This measure does not assume tau-equivalence, which is a strong
+assumption of equivalence between indicators, and ignores the
+differences in factor loadings. If we set to assume tau-equivalence, we
+get the Cronbach $\alpha$ measure
+
+``` r
+compRelSEM(fit.cfa3, tau.eq = T)
+```
+
+        Agreeableness Conscientiousness      Extraversion       Neuroticism 
+                0.702             0.729             0.585             0.538 
+             Openness 
+                0.374 
+
+We recommend to use the $\omega$ measure, as it is more representative
+of reliability, and respects the factor loadings.
+
 ## Presenting the results
 
 For the presentation of the results, first you would need to describe
@@ -1103,6 +1137,17 @@ Lastly report the $R^2$
 ``` r
 summary(fit.cfa3, standardized=T, rsquare=T)
 ```
+
+Lastly, you would need to report the factor reliability $\omega$
+
+``` r
+compRelSEM(fit.cfa3)
+```
+
+        Agreeableness Conscientiousness      Extraversion       Neuroticism 
+                0.639             0.652             0.653             0.559 
+             Openness 
+                0.437 
 
 # References
 

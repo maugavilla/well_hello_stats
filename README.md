@@ -197,6 +197,9 @@ following a course.
 
 ## Factor Analysis
 
+- [Confirmatory Factor Analysis with continuous
+  indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md)
+
 # Progress
 
 As must things in life, these tutorials as a work in progress. So we

@@ -493,6 +493,33 @@ moreFitIndices(fit.cfa3, "gammaHat")
 modindices(fit.cfa3, sort. = T)[1:10,]
 ```
 
+## Reliability
+
+Here we use metrics to estimate the factor reliability, for this we will use the `compRelSEM()` function from semTools. With the default settings we are estimating the $\omega$ measure of reliability, for each factor in the model.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+compRelSEM(fit.cfa3)
+
+```
+
+This measure does not assume tau-equivalence, which is a strong assumption of equivalence between indicators, and ignores the differences in factor loadings. If we set to assume tau-equivalence, we get the Cronbach $\alpha$ measure
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+compRelSEM(fit.cfa3, tau.eq = T)
+```
+
+We recommend to use the $\omega$ measure, as it is more representative of reliability, and respects the factor loadings.
+
 ## Presenting the results
 
 For the presentation of the results, first you would need to describe your theoretical model, and process for deciding to add modifications.
@@ -519,6 +546,18 @@ Then you would need to report the model parameters, so from the `summary()` outp
 #| warning: false
 
 summary(fit.cfa3, standardized=T, rsquare=T)
+
+```
+
+Lastly, you would need to report the factor reliability $\omega$
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+compRelSEM(fit.cfa3)
 
 ```
 
