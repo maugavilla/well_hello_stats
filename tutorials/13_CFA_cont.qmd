@@ -27,7 +27,7 @@ A basic assumption of test theory is thus that the trait explains response patte
 *Table 1: Important concepts in test theory*
 
 | Name                | Definition                                                                                                                                                                 |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | Latent variables    | Not directly observable concepts - later also called 'factors' - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns...)      |
 | Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
 | True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
@@ -63,7 +63,7 @@ In the second image, we see an example of a measurement model, when the indicato
 
 # Preparation
 
-We will use the package `psych` to get an example data set, `lavaan` to run the CFA models, and `semTools` to do some added calculations
+We will use the package `psych` to get an example data set, `lavaan` to run the CFA models, and `semTools` to do some added calculations, the other packages are used for data management or descriptive plots
 
 ```{r}
 #| echo: true
@@ -244,7 +244,7 @@ Then we see the parameters split into a few sections:
 
 -   Latent variables: presents the factor loadings for every factor. The standardized (`Std.all`) are the fully standardized loadings.
 
--    Covariances: the `Estimate` presents all the covariances, while the `Std.all` presents the correlation (standardized covariance)
+-   Covariances: the `Estimate` presents all the covariances, while the `Std.all` presents the correlation (standardized covariance)
 
 -   Intercepts: presents the indicator and factor intercepts (meanstructure)
 

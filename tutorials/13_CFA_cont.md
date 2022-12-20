@@ -1,7 +1,7 @@
 Confirmatory Factor Analysis
 ================
 Mauricio Garnier-Villarreal
-15 December, 2022
+12/20/22
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
   - <a href="#test-theory" id="toc-test-theory">Test theory</a>
@@ -137,7 +137,8 @@ are pull by the residual variance.
 # Preparation
 
 We will use the package `psych` to get an example data set, `lavaan` to
-run the CFA models, and `semTools` to do some added calculations
+run the CFA models, and `semTools` to do some added calculations, the
+other packages are used for data management or descriptive plots
 
 ``` r
 library(psych)
@@ -305,7 +306,7 @@ ggplot(dat_long, aes(x = value)) +
        y = "Number of responses")
 ```
 
-![](13_CFA_cont_files/figure-gfm/unnamed-chunk-5-1.png)
+![](13_CFA_cont_files/figure-commonmark/unnamed-chunk-5-1.png)
 
 We can see how must are close normally distributed. Remember that as
 with GLM, CFA does NOT assume that the data is normally distributed, it
