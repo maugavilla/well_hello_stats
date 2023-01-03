@@ -99,6 +99,7 @@ Here you will find links for the respective tutorials, and a short description. 
 
 ## Factor Analysis
 * [Confirmatory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md)
+* [Exploratory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_EFA_cont.md#cross-validation-cfa)
 
 # Progress
 
