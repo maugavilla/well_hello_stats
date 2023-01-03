@@ -1,7 +1,7 @@
 Confirmatory Factor Analysis
 ================
 Mauricio Garnier-Villarreal
-12/20/22
+1/3/23
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
   - <a href="#test-theory" id="toc-test-theory">Test theory</a>
@@ -704,8 +704,9 @@ moreFitIndices(fit.cfa, "gammaHat")
     gammaHat 
        0.888 
 
-Remember that we should not use these indices should not use to accept a
-model. But these indices look low for CFI and TLI in particular.
+Remember that we should not use these indices to *accept* a model, but
+as effect sizes of *misfit*. For this example, these indices look low
+for CFI and TLI in particular.
 
 ## Local model fit
 

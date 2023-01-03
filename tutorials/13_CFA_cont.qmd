@@ -27,7 +27,7 @@ A basic assumption of test theory is thus that the trait explains response patte
 *Table 1: Important concepts in test theory*
 
 | Name                | Definition                                                                                                                                                                 |
-|---------------------|---------------------------------------------------|
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Latent variables    | Not directly observable concepts - later also called 'factors' - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns...)      |
 | Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
 | True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
@@ -341,7 +341,7 @@ fitMeasures(fit.cfa, c("rmsea","cfi","tli","srmr"))
 moreFitIndices(fit.cfa, "gammaHat")
 ```
 
-Remember that we should not use these indices should not use to accept a model. But these indices look low for CFI and TLI in particular.
+Remember that we should not use these indices to *accept* a model, but as effect sizes of *misfit*. For this example, these indices look low for CFI and TLI in particular.
 
 ## Local model fit
 
