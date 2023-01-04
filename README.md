@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-03 January, 2023
+04 January, 2023
 
 - <a href="#welcome" id="toc-welcome">Welcome</a>
 - <a href="#what-is-r-and-why-should-you-learn-it"
@@ -200,7 +200,7 @@ following a course.
 - [Confirmatory Factor Analysis with continuous
   indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md)
 - [Exploratory Factor Analysis with continuous
-  indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_EFA_cont.md#cross-validation-cfa)
+  indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_EFA_cont.md)
 
 # Progress
 
