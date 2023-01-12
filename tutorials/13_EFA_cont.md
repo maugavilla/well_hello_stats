@@ -1,7 +1,7 @@
 Exploratory Factor Analysis
 ================
 Mauricio Garnier-Villarreal
-1/3/23
+1/12/23
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
   - <a href="#test-theory" id="toc-test-theory">Test theory</a>
@@ -41,6 +41,7 @@ Mauricio Garnier-Villarreal
       - <a href="#solution" id="toc-solution">Solution</a>
 - <a href="#cross-validation-cfa"
   id="toc-cross-validation-cfa">Cross-validation CFA</a>
+- <a href="#r-session" id="toc-r-session">R session</a>
 - <a href="#references" id="toc-references">References</a>
 
 # Introduction
@@ -449,7 +450,11 @@ model where the first means that it converged. In this case we see that
 all models have converged
 
 ``` r
-sapply(fit.efa, FUN=function(x)x@Fit@converged)
+converged <- NULL
+for(j in 1:10){
+  converged[j] <- lavInspect(fit.efa[[j]], "converged")
+}
+converged
 ```
 
      [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
@@ -690,7 +695,7 @@ to go over each EFA, and extract the few we need from the
 
 ``` r
 fit_ind <- NULL
-for(j in 1:length(fit.efa)){
+for(j in 1:10){
   temp <- c(nfac = nrow(lavInspect(fit.efa[[j]],"cor.lv")),
             fitMeasures(fit.efa[[j]], c("npar","chisq","df","pvalue","cfi","tli","srmr","rmsea","aic","bic")),
             moreFitIndices(fit.efa[[j]], "gammaHat"))
@@ -836,7 +841,7 @@ shows the correlations between factors
 summary(fit.efa[[6]], nd = 3L, cutoff = 0.3, dot.cutoff = 0.05)
 ```
 
-    lavaan 0.6-13.1787 ended normally after 164 iterations
+    lavaan 0.6.13 ended normally after 164 iterations
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -918,15 +923,15 @@ summary(fit.efa[[6]], nd = 3L, cutoff = 0.3, dot.cutoff = 0.05)
     Proportion var             0.091 0.087 0.081 0.078 0.064 0.034  0.437
     Cumulative var             0.091 0.179 0.260 0.338 0.402 0.437  0.437
 
-    Factor correlations:
+    Factor correlations: (* = significant at 1% level)
 
-           f1     f2     f3     f4     f5     f6
-    f1  1.000                                   
-    f2  0.143  1.000                            
-    f3  0.416  0.024  1.000                     
-    f4 -0.062 -0.116 -0.212  1.000              
-    f5  0.195 -0.019 -0.004  0.327  1.000       
-    f6 -0.325  0.096 -0.429 -0.113  0.000  1.000
+           f1      f2      f3      f4      f5      f6 
+    f1  1.000                                         
+    f2  0.143   1.000                                 
+    f3  0.416*  0.024   1.000                         
+    f4 -0.062  -0.116  -0.212*  1.000                 
+    f5  0.195  -0.019  -0.004   0.327*  1.000         
+    f6 -0.325*  0.096  -0.429* -0.113   0.000   1.000 
 
 We would say that an item belongs to the factor that it has the highest
 factor loading to.
@@ -1052,6 +1057,55 @@ lavTestLRT(fit.cfa, fit.cfa2)
     fit.cfa  260 114803 115275 2821.9       1053 0.2388      13  < 2.2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+# R session
+
+``` r
+sessionInfo()
+```
+
+    R version 4.1.3 (2022-03-10)
+    Platform: x86_64-w64-mingw32/x64 (64-bit)
+    Running under: Windows 10 x64 (build 19045)
+
+    Matrix products: default
+
+    locale:
+    [1] LC_COLLATE=English_United Kingdom.1252 
+    [2] LC_CTYPE=English_United Kingdom.1252   
+    [3] LC_MONETARY=English_United Kingdom.1252
+    [4] LC_NUMERIC=C                           
+    [5] LC_TIME=English_United Kingdom.1252    
+
+    attached base packages:
+    [1] stats     graphics  grDevices utils     datasets  methods   base     
+
+    other attached packages:
+    [1] patchwork_1.1.2 ggplot2_3.4.0   tidyr_1.2.1     car_3.1-1      
+    [5] carData_3.0-5   semTools_0.5-6  lavaan_0.6-13   psych_2.2.9    
+
+    loaded via a namespace (and not attached):
+     [1] mvtnorm_1.1-3       lattice_0.20-45     zoo_1.8-11         
+     [4] assertthat_0.2.1    digest_0.6.31       utf8_1.2.2         
+     [7] R6_2.5.1            stats4_4.1.3        evaluate_0.19      
+    [10] coda_0.19-4         pillar_1.8.1        rlang_1.0.6        
+    [13] multcomp_1.4-20     rstudioapi_0.14     Matrix_1.5-3       
+    [16] pbivnorm_0.6.0      rmarkdown_2.19      labeling_0.4.2     
+    [19] splines_4.1.3       stringr_1.5.0       munsell_0.5.0      
+    [22] numDeriv_2016.8-1.1 compiler_4.1.3      xfun_0.36          
+    [25] pkgconfig_2.0.3     mnormt_2.1.1        htmltools_0.5.4    
+    [28] tidyselect_1.2.0    tibble_3.1.8        codetools_0.2-18   
+    [31] fansi_1.0.3         dplyr_1.0.10        withr_2.5.0        
+    [34] MASS_7.3-58.1       grid_4.1.3          nlme_3.1-161       
+    [37] jsonlite_1.8.4      xtable_1.8-4        gtable_0.3.1       
+    [40] lifecycle_1.0.3     DBI_1.1.3           magrittr_2.0.3     
+    [43] scales_1.2.1        estimability_1.4.1  cli_3.6.0          
+    [46] stringi_1.7.12      farver_2.1.1        ellipsis_0.3.2     
+    [49] generics_0.1.3      vctrs_0.5.1         sandwich_3.0-2     
+    [52] TH.data_1.1-1       tools_4.1.3         glue_1.6.2         
+    [55] purrr_1.0.1         emmeans_1.8.3       abind_1.4-5        
+    [58] parallel_4.1.3      fastmap_1.1.0       survival_3.5-0     
+    [61] yaml_2.3.6          colorspace_2.0-3    knitr_1.41         
 
 # References
 

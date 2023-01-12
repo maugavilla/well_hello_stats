@@ -27,7 +27,7 @@ A basic assumption of test theory is thus that the trait explains response patte
 *Table 1: Important concepts in test theory*
 
 | Name                | Definition                                                                                                                                                                 |
-|----------------------|--------------------------------------------------|
+|--------------|----------------------------------------------------------|
 | Latent variables    | Not directly observable concepts - later also called 'factors' - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns...)      |
 | Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
 | True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
@@ -243,8 +243,11 @@ It is important to check that all the models have converged properly, we can do 
 #| eval: true
 #| warning: false
 
-sapply(fit.efa, FUN=function(x)x@Fit@converged)
-
+converged <- NULL
+for(j in 1:10){
+  converged[j] <- lavInspect(fit.efa[[j]], "converged")
+}
+converged
 ```
 
 ## Rotation
@@ -400,7 +403,7 @@ To get all the indices we recommend (and only those) we will use a loop, to go o
 #| warning: false
 
 fit_ind <- NULL
-for(j in 1:length(fit.efa)){
+for(j in 1:10){
   temp <- c(nfac = nrow(lavInspect(fit.efa[[j]],"cor.lv")),
             fitMeasures(fit.efa[[j]], c("npar","chisq","df","pvalue","cfi","tli","srmr","rmsea","aic","bic")),
             moreFitIndices(fit.efa[[j]], "gammaHat"))
@@ -624,6 +627,18 @@ We do see a considerable improvement after adding these loadings. But, how meani
 #| warning: false
 
 lavTestLRT(fit.cfa, fit.cfa2)
+
+```
+
+# R session
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+sessionInfo()
 
 ```
 
