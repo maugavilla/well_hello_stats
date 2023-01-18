@@ -1,7 +1,7 @@
 LCA with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-15 December, 2022
+1/18/23
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -309,13 +309,17 @@ summary(lca1_mod)
 With the `mix`function we build the `depmixS4` model, we can see the
 model definition, and the starting values with the `summary()` function.
 To estimate the model, we give the built model to the `fit()` function,
-and with the `summary()` we can see the results.
+and with the `summary()` we can see the results. Within the `fit`
+function we are adding the argument `emcontrol` to increase the maximum
+number of iterations while estimating each model up to $maxit=50000$ in
+this case.
 
 ``` r
-lca1_fit <- fit(lca1_mod)
+lca1_fit <- fit(lca1_mod,
+                emcontrol=em.control(maxit=50000,random.start = TRUE))
 ```
 
-    converged at iteration 142 with logLik: -3666.872 
+    converged at iteration 146 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -323,7 +327,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.4012414 0.5987586 
+    0.5987512 0.4012488 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -331,12 +335,12 @@ summary(lca1_fit)
     Resp 3 : multinomial 
     Resp 4 : multinomial 
     Resp 5 : multinomial 
-            Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.6771731 0.3228269 0.9785008 0.02149923 0.7343751 0.2656249 0.6094635
-    St2 0.3148143 0.6851857 0.5809844 0.41901557 0.5813226 0.4186774 0.2922851
+            Re1.1     Re1.2     Re2.1     Re2.2     Re3.1     Re3.2     Re4.1
+    St1 0.3148122 0.6851878 0.5809815 0.4190185 0.5813216 0.4186784 0.2922829
+    St2 0.6771694 0.3228306 0.9784978 0.0215022 0.7343736 0.2656264 0.6094608
             Re4.2     Re5.1     Re5.2
-    St1 0.3905365 0.6936983 0.3063017
-    St2 0.7077149 0.1708241 0.8291759
+    St1 0.7077171 0.1708207 0.8291793
+    St2 0.3905392 0.6936936 0.3063064
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -388,32 +392,95 @@ for(i in 1:length(n_states)){
                           multinomial("identity"),multinomial("identity"),
                           multinomial("identity"))
             )
-  lca_res[[i]] <- fit(mod, 
-                      emcontrol=em.control(maxit=50000,random.start = TRUE))
+  lca_res[[i]] <- multistart(mod, nstart=10, initIters=50000)
 }
 ```
 
     [1] 1
     converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
+    converged at iteration 1 with logLik: -3767.254 
     [1] 2
     converged at iteration 137 with logLik: -3666.872 
+    converged at iteration 146 with logLik: -3666.872 
+    converged at iteration 143 with logLik: -3666.872 
+    converged at iteration 137 with logLik: -3666.872 
+    converged at iteration 142 with logLik: -3666.872 
+    converged at iteration 138 with logLik: -3666.872 
+    converged at iteration 143 with logLik: -3666.872 
+    converged at iteration 139 with logLik: -3666.872 
+    converged at iteration 145 with logLik: -3666.872 
+    converged at iteration 140 with logLik: -3666.872 
+    converged at iteration 1 with logLik: -3666.872 
     [1] 3
-    converged at iteration 772 with logLik: -3631.122 
+    converged at iteration 940 with logLik: -3631.122 
+    converged at iteration 572 with logLik: -3631.45 
+    converged at iteration 658 with logLik: -3631.449 
+    converged at iteration 251 with logLik: -3631.446 
+    converged at iteration 794 with logLik: -3631.122 
+    converged at iteration 894 with logLik: -3631.122 
+    converged at iteration 405 with logLik: -3631.449 
+    converged at iteration 761 with logLik: -3631.122 
+    converged at iteration 989 with logLik: -3631.122 
+    converged at iteration 926 with logLik: -3631.122 
+    converged at iteration 1 with logLik: -3631.122 
     [1] 4
-    converged at iteration 1677 with logLik: -3622.448 
+    converged at iteration 1741 with logLik: -3622.448 
+    converged at iteration 574 with logLik: -3622.805 
+    converged at iteration 904 with logLik: -3622.81 
+    converged at iteration 808 with logLik: -3622.812 
+    converged at iteration 637 with logLik: -3622.802 
+    converged at iteration 811 with logLik: -3622.81 
+    converged at iteration 1380 with logLik: -3622.447 
+    converged at iteration 629 with logLik: -3622.806 
+    converged at iteration 709 with logLik: -3622.808 
+    converged at iteration 1663 with logLik: -3622.448 
+    converged at iteration 1 with logLik: -3622.447 
     [1] 5
-    converged at iteration 1615 with logLik: -3620.347 
+    converged at iteration 1590 with logLik: -3620.348 
+    converged at iteration 1231 with logLik: -3620.19 
+    converged at iteration 2098 with logLik: -3620.343 
+    converged at iteration 2208 with logLik: -3620.349 
+    converged at iteration 943 with logLik: -3621.433 
+    converged at iteration 792 with logLik: -3620.454 
+    converged at iteration 926 with logLik: -3620.177 
+    converged at iteration 1489 with logLik: -3620.172 
+    converged at iteration 777 with logLik: -3620.89 
+    converged at iteration 1716 with logLik: -3620.345 
+    converged at iteration 1 with logLik: -3620.172 
     [1] 6
-    converged at iteration 1994 with logLik: -3619.728 
+    converged at iteration 1135 with logLik: -3619.731 
+    converged at iteration 2137 with logLik: -3619.26 
+    converged at iteration 3134 with logLik: -3619.261 
+    converged at iteration 1371 with logLik: -3620.122 
+    converged at iteration 1016 with logLik: -3619.252 
+    converged at iteration 2558 with logLik: -3619.92 
+    converged at iteration 1637 with logLik: -3619.92 
+    converged at iteration 1505 with logLik: -3619.25 
+    converged at iteration 1202 with logLik: -3619.999 
+    converged at iteration 1527 with logLik: -3619.065 
+    converged at iteration 1 with logLik: -3619.065 
 
 See, that we first create a vector with the number of states we want to
 estimate, then we create an empty `list` object where we will save all
 our LCA’s. In the loop you will see that the model defined with the
 `mix`function is the same, and the only difference is that we loop over
-the number of states. Then we use the `fit` function to estimate each
-model and save it into the empty list object. Within the `fit` function
-we are adding the argument `emcontrol` to increase the maximum number of
-iterations while estimating each model up to $maxit=50000$ in this case.
+the number of states. Then we use the `multistart` function to estimate
+each model and save it into the empty list object. With the `multistart`
+function, we can estimate the model multiple times, with different
+starting values each time. This is useful to be more certain that the
+results are not a local maxima but correct convergence. With the
+`nstart` argument we specify how many starting values we want to use,
+and with the `initIters` argument we specify how many iterations use for
+each run.
 
 You should see the message for each model that it converged, if it
 doesnt show up, you can check each model by looking into the list of
@@ -424,9 +491,9 @@ lca_res[[5]]
 ```
 
     Convergence info: Log likelihood converged to within tol. (relative change) 
-    'log Lik.' -3620.347 (df=29)
-    AIC:  7298.694 
-    BIC:  7445.222 
+    'log Lik.' -3620.172 (df=29)
+    AIC:  7298.344 
+    BIC:  7444.873 
 
 ### Model Fit Indices
 
@@ -491,11 +558,11 @@ get_fits(lca_res[[2]])
 ```
 
            LogLik    parameters             n           AIC           BIC 
-    -3666.8724560    22.0000000  1156.0000000  7377.7449120  7488.9047751 
+    -3666.8723683    22.0000000  1156.0000000  7377.7447366  7488.9045997 
              CAIC           KIC         SABIC           ICL       Entropy 
-     7510.9047751  7402.7449120  7419.0256202 -7934.9250618     0.4718579 
+     7510.9045997  7402.7447366  7419.0254448 -7934.8240340     0.4719464 
          prob_min      prob_max         n_min         n_max 
-        0.7727447     0.8806820     0.3814879     0.6185121 
+        0.7728793     0.8806222     0.3814879     0.6185121 
 
 But we can apply it to all the objects in the list and return a
 `data.frame`, we are creating a data with the number of states and the
@@ -510,17 +577,17 @@ fit_ind
       n_states    LogLik parameters    n      AIC      BIC     CAIC      KIC
     1        1 -3767.254         11 1156 7556.508 7612.088 7623.088 7570.508
     2        2 -3666.872         22 1156 7377.745 7488.905 7510.905 7402.745
-    3        3 -3631.122         33 1156 7328.245 7494.984 7527.984 7364.245
-    4        4 -3622.448         44 1156 7332.896 7555.216 7599.216 7379.896
-    5        5 -3620.347         55 1156 7350.694 7628.593 7683.593 7408.694
-    6        6 -3619.728         66 1156 7371.457 7704.936 7770.936 7440.457
+    3        3 -3631.122         33 1156 7328.244 7494.984 7527.984 7364.244
+    4        4 -3622.447         44 1156 7332.893 7555.213 7599.213 7379.893
+    5        5 -3620.172         55 1156 7350.344 7628.244 7683.244 7408.344
+    6        6 -3619.065         66 1156 7370.130 7703.609 7769.609 7439.130
          SABIC       ICL   Entropy  prob_min  prob_max      n_min     n_max
     1 7577.149 -7612.088 1.0000000 1.0000000 1.0000000 1.00000000 1.0000000
-    2 7419.026 -7934.925 0.4718579 0.7727447 0.8806820 0.38148789 0.6185121
-    3 7390.166 -8033.272 0.5828541 0.7553801 0.8954865 0.23010381 0.3875433
-    4 7415.458 -8090.907 0.6338152 0.6417211 0.9286170 0.13494810 0.4403114
-    5 7453.895 -8295.127 0.6632830 0.3935024 0.8985680 0.05709343 0.4160900
-    6 7495.299 -8540.588 0.6343649 0.2745838 0.9002015 0.03979239 0.4160900
+    2 7419.025 -7934.824 0.4719464 0.7728793 0.8806222 0.38148789 0.6185121
+    3 7390.165 -8033.222 0.5829747 0.7553726 0.8956258 0.23010381 0.3875433
+    4 7415.455 -8091.183 0.6337204 0.6472895 0.9251844 0.13494810 0.4403114
+    5 7453.546 -8372.629 0.5536229 0.5043042 0.9103525 0.14446367 0.2448097
+    6 7493.972 -8409.587 0.6178753 0.5896776 0.8746908 0.09429066 0.2785467
 
 Looking at AIC and BIC, we see that the model improves (smaller) as the
 number of classes increases between 1 and 3, and from 4 and above the
@@ -540,7 +607,7 @@ ggplot(elbow_plot, aes(x = n_states, y = Value, group = IC))+
   theme_minimal()
 ```
 
-![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-12-1.png)
+![](12_LCA_depmixS4_cat_files/figure-commonmark/unnamed-chunk-12-1.png)
 
 Here we see that a meaningful decrease from 1 to 2 for all indices, them
 from 2 to 3 we see a decrease in 3 indices and basically equal for BIC.
@@ -590,9 +657,9 @@ cl_diag$sum.posterior
 ```
 
       class    count proportion
-    1    S1 434.9742  0.3762753
-    2    S2 504.3635  0.4363006
-    3    S3 216.6623  0.1874242
+    1    S1 216.6236  0.1873907
+    2    S2 504.4089  0.4363399
+    3    S3 434.9674  0.3762694
 
 `$sum.mostlikely` is a summary table of the most likely class membership
 based on the highest posterior class probability. From this table, we
@@ -612,9 +679,9 @@ cl_diag$sum.mostlikely
 ```
 
       class count proportion
-    1    S1   448  0.3875433
+    1    S1   266  0.2301038
     2    S2   442  0.3823529
-    3    S3   266  0.2301038
+    3    S3   448  0.3875433
 
 `$mostlikely.class` is a table with rows representing the class the
 person was assigned to, and the columns indicating the average posterior
@@ -638,9 +705,9 @@ cl_diag$mostlikely.class
 ```
 
                [,1]        [,2]       [,3]
-    [1,] 0.81751977 0.137572473 0.04490775
-    [2,] 0.14061702 0.755380115 0.10400286
-    [3,] 0.09912915 0.005384321 0.89548652
+    [1,] 0.89562584 0.005255304 0.09911885
+    [2,] 0.10400296 0.755372585 0.14062446
+    [3,] 0.04490748 0.137569462 0.81752306
 
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
@@ -650,10 +717,10 @@ where k is the number of classes.
 cl_diag$avg.mostlikely
 ```
 
-                 S1        S2         S3
-    [1,] 0.79374995 0.1583111 0.04793897
-    [2,] 0.13538568 0.8619751 0.00263921
-    [3,] 0.07343501 0.1972037 0.72936127
+                  S1        S2         S3
+    [1,] 0.729344973 0.1972216 0.07343343
+    [2,] 0.002575512 0.8620439 0.13538063
+    [3,] 0.047925456 0.1583337 0.79374088
 
 `AvePP` is presented as diagonal of `$avg.mostlikely`, the average
 posterior class probability (mean) for the subjects classified in the
@@ -663,7 +730,7 @@ respective class.
 diag(cl_diag$avg.mostlikely)
 ```
 
-    [1] 0.7937499 0.8619751 0.7293613
+    [1] 0.7293450 0.8620439 0.7937409
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes).
@@ -676,13 +743,13 @@ up analyses.
 head(cl_diag$individual)
 ```
 
-              S1        S2           S3 predicted
-    1 0.66804654 0.3315764 0.0003770987         1
-    2 0.66804654 0.3315764 0.0003770987         1
-    3 0.66804654 0.3315764 0.0003770987         1
-    4 0.09807081 0.9015248 0.0004044012         2
-    5 0.09807081 0.9015248 0.0004044012         2
-    6 0.09807081 0.9015248 0.0004044012         2
+                S1        S2         S3 predicted
+    1 0.0004517418 0.3316152 0.66793306         3
+    2 0.0004517418 0.3316152 0.66793306         3
+    3 0.0004517418 0.3316152 0.66793306         3
+    4 0.0004844378 0.9014686 0.09804693         2
+    5 0.0004844378 0.9014686 0.09804693         2
+    6 0.0004844378 0.9014686 0.09804693         2
 
 Entropy is a summary measure of posterior class probabilities across
 classes and individuals. It ranges from 0 (model classification no
@@ -701,11 +768,11 @@ get_fits(lca_res[[3]])
 ```
 
            LogLik    parameters             n           AIC           BIC 
-    -3631.1222597    33.0000000  1156.0000000  7328.2445193  7494.9843139 
+    -3631.1221161    33.0000000  1156.0000000  7328.2442323  7494.9840269 
              CAIC           KIC         SABIC           ICL       Entropy 
-     7527.9843139  7364.2445193  7390.1655816 -8033.2720411     0.5828541 
+     7527.9840269  7364.2442323  7390.1652946 -8033.2215211     0.5829747 
          prob_min      prob_max         n_min         n_max 
-        0.7553801     0.8954865     0.2301038     0.3875433 
+        0.7553726     0.8956258     0.2301038     0.3875433 
 
 ### Interpreting the Final Class Solution
 
@@ -717,7 +784,7 @@ summary(lca_res[[3]])
 
     Mixture probabilities model 
           pr1       pr2       pr3 
-    0.3762753 0.4363006 0.1874242 
+    0.1873907 0.4363399 0.3762694 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -726,13 +793,13 @@ summary(lca_res[[3]])
     Resp 4 : multinomial 
     Resp 5 : multinomial 
             Re1.1     Re1.2     Re2.1      Re2.2      Re3.1     Re3.2        Re4.1
-    St1 0.6894279 0.3105721 0.9658438 0.03415625 0.75546706 0.2445329 6.272249e-01
-    St2 0.2785849 0.7214151 0.5823969 0.41760314 0.81877401 0.1812260 4.206426e-01
-    St3 0.4228173 0.5771827 0.6560586 0.34394140 0.00660762 0.9933924 7.662448e-05
+    St1 0.4228199 0.5771801 0.6560660 0.34393397 0.00643779 0.9935622 9.179686e-05
+    St2 0.2785979 0.7214021 0.5824009 0.41759915 0.81878168 0.1812183 4.206142e-01
+    St3 0.6894308 0.3105692 0.9658479 0.03415205 0.75546953 0.2445305 6.272161e-01
             Re4.2     Re5.1     Re5.2
-    St1 0.3727751 0.7296713 0.2703287
-    St2 0.5793574 0.1272004 0.8727996
-    St3 0.9999234 0.2698048 0.7301952
+    St1 0.9999082 0.2698010 0.7301990
+    St2 0.5793858 0.1272157 0.8727843
+    St3 0.3727839 0.7296776 0.2703224
 
 Showing the mixture probabilities, and the response probabilities for
 each class and indicator. We can also use our `sum_list()` function,
@@ -744,41 +811,41 @@ sum_list(lca_res[[3]], dat[,1:5])
 
     $Mix_probs
     Model of type multinomial (identity), formula: ~1
-    <environment: 0x0000000056ad0768>
+    <environment: 0x0000000043cc9f50>
     Coefficients: 
           pr1       pr2       pr3 
-    0.3762753 0.4363006 0.1874242 
+    0.1873907 0.4363399 0.3762694 
 
     $Pobrabilities
     $Pobrabilities$SYS_RESP
             Re1.1     Re1.2
-    St1 0.6894279 0.3105721
-    St2 0.2785849 0.7214151
-    St3 0.4228173 0.5771827
+    St1 0.4228199 0.5771801
+    St2 0.2785979 0.7214021
+    St3 0.6894308 0.3105692
 
     $Pobrabilities$IDEO_LEV
             Re2.1      Re2.2
-    St1 0.9658438 0.03415625
-    St2 0.5823969 0.41760314
-    St3 0.6560586 0.34394140
+    St1 0.6560660 0.34393397
+    St2 0.5824009 0.41759915
+    St3 0.9658479 0.03415205
 
     $Pobrabilities$REP_POT
              Re3.1     Re3.2
-    St1 0.75546706 0.2445329
-    St2 0.81877401 0.1812260
-    St3 0.00660762 0.9933924
+    St1 0.00643779 0.9935622
+    St2 0.81878168 0.1812183
+    St3 0.75546953 0.2445305
 
     $Pobrabilities$PROT_APP
                Re4.1     Re4.2
-    St1 6.272249e-01 0.3727751
-    St2 4.206426e-01 0.5793574
-    St3 7.662448e-05 0.9999234
+    St1 9.179686e-05 0.9999082
+    St2 4.206142e-01 0.5793858
+    St3 6.272161e-01 0.3727839
 
     $Pobrabilities$CONV_PAR
             Re5.1     Re5.2
-    St1 0.7296713 0.2703287
-    St2 0.1272004 0.8727996
-    St3 0.2698048 0.7301952
+    St1 0.2698010 0.7301990
+    St2 0.1272157 0.8727843
+    St3 0.7296776 0.2703224
 
 Here we have the same information, but with different presentation, that
 we consider more friendly to read. We see that each class has between
@@ -797,7 +864,7 @@ plot_prob(df,
           facet = "class")
 ```
 
-![](12_LCA_depmixS4_cat_files/figure-gfm/unnamed-chunk-23-1.png)
+![](12_LCA_depmixS4_cat_files/figure-commonmark/unnamed-chunk-23-1.png)
 
 With this information we would *name* each class and describe the
 theoretical interpretation of what they mean and what characterize each
@@ -824,3 +891,7 @@ examples in R and Stan (2nd ed.). Taylor and Francis, CRC Press.
 Nylund-Gibson, K., & Choi, A. Y. (2018). Ten frequently asked questions
 about latent class analysis. Translational Issues in Psychological
 Science, 4(4), 440–461. https://doi.org/10.1037/tps0000176
+
+Visser, I., & Speekenbrink, M. (2022). *Mixture and Hidden Markov Models
+with R*. Springer International Publishing.
+<https://doi.org/10.1007/978-3-031-01440-6>
