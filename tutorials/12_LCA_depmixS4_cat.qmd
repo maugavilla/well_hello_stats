@@ -81,7 +81,7 @@ head(dat)
 dim(dat)
 ```
 
-Looking into the data attributes, we see that the first 5 items are related to their political views, and the following are participant characteristics. with the function `get_label()` we see the label attribute extracted from the SPSS data set. And with the function `get_labels()` we see the values for each variable
+Looking into the data attributes, we see that the first 5 items are related to their political views, and the following are participant characteristics. With the function `get_label()` we see the label attribute extracted from the SPSS data set. And with the function `get_labels()` we see the values for each variable
 
 ```{r}
 #| echo: true
@@ -149,7 +149,7 @@ From a sequence of models, the final class solution is chosen based on both theo
 
 Relative model fit can be examined using the likelihood ratio test. This is only appropriate when the two models we wish to compare are nested. The likelihood ratio test statistic is computed as the difference in maximum log-likelihoods of the two models, with the test degrees of freedom being the difference in the degrees of freedom of the two compared models. The test statistic follows the $\chi^2$ distribution, and we want it to be non-significant in order to give support to the simpler model. The likelihood ratio test can only compare two nested models at a time (Collins & Lanza, 2010).
 
-Here we show how to use a loop in *R* to run the model for a sequence of LCA's, with oncreasing number of classes, from 1 to 6
+Here we show how to use a loop in *R* to run the model for a sequence of LCA's, with increasing number of classes, from 1 to 6
 
 ```{r}
 #| echo: true

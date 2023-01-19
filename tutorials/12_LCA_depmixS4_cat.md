@@ -1,7 +1,7 @@
 LCA with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-1/18/23
+1/19/23
 
 - <a href="#latent-class-analysis-lca"
   id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
@@ -154,7 +154,7 @@ dim(dat)
 
 Looking into the data attributes, we see that the first 5 items are
 related to their political views, and the following are participant
-characteristics. with the function `get_label()` we see the label
+characteristics. With the function `get_label()` we see the label
 attribute extracted from the SPSS data set. And with the function
 `get_labels()` we see the values for each variable
 
@@ -319,7 +319,7 @@ lca1_fit <- fit(lca1_mod,
                 emcontrol=em.control(maxit=50000,random.start = TRUE))
 ```
 
-    converged at iteration 146 with logLik: -3666.872 
+    converged at iteration 138 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -327,7 +327,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.5987512 0.4012488 
+    0.4012439 0.5987561 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -335,12 +335,12 @@ summary(lca1_fit)
     Resp 3 : multinomial 
     Resp 4 : multinomial 
     Resp 5 : multinomial 
-            Re1.1     Re1.2     Re2.1     Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.3148122 0.6851878 0.5809815 0.4190185 0.5813216 0.4186784 0.2922829
-    St2 0.6771694 0.3228306 0.9784978 0.0215022 0.7343736 0.2656264 0.6094608
+            Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
+    St1 0.6771718 0.3228282 0.9784997 0.02150025 0.7343746 0.2656254 0.6094626
+    St2 0.3148135 0.6851865 0.5809834 0.41901660 0.5813222 0.4186778 0.2922843
             Re4.2     Re5.1     Re5.2
-    St1 0.7077171 0.1708207 0.8291793
-    St2 0.3905392 0.6936936 0.3063064
+    St1 0.3905374 0.6936967 0.3063033
+    St2 0.7077157 0.1708229 0.8291771
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -374,7 +374,7 @@ simpler model. The likelihood ratio test can only compare two nested
 models at a time (Collins & Lanza, 2010).
 
 Here we show how to use a loop in *R* to run the model for a sequence of
-LCA’s, with oncreasing number of classes, from 1 to 6
+LCA’s, with increasing number of classes, from 1 to 6
 
 ``` r
 set.seed(1987)
@@ -811,7 +811,7 @@ sum_list(lca_res[[3]], dat[,1:5])
 
     $Mix_probs
     Model of type multinomial (identity), formula: ~1
-    <environment: 0x0000000043cc9f50>
+    <environment: 0x0000000043a3af38>
     Coefficients: 
           pr1       pr2       pr3 
     0.1873907 0.4363399 0.3762694 

@@ -1,0 +1,792 @@
+---
+title: "HMM with depmixS4 (categorical indicators)"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+# Hidden Markov Models (HMM)
+
+Here we present Hidden Markov Models (HMM) as a longitudinal extension of Latent Class Analysis (LCA). Where we have an LCA at multiple time points, representing the relationship between the latent variable and the observed indicators (measurement part), and the relation of states across time (structural part).
+
+A HMM is a mixture model with a dynamic categorical latent variable. One of the key elements of this model is that latent-state transitions occurring over time are modeled using a first-order Markov structure. The second key element is that the latent states are connected to one or more observed response variables via a latent class structure with conditional densities (Vermunt, 2010).
+
+Besides the Markov assumption for the latent states and the local independence assumption for the responses within occasions, the latent Markov model assumes that responses are independent across occasions conditional on the latent states. The latter implies that the observed associations across time points are assumed to be explained by the autocorrelation structure for the latent states.
+
+When used with multiple indicators, the model is a longitudinal data extension of the standard latent class model (Hagenaars, 1990). The time-specific latent states can be seen as clusters or types which differ in their responses on the J indicators, and the Markovian transition structure is used to describe and predict changes that may occur across adjacent measurement occasions.
+
+## Markov assumption
+
+The markov assumptions is the basis of the structural part of the model. Representing that the latent states at time $t$ is only affected by the latent states at time $t-1$ . Meaning that the change of time is a *lag 1* model, where each time point is only has a direct effect by the previous time point, and the time points before it have indirect effects.
+
+![Markov Model](markov_model.png)
+
+Here we see that the probability of being in any given state at $t+1$ is only conditional on time $t$. While the response probabilities of the observed indicators are independent of previous time points, conditional on the latent states.
+
+## Measurement model
+
+The measurement model is a time invariant (constant) LCA. Where latent states are defined by some observed indicators, and the differences in response patterns (Masyn, 2013; Collins & Lanza, 2010).
+
+Here we will not extend on LCA, as that is cover in other readings and tutorials.
+
+## Structural model
+
+The structural model of an HMM is comprise of two sets of parameters, (i) initial states, and (ii) transition matrices. The initial states are the proportion of the sample in each state at the first time point, the posterior predictive probability for each class in LCA but at a specific time point. The transition probabilities present the probability of someone in each state to move to any other state between time $t-1$ to time $t$.
+
+The default model assumes that the transition matrix is time invariant. Meaning that the probability to transition is the same between at time 1 and at time 100. So, it will only present one transition matrix across all time points. This assumption can be relax, by adding *time* as a predictor of the transition matrix, this way we would have a time variant HMM, with different transition matrices at every time point.
+
+The transition matrix is model as a multinomial logistic regression from $k$ states across time.
+
+# `depmixS4`
+
+For this tutorial we will use the package `depmixS4`. Which has the ability to estimate LCAs, with categorical and continuous indicators, their longitudinal extension of Hidden Markov Models (HMM), and allows to include covariates. Depending on the *R* package you use, you might have some of these features, but so far this is the package that we have found to have more features.
+
+A disadvantage is that it lacks some nice summary functions, like to generate plots, tables, etc. For this I have written some functions, which build on the presentations functions from the package *tidySEM*. In the future I will collaborate to have this functions included in the package (will update the tutorials when this happens).
+
+For now, you will need to run as source the `demixs4_helper_functions.R` code. This will load a series of helper functions to create plots and summarize the results. Then we will load the package `depmixS4` for LCA, `rio` to import the data set.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+source("demixs4_helper_functions.R")
+library(depmixS4)
+library(rio)
+library(sjlabelled)
+library(summarytools)
+library(ggplot2)
+library(ggseqplot)
+library(tidyr)
+library(TraMineR)
+```
+
+If you want to load the helper functions directly from this GitHub repository, you can do it with this URL
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: false
+#| warning: false
+
+source("https://raw.githubusercontent.com/maugavilla/well_hello_stats/main/tutorials/demixs4_helper_functions.R")
+```
+
+# Dichotomous indicator example
+
+Then we will import the **vermunt_tran_magidson.sav** example data set for analysis.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat <- import("vermunt_tran_magidson.sav")
+head(dat)
+dim(dat)
+```
+
+With the function `get_label()` we see the label attribute extracted from the SPSS data set. And with the function `get_labels()` we see the values for each variable. This data set doesn't provide much information from their variables, except for the demographic variables
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+get_label(dat)
+get_labels(dat)
+```
+
+Looking at the frequency distribution of the 3 indicators of substance use, we see that harder drugs presents the lower proportion of use (13%)
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+freq(dat[,c("alc","mrj","drugs")])
+```
+
+From this example, we will work with the variables about use of alcohol (`alc`), marijuana (`mrj`), and heavier drugs (`drugs`), thesea re coded 0 for no use, and 1 for use. Other than the observed indicators we will keep the `id`, time (`age11`), and sex (`male`) variables.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat2 <- dat[,c("id","age11","male","alc","mrj","drugs")]
+dat2$alc <- as.factor(dat2$alc)
+dat2$mrj <- as.factor(dat2$mrj)
+dat2$drugs <- as.factor(dat2$drugs)
+head(dat2)
+summary(dat2)
+```
+
+For this analysis we need the longitudinal data set to be structure in the *long* format, where each time point is a row, so each subject has as many rows as time points they have. We can see how many time points are observed for each subjects with the table function, here we are showing the range as we dont want to print the output for so many subjects
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+length(unique(dat2$id)) ## number of subjects
+range(table(dat2$id)) ## range of number of time points
+
+```
+
+Here we see that we have 1725 subjects, with 23 time points each.
+
+## `depmixS4` syntax
+
+When working with `depmixS4`, we will use the dep`mix()` function for LCA. If we look at its helps page `?depmix`. The main necessary arguments are `response`, which needs a list of the regression model for each indicator variable. The basic regression will an intercept only model, for example `reponse~1`, for a categorical variable this will estimate the probability of answering the highest value. Then we have the `data` argument, where we provide or data frame. Next, we need to specify the number of states to estimate in our LCA, in our first example `nstates=2` es ask for a 2 class LCA, then we need to specify how many time points are observed for each subject, we do this in the argument `ntimes` and we extract this information with the `table` function. Last, we need to specify the `family` argument, here we define how we want to treat each indicator, with `multinomial("identity")` we specify that the indicators are categorical and estimate the model with the identity link function.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+hmm1_mod <- depmix(response = list(alc~1, mrj~1, drugs~1),
+                data=dat2,
+                nstates = 2,
+                ntimes = as.numeric(table(dat2$id)),
+                family = list(multinomial("identity"),multinomial("identity"),multinomial("identity")))
+summary(hmm1_mod)
+
+```
+
+From the summary function we see that with 2 states, we have the equal starting values for the Initial state probabilities, transition matrix, and response parameters.
+
+With the `depmix` function we build the `depmixS4` model, we can see the model definition, and the starting values with the `summary()` function. To estimate the model, we give the built model to the `fit()` function, and with the `summary()` we can see the results.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+set.seed(1987)
+
+hmm1_fit <- fit(hmm1_mod,
+                emcontrol=em.control(maxit=50000,random.start = TRUE))
+summary(hmm1_fit)
+```
+
+Congratulation! you have run your first HMM. We see that in a 2 state model, all the sample starts in state 1 (initial states), for those in states 1 there is 0.93 probability of staying in states one, and there is 0.07 probability of moving to state 2. For those in state 2, there is 0.919 probability of staying, and 0.081 probability of moving to state 1.
+
+In the response parameters we can see the probabilities for each answer in each state. So, state 1 has 61.9% chance of drinking alcohol, 2.6% chance of using marijuana, and 0.6% chance of using harder drugs. In state 2, has 99% chance of drinking alcohol, 87.4% chance of using marijuana, and 36.2% chance of using harder drugs. We can see that state 1 is of no users, and state 2 of users.
+
+### Time variant HMM
+
+This data comes from data of teenagers, starting at age 11. So, it makes sens to think that the transition matrices are time varying. We can estimate the time varying HMM by adding our time variable as a predictor of the transitions, for this we now add the argument `transition = ~age11` , indicating that the variable age will be a prediction of the transition matrix
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+hmm2_mod <- depmix(response = list(alc~1, mrj~1, drugs~1),
+                data=dat2,
+                nstates = 2,
+                transition = ~ age11,
+                ntimes = as.numeric(table(dat2$id)),
+                family = list(multinomial("identity"),multinomial("identity"),multinomial("identity")))
+summary(hmm2_mod)
+```
+
+See that for initial state and response probabilities nothing has changed. But for the transition matrix, we have a multinomial logistic regression for each component. In each one the first state is used as the baseline state. So, for St1 regression, the column St1 is the regression for the probability of staying in St1, and column St2 is the probability of switching from St1 to St2. And the regression from St2, the column St1 is the probability of switching from St2 to St1, and the column St2 is the probability of staying in St2.
+
+Then we can estimate the time varying HMM with the `fit` function
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+hmm2_fit <- fit(hmm2_mod,
+                emcontrol=em.control(maxit=50000,random.start = TRUE))
+summary(hmm2_fit)
+
+```
+
+We will evaluate the relevance of the predictor in two ways, first by looking at the NHST of the respective multinomial logistic regressions. For this we will first calculate the standard errors with the `standardError()` function, and then calculate the Wald test
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+nhst <- standardError(hmm2_fit)
+nhst$wald <- nhst$par/nhst$se
+nhst$pvalue <- 1-pnorm(abs(nhst$wald))
+nhst
+```
+
+Right now we care about the parameters in rows 4 to 10, here we see that we reject the null hypothesis of the multonomial logistic regression parameters being equal to 0 $p < .001$
+
+The second way that we will evaluate the relevance of the predictor is by comparing the model fit. We can use the `get_fits()` function to get the fit indices to compare the models
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+fits <- sapply(list(hmm1_fit, hmm2_fit), get_fits)
+colnames(fits) <- c("Time Invariant", "Time Varying")
+round(fits, 3)
+```
+
+Here we see that all IC presents better fit for the time varying model. finally we can do the likelihood ratio test between them with the following code. Which rejects the null hypothesis of both models representing the data equally well.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+1-pchisq((-2*-16481.703  - -2*-16288.147), 
+         df = (22 - 18) )
+
+```
+
+Based on these information we would argue that the HMM in this case should be time varying. So, in the following steps we will work with the time varying HMM. Note that here we are testing the relevance of time varying model before the class enumeration, but will do the class enumeration selection without the time constant HMM and then add the time predictor, this mainly because the models take longer to run. It depends if you want to account for it in the class enumeration, or after.
+
+Also, we will present how to translate the regression parameters into transition matrices conditional on the predictor later
+
+## Class enumeration
+
+In exploratory HMM, a sequence of models is fitted to the data with each additional model estimating one more class than the previous model. These models are then compared and the best solution is selected as the final class solution. In some cases, prior theory can inform the researcher about the number of classes to expect.
+
+From a sequence of models, the final class solution is chosen based on both theoretical and statistical criteria. Theory should drive the selection of indicator variables, inform the expectations and reflect on the findings. In addition to this, there are several statistical criteria to consider in model selection. These include but are not limited to likelihood ratio tests, information criteria, and the Bayes factor (Masyn, 2013).
+
+Relative model fit can be examined using the likelihood ratio test. This is only appropriate when the two models we wish to compare are nested. The likelihood ratio test statistic is computed as the difference in maximum log-likelihoods of the two models, with the test degrees of freedom being the difference in the degrees of freedom of the two compared models. The test statistic follows the $\chi^2$ distribution, and we want it to be non-significant in order to give support to the simpler model. The likelihood ratio test can only compare two nested models at a time (Collins & Lanza, 2010).
+
+Here we show how to use a loop in *R* to run the model for a sequence of HMM's, with increasing number of classes, from 1 to 6, if you were to add the predictor to the transition matrix you would need to test for 2 to 6 classes as the conditional transitions cannot be estimated for 1 class HMMs.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+n_states <- 1:6
+hmm_res <- list()
+for(i in 1:length(n_states)){
+  
+  print(n_states[i])
+  
+  mod <- depmix(response = list(alc~1, mrj~1, drugs~1),
+                data=dat2,
+                nstates = n_states[i],
+                ntimes = as.numeric(table(dat2$id)),
+                family = list(multinomial("identity"),multinomial("identity"),multinomial("identity")))
+  
+  hmm_res[[i]] <- multistart(mod, nstart=5, initIters=50000)
+}
+
+```
+
+See, that we first create a vector with the number of states we want to estimate, then we create an empty `list` object where we will save all our HMM's. In the loop you will see that the model defined with the `depmix` function is the same, and the only difference is that we loop over the number of states. Then we use the `multistart` function to estimate each model and save it into the empty list object. With the `multistart` function, we can estimate the model multiple times, with different starting values each time. This is useful to be more certain that the results are not a local maxima but correct convergence. With the `nstart` argument we specify how many starting values we want to use, and with the `initIters` argument we specify how many iterations use for each run.
+
+You should see the message for each model that it converged, if it doesnt show up, you can check each model by looking into the list of models, like looking at the 5th model
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+hmm_res[[5]]
+```
+
+### Model Fit Indices
+
+Fit indices typically used for determining the optimal number of classes include the Akaike Information Criterion (AIC) and the Bayesian Information Criterion (BIC). Both information criteria are based on the -2\*log-likelihood (which is lower for better fitting models), and add a penalty for the number of parameters (thus incentivizing simpler models). This helps balance model fit and model complexity. The lower the value of an information criterion, the better the overall fit of the model.
+
+The general objective of the Information Criteria (IC) is to evaluate the model's out-of-sample predictive accuracy, so adjusting for over fitting. Fit measures like $R^2$ evaluate the in-sample predictive accuracy, meaning that they evaluate the models ability to predict the observed outcomes based on the same data that was use to build up the model. These metrics are positively bias, meaning that will present better model fit than it has in reality. While IC corrects for this positive bias by evaluating the models accuracy approximating the out-of-sample predictive accuracy, meaning that it is the ability to predict the outcome for observations that are not part of the training model. Ideally we would estimate the model a lot of time with less observations and predict their scores, but IC's approximate this by their different penalty metrics. For example $R^2$ will increase even if an added predictors are unnecessary, while IC's will show worst fit when a predictor (complexity) is unnecessary (McElreath, 2020)
+
+The BIC applies a stronger penalty for model complexity that scales logarithmically with the sample size. The literature suggests the BIC may be the most appropriate information criterion to use for model comparison (Nylund-Gibson & Choi, 2018; Masyn, 2013)
+
+Information criteria may occasionally contradict each other, so it is important to identify a suitable strategy to reconcile them. One option is to select a specific fit index before analyzing the data. Another option is to always prefer the most parsimonious model that has best fit according to any of the available fit indices. Yet another option is to incorporate information from multiple fit indices using the analytic hierarchy process. Finally, one might make an elbow plot and compare multiple information criteria (Nylund-Gibson & Choi, 2018).
+
+A disadvantage of the IC's is that we do not have standard errors for them, so we only have the absolute values without a measure of their variability. So, the difference between models IC can be very small. Still indicating that the model with the lower value is "better", but if this difference is very small can considered them "functionally equal", and you should take into consideration the interpretability of the model.
+
+LCA studies commonly report -2\*log likelihood of the final class solution. This is a basic fit measure used to compute most information criteria. However, since log likelihood is not penalized for model complexity, it will continuously fall with the addition of more classes.
+
+We have created a helper function to estimate a series of fit indices for an LCA from `depmixS4`, that can be use to get the fit indices from a model from the list
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+get_fits(hmm_res[[2]])
+```
+
+But we can apply it to all the objects in the list and return a `data.frame`, we are creating a data with the number of states and the fit indices, such as log-likelihood, AIC, BIC, SABIC.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+fit_ind <- data.frame(n_states=n_states,
+                      t(sapply(hmm_res, get_fits)))
+fit_ind
+```
+
+Looking at AIC and BIC, we see that the model improves (smaller) as the number of classes increases between 1 and 3, and from 4 and above the fit worsen. Then we create the elbow plot. We first structure the fit indices into long format with `pivot_longer` function, and then we use `ggplot2` to create the elbow plot.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+elbow_plot <- fit_ind[ , c("n_states","AIC","BIC","CAIC","KIC","SABIC")] # extract ICs
+elbow_plot <- pivot_longer(elbow_plot, cols = c("AIC","BIC","CAIC","KIC","SABIC"), names_to = "IC", values_to = "Value") # to long format
+
+ggplot(elbow_plot, aes(x = n_states, y = Value, group = IC))+
+  geom_point(aes(color = IC))+
+  geom_line(aes(color = IC))+
+  labs(title="Elbow Plot of Information Criteria per Class Solution", 
+       x = "Class Solution", y = " Value")+
+  theme_minimal()
+```
+
+From these results we see a meaningful improvement at least up to 3 classes, and relatively flat change after 4 classes. In practice you should get the results for the 3, 4 and 5 class solution, and evaluate which is more theoretically relevant. Here for tutorial purposes, we will choose the 4 class solution
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+summary(hmm_res[[4]])
+
+```
+
+Here we see the interpretation of the state response patterns
+
+1.  State 1 (All substances): users of all 3 substances, over 90% chance of using them
+
+2.  State 2 (Soft substances): users of alcohol and marijuana, but not users of harder drugs
+
+3.  State 3 (No users): low probability of using any substance
+
+4.  State 4 (Alcohol users): high probability of drinking alcohol,bu low probability of using any other substance
+
+We also see that all the sample starts in State 3 (No users), from the initial state probabilities.
+
+From the time constant transition matrix, we see:
+
+1.  The no users (state 3), have 8% chance of moving to the soft substance state (state 2), and 12% chance of moving to the alcohol use state (4). And 80% chance of stayin in the no users state.
+
+2.  The all substance state (1) have 83% chance of staying in the same state. Ans 14% chance of moving to the soft substance state (2).
+
+3.  The soft substance state (2) has 78% chance of staying in that state. and 10% chance of moving to the all substance state, or the alcohol user state.
+
+4.  The alcohol users state (4) have 92% chance of staying in that state. And 5% chance of moving to the soft substance state (2).
+
+## Time varying HMM
+
+As we show before, in this case a time varying HMM makes more theoretical sense, and in our first test (with 2 states) is presents better fit. So, fort lets estimate the time varying HMM with 4 classes, estimating it multiple starting values (you will notice these ones take longer)
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+hmm4c_tv <- depmix(response = list(alc~1, mrj~1, drugs~1),
+                data=dat2,
+                nstates = 4,
+                transition = ~ age11,
+                ntimes = as.numeric(table(dat2$id)),
+                family = list(multinomial("identity"),multinomial("identity"),multinomial("identity")))
+summary(hmm4c_tv)
+
+hmm4c_tv_fit <- multistart(hmm4c_tv, nstart=5, initIters=50000)
+```
+
+We can see the overall model here
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+summary(hmm4c_tv_fit)
+
+```
+
+From the response patterns, we see that the no users states is state 2 now, the soft substance is state 1, state 3 is the all substances, and state 4 is the alcohol users. So, we see label switching, but the same profiles and response patterns overall
+
+When we look at the 4 class solutions, we see that the time varying one has better model fit. So, we will choose to keep the time varying HMM
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+fits <- sapply(list(hmm_res[[4]], hmm4c_tv_fit), get_fits)
+colnames(fits) <- c("Time Invariant", "Time Varying")
+round(fits, 3)
+```
+
+### Classification Diagnostics
+
+Best models will divide the sample into subgroups which are internally homogeneous and externally distinct. Classification diagnostics give us a way to assess the degree to which this is the case. They are separate from model fit indices as a model can fit the data well but show poor latent class separation (Masyn, 2013). Classification diagnostics should not be used for model selection, but they can be used to disqualify certain solutions because they are uninterpretable. Interpretability should always be a consideration when considering different class solutions (Nylund-Gibson & Choi, 2018)
+
+Four important classification diagnostics are shown here: (1) the *minimum* and *maximum* percentage of the sample assigned to a particular *class*, (2) the *range of the posterior class probabilities* by most likely class membership, (3) *entropy*, and (4) *AvePP* average posterior class probability. All three are based on posterior class probabilities.
+
+The posterior class probability is a measure of classification uncertainty which can be computed for each individual, or averaged for each latent class. When the posterior class probability is computed for each individual in the dataset, it represents each person's probability of belonging to each latent class. For each person, the highest posterior class probability is then determined and the individual is assigned to the corresponding class. We want each individual's posterior class probabilities to be high for one and low for the remaining latent classes. This is considered a high classification accuracy and means that the classes are distinct. To obtain posterior class probabilities, run the custom function`class_prob_dm()`. This function produces output comprised of several elements:
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag <- class_prob_dm(hmm4c_tv_fit)
+```
+
+`$sum.posterior` is a summary table of the posterior class probabilities indicating what proportion of the data contributes to each class at the initial time point.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$sum.posterior
+```
+
+`$sum.mostlikely` is a summary table of the most likely class membership based on the highest posterior class probability. From this table, we compute the minimum and maximum percentage of the sample assigned to a particular class, , i.e. **n_min** (the smallest class proportion based on the posterior class probabilities) and **n_max** (the largest class proportion based on the posterior class probabilities). We are especially interested in **n_min** as if it is very small and comprised of few observations, the model for that group might not be locally identified. It may be impossible to calculate descriptive statistics for such a small class. Estimating HMM parameters on small subsamples might lead to bias in the results. Therefore, we advise caution when dealing with small classes. It is important to note that these are in function of the row predicted states across all subjects and time points.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$sum.mostlikely
+```
+
+`$mostlikely.class` is a table with rows representing the class the person was assigned to, and the columns indicating the average posterior probability. The diagonal represents the probability that observations in each class will be correctly classified. If any of the values on the diagonal of this table is low, we might consider not to interpret that solution. We use the diagonal to compute the range of the posterior class probabilities by most likely class membership which consists of the lowest class posterior probability (**prob_min**), and the highest posterior probability (**prob_max**). Both **prob_min** and **prob_max** can be used to disqualify certain class solutions, and are a convenient way to summarize class separation in LCA. We want both **prob_min** and **prob_max** to be high as that means that for all classes the people who were assigned to that class have a high probability of being there. **prob_min** is especially important as it can diagnose if there is a class with low posterior probabilities which could make one reconsider that class solution.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$mostlikely.class
+```
+
+`$avg.mostlikely` contains the average posterior probabilities for each class, for the subset of observations with most likely class of 1:k, where k is the number of classes.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+cl_diag$avg.mostlikely
+```
+
+`AvePP` is presented as diagonal of `$avg.mostlikely`, the average posterior class probability (mean) for the subjects classified in the respective class.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+diag(cl_diag$avg.mostlikely)
+```
+
+`$individual` is the individual posterior probability matrix, with dimensions n (number of cases in the data) x k (number of classes). Additionally it includes the `predicted` class in function of the highest predicted probability. Individual class probabilities and/or predicted class are often useful for researchers who wish to do follow up analyses.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+head(cl_diag$individual)
+```
+
+Entropy is a summary measure of posterior class probabilities across classes and individuals. It ranges from 0 (model classification no better than random chance) to 1 (perfect classification). As a rule of thumb, values above .80 are deemed acceptable and those approaching 1 are considered ideal. An appropriate use of entropy is that it can disqualify certain solutions if class separability is too low. Entropy was not built for nor should it be used for model selection during class enumeration (Masyn, 2013). **n_min**, **n_max**, **prob_min**, **prob_max**, and **entropy** and can be obtained using `get_fits()`.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+round(get_fits(hmm4c_tv_fit), 4)
+```
+
+### Conditional transition matrices
+
+Now we have a series of multinomial logistic regressions that represent the change in probabilities in the transition matrices. But we need the transition matrices at different values of time (`age11`).
+
+We can extract the necessary information from the output of the `predict` function of the transition matrix *mlogit* regressions. First, we will extract the predictions from the transitions regressions, this will give us a list object of length 4 (dimension of the transition matrix). So, the first object present the transitions from State 1 to all other states, the second presents the transitions from State 2 to all other, and so on.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+pred_trans <- lapply(hmm4c_tv_fit@transition, predict)
+is(pred_trans)
+length(pred_trans)
+```
+
+Then we can select within each object the rows for a specific time point, and build a transition matrix, for example for `age11=5`
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+tm <- t(sapply(pred_trans, function(x){colMeans(x[dat2$age11 == 5,])}))
+round(tm,4)
+```
+
+With this function, we just need to change the desired age in `dat2$age11 == 5` to change the conditional transition matrix for a specific time point. As a next step you would want to have the matrices for all time points.
+
+We can do this by running the previous code for every observed value in the time variable, we can do this with the following code. First we save all the unique observed time points. Then we calculate all transition matrices for each time point in a loop.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+times <- unique(dat2$age11)
+times
+
+tm_all <- NULL
+for(j in 1:length(times)){
+  temp <- t(sapply(pred_trans, function(x){colMeans(x[dat2$age11 == times[j],])}))
+  temp <- cbind(rep(times[j], ncol(temp)), 
+                1:nrow(temp),
+                temp)
+  tm_all <- do.call(rbind, list(tm_all, temp))
+}
+colnames(tm_all) <- c("time","from", 1:4)
+round(tm_all, 4)
+```
+
+Now, we have all transition matrices over time
+
+### Plotting HMM
+
+Here we will present a couple of ways to plot the results from HMM. The first would be use the predicted classes from HMM to do index plots from Sequence Analysis, this with the packages `TraMineR` and `ggseqplot`
+
+#### Index plot
+
+First, we need to take the subjects ids, time, and predicted classes into a data frame. This will be in the long format (as we have use it so far), and now we need to switch it to wide format
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat3 <- data.frame(dat2[,c("id","age11")], pred=cl_diag$individual$predicted)
+#colnames(dat2) <- c("persnr","maand1","Class2","Cluster")
+#dat2$maand <- paste0("m",dat2$maand)
+head(dat3)
+summary(dat3)
+
+dat3 <- pivot_wider(dat3, id_cols = c(id), 
+                    names_from = age11, 
+                    values_from = pred)
+head(dat3)
+```
+
+Now we have a wide data set, with the id and predicted states at each of the 23 time points. Then we need to translate this into a sequence object with the `seqdef` function. Here we need to provide only the predicted classes (exclude the id variable), and can add labels to the states
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+
+alphabet <- 1:4
+labs <- c('Soft substance', 
+          'No users',
+          'All substances',
+          'Alcohol')
+scodes <- c("SS","NU","AS","AL")
+
+seq_pred <- seqdef(dat3, 2:ncol(dat3), 
+                   alphabet = alphabet,
+                   labels = labs, 
+                   states = scodes)
+```
+
+Then we can use the `ggseqiplot` function to create the index plot. Here we see the process over time in their predicted states. Everyone starts as a non user, but then we see the switch to alcohol users, and some go to soft or all substances.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+ggseqiplot(seq_pred, 
+          sortv="from.start")
+
+```
+
+This plots is sorted by the states at the beginning, we can also sorted by the end. Now, we see that most subjects end up as alcohol users, some in the other states, and all substances is the smaller state at the end.
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+ggseqiplot(seq_pred, 
+           sortv="from.end")
+
+```
+
+You can sort the index plot in function on how you want to describe the results
+
+#### Density plot
+
+Another plots from Sequence Analysis, is the density plot. This one presents the proportion of the sample at each time point that is predicted to be in each state
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+ggseqdplot(seq_pred)
+
+```
+
+We can also separate each state, and present each in separate rows or columns, with the `dissect` argument
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+ggseqdplot(seq_pred,
+           dissect = "col")
+```
+
+#### Transition probabilities
+
+Specially in the case of time varying HMMs, we have too many numbers to describe the transitions over time. For this we think visualization can help. First we need to take all full table of transition matrices, and transform it into a long format table, where each row will be a single transition probability at a single time point, with the following code
+
+Note that I an recoding the state numbers for the names we have given them, for nicer plots and easier interpretation
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+tm_all <- as.data.frame(tm_all)
+
+tm_all$time <- as.factor(tm_all$time)
+tm_all$from <- as.factor(tm_all$from)
+
+dat4 <- pivot_longer(tm_all, 
+                     cols = as.character(1:4), 
+                     names_to = "to",
+                     values_to = "transition")
+dat4$from <- car::recode(dat4$from, 
+                         "1='Soft substance';
+                         2='No users';
+                         3='All substances';
+                         4='Alcohol' ")
+dat4$to <- car::recode(dat4$to, 
+                         "1='Soft substance';
+                         2='No users';
+                         3='All substances';
+                         4='Alcohol' ")
+dat4
+```
+
+Now, we can plot the transitions from each starting state (column `from`), to each outgoing state (column `to`), with this `ggplot2` syntax
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+q <- ggplot(data=dat4, 
+            aes(x=time,y=transition, fill=to))
+q + geom_bar(stat="identity") + 
+  facet_grid(rows=vars(from))+
+  scale_color_gradient()
+
+```
+
+Not surprisingly, most subjects tend to stay in the state that they are, and if the transition probability to other state is low can be hard to see. For this reason, we can also make the same plot, but excluding the probability to stay in the same state, by subsetting the table excluding rows where the `from` and `to` table are the same
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+q2 <- ggplot(data=dat4[dat4$from != dat4$to,], 
+            aes(x=time,y=transition, fill=to))
+q2 + geom_bar(stat="identity") + 
+  facet_grid(rows=vars(from))+
+  scale_color_gradient()
+
+```
+
+Now its easier to read the transition probabilities to move to another state
+
+# References
+
+Vermunt, J. K. (2010). Longitudinal Research Using Mixture Models. In K. Montfort, J. H. Oud, & A. Satorra (Eds.), *Longitudinal Research with Latent Variables* (pp. 119--152). Springer. <https://doi.org/10.1007/978-3-642-11760-2_4>
+
+Hagenaars, J. A. (1990). Categorical longitudinal data: Loglinear analysis of panel, trend and cohort data. Newbury Park: Sage
+
+Masyn, K. E. (2013). Latent Class Analysis and Finite Mixture Modeling. In P. E. Nathan & T. D. Little (Eds.), The Oxford Handbook of Quantitative Methods: Vol. Volume 2: Statistical Analysis (p. 63). Oxford University Press.
+
+Collins, L. M., & Lanza, S. T. (2010). Latent Class and Latent Transition Analysis: With Applications in the Social, Behavioral, and Health Science. John Wiley & Sons, Inc.
+
+Visser, I., & Speekenbrink, M. (2022). *Mixture and Hidden Markov Models with R*. Springer International Publishing. <https://doi.org/10.1007/978-3-031-01440-6>
+
+McElreath, R. (2020). Statistical rethinking: A Bayesian course with examples in R and Stan (2nd ed.). Taylor and Francis, CRC Press.
+
+Nylund-Gibson, K., & Choi, A. Y. (2018). Ten frequently asked questions about latent class analysis. Translational Issues in Psychological Science, 4(4), 440--461. https://doi.org/10.1037/tps0000176
