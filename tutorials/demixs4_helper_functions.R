@@ -225,7 +225,13 @@ bvr <- function(fit, dat, priors=NULL) {
 ##### residual correlations
 
 
-res_cors <- function(x, dat, pv=F, method="pearson"){
+res_cors <- function(x, dat, 
+                     method="pearson",
+                     c=NULL,p=NULL,d=NULL,
+                     use = "complete.obs",
+                     digits = 3
+                     #pv=F
+                     ){
   
   y <- dat
   y$class <- x@posterior[,1]
@@ -233,13 +239,17 @@ res_cors <- function(x, dat, pv=F, method="pearson"){
   unq <- sort(unique(y$class))
   res_cor <- list()
   for(j in 1:length(unq)){
-    if(pv){
-      res_cor[[j]] <- corr.test(y[y$class == unq[j],colnames(dat)], 
-                                method = method)
-    }else{
-      res_cor[[j]] <- cor(y[y$class == unq[j],colnames(dat)], 
-                                method = method)
-    }
+    #if(pv){
+    #  res_cor[[j]] <- corr.test(y[y$class == unq[j],colnames(dat)], 
+    #                            method = method)
+    #}else{
+      #res_cor[[j]] <- cor(y[y$class == unq[j],colnames(dat)], 
+      #                          method = method)
+      
+      res_cor[[j]] <- round(mixedCor(y[y$class == unq[j],colnames(dat)],
+                               c=c,p=p,d=d,
+                          method = method, use=use)$rho, digits)
+    #}
     
   }
   
@@ -283,3 +293,8 @@ sum_list <- function(x, dat){
 #          facet = "class")
 
 #res_cors(fm, dat=balance[,c("d1","d2","d3","d4")], pv=F)
+#rr <- res_cors(lca_res[[3]], 
+#         dat=dat[,c("SYS_RESP", "IDEO_LEV", "REP_POT", "PROT_APP", "CONV_PAR")],
+#         d=c("SYS_RESP", "IDEO_LEV", "REP_POT", "PROT_APP", "CONV_PAR"))
+#rr
+
