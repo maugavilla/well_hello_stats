@@ -1,7 +1,7 @@
 HMM with depmixS4 (categorical indicators)
 ================
 Mauricio Garnier-Villarreal
-1/19/23
+2/6/23
 
 - <a href="#hidden-markov-models-hmm"
   id="toc-hidden-markov-models-hmm">Hidden Markov Models (HMM)</a>
@@ -882,37 +882,38 @@ summary(hmm_res[[4]])
     St3 0.008 0.992 0.068 0.932 0.115 0.885
     St4 0.027 0.973 0.182 0.818 1.000 0.000
 
-Here we see the interpretation of the state response patterns
+Here we see the interpretation of the state response patterns (in use
+severity order)
 
-1.  State 1 (All substances): users of all 3 substances, over 90% chance
-    of using them
+- No users: low probability of using any substance
 
-2.  State 2 (Soft substances): users of alcohol and marijuana, but not
-    users of harder drugs
+- Alcohol users: high probability of drinking alcohol,bu low probability
+  of using any other substance
 
-3.  State 3 (No users): low probability of using any substance
+- Soft substances: users of alcohol and marijuana, but not users of
+  harder drugs
 
-4.  State 4 (Alcohol users): high probability of drinking alcohol,bu low
-    probability of using any other substance
+- All substances: users of all 3 substances, over 90% chance of using
+  them
 
 We also see that all the sample starts in State 3 (No users), from the
 initial state probabilities.
 
 From the time constant transition matrix, we see:
 
-1.  The no users (state 3), have 8% chance of moving to the soft
-    substance state (state 2), and 12% chance of moving to the alcohol
-    use state (4). And 80% chance of stayin in the no users state.
+1.  The no users, have 8% chance of moving to the soft substance state,
+    and 12% chance of moving to the alcohol use state. And 80% chance of
+    staying in the no users state.
 
-2.  The all substance state (1) have 83% chance of staying in the same
-    state. Ans 14% chance of moving to the soft substance state (2).
+2.  The all substance state have 83% chance of staying in the same
+    state. Ans 14% chance of moving to the soft substance state.
 
-3.  The soft substance state (2) has 78% chance of staying in that
-    state. and 10% chance of moving to the all substance state, or the
-    alcohol user state.
+3.  The soft substance state has 78% chance of staying in that state.
+    and 10% chance of moving to the all substance state, or the alcohol
+    user state.
 
-4.  The alcohol users state (4) have 92% chance of staying in that
-    state. And 5% chance of moving to the soft substance state (2).
+4.  The alcohol users state have 92% chance of staying in that state.
+    And 5% chance of moving to the soft substance state.
 
 ## Time varying HMM
 
@@ -1176,11 +1177,11 @@ that class solution.
 cl_diag$mostlikely.class
 ```
 
-                [,1]       [,2]        [,3]       [,4]
-    [1,] 0.700761892 0.04128222 0.099032870 0.15892302
-    [2,] 0.003830002 0.88120768 0.003324670 0.11163764
-    [3,] 0.154776044 0.01271784 0.797868447 0.03463767
-    [4,] 0.059349971 0.07264743 0.007841619 0.86016098
+               assigned.1 assigned.2  assigned.3 assigned.4
+    avgprob.1 0.700761892 0.04128222 0.099032870 0.15892302
+    avgprob.2 0.003830002 0.88120768 0.003324670 0.11163764
+    avgprob.3 0.154776044 0.01271784 0.797868447 0.03463767
+    avgprob.4 0.059349971 0.07264743 0.007841619 0.86016098
 
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
@@ -1190,11 +1191,11 @@ where k is the number of classes.
 cl_diag$avg.mostlikely
 ```
 
-                 S1          S2          S3        S4
-    [1,] 0.76844473 0.005752430 0.090680029 0.1351228
-    [2,] 0.02936451 0.858515516 0.004833246 0.1072867
-    [3,] 0.18132933 0.008337722 0.780523052 0.0298099
-    [4,] 0.07509876 0.072254807 0.008745011 0.8439014
+               meanprob.S1 meanprob.S2 meanprob.S3 meanprob.S4
+    assigned.1  0.76844473 0.005752430 0.090680029   0.1351228
+    assigned.2  0.02936451 0.858515516 0.004833246   0.1072867
+    assigned.3  0.18132933 0.008337722 0.780523052   0.0298099
+    assigned.4  0.07509876 0.072254807 0.008745011   0.8439014
 
 `AvePP` is presented as diagonal of `$avg.mostlikely`, the average
 posterior class probability (mean) for the subjects classified in the

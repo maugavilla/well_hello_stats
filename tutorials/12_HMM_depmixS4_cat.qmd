@@ -383,27 +383,27 @@ summary(hmm_res[[4]])
 
 ```
 
-Here we see the interpretation of the state response patterns
+Here we see the interpretation of the state response patterns (in use severity order)
 
-1.  State 1 (All substances): users of all 3 substances, over 90% chance of using them
+-   No users: low probability of using any substance
 
-2.  State 2 (Soft substances): users of alcohol and marijuana, but not users of harder drugs
+-   Alcohol users: high probability of drinking alcohol,bu low probability of using any other substance
 
-3.  State 3 (No users): low probability of using any substance
+-   Soft substances: users of alcohol and marijuana, but not users of harder drugs
 
-4.  State 4 (Alcohol users): high probability of drinking alcohol,bu low probability of using any other substance
+-   All substances: users of all 3 substances, over 90% chance of using them
 
 We also see that all the sample starts in State 3 (No users), from the initial state probabilities.
 
 From the time constant transition matrix, we see:
 
-1.  The no users (state 3), have 8% chance of moving to the soft substance state (state 2), and 12% chance of moving to the alcohol use state (4). And 80% chance of stayin in the no users state.
+1.  The no users, have 8% chance of moving to the soft substance state, and 12% chance of moving to the alcohol use state. And 80% chance of staying in the no users state.
 
-2.  The all substance state (1) have 83% chance of staying in the same state. Ans 14% chance of moving to the soft substance state (2).
+2.  The all substance state have 83% chance of staying in the same state. Ans 14% chance of moving to the soft substance state.
 
-3.  The soft substance state (2) has 78% chance of staying in that state. and 10% chance of moving to the all substance state, or the alcohol user state.
+3.  The soft substance state has 78% chance of staying in that state. and 10% chance of moving to the all substance state, or the alcohol user state.
 
-4.  The alcohol users state (4) have 92% chance of staying in that state. And 5% chance of moving to the soft substance state (2).
+4.  The alcohol users state have 92% chance of staying in that state. And 5% chance of moving to the soft substance state.
 
 ## Time varying HMM
 
