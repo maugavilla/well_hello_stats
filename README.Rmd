@@ -55,52 +55,51 @@ Here you will find links for the respective tutorials, and a short description. 
 
 ## Set up
 
--   [Install R and RStudio for Mac](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_1_Installing_mac.md)
--   [Install R and RStudio for Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md)
--   [Setting up RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md)
+-   [Install R and RStudio for Mac](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_1_Installing_mac.md): how to step by step install R and RStudio on Mac operating system
+-   [Install R and RStudio for Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md): how to step by step install R and RStudio on Windows operating system
+-   [Setting up RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md): explanation of RStudio and how to set it up.
 
 ## Basics
 
--   [R Basics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_1_R_basics.md)
--   [Download the WVS data set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md)
--   [Import data sets (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md)
--   [Import data sets (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md)
--   [Quick R](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_2_Quick_R.md)
+-   [R Basics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/1_1_R_basics.md): basic use of R, data types, data structures, importing data, functions, install and load packages, working directory and saving your work. 
+-   [Download the WVS data set](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/2_1_download_WVS.md): where to request access to the World Value Survey (WVS) data set, used in a lot of the tutorials.
+-   [Import data sets (long)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_1_Import_data_sets_long.md): introduction to data formats, Base R, use of packages foreign, haven and rio, general recommendations. Packages: rio, haven, foreign.
+-   [Import data sets (short)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/3_2_Import_data_sets_short.md): introduction to data formats, use of package rio, general recommendations. 
 
 ## Initial work with data
 
--   [Data management 1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_1_Data_management_1.md)
--   [Data management 2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_2_Data_management_2.md)
--   [Descriptive Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md)
--   [Basic plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md)
+-   [Data management 1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_1_Data_management_1.md): setting up R session, import data set, recode items, create composite scores, variable calculations, selecting subsets. Packages: rio, car, psych.
+-   [Data management 2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_2_Data_management_2.md): setting up R session, import data set, variable types, use the factor function. 
+-   [Descriptive Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md): setting up R session, import data set, continuous items, categorical items, data frame summary. Packages: rio, summarytools. 
+-   [Basic plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md): setting up R session, import data set, ggplot2 basics, histogram, scatter plot, bar plot, box plot. Packages: rio, ggplot2.
 
 ## Relations betwen variables
 
--   [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md)
+-   [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md): setting up R session, import data set, scatter plot, Pearson correlation, Spearman correlation, Kendal-tau correlation, extracting the matrices, correlogram, pairs plot. Packages: rio, psych, corrplot, ggplot2, GGally. 
 
 ## Scale evaluation
 
--   [Reliability](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/7_1_reliability.md)
+-   [Reliability](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/7_1_reliability.md): what is reliability analysis?, preparation, reliability analysis (Cronbach’s alpha, McDonald's omega). Packages: rio, psych, car. 
 
 ## General Linear Models
 
--   [t-test](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_1_ttest.md)
--   [Linear regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md)
--   [Moderation with `lm`](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_1_moderation_lm.md)
--   [Moderation with the PROCESS macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md)
--   [Mediation with path analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md)
--   [Mediation with the PROCESS macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md)
+-   [t-test](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_1_ttest.md): setting up R session, import data set, difference in means, one sample t-test, two sample t-test, paired sample t-test, effect sizes, graphing your results. Packages: rio, effectsize, ggpubr. 
+-   [Linear regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md): setting up R session, import data set, simple linear regression, linear regression with a binary predictor, multiple linear regression, standardize solution, assumptions, effect size, plots, interpretation. Packages: rio, psych, effectsize, visreg, rockchalk, ggplot2.
+-   [Moderation with `lm`](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_1_moderation_lm.md): what is moderation, setting up R session, import data set, moderation analysis steps, categorical and continuous moderator, main effects, interaction models, effect size, probbing, plotting, interpretation. Packages: rio, effectsize, visreg, reghelper.  
+-   [Moderation with the PROCESS macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md): what is moderation, installing PROCESS macro, setting up R session, import data set, moderation analysis steps, categorical and continuous moderator, main effects, interaction models, effect size, probbing, plotting, interpretation. Packages: rio, PROCESS macro
+-   [Mediation with path analysis](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_1_mediation_path.md): what is mediation, setting up R session, import data set, mediation analysis steps, total effect, indirect effect, NHST methods, recommendations and interpretation. Packages: rio, lavaan, semTools.
+-   [Mediation with the PROCESS macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_2_mediation_PROCESS.md): what is mediation, installing PROCESS macro, setting up R session, import data set, mediation analysis steps, total effect, indirect effect, NHST methods, recommendations and interpretation. Packages: rio, PROCESS macro
 
 ## Mixture models
 
--   [LCA with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md)
--   [LCA with tidySEM (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_tidySEM_cat.md)
--   [HMM with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_HMM_depmixS4_cat.md)
+-   [LCA with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md): latent class analysis. depmixS4 basics, dichotomous indicator example, class enumeration, and interpretation. Packages: rio, depmixS4, sjlabelled, summarytools, ggplot2.
+-   [LCA with tidySEM (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_tidySEM_cat.md): latent class analysis. tidySEM basics, dichotomous indicator example, class enumeration, and interpretation. Packages: rio, tidySEM, sjlabelled, summarytools, ggplot2, tidyr.
+-   [HMM with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_HMM_depmixS4_cat.md): hidden markov models, depmixS4 basics, dichotomous indicator example, time invariant and time variant HMM, class enumeration, plots. Packages: rio, depmixS4, sjlabelled, summarytools, ggplot2, ggseqplot, tidyr, TraMineR.
 
 ## Factor Analysis
 
--   [Confirmatory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md)
--   [Exploratory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_EFA_cont.md)
+-   [Confirmatory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_CFA_cont.md): test theory, measurement model, data preparation, CFA, lavaan, estimation, model evaluation, reliability, presenting results. Packages: psych, lavaan, semTools, car, tidyr, ggplot2. 
+-   [Exploratory Factor Analysis with continuous indicators](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/13_EFA_cont.md): test theory, measurement model, data preparation, EFA, estimation, rotation, factor enumeration, cross-validation. Packages: psych, lavaan, semTools, car, tidyr, ggplot2, patchwork.
 
 # Progress
 

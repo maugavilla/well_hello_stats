@@ -2,58 +2,54 @@ R basics: Getting started
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+31 March, 2023
 
--   <a href="#introduction" id="toc-introduction">Introduction</a>
-    -   <a href="#using-rstudio" id="toc-using-rstudio">Using RStudio</a>
-    -   <a href="#running-code-from-the-r-script"
-        id="toc-running-code-from-the-r-script">Running code from the R
-        script</a>
--   <a href="#working-directory" id="toc-working-directory">Working
-    directory</a>
--   <a href="#save-syntax-and-workspace"
-    id="toc-save-syntax-and-workspace">Save syntax and workspace</a>
-    -   <a href="#assigning-values-to-names"
-        id="toc-assigning-values-to-names">Assigning values to names</a>
--   <a href="#data-types" id="toc-data-types">Data types</a>
-    -   <a href="#numeric" id="toc-numeric">Numeric</a>
-    -   <a href="#character" id="toc-character">Character</a>
--   <a href="#data-structures" id="toc-data-structures">Data structures</a>
-    -   <a href="#vector" id="toc-vector">Vector</a>
-        -   <a href="#selecting-elements" id="toc-selecting-elements">Selecting
-            elements</a>
-    -   <a href="#dataframe" id="toc-dataframe">Data.frame</a>
-        -   <a href="#selecting-rows-columns-and-elements"
-            id="toc-selecting-rows-columns-and-elements">Selecting rows, columns and
-            elements</a>
-            -   <a href="#selecting-columns" id="toc-selecting-columns">selecting
-                columns</a>
-            -   <a href="#selecting-rows" id="toc-selecting-rows">selecting rows</a>
-            -   <a href="#selecting-rows-and-columns"
-                id="toc-selecting-rows-and-columns">selecting rows and columns</a>
-        -   <a href="#subsetting-adding-and-modifying-data"
-            id="toc-subsetting-adding-and-modifying-data">Subsetting, adding and
-            modifying data</a>
-    -   <a href="#other-common-data-structures"
-        id="toc-other-common-data-structures">Other common data structures</a>
--   <a href="#importing-and-saving-data"
-    id="toc-importing-and-saving-data">Importing and saving data</a>
--   <a href="#functions" id="toc-functions">Functions</a>
-    -   <a href="#what-is-a-function" id="toc-what-is-a-function">What is a
-        function?</a>
-    -   <a href="#using-functions" id="toc-using-functions">Using functions</a>
-        -   <a href="#viewing-and-interpreting-function-documentation"
-            id="toc-viewing-and-interpreting-function-documentation">Viewing and
-            interpreting function documentation</a>
--   <a href="#packages" id="toc-packages">Packages</a>
-    -   <a href="#install-and-load-packages"
-        id="toc-install-and-load-packages">Install and load packages</a>
-    -   <a href="#some-error-messages" id="toc-some-error-messages">Some error
-        messages</a>
--   <a href="#working-directory-1" id="toc-working-directory-1">Working
-    directory</a>
--   <a href="#save-syntax-and-workspace-1"
-    id="toc-save-syntax-and-workspace-1">Save syntax and workspace</a>
+- <a href="#introduction" id="toc-introduction">Introduction</a>
+  - <a href="#using-rstudio" id="toc-using-rstudio">Using RStudio</a>
+  - <a href="#running-code-from-the-r-script"
+    id="toc-running-code-from-the-r-script">Running code from the R
+    script</a>
+  - <a href="#assigning-values-to-names"
+    id="toc-assigning-values-to-names">Assigning values to names</a>
+- <a href="#data-types" id="toc-data-types">Data types</a>
+  - <a href="#numeric" id="toc-numeric">Numeric</a>
+  - <a href="#character" id="toc-character">Character</a>
+- <a href="#data-structures" id="toc-data-structures">Data structures</a>
+  - <a href="#vector" id="toc-vector">Vector</a>
+    - <a href="#selecting-elements" id="toc-selecting-elements">Selecting
+      elements</a>
+  - <a href="#dataframe" id="toc-dataframe">Data.frame</a>
+    - <a href="#selecting-rows-columns-and-elements"
+      id="toc-selecting-rows-columns-and-elements">Selecting rows, columns and
+      elements</a>
+      - <a href="#selecting-columns" id="toc-selecting-columns">selecting
+        columns</a>
+      - <a href="#selecting-rows" id="toc-selecting-rows">selecting rows</a>
+      - <a href="#selecting-rows-and-columns"
+        id="toc-selecting-rows-and-columns">selecting rows and columns</a>
+    - <a href="#subsetting-adding-and-modifying-data"
+      id="toc-subsetting-adding-and-modifying-data">Subsetting, adding and
+      modifying data</a>
+  - <a href="#other-common-data-structures"
+    id="toc-other-common-data-structures">Other common data structures</a>
+- <a href="#importing-and-saving-data"
+  id="toc-importing-and-saving-data">Importing and saving data</a>
+- <a href="#functions" id="toc-functions">Functions</a>
+  - <a href="#what-is-a-function" id="toc-what-is-a-function">What is a
+    function?</a>
+  - <a href="#using-functions" id="toc-using-functions">Using functions</a>
+    - <a href="#viewing-and-interpreting-function-documentation"
+      id="toc-viewing-and-interpreting-function-documentation">Viewing and
+      interpreting function documentation</a>
+- <a href="#packages" id="toc-packages">Packages</a>
+  - <a href="#install-and-load-packages"
+    id="toc-install-and-load-packages">Install and load packages</a>
+  - <a href="#some-error-messages" id="toc-some-error-messages">Some error
+    messages</a>
+- <a href="#working-directory" id="toc-working-directory">Working
+  directory</a>
+- <a href="#save-syntax-and-workspace"
+  id="toc-save-syntax-and-workspace">Save syntax and workspace</a>
 
 # Introduction
 
@@ -69,15 +65,15 @@ File -\> New File -\> R Script.
 You will now see four windows split evenly over the four corners of your
 screen:
 
--   You have the text editor for the file that you are working in. This
-    will most of the time be an R script (syntax).
--   Can see the data and values that you are currently working with
-    (environment) or view your history of input.
--   Have the console, which is where you can enter and run code, and
-    view the output. If you run code from your R script, it will also be
-    executed in this console.
--   Can browse through files on your computer, view help for functions,
-    or view visualizations.
+- You have the text editor for the file that you are working in. This
+  will most of the time be an R script (syntax).
+- Can see the data and values that you are currently working with
+  (environment) or view your history of input.
+- Have the console, which is where you can enter and run code, and view
+  the output. If you run code from your R script, it will also be
+  executed in this console.
+- Can browse through files on your computer, view help for functions, or
+  view visualizations.
 
 While you can directly enter code into your console, you should always
 work with R scripts. This allows you to keep track of what you are doing
@@ -132,16 +128,16 @@ output.
 You can **run** parts of the code in an R script by pressing Ctrl +
 Enter (on mac this is command + Enter). This can be done in two ways:
 
--   If you select a piece of text (so that it is highlighted) you can
-    press Ctrl + Enter to run the selection. For example, select the
-    first three lines (the three mathematical operations) and press
-    Ctrl + Enter.
--   If you haven’t made a selection, but your text cursor is in the
-    editor, you can press Ctrl + Enter to run the line where the cursor
-    is at. This will also move the cursor to the next line, so you can
-    *walk* through the code from top to bottom, running each line. Try
-    starting on the first line, and pressing Ctrl + Enter six times, to
-    run each line separately.
+- If you select a piece of text (so that it is highlighted) you can
+  press Ctrl + Enter to run the selection. For example, select the first
+  three lines (the three mathematical operations) and press Ctrl +
+  Enter.
+- If you haven’t made a selection, but your text cursor is in the
+  editor, you can press Ctrl + Enter to run the line where the cursor is
+  at. This will also move the cursor to the next line, so you can *walk*
+  through the code from top to bottom, running each line. Try starting
+  on the first line, and pressing Ctrl + Enter six times, to run each
+  line separately.
 
 You might have noticed that after for the `sum()` in the last example we
 have added a comment stating that we are using a function. It is good to
@@ -159,64 +155,6 @@ sum(1,4,6,7,8)
 ```
 
     ## [1] 26
-
-# Working directory
-
-Before we get to far along, we want to make sure that we can save any
-analysis that we do. The working directory is the folder in your
-computer from which R will look for and write files (like your R
-analysis scripts) into directly. You can set the working directory to
-any folder in your computer. We recommend you to have it explicitly for
-each R syntax file, this way every time you start the syntax again.
-
-You can first see what your working directory is with
-
-``` r
-getwd()
-```
-
-There are two ways to set your working directory \* First, with the
-RStudio interface. On the top bar menu Session -\> Set Working Directory
--\> Choose Directory. This will open a window for you to select the
-folder you want to. You will see that these steps will prompt a syntax
-run in the console. We recommend you to copy this line and past it in
-your syntax so you can re-run it next time you open your syntax \*
-Second, we can use the syntax directly, with the `setwd()` function, you
-can copy the direction of the folder and paste it into the function.
-Make sure this is between quotes, and the slash is in this direction /
-
-``` r
-setwd("C:/Users/Admin/Downloads")
-```
-
-# Save syntax and workspace
-
-As we have shown there are two pieces of information we would want to
-save, the syntax and workspace. The syntax is the list of instructions
-you’ve created for R. The workspace is everything you see in RStudio:
-the data, functions, and objects that you have created. From the RStudio
-interface we can save both of them, for the syntax you will use the save
-icon in the syntax pane.
-
-![](images/screen32.png)
-
-This will open a window for you to name the file. This will be a file
-with the extension `.R`
-
-And for saving the workspace, we will use the save icon from the
-Environment pane
-
-![](images/screen33.png)
-
-From here you can give a name to this file. This will be a file with the
-extension `.RData`.
-
-In general, you always want to save the syntax, as this is the
-reproducible base of your analysis. At any point you can open the syntax
-and re-run all the analysis and obtain the same results. We recommend to
-save the workspace only when the results of the project are final and/or
-re-running the syntax takes long so you don’t want to do this every time
-you open the syntax again.
 
 ## Assigning values to names
 
@@ -285,16 +223,16 @@ when we assign a new value to **h** it overwrites the old value.
 Data types concern the different types that single values in data can
 have. The most basic data types in R are:
 
--   numeric (numbers)
--   character (text, sometimes also called ‘strings’)
--   factor (categorical data)
--   logical (True or False)
+- numeric (numbers)
+- character (text, sometimes also called ‘strings’)
+- factor (categorical data)
+- logical (True or False)
 
 In addition, there are special types for data such as date/time values.
 
--   Date (calendar dates) or POSIXlt (calendar dates and times). We will
-    not go over these more advanced data types here, but you should know
-    that they exist within R.
+- Date (calendar dates) or POSIXlt (calendar dates and times). We will
+  not go over these more advanced data types here, but you should know
+  that they exist within R.
 
 ## Numeric
 
@@ -577,12 +515,12 @@ the elements in the *column vectors*. In other words, that each row
 represents a *case*. In our example, these cases are participants, and
 the columns represent:
 
--   the participant **id**.
--   the experimental **condition** (E = experimental condition, C =
-    control group)
--   demographic variables: **gender** and **age**.
--   test scores before and after the experimental condition:
-    **score_t1** and **score_t2**
+- the participant **id**.
+- the experimental **condition** (E = experimental condition, C =
+  control group)
+- demographic variables: **gender** and **age**.
+- test scores before and after the experimental condition: **score_t1**
+  and **score_t2**
 
 ### Selecting rows, columns and elements
 
@@ -857,24 +795,24 @@ There are many correct and formal ways to define what functions are, but
 for the sake of simplicity we will focus on an informal description of
 how you can think of functions in R:
 
--   A function has the form:
-    `output <- function_name(argument1, argument2, ...)`
-    -   **function_name** is a name to indicate which function you want
-        to use. It is followed by parentheses.
-    -   **arguments** are the input of the function, and are inserted
-        within the parentheses. Arguments can be any R object, such as
-        numbers, strings, vectors and data.frames. Multiple arguments
-        can be given, separated by commas.
-    -   **output** is anything that is returned by the function, such as
-        vectors, data.frames or the results of a statistical analysis.
-        Some functions do not have output, but produce a visualization
-        or write data to disk.
--   The purpose of a function is to make it easy to perform a (large)
-    set of (complex) operations. This is crucial, because
-    -   It makes code easier to understand. You don’t need to see the
-        operations, just the name of the function that performs them
-    -   You don’t need to understand the operations, just how to use the
-        function
+- A function has the form:
+  `output <- function_name(argument1, argument2, ...)`
+  - **function_name** is a name to indicate which function you want to
+    use. It is followed by parentheses.
+  - **arguments** are the input of the function, and are inserted within
+    the parentheses. Arguments can be any R object, such as numbers,
+    strings, vectors and data.frames. Multiple arguments can be given,
+    separated by commas.
+  - **output** is anything that is returned by the function, such as
+    vectors, data.frames or the results of a statistical analysis. Some
+    functions do not have output, but produce a visualization or write
+    data to disk.
+- The purpose of a function is to make it easy to perform a (large) set
+  of (complex) operations. This is crucial, because
+  - It makes code easier to understand. You don’t need to see the
+    operations, just the name of the function that performs them
+  - You don’t need to understand the operations, just how to use the
+    function
 
 For example, say that you need to calculate the square root of a number.
 This is a very common thing to do in statistical analysis, but it
@@ -1055,13 +993,12 @@ regularly. As developers improve and fix bugs every so often, we need to
 update the packages to obtain the latest versions. We recommend to check
 for update at least once a month. You can do this in two ways
 
--   First with the RStudio interface. On the bottom left pane, on the
-    **Packages** tab, click on the update button. This will open a
-    window, showing which packages have newer versions available, then
-    click **Select all** and **Install Updates**
--   Second by using the R syntax as shown below, by including the
-    argument `ask=FALSE`, it will automatically installed all available
-    updates.
+- First with the RStudio interface. On the bottom left pane, on the
+  **Packages** tab, click on the update button. This will open a window,
+  showing which packages have newer versions available, then click
+  **Select all** and **Install Updates**
+- Second by using the R syntax as shown below, by including the argument
+  `ask=FALSE`, it will automatically installed all available updates.
 
 ``` r
 update.packages(ask=FALSE, checkBuilt=T)
