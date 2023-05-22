@@ -2,14 +2,12 @@
 title: "Creating and Exporting Tables in APA Format (7th Edition)"
 author: "R Helpdesk (Denise J. Roth) FSW VU Amsterdam"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document:
-    keep_md : true
-    toc: yes
-    toc_depth: 5
-editor_options:
-  chunk_output_type: inline
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
 ---
+
 
 
 # Introduction
@@ -257,8 +255,4 @@ Note that these automatice functions make a lot of decisions for the user, so if
 ## Further options
 
 Note that you can also use the ```apaTables``` for other models, such as linear regression models. As is typical with R, there is not one single way of using a package or function and different options offer different strengths and weaknesses.
-
-
-
-
 
