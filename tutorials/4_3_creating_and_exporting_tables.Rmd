@@ -54,6 +54,12 @@ mydata <- import("Survey_AI.csv")
 head(mydata)
 ```
 
+If you wish to import it from the github site, you can use the raw data link as follows
+
+```{r, eval=F}
+mydata <- import("https://raw.githubusercontent.com/maugavilla/well_hello_stats/main/tutorials/Survey_AI.csv")
+head(mydata)
+```
 
 ## Prepare the dataset
 
@@ -184,6 +190,7 @@ In this example, our data is a ```.dta```, ```STATA``` data file. However, the `
 d <- import("GSS2021.dta")
 dim(d)
 ```
+
 
 
 ## Prepare the data
