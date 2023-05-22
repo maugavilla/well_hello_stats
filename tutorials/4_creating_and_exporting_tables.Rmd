@@ -1,0 +1,256 @@
+---
+title: "Creating and Exporting Tables in APA Format (7th Edition)"
+author: "R Helpdesk (Denise J. Roth) @FSW VU Amsterdam"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  github_document:
+    toc: yes
+    toc_depth: 5
+editor_options:
+  chunk_output_type: inline
+---
+
+
+# Introduction
+
+As soon as we have cleaned our data and conducted our analyses to test our hypotheses, and investigate our research questions, we want to present our findings in an appealing and readable way. There are various options for doing this, but one important means of visualizing data is the use of tables.
+In the social sciences, many journals make use of the formatting and citation guidelines provided by the *American Psychological Association (APA)*, whose current edition is its 7th revision. 
+While there are many existing options for creating tables in APA format, several packages often only allow you to format tables using a specific type of analysis or lack the ability of easily converting them to Word. 
+This is why in this tutorial, functions of the package ```rempsyc``` are introduced. As opposed to packages with similar functions, this one allows for a great degree of flexibility.
+In addition, this tutorial also includes alternatives and provides a brief introduction in how to use an alternative package (```apaTables```) for correlation and ANOVA tables.
+
+
+# Set Up the R session
+
+When we start working in R, we always need to setup our session. For this we need to set our working directory. In this case I am doing that for the folder that holds the downloaded dataset from [Kaggle](https://www.kaggle.com/datasets/gianinamariapetrascu/survey-on-students-perceptions-of-ai-in-education/). Kaggle is an online data scientists' community that provides a wide range of different datasets that are freely available to users to practice their computational skills. In this specific example, we will be using a dataset which contains the results of a survey conducted on undergraduate students enrolled in the 2nd and 3rd year of study at the Faculty of Cybernetics, Statistics and Economic Informatics at the Bucharest University of Economic Studies. 
+
+```{r, eval=F, error=F}
+setwd("YOURWORKINGDIRECTORY")
+```
+
+
+
+The next step for setting up our session will be to load the packages that we will be using. We will use some packages for data management (```dplyr```, ```tidyr```) and then need to load ```rempsyc``` in addition to that. Will use ```flextable``` to export the tables. We also need ```rio``` for importing different data sets. For some of the tables, we will also be using ```apaTables```  Note that you potentially need to install some of these packages, however.
+
+
+
+```{r, eval=T, message=F}
+library(dplyr)
+library(tidyr)
+library(rempsyc)
+library(flextable)
+library(rio)
+library(apaTables)
+```
+
+
+# Import the dataset 
+
+Furthermore, we are importing our data in ```.csv``` format.
+
+
+```{r, eval=T}
+mydata <- import("Survey_AI.csv")
+head(mydata)
+```
+
+
+## Prepare the dataset
+
+Let us first select only the variables that we will be using for our analysis and give them a more intuitive variable name. We want to see whether there is a relationship between students’ knowledge of AI and their perceptions of its usefulness in education. 
+
+
+```{r, eval=T}
+mydata <- select(mydata, Knowledge = Q1.AI_knowledge, AI_Utility = Q7.Utility_grade, Sex = Q12.Gender)
+head(mydata)
+```
+
+
+In a next step, we should create a factor variable that contains information on the respondents’ sex as a control variable and give it a meaningful scale. 
+
+
+```{r, eval=T}
+mydata <- mutate(mydata, Female = as.factor(ifelse(Sex == "1", 1, 0)))
+head(mydata)
+```
+
+
+# Example: Simple Linear Regression
+
+Let us run a simple linear regression model where we use *AI Knowledge* as our main independent variable and *AI Utility* as our dependent variable while controlling for sex. 
+
+```{r, eval=T}
+model <- lm(AI_Utility ~ Knowledge + Female, mydata)
+summary(model)
+```
+
+
+Now we gather the summary statistics that we would like to include in our table. 
+
+```{r, eval=T}
+# Gather summary statistics
+statistics.table <- as.data.frame(summary(model)$coefficients)
+
+# Get the confidence interval (CI) of the regression coefficient
+CI <- confint(model, level=0.95)
+
+# Add a row to join the variables names and CI to the stats
+statistics.table <- cbind(row.names(statistics.table), statistics.table, CI)
+# Rename the columns appropriately
+names(statistics.table) <- c("Term", "B", "SE", "t", "p", "CI_lower", "CI_upper")
+```
+
+
+## Creating a ```nice_table```
+
+With the summary statistics gathered, we can now easily create an attractive table using ```nice_table```.
+
+```{r, eval=T}
+nice_table(statistics.table)
+```
+
+
+## Exporting the Table to Word
+
+In this next step, we can easily export the table we just created to ```.docx```. This is especially handy considering that formats such as ```.jpeg``` or ```.png``` would not appear in the often strict word counts that we work with. 
+
+
+```{r, eval=F}
+my_table <- nice_table(statistics.table)
+save_as_docx(my_table, path = "nice_table_example.docx")
+```
+
+
+# Integration with ```rempsyc``` functions
+
+The ```nice_table``` functions also integrates smoothly with other statistical functions from the ```rempsyc``` package such as ```nice_lm``` or ```nice_t_test```, among others. These functions already provide useful default effect sizes and thus make for an attractive summary table. 
+
+## Linear Regression with ```nice_lm```
+
+The ```nice_lm()``` function creates the table of standard results from a linear model
+
+```{r, eval=T}
+nice_lm(model)
+```
+
+Then we can wrap this table with the ```nice_table()``` function, to clean it up for reporting
+
+```{r, eval=T}
+nice_table(nice_lm(model))
+```
+
+
+## T-test with ```nice_t_test```
+
+Similar, we have a quick function for $t-test$ with ```nice_t_test```. Here you need to specify the response and group variable for the analysis, the function will do the analysis and create the table according to the neccesary format for creating the table
+
+```{r, eval=T}
+t_table <- nice_t_test(data = mydata,
+                       response = "AI_Utility",
+                       group = "Sex",
+                       warning = FALSE)
+t_table
+```
+Then we can pass those results to the ```nice_table``` function
+
+```{r, eval=T}
+nice_table(t_table)
+```
+
+The ```nice_t_test``` functions additionally offers making several t-tests at once by specifying the desired dependent variables.
+
+
+```{r, eval=F, message=F, error=F}
+nice_table(nice_t_test(
+  data = mydata,
+  response = c("Knowledge", "AI_Utility"),
+  group = "Sex",
+  warning = FALSE) )
+```
+
+
+These are only some of the options offered with ```nice_table``` and ```rempsyc```. For further information, check out [Rémi Thériault's vignette](https://rempsyc.remi-theriault.com/articles/table).
+
+
+# Correlation Tables with ```apaTables```
+
+For this example, we will be using a data set provided by the [General Social Survey](https://gss.norc.org/get-the-data/stata/). We want to find out whether different dimensions of institutional trust correlate with each other. 
+
+## Import the dataset 
+
+In this example, our data is a ```.dta```, ```STATA``` data file. However, the ```import()``` can handle this file format just as well.
+
+```{r, eval=T, message=F, error=F}
+d <- import("GSS2021.dta")
+dim(d)
+```
+
+
+## Prepare the data
+
+Before running a quick correlation analysis, we select the variables of interest and give them more intuitive variable names. Furthermore, we remove all the missing observations from the dataframe. 
+
+```{r, eval=T, message=F, error=F}
+d <- select(d, matches("CON"))
+
+d <- select(d, confed, conjudge, consci, conlegis, conarmy)
+
+d <- rename(d,
+            federal = confed,
+            court = conjudge,
+            science = consci,
+            congress = conlegis,
+            military = conarmy)
+
+d <- drop_na(d)
+```
+
+## Creating Correlation Table
+
+Finally, we use the ```apa.cor.table()``` function to create a correlation table that we can immediately export as a ```.docx``` file. This table will report the mean, standard deviation from each variable, and all possible Pearson correlations
+
+```{r, eval=F, message=F, error=F}
+apa.cor.table(d, filename="Table1_APA.docx", table.number=1)
+```
+
+
+# ANOVA tables with ```apaTables```
+
+## Creating an example dataset
+
+For this example, we quickly create a data frame in R. This step would of course be replaced with you reading in your own data that you would like to read into R. In this artificial data set, we test whether the weather used in an advertisement affects participants' attitudes towards the brand. 
+
+```{r, eval=T, message=F, error=F}
+set.seed(123)
+ad_data <- tibble(
+  participant = rep(1:20, each = 6),
+  weather = as.factor(rep(c("Sunny", "Cloudy", "Rainy"), each = 2, times = 20)),
+  attitude_toward_brand = rnorm(120, mean = c(5, 4, 4, 3, 3, 2), sd = 1))
+head(ad_data)
+```
+
+## Run model and create exportable ANOVA table 
+
+We first need to run the analysis with the base function ```aov``` 
+```{r, eval=T, message=F, error=F}
+ad_model1 <- aov(attitude_toward_brand ~ weather, data = ad_data)
+summary(ad_model1)
+```
+
+Then the ```apa.aov.table``` can be use to export the table in a ``docx``` file
+
+```{r, eval=F, message=F, error=F}
+apa.aov.table(ad_model1, filename = "Table2_APA.doc", table.number = 2)
+```
+
+Note that these automatice functions make a lot of decisions for the user, so if you wish to report different information, would need to build the tables on your own
+
+
+## Further options
+
+Note that you can also use the ```apaTables``` for other models, such as linear regression models. As is typical with R, there is not one single way of using a package or function and different options offer different strengths and weaknesses.
+
+
+
+
+

@@ -1,0 +1,92 @@
+﻿ID,Q1.AI_knowledge,Q2.AI_sources,Q2#1.Internet,Q2#2.Books/Papers,Q2#3.Social_media,Q2#4.Discussions,Q2#5.NotInformed,Q3#1.AI_dehumanization,Q3#2.Job_replacement,Q3#3.Problem_solving,Q3#4.AI_rulling_society,Q4#1.AI_costly,Q4#2.Economic_crisis,Q4#3.Economic_growth,Q4#4.Job_loss,Q5.Feelings,Q6.Domains,Q6#1.Education,Q6#2.Medicine,Q6#3.Agriculture,Q6#4.Constructions,Q6#5.Marketing,Q6#6.Administration,Q6#7.Art,Q7.Utility_grade,Q8.Advantage_teaching,Q9.Advantage_learning,Q10.Advantage_evaluation ,Q11.Disadvantage_educational_process,Q12.Gender,Q13.Year_of_study,Q14.Major,Q15.Passed_exams,Q16.GPA
+1,8,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,1,2,5,1,4,2,4,2,1,Education;Medicine;Marketing,1,1,0,0,1,0,0,9,3,1,2,3,1,2,2,1,9.2
+2,7,Internet;Social media,1,0,1,0,0,2,3,4,1,3,3,4,3,1,Medicine;Agriculture;Constructions,0,1,1,1,0,0,0,6,2,2,1,2,2,2,2,1,7.7
+3,5,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,2,1,4,1,3,1,3,2,1,Education;Marketing;Public Administration,1,0,0,0,1,1,0,6,3,3,3,4,2,2,2,0,7.2
+4,5,Internet;Social media,1,0,1,0,0,4,4,5,3,4,3,3,4,1,Education;Medicine,1,1,0,0,0,0,0,9,1,2,2,3,1,2,2,1,8.2
+5,4,Internet,1,0,0,0,0,1,2,5,1,3,1,4,2,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,8,3,2,3,4,1,2,2,1,7.7
+6,5,Internet;Discussions with family/friends,1,0,0,1,0,3,4,4,3,4,3,3,4,2,Education;Agriculture;Public Administration,1,0,1,0,0,1,0,6,1,2,3,1,1,2,2,1,7.7
+7,7,Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,0,1,1,1,0,1,2,4,1,5,4,2,4,1,Education;Medicine;Constructions,1,1,0,1,0,0,0,10,1,2,1,3,1,2,2,0,7.2
+8,6,Internet,1,0,0,0,0,1,1,5,1,3,2,3,2,1,Education;Medicine,1,1,0,0,0,0,0,8,3,3,3,3,2,2,2,0,6.7
+9,6,Internet;Books/Scientific papers (physical/online format);Discussions with family/friends,1,1,0,1,0,2,4,5,2,5,2,3,4,1,Agriculture;Marketing;Public Administration,0,0,1,0,1,1,0,8,3,2,2,1,1,2,2,0,7.7
+10,4,Internet,1,0,0,0,0,4,4,4,3,4,3,3,4,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,7,1,1,3,1,1,2,3,1,8.2
+11,4,Internet;Discussions with family/friends,1,0,0,1,0,3,3,5,2,4,1,4,3,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,10,2,2,3,3,1,2,3,0,7.7
+12,6,Internet,1,0,0,0,0,4,4,2,2,3,3,3,3,1,Medicine;Agriculture;Constructions;Public Administration,0,1,1,1,0,1,0,4,2,2,3,2,2,2,2,1,7.7
+13,9,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,2,4,5,1,4,1,4,4,4,Education;Medicine;Art,1,1,0,0,0,0,1,10,3,1,3,3,1,2,2,1,9.7
+14,9,Books/Scientific papers (physical/online format),0,1,0,0,0,2,4,5,4,3,2,5,5,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,9,1,1,3,2,2,1,3,1,9.2
+15,7,Internet,1,0,0,0,0,2,4,4,1,4,1,3,2,3,Medicine;Agriculture;Constructions;Marketing;Public Administration,0,1,1,1,1,1,0,10,3,1,3,4,1,2,2,1,9.2
+16,6,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,2,2,4,2,4,2,4,2,3,Constructions;Public Administration,0,0,0,1,0,1,0,4,2,2,1,1,1,2,3,1,8.2
+17,1,I don't inform myself about AI,0,0,0,0,1,1,4,5,1,4,3,5,4,3,Medicine;Agriculture;Marketing,0,1,1,0,1,0,0,3,1,2,1,4,2,2,2,0,6.2
+18,8,Internet;Social media,1,0,1,0,0,5,5,5,5,5,3,3,5,2,Medicine;Constructions;Marketing;Art,0,1,0,1,1,0,1,8,1,1,3,1,2,1,3,1,9.2
+19,7,Internet;Social media;Discussions with family/friends,1,0,1,1,0,4,4,4,1,4,1,3,4,1,Education;Medicine;Constructions,1,1,0,1,0,0,0,6,1,1,2,2,1,2,3,1,7.7
+20,6,Social media,0,0,1,0,0,1,2,5,2,4,3,4,2,1,Medicine;Agriculture;Constructions;Art,0,1,1,1,0,0,1,6,1,3,3,2,1,1,1,1,8.7
+21,6,Internet;Social media,1,0,1,0,0,2,2,4,1,3,2,4,4,1,Education;Medicine;Agriculture;Public Administration,1,1,1,0,0,1,0,8,1,2,3,3,1,2,3,0,7.2
+22,7,Internet;Social media;Discussions with family/friends,1,0,1,1,0,3,4,3,2,5,3,3,4,3,Medicine;Constructions,0,1,0,1,0,0,0,4,2,2,3,1,1,1,1,1,8.7
+23,7,Internet;Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,1,1,1,1,0,4,5,4,4,5,2,5,5,1,Medicine,0,1,0,0,0,0,0,7,3,1,3,2,1,2,1,1,7.7
+24,5,Internet,1,0,0,0,0,2,2,5,3,3,3,3,3,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,7,3,3,3,2,1,2,1,1,9.2
+25,4,Internet;Social media;Discussions with family/friends,1,0,1,1,0,3,2,5,1,4,3,4,4,1,Education;Medicine;Constructions,1,1,0,1,0,0,0,6,1,2,2,3,1,1,3,1,7.2
+26,5,Books/Scientific papers (physical/online format),0,1,0,0,0,2,1,5,1,2,3,3,2,1,Medicine;Constructions,0,1,0,1,0,0,0,8,3,1,3,1,1,2,1,1,8.7
+27,7,Internet;Books/Scientific papers (physical/online format);Discussions with family/friends,1,1,0,1,0,4,3,4,1,4,3,3,3,1,Education;Medicine;Agriculture;Marketing;Art,1,1,1,0,1,0,1,9,3,2,1,3,1,1,3,1,8.2
+28,3,Internet,1,0,0,0,0,1,4,4,3,4,2,3,4,1,Education;Medicine;Constructions,1,1,0,1,0,0,0,7,1,2,2,3,1,2,1,1,8.7
+29,6,Internet;Social media;Discussions with family/friends,1,0,1,1,0,3,1,5,2,2,1,5,1,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,10,3,2,3,3,1,1,3,1,7.7
+30,5,Internet,1,0,0,0,0,3,3,4,3,4,3,3,2,1,Medicine;Constructions,0,1,0,1,0,0,0,4,2,2,1,1,1,1,1,1,7.7
+31,5,Internet,1,0,0,0,0,4,4,5,3,5,3,3,4,1,Education;Agriculture;Marketing,1,0,1,0,1,0,0,7,3,1,2,3,1,2,2,1,7.7
+32,6,Internet,1,0,0,0,0,2,4,4,3,5,2,4,4,1,Medicine;Agriculture;Constructions,0,1,1,1,0,0,0,6,2,3,1,1,1,2,3,0,7.7
+33,5,Books/Scientific papers (physical/online format),0,1,0,0,0,5,5,5,5,3,2,4,4,1,Medicine;Marketing;Art,0,1,0,0,1,0,1,5,1,2,2,1,1,1,1,1,7.7
+34,7,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,4,4,5,1,2,1,4,4,1,Medicine;Agriculture;Constructions,0,1,1,1,0,0,0,4,3,2,3,1,1,2,3,1,7.2
+35,6,Internet;Social media,1,0,1,0,0,4,4,4,2,3,4,4,4,1,Education;Medicine,1,1,0,0,0,0,0,7,3,2,3,2,1,2,2,1,6.2
+36,8,Internet,1,0,0,0,0,3,2,4,3,4,4,3,4,3,Construction,0,0,0,0,0,0,0,9,3,3,2,2,1,2,2,0,7.2
+37,10,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,4,5,5,1,1,4,4,5,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration;Art,1,1,1,1,1,1,1,9,1,2,3,2,2,2,2,0,6.7
+38,8,Internet;Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,1,1,1,1,0,1,1,5,1,4,4,2,3,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration;Art,1,1,1,1,1,1,1,10,2,2,2,2,1,2,2,1,7.7
+39,7,Books/Scientific papers (physical/online format),0,1,0,0,0,2,3,4,3,2,3,4,3,2,Education,1,0,0,0,0,0,0,7,1,2,1,2,1,2,2,1,7.7
+40,7,Internet;Social media;Discussions with family/friends,1,0,1,1,0,3,2,5,3,4,2,5,5,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,8,1,1,3,3,2,2,2,1,7.7
+41,7,Social media,0,0,1,0,0,4,5,1,3,3,4,2,5,2,Education;Medicine;Constructions;Public Administration,1,1,0,1,0,1,0,7,1,2,3,1,2,2,2,0,6.2
+42,5,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,3,4,4,3,4,2,4,4,1,Education;Medicine,1,1,0,0,0,0,0,8,1,2,2,4,1,2,2,1,8.2
+43,8,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,2,3,5,3,3,4,5,3,1,Education;Medicine;Agriculture,1,1,1,0,0,0,0,9,1,2,2,3,1,2,2,1,8.7
+44,5,Internet,1,0,0,0,0,2,3,5,1,4,3,4,3,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,9,1,1,2,1,1,2,3,1,7.7
+45,6,Internet;Social media;Discussions with family/friends,1,0,1,1,0,2,2,5,2,4,2,5,3,1,Education;Medicine;Marketing;Public Administration;Art,1,1,0,0,1,1,1,10,1,2,1,1,2,2,3,1,7.7
+46,3,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,3,2,1,3,4,3,4,3,1,Education;Medicine;Constructions,1,1,0,1,0,0,0,10,3,1,1,1,1,2,3,0,6.7
+47,8,Internet;Social media,1,0,1,0,0,5,5,2,5,4,3,3,5,2,Medicine;Agriculture;Constructions;Public Administration,0,1,1,1,0,1,0,3,1,2,1,1,2,2,2,1,7.2
+48,7,Internet,1,0,0,0,0,1,2,5,1,4,2,4,1,4,Education;Medicine;Public Administration,1,1,0,0,0,1,0,10,3,1,3,4,2,2,3,0,7.7
+49,9,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,1,2,5,3,3,1,4,3,1,Education;Medicine;Marketing,1,1,0,0,1,0,0,10,2,1,3,4,1,2,3,1,7.7
+50,7,Internet;Social media,1,0,1,0,0,3,3,3,3,3,3,3,3,1,Education;Marketing,1,0,0,0,1,0,0,8,1,1,1,1,1,2,2,1,7.2
+51,3,Internet;Social media,1,0,1,0,0,3,4,4,3,3,3,4,4,1,Medicine;Agriculture;Constructions;Public Administration,0,1,1,1,0,1,0,8,3,1,3,1,1,2,2,1,7.7
+52,4,Internet;Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,1,1,1,1,0,3,2,5,1,5,2,4,4,1,Agriculture;Constructions,0,0,1,1,0,0,0,5,1,3,1,1,1,2,2,0,6.2
+53,7,Internet;Social media,1,0,1,0,0,3,4,4,4,5,4,4,4,2,Medicine;Agriculture;Public Administration,0,1,1,0,0,1,0,6,2,2,2,2,1,2,2,1,9.2
+54,5,Internet,1,0,0,0,0,2,2,5,4,3,3,5,4,4,Education;Medicine;Public Administration,1,1,0,0,0,1,0,9,2,2,2,4,1,2,2,0,7.7
+55,5,Internet,1,0,0,0,0,1,4,4,3,3,2,3,1,1,Education;Medicine;Constructions;Marketing,1,1,0,1,1,0,0,7,1,3,2,2,2,2,2,0,7.2
+56,6,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,2,3,5,1,4,5,5,4,1,Education;Medicine;Agriculture;Marketing,1,1,1,0,1,0,0,10,1,2,3,1,1,2,1,0,7.2
+57,5,Internet,1,0,0,0,0,2,4,4,2,4,2,4,4,1,Medicine;Agriculture;Constructions;Marketing;Public Administration,0,1,1,1,1,1,0,8,3,2,3,1,1,1,1,1,9.2
+58,8,Internet;Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,1,1,1,1,0,1,2,5,3,5,3,4,3,3,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration;Art,1,1,1,1,1,1,1,8,1,2,1,2,1,2,2,1,7.7
+59,4,I don't inform myself about AI,0,0,0,0,1,2,2,5,2,4,2,5,3,1,Education;Medicine;Agriculture;Constructions;Marketing,1,1,1,1,1,0,0,10,1,2,2,4,1,1,1,1,9.7
+60,5,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,1,2,5,1,2,1,5,2,4,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,10,2,2,3,2,2,1,1,1,7.7
+61,6,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,1,2,5,1,2,1,5,2,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,10,2,2,3,2,2,1,1,1,9.7
+62,4,Internet;Social media,1,0,1,0,0,4,4,5,4,2,1,5,4,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,10,3,1,3,3,2,2,2,1,8.2
+63,8,Internet;Social media;Discussions with family/friends,1,0,1,1,0,3,3,4,2,3,2,4,2,1,Education;Medicine;Agriculture;Constructions;Public Administration,1,1,1,1,0,1,0,9,1,2,3,3,1,1,1,1,9.2
+64,6,Internet,1,0,0,0,0,3,4,5,4,2,3,2,2,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,6,1,2,2,3,1,1,1,0,7.7
+65,7,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,2,5,4,4,4,2,3,4,1,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,8,1,1,3,1,2,1,1,1,9.2
+66,5,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,1,5,3,3,4,2,2,4,1,Medicine;Agriculture;Constructions;Art,0,1,1,1,0,0,1,3,3,3,1,1,1,1,1,1,7.7
+67,8,Internet;Books/Scientific papers (physical/online format);Social media;Discussions with family/friends,1,1,1,1,0,5,5,5,5,4,5,5,5,2,Medicine;Agriculture,0,1,1,0,0,0,0,6,1,1,2,1,2,1,1,1,7.7
+68,1,Internet,1,0,0,0,0,3,4,4,3,4,4,4,4,2,Education;Medicine;Agriculture;Constructions,1,1,1,1,0,0,0,10,1,1,3,2,1,1,1,1,7.2
+69,6,Internet,1,0,0,0,0,2,3,4,2,4,2,4,2,1,Education;Medicine;Constructions;Public Administration,1,1,0,1,0,1,0,9,3,3,1,2,1,1,1,1,8.7
+70,4,Internet;Social media,1,0,1,0,0,4,3,4,4,5,3,4,4,2,Education;Marketing;Public Administration,1,0,0,0,1,1,0,6,1,2,3,3,1,1,1,1,7.7
+71,9,Internet;Social media,1,0,1,0,0,1,3,4,1,3,3,3,4,1,Medicine;Agriculture;Constructions,0,1,1,1,0,0,0,10,3,2,2,1,1,2,2,1,6.7
+72,10,Internet;Social media,1,0,1,0,0,1,5,5,5,3,1,5,1,4,Education;Medicine;Marketing;Art,1,1,0,0,1,0,1,10,3,3,1,3,2,2,3,1,8.7
+73,8,Internet,1,0,0,0,0,2,2,2,2,2,2,4,4,1,Education;Medicine;Marketing,1,1,0,0,1,0,0,10,1,1,3,1,2,2,2,1,9.2
+74,6,Internet,1,0,0,0,0,3,4,4,2,3,2,3,4,1,Constructions,0,0,0,1,0,0,0,5,3,2,2,1,1,2,2,1,8.7
+75,5,I don't inform myself about AI,0,0,0,0,1,3,1,2,1,3,1,3,4,3,Marketing,0,0,0,0,1,0,0,5,2,2,3,1,1,2,2,1,8.2
+76,4,Internet,1,0,0,0,0,2,4,5,3,2,2,4,4,1,Medicine;Public Administration,0,1,0,0,0,1,0,7,2,1,2,3,2,2,3,0,5.7
+77,7,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,2,5,5,2,5,3,4,4,1,Education;Medicine;Agriculture;Constructions;Public Administration,1,1,1,1,0,1,0,10,3,1,3,2,2,1,1,0,8.7
+78,4,Internet,1,0,0,0,0,2,4,4,3,4,5,3,5,1,Education;Marketing,1,0,0,0,1,0,0,8,2,3,1,1,1,1,1,1,8.7
+79,4,I don't inform myself about AI,0,0,0,0,1,3,3,2,3,4,2,2,4,3,Education;Medicine;Agriculture,1,1,1,0,0,0,0,7,1,2,3,1,2,1,1,1,7.2
+80,8,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,1,2,5,1,3,1,3,3,3,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,8,3,1,3,3,1,1,1,1,7.7
+81,8,Internet;Books/Scientific papers (physical/online format);Social media,1,1,1,0,0,2,4,5,2,2,3,4,2,1,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration;Art,1,1,1,1,1,1,1,8,3,2,3,3,1,1,3,1,7.2
+82,3,Internet,1,0,0,0,0,4,4,2,3,3,5,3,5,2,Education,1,0,0,0,0,0,0,3,2,2,3,2,2,1,2,0,5.7
+83,7,Internet;Social media,1,0,1,0,0,3,4,4,3,4,3,3,4,1,Education;Public Administration,1,0,0,0,0,1,0,8,3,1,2,2,1,1,3,1,7.7
+84,5,Social media,0,0,1,0,0,4,4,4,4,3,4,3,4,3,Public Administration,0,0,0,0,0,1,0,7,2,3,2,3,2,1,2,1,6.7
+85,6,Internet;Books/Scientific papers (physical/online format),1,1,0,0,0,3,3,4,3,3,4,2,3,1,Education;Marketing;Public Administration,1,0,0,0,1,1,0,6,1,3,1,1,1,2,1,1,8.2
+86,1,I don't inform myself about AI,0,0,0,0,1,5,5,2,3,4,3,3,5,2,Education;Marketing;Public Administration,1,0,0,0,1,1,0,6,1,2,1,1,2,2,1,0,5.7
+87,8,Internet,1,0,0,0,0,1,1,5,1,3,2,4,2,1,Education;Medicine,1,1,0,0,0,0,0,7,2,2,1,1,2,1,1,1,7.2
+88,6,Social media,0,0,1,0,0,2,2,4,3,4,2,4,3,1,Education;Medicine,1,1,0,0,0,0,0,7,3,1,3,2,2,1,3,1,8.7
+89,9,Books/Scientific papers (physical/online format),0,1,0,0,0,1,1,5,1,4,2,5,2,4,Education;Medicine;Agriculture;Constructions;Marketing;Public Administration,1,1,1,1,1,1,0,10,1,2,3,1,2,1,1,0,6.2
+90,2,I don't inform myself about AI,0,0,0,0,1,2,4,4,4,5,4,2,4,2,Medicine,0,1,0,0,0,0,0,2,2,3,1,2,2,1,1,1,8.7
+91,2,Discussions with family/friends,0,0,0,1,0,2,4,2,4,4,2,4,2,4,Medicine;Constructions;Public Administration,0,1,0,1,0,1,0,2,3,3,3,4,2,1,3,1,5.2
