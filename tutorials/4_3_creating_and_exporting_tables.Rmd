@@ -1,9 +1,10 @@
 ---
 title: "Creating and Exporting Tables in APA Format (7th Edition)"
-author: "R Helpdesk (Denise J. Roth) @FSW VU Amsterdam"
+author: "R Helpdesk (Denise J. Roth) FSW VU Amsterdam"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  github_document:
+  html_document:
+    keep_md : true
     toc: yes
     toc_depth: 5
 editor_options:
