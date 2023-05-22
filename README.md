@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-03 April, 2023
+22 May, 2023
 
 - <a href="#welcome" id="toc-welcome">Welcome</a>
 - <a href="#what-is-r-and-why-should-you-learn-it"
@@ -15,6 +15,7 @@ Mauricio Garnier-Villarreal
   - <a href="#basics" id="toc-basics">Basics</a>
   - <a href="#initial-work-with-data"
     id="toc-initial-work-with-data">Initial work with data</a>
+  - <a href="#reporting" id="toc-reporting">Reporting</a>
   - <a href="#relations-betwen-variables"
     id="toc-relations-betwen-variables">Relations betwen variables</a>
   - <a href="#scale-evaluation" id="toc-scale-evaluation">Scale
@@ -184,6 +185,11 @@ following a course.
   plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md):
   setting up R session, import data set, ggplot2 basics, histogram,
   scatter plot, bar plot, box plot. Packages: rio, ggplot2.
+
+## Reporting
+
+- [Creating and Exporting Tables in APA Format (7th
+  Edition)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_3_creating_and_exporting_tables.md)
 
 ## Relations betwen variables
 

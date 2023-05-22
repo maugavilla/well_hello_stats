@@ -73,6 +73,10 @@ Here you will find links for the respective tutorials, and a short description. 
 -   [Descriptive Statistics](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_1_descriptive_statistics.md): setting up R session, import data set, continuous items, categorical items, data frame summary. Packages: rio, summarytools. 
 -   [Basic plots](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/5_2_basic_plots.md): setting up R session, import data set, ggplot2 basics, histogram, scatter plot, bar plot, box plot. Packages: rio, ggplot2.
 
+## Reporting
+
+- [Creating and Exporting Tables in APA Format (7th Edition)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_3_creating_and_exporting_tables.md)
+
 ## Relations betwen variables
 
 -   [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md): setting up R session, import data set, scatter plot, Pearson correlation, Spearman correlation, Kendal-tau correlation, extracting the matrices, correlogram, pairs plot. Packages: rio, psych, corrplot, ggplot2, GGally. 
