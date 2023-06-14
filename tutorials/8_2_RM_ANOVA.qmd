@@ -1,0 +1,231 @@
+---
+title: "Repeated Measures ANOVA"
+author: "Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+
+# Introduction
+
+As social scientists delving into the world of statistics, it's essential to grasp various statistical techniques commonly used in research. One such technique is the Repeated Measures Analysis of Variance (ANOVA). In this tutorial, we'll explore what a repeated measures ANOVA is, when to use it, and how it can be applied to analyze data in research studies. So let's dive in!
+
+Repeated Measures ANOVA (RM-ANOVA) is a statistical method used to analyze data when the same subjects or participants are measured on multiple occasions or under different conditions. It allows researchers to examine whether there are significant differences across these repeated measurements or conditions while accounting for the interdependence of the data. It is particularly useful when you have data that involve multiple measurements taken from the same subjects or participants. It is commonly used in various fields such as psychology, biology, medicine, education, and social sciences. You would typically choose a RM-ANOVA over other analysis methods when you either have a: 
+
+1. within-subject design: This means that each participant in your study is measured or tested under different conditions or at multiple time points. For example, measuring the performance of students before and after an intervention or assessing the effects of different treatment conditions on patients' blood pressure. Or:
+
+2. You want to compare the means of three or more conditions: RM-ANOVA is specifically designed to analyze data with three or more levels or conditions. If you have only two conditions, a paired t-test might be more appropriate.
+
+
+# Set up the R Session
+
+When we start working in R, we always need to setup our session. For this we need to set our working directory. In this case I am doing that for the folder that holds the downloaded dataset for this example. 
+
+
+```{r, eval=F, error=F}
+setwd("YOURWORKINGDIRECTORY")
+```
+
+
+The next step for setting up our session will be to load the packages that we will be using. We will use a packages like ```dplyr``` for data management, as well as the ```rio``` package for importing our data. Additionally, we need the ```reshape2``` to reshape our data. Finally, the packages ```afex```, and ```marginaleffects``` are used for conducting our analyses. Note that you potentially need to install some of these packages, however.
+
+
+```{r, eval=T, message=F}
+library(rio)
+library(dplyr)
+library(reshape2)
+library(marginaleffects)
+library(afex)
+```
+
+
+# Import the Dataset
+
+We are importing a ```.sav``` file from Qualtrics. This data shows an example from a pre-test which was setup to determine which of five different brands  (Adidas, Puma, Nike, H&M, Tommy Hilfiger) had the best fit with two celebrity influencer couples (Beyoncé and Jay Z and Shakira and Piqué) for the promotion of a brand on Instagram. Participants rated the congruence of five sports brands with one of the celebrity couples (randomized), measured using a 7-Point Likert scale ranging from one (strongly disagree) to seven (strongly agree). Participants were also asked their agreement level to statements such as “Adidas is a good match with the celebrities” or “Puma is a good match with the celebrities” etc.. The congruence was the within factor with five levels (Adidas, Puma, Nike, H&M, Tommy Hilfiger) and the between factor was the type of celebrity couple (Beyonce & Jay-Z versus Shakira & Piqué). In total, 32 participants filled in the survey.
+
+```{r, eval=T}
+d <- import("Native advertisement - pretest wide.sav")
+```
+
+## Prepare the Dataset
+
+In these next steps, we first create a variable that contains a participant ID and we also change the classes for some of the variables included, as our model will ultimately need to know how to treat which variables in its calculations.
+
+With the ```mutate()``` function, we give it the data set, and then can create a new variable ```id``` that represents the subject id, in function of the data row numbers.  
+
+Then, with the same function, we can give a multiple variables within the ```across``` function, and then change the data type to numeric and factor respectively. This way, we have a clear defined user ids, and ```R``` know which variables to treat as numeric and factor for future uses
+
+```{r, eval=T}
+d_id <- mutate(d, id = row_number())
+
+d_id <- mutate(d_id, across(c(Cleb_Congruence_1, Cleb_Congruence_2, 
+                 Cleb_Congruence_3, Cleb_Congruence_4, 
+                 Cleb_Congruence_5, Condition_Couple), as.numeric))
+d_id <- mutate(d_id, across(c(Condition_Couple,id), as.factor))
+
+```
+
+
+## Convert the Dataframe from Wide to Long Format
+
+In R, data frames can be organized in two different formats: wide and long. Each format has its advantages and is suitable for different types of analyses. Let's explore the differences between these formats.
+In the **wide** format, each subject's measurements or observations are represented in a single row, and each variable or condition has its own column. This format is often used when data is initially collected or entered. Advantages of the wide format include simplicity and ease of data entry. It is also suitable for certain analyses like generalized linear models that assumed independence of observations, as each row is independent of each other. However, for repeated measures analyses, the long format is preferred and necessary, as the assumption of independence of observations is violated, so we need to model it. 
+
+In the **long** format, each observation is represented in a separate row, and a single column is used to indicate the condition or variable, so that each subject will have as many rows as time points. This format is particularly useful when dealing with repeated measures or within-subjects designs. Each subject's measurements are stacked on top of each other, allowing for easy identification of repeated measures and within-subjects factors. This format facilitates the analysis of dependencies and enables appropriate statistical techniques such as RM-ANOVA. RM-ANOVA requires a long format because it relies on the dependence of measurements taken from the same subjects. By organizing the data in a long format, we explicitly represent the repeated measurements and their associated conditions. This allows the statistical analysis to properly account for the within-subjects variability.
+
+In a long format, each row represents a unique measurement, and the subject identifier ensures that the measurements are linked to the corresponding individuals. This format provides the necessary structure for conducting analyses that involve repeated measures, as it allows for the identification of within-subjects factors, the calculation of subject-specific means, and the assessment of the differences between conditions.
+
+By using the long format in RM-ANOVA, we can effectively examine the effects of the within-subjects factors while accounting for the dependency between measurements. The analysis can then yield valuable insights into the significance of the conditions and their impact on the measured outcome.
+
+Let us first view what the our initially **wide** data frame looks like, reshape it to the long format and then take a look again!
+
+With the ```melt()``` function we can reshape it, first need to give the wide format data set (```d_id```), then in the ```id.vars``` argument we provide the name of the variables that do not change over time, and for the ```measure.vars``` argument we give the name of the variables that change over time. Then, in ```variable.name``` we give the values that the **time** variables will have. Finally, in the ```value.name``` we have the name of the variable that reports the score at each time point
+
+We will change the variable type for ```Codition_couple``` to force the RM-ANOVA unction to treat it as a grouping variable. So, for these variables is recommended to code them with words representing each group, instead of numbers 
+
+```{r, eval=T, warning=FALSE}
+head(d_id)
+
+d_long <- melt(d_id,id.vars=c("id", "Condition_Couple"),
+measure.vars=c("Cleb_Congruence_1", "Cleb_Congruence_2","Cleb_Congruence_3", "Cleb_Congruence_4","Cleb_Congruence_5"),
+          variable.name="Cleb_Congruence", 
+          value.name="brand")
+
+d_long$Condition_Couple <- as.character(d_long$Condition_Couple)
+head(d_long)
+```
+
+# Perform Repeated Measure Analysis 
+
+Now, it is time to actually perform a RM-ANOVA using functions from the ```afex``` package that we loaded earlier. In addition to that, we can also perform post-hoc tests. 
+
+First, with the ```aov_ez``` function we will run the RM-ANOVA. we need to provide the long format data set (```d_long```), the dependent variable (```brand```), the subject id (```id```), the within subject condition (```Cleb_Congruence```).
+
+```{r, eval=TRUE, warning=FALSE}
+model <- aov_ez(data=d_long,
+                id = "id",
+                dv = "brand",
+                within = "Cleb_Congruence")
+summary(model)
+
+```
+
+The output ```summary(model)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that .... 
+
+Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
+
+And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+
+## Post-hoc pairwise comparisons
+
+Once we have established an overall model effect, we would be interested in testing specific comparisons, such as **Where do we see specific mean differences?**. We will do the post-hoc tests with the ```marginalleffects``` package, this will tell you how the values of the outcome predicted by the model change when we manipulate the predictors (and their pairwise combinations)
+
+For this function, we provide the RM-ANOVA object (```model```), the group variable we want to estimate
+```{r, eval=TRUE, warning=FALSE}
+acmp <- avg_comparisons(model,
+                       variables = list(Cleb_Congruence = "pairwise"), 
+                       p_adjust = "fdr", conf_level = 0.95)
+
+summary(acmp)
+```
+
+From these post-host, we can interpret that we reject the null hypothesis of equal means over conditions for the comparisons with an adjusted $p-value < .05$. 
+
+## Plot group means
+
+Then we can visualize these difference by plotting the means across conditions. We can do this with the visualization conditions of the ```marginaeffects``` package. 
+
+First, we can see the model prediction, the average predictions based on our model, across the condition of interest, with the ```avg_predictions()``` function
+
+Here we see the mode predicted means for each condition, as well as the measure of variability (SE)
+```{r}
+p <- avg_predictions(model, by = "Cleb_Congruence")
+p
+```
+
+Then we can plot it with the function ```plot_predictions```, based on the model, and the error bars representing the variability
+
+```{r}
+plot_predictions(model, by = "Cleb_Congruence")
+```
+
+The visualizations can be helpful to understand trends, and be clear on the direction of the differences. 
+
+Note that this plot is a ```ggplot2``` type of plot, so you can edit it accordingly. 
+
+# Mixed design RM-ANOVA
+
+A common next step in RM-ANOVA, is to also include a between subject predictor, this way accounting for both within and between condition differences. As we have within conditions, still requires to account for the observations dependencies. 
+
+For this we will extend the use of the ```aov_ez``` function, will start with the same arguments as before. The only difference is that we are adding a between subject predictor (```Condition_Couple```) in the ```between``` argument. This by default will include the interaction by within and between variables. 
+
+```{r, eval=TRUE, warning=FALSE}
+model2 <- aov_ez(data=d_long,
+                id = "id",
+                dv = "brand",
+                within = "Cleb_Congruence", 
+                between = "Condition_Couple")
+summary(model2)
+
+```
+
+
+The output ```summary(model2)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that .... 
+
+Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
+
+And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+
+## Post-hoc comparisons
+
+Now, the post-hocs can be done in 3 ways, first for the within variable, second for the between variable, and third with the interaction between them
+
+First, we can estimate the pairwise comparisons (ignoring the interactions)by including both the between and within variables in the ```variables``` argument and asking for the pairwise comparisons. 
+
+```{r}
+acmp_1 <- avg_comparisons(model2,
+                          variables = list(Cleb_Congruence = "pairwise", Condition_Couple = "pairwise"),
+                          p_adjust = "fdr", conf_level = 0.95)
+
+summary(acmp_1)
+```
+
+From ```summary(acmp_1)``` we will have the estimated mean difference for each pair comparison, and we can reject the null hypothesis for comparisons where the adjusted $p -value < .05$
+
+If we want to estimate the interacting post-hoc, across between and within conditions. We can include the between condition in the ```by``` argument. This way the results will include the pairwise comparisons across ```Cleb_Congruence``` within conditions, for each ```Condition_Couple``` between condition 
+
+```{r}
+acmp_2 <- avg_comparisons(model2,
+                          variables = list(Cleb_Congruence = "pairwise"), 
+                          p_adjust = "fdr", conf_level = 0.95, 
+                          by = "Condition_Couple")
+
+summary(acmp_2)
+```
+
+This turns into larger post-hoc results, so be careful in its reading and interpretation
+
+
+## Plot post-hoc
+
+For plotting the post-hoc results when including between and within factors, we can do it the same as before one predictor at the time, or looking the the interaction. 
+
+We can see the model predicted means for each group combination by including both predictors in the ```by``` argument. If you include only one predictor, you will get the predictions for only that one, ignoring the interaction.
+
+Here we get the model predictions across both predictors, accounting for the interaction. 
+
+```{r}
+p2 <- avg_predictions(model2,
+                      by = c("Cleb_Congruence", "Condition_Couple") )
+p2
+```
+
+Then, we can plot the estimated means, accounting for the interactions. With the same function as before, but by including both predictors in the ```by``` argument. The function by default will choose the between subject variable as the condition to separate the plot by group (based on color)
+
+```{r}
+plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
+```
+
