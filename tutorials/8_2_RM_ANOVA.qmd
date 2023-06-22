@@ -39,6 +39,8 @@ library(dplyr)
 library(reshape2)
 library(marginaleffects)
 library(afex)
+library(sjlabelled)
+library(effectsize)
 ```
 
 
@@ -52,6 +54,27 @@ d <- import("Native advertisement - pretest wide.sav")
 
 ## Prepare the Dataset
 
+For easiness, we want to change the variable name to the respective brand name, we can see the band associated to each variable from the attributes of the data with the ```get_label()``` function from the package ```sjlabelled``` 
+
+```{r}
+get_label(d)
+```
+
+From this we have the necessary information to rename them, so that the variable name match the brand
+
+```{r}
+colnames(d) <- c("Adidas","Puma","Nike","HM","Tommy_Hilfiger","Condition_Couple")
+```
+
+Then we will recode the labels of the couple variable, so that it explicitly mentions the couple instead of using codes 0 - 1. We will do that with ```recode()``` function as follows
+
+```{r, warning=FALSE}
+d$Condition_Couple <- car::recode(d$Condition_Couple, 
+                                  "0='Beyonce & Jay-Z';
+                                  1= 'Shakira & Piqué' ")
+```
+
+
 In these next steps, we first create a variable that contains a participant ID and we also change the classes for some of the variables included, as our model will ultimately need to know how to treat which variables in its calculations.
 
 With the ```mutate()``` function, we give it the data set, and then can create a new variable ```id``` that represents the subject id, in function of the data row numbers.  
@@ -61,9 +84,9 @@ Then, with the same function, we can give a multiple variables within the ```acr
 ```{r, eval=T}
 d_id <- mutate(d, id = row_number())
 
-d_id <- mutate(d_id, across(c(Cleb_Congruence_1, Cleb_Congruence_2, 
-                 Cleb_Congruence_3, Cleb_Congruence_4, 
-                 Cleb_Congruence_5, Condition_Couple), as.numeric))
+d_id <- mutate(d_id, across(c(Adidas, Puma, 
+                 Nike, HM, 
+                 Tommy_Hilfiger), as.numeric))
 d_id <- mutate(d_id, across(c(Condition_Couple,id), as.factor))
 
 ```
@@ -84,17 +107,15 @@ Let us first view what the our initially **wide** data frame looks like, reshape
 
 With the ```melt()``` function we can reshape it, first need to give the wide format data set (```d_id```), then in the ```id.vars``` argument we provide the name of the variables that do not change over time, and for the ```measure.vars``` argument we give the name of the variables that change over time. Then, in ```variable.name``` we give the values that the **time** variables will have. Finally, in the ```value.name``` we have the name of the variable that reports the score at each time point
 
-We will change the variable type for ```Codition_couple``` to force the RM-ANOVA unction to treat it as a grouping variable. So, for these variables is recommended to code them with words representing each group, instead of numbers 
 
 ```{r, eval=T, warning=FALSE}
 head(d_id)
 
 d_long <- melt(d_id,id.vars=c("id", "Condition_Couple"),
-measure.vars=c("Cleb_Congruence_1", "Cleb_Congruence_2","Cleb_Congruence_3", "Cleb_Congruence_4","Cleb_Congruence_5"),
+measure.vars=c("Adidas","Puma","Nike","HM","Tommy_Hilfiger"),
           variable.name="Cleb_Congruence", 
           value.name="brand")
 
-d_long$Condition_Couple <- as.character(d_long$Condition_Couple)
 head(d_long)
 ```
 
@@ -118,6 +139,21 @@ The output ```summary(model)``` present different sections, first from the ```AN
 Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
 
 And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+
+## Effect size
+
+We also need to describe the results in function of measures of effect size. For ANOVA family of analysis, we recommend to use $\eta^2_f$ and $\omega^2_f$. These measures estimate the proportion of variance explained by each predictor (similar to $R^2$). Where $\eta^2_f$ is more positively bias (similar to $R^2$), and $\omega^2_f$ is a more conservative measure. 
+
+When you have multiple predictors, you will also see the **partial** version of these measures ($\eta^2_p$ and $\omega^2_p$). These will most commonly present higher effect sizes, as they are the proportion of explained variance **that is not predicted by any other predictors**. So, will show higher effect sizes because they are not in function of the total variance of the outcome, but the residual variance. 
+
+To estimate these measure we will use the ```effectsize``` package functions, just provide the RM-ANOVA model to the respective functions, notice that we set ```partial = FALSE``` to estimate the full measure instead of partial one. 
+
+```{r}
+eta_squared(model, partial = FALSE)
+omega_squared(model, partial = FALSE)
+```
+
+When the model has only one predictor, these measures are equivalent to the model $R^2$. In this case the show that around an 11\%  ($\eta^2_f = 0.11$) of the variance is explained by the ```Cleb_Conguence``` variable, or conservatively 9\% ($\omega^2_f = 0.09$)
 
 ## Post-hoc pairwise comparisons
 
@@ -156,6 +192,57 @@ The visualizations can be helpful to understand trends, and be clear on the dire
 
 Note that this plot is a ```ggplot2``` type of plot, so you can edit it accordingly. 
 
+
+## Post-hoc planned comparisons
+
+In many cases you will not be interested in all pairwise comparisons, but on planned comparisons, or specific contrasts tests. For this we can use the ```hypotheses()``` function. First we can ask for how is the function naming the relevant parameters
+
+```{r}
+hypotheses(model)
+```
+
+Here we see that the model extracts the mean for each of the five groups, and we see that this match the factor variable
+
+```{r}
+coef(model$lm)
+```
+
+Now, given the type of brands, we can think of comparing **sports** (Adidas, Puma, Nike) brands against **casual** (H&M, Tommy Hilfiger) brands. Here we will show hoe to do this in two ways. 
+
+In the first approach we will write up the formula to compare the groups in function of the parameters from ```hypotheses(model)```. Here we average the group mean for sporty and casual brands
+
+```{r}
+hypotheses(model, "(b1+b2+b3)/3 = (b4+b5)/2")
+```
+
+In the second method, we will write the hypothesis with the commonly use **weights**, where we set group parameters based on the sign of the weights. So the first 3 groups will be set as one, and the last 2 will be grouped together. This way positive weights will be compared agaiant negative weights. 
+
+```{r}
+hypotheses(model, hypothesis = c(1/3,1/3,1/3,-1/2,-1/2))
+```
+
+Here we reject the null hypothesis of sporty and casual brands to have the same level of congruence.  
+
+You can also build a matrix with multiple contrasts, to test more than one hypothesis at the time. For this example, We are adding a hypothesis for each type of brand mean being equal to 0, and then the comparison between them (previous example)
+
+Note that for the matrix, each column represents a different hypothesis and each row represents a group
+
+```{r}
+cont_mat <- cbind(c(1/3,1/3,1/3,0,0),
+                  c(0,0,0,1/2,1/2),
+                  c(1/3,1/3,1/3,-1/2,-1/2))
+colnames(cont_mat) <- c("Sport=0","Casual=0","Sport=Casual")
+cont_mat
+```
+
+
+```{r}
+hypotheses(model, hypothesis = cont_mat)
+```
+
+Note that for contrast weights, if you want the means in the metric of the observed variable, you need to make sure the weights sum up to 1. Otherwise the interpretation will be in another metric. 
+
+
 # Mixed design RM-ANOVA
 
 A common next step in RM-ANOVA, is to also include a between subject predictor, this way accounting for both within and between condition differences. As we have within conditions, still requires to account for the observations dependencies. 
@@ -178,6 +265,30 @@ The output ```summary(model2)``` present different sections, first from the ```A
 Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
 
 And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+
+## Effect size
+
+
+Rememeber that when you have multiple predictors, you will also see the **partial** version of these measures ($\eta^2_p$ and $\omega^2_p$). These will most commonly present higher effect sizes, as they are the proportion of explained variance **that is not predicted by any other predictors**. So, will show higher effect sizes because they are not in function of the total variance of the outcome, but the residual variance. 
+
+To estimate these measure we will use the ```effectsize``` package functions, just provide the RM-ANOVA model to the respective functions, notice that we set ```partial = FALSE``` to estimate the full measure instead of partial one. 
+
+```{r}
+eta_squared(model2, partial = FALSE)
+omega_squared(model2, partial = FALSE)
+```
+
+In this case the show that around an 11\%  ($\eta^2_f = 0.11$) of the variance is explained by the ```Cleb_Conguence``` variable, or conservatively 9\% ($\omega^2_f = 0.09$). And the variable ```Condition_Couple``` and the interaction functionally have no effect. 
+
+You can estimate the partial measures with the argument ```partial=TRUE```
+
+```{r}
+eta_squared(model2, partial = TRUE)
+omega_squared(model2, partial = TRUE)
+```
+
+In this case the show that around an 19\%  ($\eta^2_f = 0.19$) of the variance that is not explained by other predictors is explained by the ```Cleb_Conguence``` variable, or conservatively 10\% ($\omega^2_f = 0.10$). And the variable ```Condition_Couple``` and the interaction functionally have no effect. 
+
 
 ## Post-hoc comparisons
 
@@ -229,3 +340,38 @@ Then, we can plot the estimated means, accounting for the interactions. With the
 plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
 ```
 
+
+## Post-hoc planned comparisons
+
+(Note, I have no theoretical reason for meaningful comparisons here, so I am writing some as understandable examples)
+
+For planned comparisons while having cross factors we will use the ```marginal_means``` function, which estimates all cross factor means (similar to ```avg_predictions```). If you run the function with the default arguments it will estimate the marginal means for each factor, and we need to add the argument ```cross=T``` to estimate all possible cross marginal means. 
+
+```{r}
+mm <- marginal_means(model2, cross=T)
+data.frame(mm)
+```
+
+Once we have seen the cross means, we can build comparisons with weights vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs **Casual-Shakira & Piqué** we can use the following weight vector in the ```hypothesis``` argument
+
+```{r}
+mm2 <- marginal_means(model2, cross=T, 
+                      hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2))
+mm2
+```
+
+Here we see that we fail to reject the null hypothesis of both groups having the same marginal mean. 
+
+And, we can also add multiple comparisons with a matrix of weights. In this example, we are adding the same hypothesis as before, and adding **Sporty-Beyonce & Jay-Z** vs **Sporty-Shakira & Piqué**
+
+Note that for the matrix, each column represents a different hypothesis and each row represents a group
+
+```{r}
+cont_mat2 <- cbind(c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2),
+                   c(1/3,1/3,1/3,0,0,-1/3,-1/3,-1/3,0,0))
+mm3 <- marginal_means(model2, cross=T, 
+                      hypothesis = cont_mat2)
+mm3
+```
+
+For both of these example, we fail to reject the null hypothesis. 

@@ -1,6 +1,6 @@
 # Repeated Measures ANOVA
 Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
-2023-06-14
+2023-06-22
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -10,11 +10,15 @@ Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
     Format](#convert-the-dataframe-from-wide-to-long-format)
 - [Perform Repeated Measure
   Analysis](#perform-repeated-measure-analysis)
+  - [Effect size](#effect-size)
   - [Post-hoc pairwise comparisons](#post-hoc-pairwise-comparisons)
   - [Plot group means](#plot-group-means)
+  - [Post-hoc planned comparisons](#post-hoc-planned-comparisons)
 - [Mixed design RM-ANOVA](#mixed-design-rm-anova)
+  - [Effect size](#effect-size-1)
   - [Post-hoc comparisons](#post-hoc-comparisons)
   - [Plot post-hoc](#plot-post-hoc)
+  - [Post-hoc planned comparisons](#post-hoc-planned-comparisons-1)
 
 # Introduction
 
@@ -71,6 +75,8 @@ library(dplyr)
 library(reshape2)
 library(marginaleffects)
 library(afex)
+library(sjlabelled)
+library(effectsize)
 ```
 
 # Import the Dataset
@@ -96,6 +102,45 @@ d <- import("Native advertisement - pretest wide.sav")
 
 ## Prepare the Dataset
 
+For easiness, we want to change the variable name to the respective
+brand name, we can see the band associated to each variable from the
+attributes of the data with the `get_label()` function from the package
+`sjlabelled`
+
+``` r
+get_label(d)
+```
+
+                                                                                                                                                          Cleb_Congruence_1 
+            "How will the following brands match these celebrities when they promote this brand on their Instagram account? - Adidas is a good match with the celebrities." 
+                                                                                                                                                          Cleb_Congruence_2 
+              "How will the following brands match these celebrities when they promote this brand on their Instagram account? - Puma is a good match with the celebrities." 
+                                                                                                                                                          Cleb_Congruence_3 
+              "How will the following brands match these celebrities when they promote this brand on their Instagram account? - Nike is a good match with the celebrities." 
+                                                                                                                                                          Cleb_Congruence_4 
+               "How will the following brands match these celebrities when they promote this brand on their Instagram account? - H&M is a good match with the celebrities." 
+                                                                                                                                                          Cleb_Congruence_5 
+    "How will the following brands match these celebrities when they promote this brand on their Instagram account? - Tommy Hilfiger is a good match with the celebrities." 
+                                                                                                                                                           Condition_Couple 
+                                                                                                                                                                         "" 
+
+From this we have the necessary information to rename them, so that the
+variable name match the brand
+
+``` r
+colnames(d) <- c("Adidas","Puma","Nike","HM","Tommy_Hilfiger","Condition_Couple")
+```
+
+Then we will recode the labels of the couple variable, so that it
+explicitly mentions the couple instead of using codes 0 - 1. We will do
+that with `recode()` function as follows
+
+``` r
+d$Condition_Couple <- car::recode(d$Condition_Couple, 
+                                  "0='Beyonce & Jay-Z';
+                                  1= 'Shakira & Piqué' ")
+```
+
 In these next steps, we first create a variable that contains a
 participant ID and we also change the classes for some of the variables
 included, as our model will ultimately need to know how to treat which
@@ -113,9 +158,9 @@ know which variables to treat as numeric and factor for future uses
 ``` r
 d_id <- mutate(d, id = row_number())
 
-d_id <- mutate(d_id, across(c(Cleb_Congruence_1, Cleb_Congruence_2, 
-                 Cleb_Congruence_3, Cleb_Congruence_4, 
-                 Cleb_Congruence_5, Condition_Couple), as.numeric))
+d_id <- mutate(d_id, across(c(Adidas, Puma, 
+                 Nike, HM, 
+                 Tommy_Hilfiger), as.numeric))
 d_id <- mutate(d_id, across(c(Condition_Couple,id), as.factor))
 ```
 
@@ -174,47 +219,34 @@ over time. Then, in `variable.name` we give the values that the **time**
 variables will have. Finally, in the `value.name` we have the name of
 the variable that reports the score at each time point
 
-We will change the variable type for `Codition_couple` to force the
-RM-ANOVA unction to treat it as a grouping variable. So, for these
-variables is recommended to code them with words representing each
-group, instead of numbers
-
 ``` r
 head(d_id)
 ```
 
-      Cleb_Congruence_1 Cleb_Congruence_2 Cleb_Congruence_3 Cleb_Congruence_4
-    1                 6                 4                 5                 4
-    2                 6                 4                 6                 1
-    3                 2                 2                 2                 2
-    4                 6                 5                 6                 2
-    5                 5                 3                 6                 2
-    6                 2                 4                 6                 3
-      Cleb_Congruence_5 Condition_Couple id
-    1                 4                0  1
-    2                 1                0  2
-    3                 6                0  3
-    4                 2                0  4
-    5                 2                0  5
-    6                 3                1  6
+      Adidas Puma Nike HM Tommy_Hilfiger Condition_Couple id
+    1      6    4    5  4              4  Beyonce & Jay-Z  1
+    2      6    4    6  1              1  Beyonce & Jay-Z  2
+    3      2    2    2  2              6  Beyonce & Jay-Z  3
+    4      6    5    6  2              2  Beyonce & Jay-Z  4
+    5      5    3    6  2              2  Beyonce & Jay-Z  5
+    6      2    4    6  3              3  Shakira & Piqué  6
 
 ``` r
 d_long <- melt(d_id,id.vars=c("id", "Condition_Couple"),
-measure.vars=c("Cleb_Congruence_1", "Cleb_Congruence_2","Cleb_Congruence_3", "Cleb_Congruence_4","Cleb_Congruence_5"),
+measure.vars=c("Adidas","Puma","Nike","HM","Tommy_Hilfiger"),
           variable.name="Cleb_Congruence", 
           value.name="brand")
 
-d_long$Condition_Couple <- as.character(d_long$Condition_Couple)
 head(d_long)
 ```
 
-      id Condition_Couple   Cleb_Congruence brand
-    1  1                0 Cleb_Congruence_1     6
-    2  2                0 Cleb_Congruence_1     6
-    3  3                0 Cleb_Congruence_1     2
-    4  4                0 Cleb_Congruence_1     6
-    5  5                0 Cleb_Congruence_1     5
-    6  6                1 Cleb_Congruence_1     2
+      id Condition_Couple Cleb_Congruence brand
+    1  1  Beyonce & Jay-Z          Adidas     6
+    2  2  Beyonce & Jay-Z          Adidas     6
+    3  3  Beyonce & Jay-Z          Adidas     2
+    4  4  Beyonce & Jay-Z          Adidas     6
+    5  5  Beyonce & Jay-Z          Adidas     5
+    6  6  Shakira & Piqué          Adidas     2
 
 # Perform Repeated Measure Analysis
 
@@ -271,6 +303,56 @@ interpret that …
 And third, for the `Greenhouse-Geisser and Huynh-Feldt Corrections`
 correction section we can interpret that ….
 
+## Effect size
+
+We also need to describe the results in function of measures of effect
+size. For ANOVA family of analysis, we recommend to use $\eta^2_f$ and
+$\omega^2_f$. These measures estimate the proportion of variance
+explained by each predictor (similar to $R^2$). Where $\eta^2_f$ is more
+positively bias (similar to $R^2$), and $\omega^2_f$ is a more
+conservative measure.
+
+When you have multiple predictors, you will also see the **partial**
+version of these measures ($\eta^2_p$ and $\omega^2_p$). These will most
+commonly present higher effect sizes, as they are the proportion of
+explained variance **that is not predicted by any other predictors**.
+So, will show higher effect sizes because they are not in function of
+the total variance of the outcome, but the residual variance.
+
+To estimate these measure we will use the `effectsize` package
+functions, just provide the RM-ANOVA model to the respective functions,
+notice that we set `partial = FALSE` to estimate the full measure
+instead of partial one.
+
+``` r
+eta_squared(model, partial = FALSE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter       | Eta2 |       95% CI
+    -------------------------------------
+    Cleb_Congruence | 0.11 | [0.02, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+``` r
+omega_squared(model, partial = FALSE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter       | Omega2 |       95% CI
+    ---------------------------------------
+    Cleb_Congruence |   0.09 | [0.01, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+When the model has only one predictor, these measures are equivalent to
+the model $R^2$. In this case the show that around an 11%
+($\eta^2_f = 0.11$) of the variance is explained by the `Cleb_Conguence`
+variable, or conservatively 9% ($\omega^2_f = 0.09$)
+
 ## Post-hoc pairwise comparisons
 
 Once we have established an overall model effect, we would be interested
@@ -292,30 +374,30 @@ summary(acmp)
 ```
 
 
-                Term                              Contrast Estimate Std. Error
-     Cleb_Congruence Cleb_Congruence_2 - Cleb_Congruence_1   -0.750      0.336
-     Cleb_Congruence Cleb_Congruence_3 - Cleb_Congruence_1   -0.125      0.361
-     Cleb_Congruence Cleb_Congruence_4 - Cleb_Congruence_1   -1.625      0.401
-     Cleb_Congruence Cleb_Congruence_5 - Cleb_Congruence_1   -1.063      0.466
-     Cleb_Congruence Cleb_Congruence_3 - Cleb_Congruence_2    0.625      0.268
-     Cleb_Congruence Cleb_Congruence_4 - Cleb_Congruence_2   -0.875      0.320
-     Cleb_Congruence Cleb_Congruence_5 - Cleb_Congruence_2   -0.313      0.371
-     Cleb_Congruence Cleb_Congruence_4 - Cleb_Congruence_3   -1.500      0.339
-     Cleb_Congruence Cleb_Congruence_5 - Cleb_Congruence_3   -0.938      0.381
-     Cleb_Congruence Cleb_Congruence_5 - Cleb_Congruence_4    0.563      0.333
-          z Pr(>|z|)
-     -2.232   0.0366
-     -0.346   0.7294
-     -4.053   <0.001
-     -2.278   0.0366
-      2.328   0.0366
-     -2.735   0.0208
-     -0.841   0.4447
-     -4.425   <0.001
-     -2.462   0.0346
-      1.690   0.1137
+                Term                Contrast Estimate Std. Error      z Pr(>|z|)
+     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0366
+     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7294
+     Cleb_Congruence HM - Adidas               -1.625      0.401 -4.053   <0.001
+     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0366
+     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0366
+     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0208
+     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4447
+     Cleb_Congruence HM - Nike                 -1.500      0.339 -4.425   <0.001
+     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0346
+     Cleb_Congruence Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1137
+        S
+      4.8
+      0.5
+     11.9
+      4.8
+      4.8
+      5.6
+      1.2
+     13.3
+      4.9
+      3.1
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value 
+    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value 
 
 From these post-host, we can interpret that we reject the null
 hypothesis of equal means over conditions for the comparisons with an
@@ -340,14 +422,14 @@ p
 ```
 
 
-       Cleb_Congruence Estimate Std. Error     z Pr(>|z|) 2.5 % 97.5 %
-     Cleb_Congruence_1     4.69      0.306 15.32   <0.001  4.09   5.29
-     Cleb_Congruence_2     3.94      0.277 14.24   <0.001  3.40   4.48
-     Cleb_Congruence_3     4.56      0.287 15.88   <0.001  4.00   5.13
-     Cleb_Congruence_4     3.06      0.317  9.65   <0.001  2.44   3.68
-     Cleb_Congruence_5     3.62      0.329 11.01   <0.001  2.98   4.27
+     Cleb_Congruence Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+      Adidas             4.69      0.306 15.32   <0.001 173.6  4.09   5.29
+      Puma               3.94      0.277 14.24   <0.001 150.4  3.40   4.48
+      Nike               4.56      0.287 15.88   <0.001 186.3  4.00   5.13
+      HM                 3.06      0.317  9.65   <0.001  70.8  2.44   3.68
+      Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
-    Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, conf.low, conf.high 
+    Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
 
 Then we can plot it with the function `plot_predictions`, based on the
 model, and the error bars representing the variability
@@ -356,13 +438,120 @@ model, and the error bars representing the variability
 plot_predictions(model, by = "Cleb_Congruence")
 ```
 
-![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-9-1.png)
+![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-13-1.png)
 
 The visualizations can be helpful to understand trends, and be clear on
 the direction of the differences.
 
 Note that this plot is a `ggplot2` type of plot, so you can edit it
 accordingly.
+
+## Post-hoc planned comparisons
+
+In many cases you will not be interested in all pairwise comparisons,
+but on planned comparisons, or specific contrasts tests. For this we can
+use the `hypotheses()` function. First we can ask for how is the
+function naming the relevant parameters
+
+``` r
+hypotheses(model)
+```
+
+
+     Term Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+       b1     4.69      0.306 15.32   <0.001 173.6  4.09   5.29
+       b2     3.94      0.277 14.24   <0.001 150.4  3.40   4.48
+       b3     4.56      0.287 15.88   <0.001 186.3  4.00   5.13
+       b4     3.06      0.317  9.65   <0.001  70.8  2.44   3.68
+       b5     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+Here we see that the model extracts the mean for each of the five
+groups, and we see that this match the factor variable
+
+``` r
+coef(model$lm)
+```
+
+                Adidas   Puma   Nike     HM Tommy_Hilfiger
+    (Intercept) 4.6875 3.9375 4.5625 3.0625          3.625
+
+Now, given the type of brands, we can think of comparing **sports**
+(Adidas, Puma, Nike) brands against **casual** (H&M, Tommy Hilfiger)
+brands. Here we will show hoe to do this in two ways.
+
+In the first approach we will write up the formula to compare the groups
+in function of the parameters from `hypotheses(model)`. Here we average
+the group mean for sporty and casual brands
+
+``` r
+hypotheses(model, "(b1+b2+b3)/3 = (b4+b5)/2")
+```
+
+
+                         Term Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
+     (b1+b2+b3)/3 = (b4+b5)/2     1.05      0.289 3.64   <0.001 11.8 0.485   1.62
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+In the second method, we will write the hypothesis with the commonly use
+**weights**, where we set group parameters based on the sign of the
+weights. So the first 3 groups will be set as one, and the last 2 will
+be grouped together. This way positive weights will be compared agaiant
+negative weights.
+
+``` r
+hypotheses(model, hypothesis = c(1/3,1/3,1/3,-1/2,-1/2))
+```
+
+
+       Term Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
+     custom     1.05      0.289 3.64   <0.001 11.8 0.485   1.62
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+Here we reject the null hypothesis of sporty and casual brands to have
+the same level of congruence.
+
+You can also build a matrix with multiple contrasts, to test more than
+one hypothesis at the time. For this example, We are adding a hypothesis
+for each type of brand mean being equal to 0, and then the comparison
+between them (previous example)
+
+Note that for the matrix, each column represents a different hypothesis
+and each row represents a group
+
+``` r
+cont_mat <- cbind(c(1/3,1/3,1/3,0,0),
+                  c(0,0,0,1/2,1/2),
+                  c(1/3,1/3,1/3,-1/2,-1/2))
+colnames(cont_mat) <- c("Sport=0","Casual=0","Sport=Casual")
+cont_mat
+```
+
+           Sport=0 Casual=0 Sport=Casual
+    [1,] 0.3333333      0.0    0.3333333
+    [2,] 0.3333333      0.0    0.3333333
+    [3,] 0.3333333      0.0    0.3333333
+    [4,] 0.0000000      0.5   -0.5000000
+    [5,] 0.0000000      0.5   -0.5000000
+
+``` r
+hypotheses(model, hypothesis = cont_mat)
+```
+
+
+             Term Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+     Sport=0          4.40      0.222 19.83   <0.001 288.2 3.961   4.83
+     Casual=0         3.34      0.277 12.06   <0.001 108.9 2.800   3.89
+     Sport=Casual     1.05      0.289  3.64   <0.001  11.8 0.485   1.62
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+Note that for contrast weights, if you want the means in the metric of
+the observed variable, you need to make sure the weights sum up to 1.
+Otherwise the interpretation will be in another metric.
 
 # Mixed design RM-ANOVA
 
@@ -384,8 +573,6 @@ model2 <- aov_ez(data=d_long,
                 within = "Cleb_Congruence", 
                 between = "Condition_Couple")
 ```
-
-    Converting to factor: Condition_Couple
 
     Contrasts set to contr.sum for the following variables: Condition_Couple
 
@@ -439,6 +626,90 @@ interpret that …
 And third, for the `Greenhouse-Geisser and Huynh-Feldt Corrections`
 correction section we can interpret that ….
 
+## Effect size
+
+Rememeber that when you have multiple predictors, you will also see the
+**partial** version of these measures ($\eta^2_p$ and $\omega^2_p$).
+These will most commonly present higher effect sizes, as they are the
+proportion of explained variance **that is not predicted by any other
+predictors**. So, will show higher effect sizes because they are not in
+function of the total variance of the outcome, but the residual
+variance.
+
+To estimate these measure we will use the `effectsize` package
+functions, just provide the RM-ANOVA model to the respective functions,
+notice that we set `partial = FALSE` to estimate the full measure
+instead of partial one.
+
+``` r
+eta_squared(model2, partial = FALSE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter                        |     Eta2 |       95% CI
+    ----------------------------------------------------------
+    Condition_Couple                 | 1.21e-03 | [0.00, 1.00]
+    Cleb_Congruence                  |     0.11 | [0.02, 1.00]
+    Condition_Couple:Cleb_Congruence |     0.01 | [0.00, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+``` r
+omega_squared(model2, partial = FALSE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter                        | Omega2 |       95% CI
+    --------------------------------------------------------
+    Condition_Couple                 |   0.00 | [0.00, 1.00]
+    Cleb_Congruence                  |   0.09 | [0.01, 1.00]
+    Condition_Couple:Cleb_Congruence |   0.00 | [0.00, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+In this case the show that around an 11% ($\eta^2_f = 0.11$) of the
+variance is explained by the `Cleb_Conguence` variable, or
+conservatively 9% ($\omega^2_f = 0.09$). And the variable
+`Condition_Couple` and the interaction functionally have no effect.
+
+You can estimate the partial measures with the argument `partial=TRUE`
+
+``` r
+eta_squared(model2, partial = TRUE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter                        | Eta2 (partial) |       95% CI
+    ----------------------------------------------------------------
+    Condition_Couple                 |       3.14e-03 | [0.00, 1.00]
+    Cleb_Congruence                  |           0.19 | [0.07, 1.00]
+    Condition_Couple:Cleb_Congruence |           0.02 | [0.00, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+``` r
+omega_squared(model2, partial = TRUE)
+```
+
+    # Effect Size for ANOVA (Type III)
+
+    Parameter                        | Omega2 (partial) |       95% CI
+    ------------------------------------------------------------------
+    Condition_Couple                 |             0.00 | [0.00, 1.00]
+    Cleb_Congruence                  |             0.10 | [0.01, 1.00]
+    Condition_Couple:Cleb_Congruence |             0.00 | [0.00, 1.00]
+
+    - One-sided CIs: upper bound fixed at [1.00].
+
+In this case the show that around an 19% ($\eta^2_f = 0.19$) of the
+variance that is not explained by other predictors is explained by the
+`Cleb_Conguence` variable, or conservatively 10% ($\omega^2_f = 0.10$).
+And the variable `Condition_Couple` and the interaction functionally
+have no effect.
+
 ## Post-hoc comparisons
 
 Now, the post-hocs can be done in 3 ways, first for the within variable,
@@ -458,32 +729,32 @@ summary(acmp_1)
 ```
 
 
-                 Term                              Contrast Estimate Std. Error
-     Cleb_Congruence  Cleb_Congruence_2 - Cleb_Congruence_1   -0.750      0.329
-     Cleb_Congruence  Cleb_Congruence_3 - Cleb_Congruence_1   -0.125      0.367
-     Cleb_Congruence  Cleb_Congruence_4 - Cleb_Congruence_1   -1.625      0.404
-     Cleb_Congruence  Cleb_Congruence_5 - Cleb_Congruence_1   -1.063      0.469
-     Cleb_Congruence  Cleb_Congruence_3 - Cleb_Congruence_2    0.625      0.261
-     Cleb_Congruence  Cleb_Congruence_4 - Cleb_Congruence_2   -0.875      0.323
-     Cleb_Congruence  Cleb_Congruence_5 - Cleb_Congruence_2   -0.313      0.377
-     Cleb_Congruence  Cleb_Congruence_4 - Cleb_Congruence_3   -1.500      0.342
-     Cleb_Congruence  Cleb_Congruence_5 - Cleb_Congruence_3   -0.938      0.383
-     Cleb_Congruence  Cleb_Congruence_5 - Cleb_Congruence_4    0.563      0.338
-     Condition_Couple 1 - 0                                    0.125      0.407
-          z Pr(>|z|)
-     -2.279   0.0370
-     -0.341   0.7586
-     -4.026   <0.001
-     -2.264   0.0370
-      2.395   0.0366
-     -2.706   0.0250
-     -0.829   0.4975
-     -4.392   <0.001
-     -2.448   0.0366
-      1.664   0.1323
-      0.307   0.7586
+                 Term                          Contrast Estimate Std. Error      z
+     Cleb_Congruence  Puma - Adidas                       -0.750      0.329 -2.279
+     Cleb_Congruence  Nike - Adidas                       -0.125      0.367 -0.341
+     Cleb_Congruence  HM - Adidas                         -1.625      0.404 -4.026
+     Cleb_Congruence  Tommy_Hilfiger - Adidas             -1.063      0.469 -2.264
+     Cleb_Congruence  Nike - Puma                          0.625      0.261  2.395
+     Cleb_Congruence  HM - Puma                           -0.875      0.323 -2.706
+     Cleb_Congruence  Tommy_Hilfiger - Puma               -0.313      0.377 -0.829
+     Cleb_Congruence  HM - Nike                           -1.500      0.342 -4.392
+     Cleb_Congruence  Tommy_Hilfiger - Nike               -0.938      0.383 -2.448
+     Cleb_Congruence  Tommy_Hilfiger - HM                  0.563      0.338  1.664
+     Condition_Couple Shakira & Piqué - Beyonce & Jay-Z    0.125      0.407  0.307
+     Pr(>|z|)    S
+       0.0370  4.8
+       0.7586  0.4
+       <0.001 11.6
+       0.0370  4.8
+       0.0366  4.8
+       0.0250  5.3
+       0.4975  1.0
+       <0.001 13.0
+       0.0366  4.8
+       0.1323  2.9
+       0.7586  0.4
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value 
+    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value 
 
 From `summary(acmp_1)` we will have the estimated mean difference for
 each pair comparison, and we can reject the null hypothesis for
@@ -505,50 +776,50 @@ summary(acmp_2)
 ```
 
 
-                Term                                          Contrast
-     Cleb_Congruence mean(Cleb_Congruence_2) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_2) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_3) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_3) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_1)
-     Cleb_Congruence mean(Cleb_Congruence_3) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_3) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_2)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_3)
-     Cleb_Congruence mean(Cleb_Congruence_4) - mean(Cleb_Congruence_3)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_3)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_3)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_4)
-     Cleb_Congruence mean(Cleb_Congruence_5) - mean(Cleb_Congruence_4)
-     Condition_Couple Estimate Std. Error      z Pr(>|z|)
-                    0  -1.2500      0.465 -2.685  0.03622
-                    1  -0.2500      0.465 -0.537  0.71931
-                    0  -0.1875      0.519 -0.361  0.76317
-                    1  -0.0625      0.519 -0.120  0.90418
-                    0  -1.9375      0.571 -3.395  0.00687
-                    1  -1.3125      0.571 -2.300  0.05369
-                    0  -1.4375      0.664 -2.166  0.06732
-                    1  -0.6875      0.664 -1.036  0.42885
-                    0   1.0625      0.369  2.879  0.02659
-                    1   0.1875      0.369  0.508  0.71931
-                    0  -0.6875      0.457 -1.503  0.26546
-                    1  -1.0625      0.457 -2.323  0.05369
-                    0  -0.1875      0.533 -0.352  0.76317
-                    1  -0.4375      0.533 -0.821  0.54902
-                    0  -1.7500      0.483 -3.623  0.00583
-                    1  -1.2500      0.483 -2.588  0.03864
-                    0  -1.2500      0.542 -2.308  0.05369
-                    1  -0.6250      0.542 -1.154  0.41404
-                    0   0.5000      0.478  1.046  0.42885
-                    1   0.6250      0.478  1.307  0.34762
+                Term                            Contrast Condition_Couple Estimate
+     Cleb_Congruence mean(Puma) - mean(Adidas)            Beyonce & Jay-Z  -1.2500
+     Cleb_Congruence mean(Puma) - mean(Adidas)            Shakira & Piqué  -0.2500
+     Cleb_Congruence mean(Nike) - mean(Adidas)            Beyonce & Jay-Z  -0.1875
+     Cleb_Congruence mean(Nike) - mean(Adidas)            Shakira & Piqué  -0.0625
+     Cleb_Congruence mean(HM) - mean(Adidas)              Beyonce & Jay-Z  -1.9375
+     Cleb_Congruence mean(HM) - mean(Adidas)              Shakira & Piqué  -1.3125
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Beyonce & Jay-Z  -1.4375
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Shakira & Piqué  -0.6875
+     Cleb_Congruence mean(Nike) - mean(Puma)              Beyonce & Jay-Z   1.0625
+     Cleb_Congruence mean(Nike) - mean(Puma)              Shakira & Piqué   0.1875
+     Cleb_Congruence mean(HM) - mean(Puma)                Beyonce & Jay-Z  -0.6875
+     Cleb_Congruence mean(HM) - mean(Puma)                Shakira & Piqué  -1.0625
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Beyonce & Jay-Z  -0.1875
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Shakira & Piqué  -0.4375
+     Cleb_Congruence mean(HM) - mean(Nike)                Beyonce & Jay-Z  -1.7500
+     Cleb_Congruence mean(HM) - mean(Nike)                Shakira & Piqué  -1.2500
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Beyonce & Jay-Z  -1.2500
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Shakira & Piqué  -0.6250
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Beyonce & Jay-Z   0.5000
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Shakira & Piqué   0.6250
+     Std. Error      z Pr(>|z|)   S
+          0.465 -2.685  0.03622 4.8
+          0.465 -0.537  0.71931 0.5
+          0.519 -0.361  0.76317 0.4
+          0.519 -0.120  0.90418 0.1
+          0.571 -3.395  0.00687 7.2
+          0.571 -2.300  0.05369 4.2
+          0.664 -2.166  0.06732 3.9
+          0.664 -1.036  0.42885 1.2
+          0.369  2.879  0.02659 5.2
+          0.369  0.508  0.71931 0.5
+          0.457 -1.503  0.26546 1.9
+          0.457 -2.323  0.05369 4.2
+          0.533 -0.352  0.76317 0.4
+          0.533 -0.821  0.54902 0.9
+          0.483 -3.623  0.00583 7.4
+          0.483 -2.588  0.03864 4.7
+          0.542 -2.308  0.05369 4.2
+          0.542 -1.154  0.41404 1.3
+          0.478  1.046  0.42885 1.2
+          0.478  1.307  0.34762 1.5
 
-    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, predicted, predicted_hi, predicted_lo 
+    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, predicted, predicted_hi, predicted_lo 
 
 This turns into larger post-hoc results, so be careful in its reading
 and interpretation
@@ -574,17 +845,17 @@ p2
 ```
 
 
-       Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|) 2.5 %
-     Cleb_Congruence_1                0     4.88      0.437 11.15   <0.001  4.02
-     Cleb_Congruence_2                0     3.63      0.389  9.31   <0.001  2.86
-     Cleb_Congruence_3                0     4.69      0.412 11.38   <0.001  3.88
-     Cleb_Congruence_4                0     2.94      0.455  6.46   <0.001  2.05
-     Cleb_Congruence_5                0     3.44      0.471  7.30   <0.001  2.51
-     Cleb_Congruence_1                1     4.50      0.437 10.29   <0.001  3.64
-     Cleb_Congruence_2                1     4.25      0.389 10.92   <0.001  3.49
-     Cleb_Congruence_3                1     4.44      0.412 10.78   <0.001  3.63
-     Cleb_Congruence_4                1     3.19      0.455  7.01   <0.001  2.30
-     Cleb_Congruence_5                1     3.81      0.471  8.10   <0.001  2.89
+     Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
+      Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
+      Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
+      Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
+      HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
+      Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
+      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
+      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
+      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
+      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
+      Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
      97.5 %
        5.73
        4.39
@@ -597,7 +868,7 @@ p2
        4.08
        4.74
 
-    Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, conf.low, conf.high 
+    Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
 
 Then, we can plot the estimated means, accounting for the interactions.
 With the same function as before, but by including both predictors in
@@ -609,4 +880,88 @@ on color)
 plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
 ```
 
-![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-14-1.png)
+![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-26-1.png)
+
+## Post-hoc planned comparisons
+
+(Note, I have no theoretical reason for meaningful comparisons here, so
+I am writing some as understandable examples)
+
+For planned comparisons while having cross factors we will use the
+`marginal_means` function, which estimates all cross factor means
+(similar to `avg_predictions`). If you run the function with the default
+arguments it will estimate the marginal means for each factor, and we
+need to add the argument `cross=T` to estimate all possible cross
+marginal means.
+
+``` r
+mm <- marginal_means(model2, cross=T)
+data.frame(mm)
+```
+
+       rowid Condition_Couple Cleb_Congruence estimate std.error statistic
+    1      1  Beyonce & Jay-Z          Adidas   4.8750 0.4372023 11.150445
+    2      2  Beyonce & Jay-Z            Puma   3.6250 0.3893103  9.311339
+    3      3  Beyonce & Jay-Z            Nike   4.6875 0.4117417 11.384564
+    4      4  Beyonce & Jay-Z              HM   2.9375 0.4550069  6.455947
+    5      5  Beyonce & Jay-Z  Tommy_Hilfiger   3.4375 0.4707596  7.302029
+    6      6  Shakira & Piqué          Adidas   4.5000 0.4372023 10.292719
+    7      7  Shakira & Piqué            Puma   4.2500 0.3893103 10.916742
+    8      8  Shakira & Piqué            Nike   4.4375 0.4117417 10.777387
+    9      9  Shakira & Piqué              HM   3.1875 0.4550069  7.005389
+    10    10  Shakira & Piqué  Tommy_Hilfiger   3.8125 0.4707596  8.098614
+            p.value  s.value conf.low conf.high brand id wts
+    1  7.124910e-29 93.50304 4.018099  5.731901 3.975  1   1
+    2  1.262310e-20 66.10250 2.861966  4.388034 3.975  1   1
+    3  4.991735e-30 97.33830 3.880501  5.494499 3.975  1   1
+    4  1.075446e-10 33.11435 2.045703  3.829297 3.975  1   1
+    5  2.834607e-13 41.68192 2.514828  4.360172 3.975  1   1
+    6  7.599981e-25 80.12221 3.643099  5.356901 3.975  1   1
+    7  9.587335e-28 89.75286 3.486966  5.013034 3.975  1   1
+    8  4.402126e-27 87.55386 3.630501  5.244499 3.975  1   1
+    9  2.463010e-12 38.56271 2.295703  4.079297 3.975  1   1
+    10 5.558899e-16 50.67605 2.889828  4.735172 3.975  1   1
+
+Once we have seen the cross means, we can build comparisons with weights
+vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs
+**Casual-Shakira & Piqué** we can use the following weight vector in the
+`hypothesis` argument
+
+``` r
+mm2 <- marginal_means(model2, cross=T, 
+                      hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2))
+mm2
+```
+
+
+       Term   Mean Std. Error      z Pr(>|z|)   S 2.5 % 97.5 %
+     custom -0.313      0.561 -0.557    0.577 0.8 -1.41  0.786
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+Here we see that we fail to reject the null hypothesis of both groups
+having the same marginal mean.
+
+And, we can also add multiple comparisons with a matrix of weights. In
+this example, we are adding the same hypothesis as before, and adding
+**Sporty-Beyonce & Jay-Z** vs **Sporty-Shakira & Piqué**
+
+Note that for the matrix, each column represents a different hypothesis
+and each row represents a group
+
+``` r
+cont_mat2 <- cbind(c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2),
+                   c(1/3,1/3,1/3,0,0,-1/3,-1/3,-1/3,0,0))
+mm3 <- marginal_means(model2, cross=T, 
+                      hypothesis = cont_mat2)
+mm3
+```
+
+
+       Term      Mean Std. Error         z Pr(>|z|)   S  2.5 % 97.5 %
+     custom -3.13e-01      0.561 -5.57e-01    0.577 0.8 -1.411  0.786
+     custom -2.22e-16      0.451 -4.93e-16    1.000 0.0 -0.883  0.883
+
+    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
+For both of these example, we fail to reject the null hypothesis.
