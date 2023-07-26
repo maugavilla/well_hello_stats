@@ -1,6 +1,6 @@
 # Repeated Measures ANOVA
 Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
-2023-06-22
+2023-07-26
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -19,6 +19,7 @@ Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
   - [Post-hoc comparisons](#post-hoc-comparisons)
   - [Plot post-hoc](#plot-post-hoc)
   - [Post-hoc planned comparisons](#post-hoc-planned-comparisons-1)
+  - [Interpretation](#interpretation)
 
 # Introduction
 
@@ -355,6 +356,25 @@ variable, or conservatively 9% ($\omega^2_f = 0.09$)
 
 ## Post-hoc pairwise comparisons
 
+We can start by looking at the estimated means for each group, we can do
+this with the `avg_predictions` function. We need to provide it with the
+model, and for which predictor in the model you wish to see predicted
+means with the `by` argument
+
+``` r
+avg_predictions(model, by = c("Cleb_Congruence"))
+```
+
+
+     Cleb_Congruence Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+      Adidas             4.69      0.306 15.32   <0.001 173.6  4.09   5.29
+      Puma               3.94      0.277 14.24   <0.001 150.4  3.40   4.48
+      Nike               4.56      0.287 15.88   <0.001 186.3  4.00   5.13
+      HM                 3.06      0.317  9.65   <0.001  70.8  2.44   3.68
+      Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
+
+    Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+
 Once we have established an overall model effect, we would be interested
 in testing specific comparisons, such as **Where do we see specific mean
 differences?**. We will do the post-hoc tests with the
@@ -363,45 +383,56 @@ outcome predicted by the model change when we manipulate the predictors
 (and their pairwise combinations)
 
 For this function, we provide the RM-ANOVA object (`model`), the group
-variable we want to estimate
+variable we want to estimate (`list(Cleb_Congruence = "pairwise")`) as
+well as specifying that we are requesting the pairwise comparisons.
+Additionally, we are equating the `fdr` false discovery rate $p$-value
+correction, asking for the tests and CI to be presented for the 95%
+confidence level. We are specifying the degrees of freedom so the
+function uses the $t-test$ instead of the $z-test$, we get these from
+the handy function `insight::get_df()` which requires the RN-ANOVA
+object
 
 ``` r
 acmp <- avg_comparisons(model,
                        variables = list(Cleb_Congruence = "pairwise"), 
-                       p_adjust = "fdr", conf_level = 0.95)
+                       p_adjust = "fdr", conf_level = 0.95,
+                       df = insight::get_df(model))
 
 summary(acmp)
 ```
 
 
-                Term                Contrast Estimate Std. Error      z Pr(>|z|)
-     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0366
-     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7294
+                Term                Contrast Estimate Std. Error      t Pr(>|t|)
+     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0386
+     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7298
      Cleb_Congruence HM - Adidas               -1.625      0.401 -4.053   <0.001
-     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0366
-     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0366
-     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0208
-     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4447
+     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0386
+     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0386
+     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0232
+     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4461
      Cleb_Congruence HM - Nike                 -1.500      0.339 -4.425   <0.001
-     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0346
-     Cleb_Congruence Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1137
-        S
-      4.8
-      0.5
-     11.9
-      4.8
-      4.8
-      5.6
-      1.2
-     13.3
-      4.9
-      3.1
+     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0373
+     Cleb_Congruence Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1163
+        S  Df
+      4.7 154
+      0.5 154
+     11.3 154
+      4.7 154
+      4.7 154
+      5.4 154
+      1.2 154
+     12.4 154
+      4.7 154
+      3.1 154
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value 
+    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
 
 From these post-host, we can interpret that we reject the null
 hypothesis of equal means over conditions for the comparisons with an
-adjusted $p-value < .05$.
+adjusted $p-value < .05$, as the most commonly use $\alpha$ level.
+
+Notice we are using `fdr` $p$-value correcting, instead of more
+conservative ones like Bonferroni.
 
 ## Plot group means
 
@@ -438,7 +469,7 @@ model, and the error bars representing the variability
 plot_predictions(model, by = "Cleb_Congruence")
 ```
 
-![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-13-1.png)
+![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-14-1.png)
 
 The visualizations can be helpful to understand trends, and be clear on
 the direction of the differences.
@@ -723,13 +754,14 @@ interactions)by including both the between and within variables in the
 ``` r
 acmp_1 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise", Condition_Couple = "pairwise"),
-                          p_adjust = "fdr", conf_level = 0.95)
+                          p_adjust = "fdr", conf_level = 0.95,
+                          df = insight::get_df(model2))
 
 summary(acmp_1)
 ```
 
 
-                 Term                          Contrast Estimate Std. Error      z
+                 Term                          Contrast Estimate Std. Error      t
      Cleb_Congruence  Puma - Adidas                       -0.750      0.329 -2.279
      Cleb_Congruence  Nike - Adidas                       -0.125      0.367 -0.341
      Cleb_Congruence  HM - Adidas                         -1.625      0.404 -4.026
@@ -741,20 +773,20 @@ summary(acmp_1)
      Cleb_Congruence  Tommy_Hilfiger - Nike               -0.938      0.383 -2.448
      Cleb_Congruence  Tommy_Hilfiger - HM                  0.563      0.338  1.664
      Condition_Couple Shakira & Piqué - Beyonce & Jay-Z    0.125      0.407  0.307
-     Pr(>|z|)    S
-       0.0370  4.8
-       0.7586  0.4
-       <0.001 11.6
-       0.0370  4.8
-       0.0366  4.8
-       0.0250  5.3
-       0.4975  1.0
-       <0.001 13.0
-       0.0366  4.8
-       0.1323  2.9
-       0.7586  0.4
+     Pr(>|t|)    S  Df
+       0.0393  4.7 149
+       0.7590  0.4 149
+       <0.001 11.0 149
+       0.0393  4.7 149
+       0.0393  4.7 149
+       0.0279  5.2 149
+       0.4991  1.0 149
+       <0.001 12.1 149
+       0.0393  4.7 149
+       0.1351  2.9 149
+       0.7590  0.4 149
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value 
+    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
 
 From `summary(acmp_1)` we will have the estimated mean difference for
 each pair comparison, and we can reject the null hypothesis for
@@ -770,7 +802,8 @@ between condition
 acmp_2 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise"), 
                           p_adjust = "fdr", conf_level = 0.95, 
-                          by = "Condition_Couple")
+                          by = "Condition_Couple",
+                          df = insight::get_df(model2))
 
 summary(acmp_2)
 ```
@@ -797,29 +830,29 @@ summary(acmp_2)
      Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Shakira & Piqué  -0.6250
      Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Beyonce & Jay-Z   0.5000
      Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Shakira & Piqué   0.6250
-     Std. Error      z Pr(>|z|)   S
-          0.465 -2.685  0.03622 4.8
-          0.465 -0.537  0.71931 0.5
-          0.519 -0.361  0.76317 0.4
-          0.519 -0.120  0.90418 0.1
-          0.571 -3.395  0.00687 7.2
-          0.571 -2.300  0.05369 4.2
-          0.664 -2.166  0.06732 3.9
-          0.664 -1.036  0.42885 1.2
-          0.369  2.879  0.02659 5.2
-          0.369  0.508  0.71931 0.5
-          0.457 -1.503  0.26546 1.9
-          0.457 -2.323  0.05369 4.2
-          0.533 -0.352  0.76317 0.4
-          0.533 -0.821  0.54902 0.9
-          0.483 -3.623  0.00583 7.4
-          0.483 -2.588  0.03864 4.7
-          0.542 -2.308  0.05369 4.2
-          0.542 -1.154  0.41404 1.3
-          0.478  1.046  0.42885 1.2
-          0.478  1.307  0.34762 1.5
+     Std. Error      t Pr(>|t|)   S  Df
+          0.465 -2.685  0.04033 4.6 149
+          0.465 -0.537  0.72019 0.5 149
+          0.519 -0.361  0.76370 0.4 149
+          0.519 -0.120  0.90434 0.1 149
+          0.571 -3.395  0.00881 6.8 149
+          0.571 -2.300  0.05716 4.1 149
+          0.664 -2.166  0.07086 3.8 149
+          0.664 -1.036  0.43125 1.2 149
+          0.369  2.879  0.03051 5.0 149
+          0.369  0.508  0.72019 0.5 149
+          0.457 -1.503  0.26969 1.9 149
+          0.457 -2.323  0.05716 4.1 149
+          0.533 -0.352  0.76370 0.4 149
+          0.533 -0.821  0.55077 0.9 149
+          0.483 -3.623  0.00798 7.0 149
+          0.483 -2.588  0.04246 4.6 149
+          0.542 -2.308  0.05716 4.1 149
+          0.542 -1.154  0.41712 1.3 149
+          0.478  1.046  0.43125 1.2 149
+          0.478  1.307  0.35128 1.5 149
 
-    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, predicted, predicted_hi, predicted_lo 
+    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, df, predicted, predicted_hi, predicted_lo 
 
 This turns into larger post-hoc results, so be careful in its reading
 and interpretation
@@ -880,7 +913,7 @@ on color)
 plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
 ```
 
-![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-26-1.png)
+![](8_2_RM_ANOVA_files/figure-commonmark/unnamed-chunk-27-1.png)
 
 ## Post-hoc planned comparisons
 
@@ -965,3 +998,26 @@ mm3
     Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
 
 For both of these example, we fail to reject the null hypothesis.
+
+## Interpretation
+
+A repeated measure testing was used to determine the congruence between
+five sports clothing brands and two celebrity couples. Participants
+rated the congruence of five sports brands with one of the celebrity
+couples (randomized), measured using a seven-point Likert scale ranging
+from one (strongly disagree) to seven (strongly agree).
+
+Participants were asked their agreement level to statements such as
+“Adidas is a good match with the celebrities” and “Puma is a good match
+with the celebrities”. The repeated measure used a within factor with
+five levels (Adidas, Puma, Nike, H&M, Tommy Hilfiger) and a between
+factor with two levels (Beyonce & Jay-Z and Shakira & Piqué). The result
+showed that there we reject the null hypothesis of no differences in
+congruence between the brands ($F (4, 124) = 6.93, p < .01$). Overall
+Adidas had the highest mean congruence (M = 4.69, SE = 0.31).
+
+We fail to reject the null hypothesis of equal congruence, when
+comparing the two celebrity couples (interaction)
+($F (4, 120) = 0.68, p = 0.606$). This shows that no brands showed a
+significantly higher congruence with one couple compared to the other.
+And brand differences should be look at ignoring couple effects

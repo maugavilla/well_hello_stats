@@ -157,18 +157,27 @@ When the model has only one predictor, these measures are equivalent to the mode
 
 ## Post-hoc pairwise comparisons
 
+We can start by looking at the estimated means for each group, we can do this with the ```avg_predictions``` function. We need to provide it with the model, and for which predictor in the model you wish to see predicted means with the ```by``` argument
+
+```{r}
+avg_predictions(model, by = c("Cleb_Congruence"))
+```
+
 Once we have established an overall model effect, we would be interested in testing specific comparisons, such as **Where do we see specific mean differences?**. We will do the post-hoc tests with the ```marginalleffects``` package, this will tell you how the values of the outcome predicted by the model change when we manipulate the predictors (and their pairwise combinations)
 
-For this function, we provide the RM-ANOVA object (```model```), the group variable we want to estimate
+For this function, we provide the RM-ANOVA object (```model```), the group variable we want to estimate (```list(Cleb_Congruence = "pairwise")```) as well as specifying that we are requesting the pairwise comparisons. Additionally, we are equating the ```fdr``` false discovery rate $p$-value correction, asking for the tests and CI to be presented for the 95% confidence level. We are specifying the degrees of freedom so the function uses the $t-test$ instead of the $z-test$, we get these from the handy function ```insight::get_df()``` which requires the RN-ANOVA object
 ```{r, eval=TRUE, warning=FALSE}
 acmp <- avg_comparisons(model,
                        variables = list(Cleb_Congruence = "pairwise"), 
-                       p_adjust = "fdr", conf_level = 0.95)
+                       p_adjust = "fdr", conf_level = 0.95,
+                       df = insight::get_df(model))
 
 summary(acmp)
 ```
 
-From these post-host, we can interpret that we reject the null hypothesis of equal means over conditions for the comparisons with an adjusted $p-value < .05$. 
+From these post-host, we can interpret that we reject the null hypothesis of equal means over conditions for the comparisons with an adjusted $p-value < .05$, as the most commonly use $\alpha$ level. 
+
+Notice we are using ```fdr``` $p$-value correcting, instead of more conservative ones like Bonferroni.
 
 ## Plot group means
 
@@ -299,7 +308,8 @@ First, we can estimate the pairwise comparisons (ignoring the interactions)by in
 ```{r}
 acmp_1 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise", Condition_Couple = "pairwise"),
-                          p_adjust = "fdr", conf_level = 0.95)
+                          p_adjust = "fdr", conf_level = 0.95,
+                          df = insight::get_df(model2))
 
 summary(acmp_1)
 ```
@@ -312,7 +322,8 @@ If we want to estimate the interacting post-hoc, across between and within condi
 acmp_2 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise"), 
                           p_adjust = "fdr", conf_level = 0.95, 
-                          by = "Condition_Couple")
+                          by = "Condition_Couple",
+                          df = insight::get_df(model2))
 
 summary(acmp_2)
 ```
@@ -375,3 +386,11 @@ mm3
 ```
 
 For both of these example, we fail to reject the null hypothesis. 
+
+## Interpretation
+
+A repeated measure testing was used to determine the congruence between five sports clothing brands and two celebrity couples. Participants rated the congruence of five sports brands with one of the celebrity couples (randomized), measured using a seven-point Likert scale ranging from one (strongly disagree) to seven (strongly agree). 
+
+Participants were asked their agreement level to statements such as “Adidas is a good match with the celebrities” and “Puma is a good match with the celebrities”. The repeated measure used a within factor with five levels (Adidas, Puma, Nike, H&M, Tommy Hilfiger) and a between factor with two levels (Beyonce & Jay-Z and Shakira & Piqué). The result showed that there we reject the null hypothesis of no differences in congruence between the brands ($F (4, 124) = 6.93, p < .01$). Overall Adidas had the highest mean congruence (M = 4.69, SE = 0.31). 
+
+We fail to reject the null hypothesis of equal congruence, when comparing the two celebrity couples (interaction) ($F (4, 120) = 0.68, p = 0.606$). This shows that no brands showed a significantly higher congruence with one couple compared to the other. And brand differences should be look at ignoring couple effects
