@@ -1,30 +1,24 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-22 May, 2023
+26 July, 2023
 
-- <a href="#welcome" id="toc-welcome">Welcome</a>
-- <a href="#what-is-r-and-why-should-you-learn-it"
-  id="toc-what-is-r-and-why-should-you-learn-it">What is R and why should
-  you learn it?</a>
-- <a href="#prerequisites" id="toc-prerequisites">Prerequisites</a>
-- <a href="#how-to-use-this-resource"
-  id="toc-how-to-use-this-resource">How to use this resource</a>
-- <a href="#the-tutorials" id="toc-the-tutorials">The tutorials</a>
-  - <a href="#set-up" id="toc-set-up">Set up</a>
-  - <a href="#basics" id="toc-basics">Basics</a>
-  - <a href="#initial-work-with-data"
-    id="toc-initial-work-with-data">Initial work with data</a>
-  - <a href="#reporting" id="toc-reporting">Reporting</a>
-  - <a href="#relations-betwen-variables"
-    id="toc-relations-betwen-variables">Relations betwen variables</a>
-  - <a href="#scale-evaluation" id="toc-scale-evaluation">Scale
-    evaluation</a>
-  - <a href="#general-linear-models" id="toc-general-linear-models">General
-    Linear Models</a>
-  - <a href="#mixture-models" id="toc-mixture-models">Mixture models</a>
-  - <a href="#factor-analysis" id="toc-factor-analysis">Factor Analysis</a>
-- <a href="#progress" id="toc-progress">Progress</a>
+- [Welcome](#welcome)
+- [What is R and why should you learn
+  it?](#what-is-r-and-why-should-you-learn-it)
+- [Prerequisites](#prerequisites)
+- [How to use this resource](#how-to-use-this-resource)
+- [The tutorials](#the-tutorials)
+  - [Set up](#set-up)
+  - [Basics](#basics)
+  - [Initial work with data](#initial-work-with-data)
+  - [Reporting](#reporting)
+  - [Relations betwen variables](#relations-betwen-variables)
+  - [Scale evaluation](#scale-evaluation)
+  - [General Linear Models](#general-linear-models)
+  - [Mixture models](#mixture-models)
+  - [Factor Analysis](#factor-analysis)
+- [Progress](#progress)
 
 <div style="padding: 0.2em;">
 
@@ -211,6 +205,13 @@ following a course.
   setting up R session, import data set, difference in means, one sample
   t-test, two sample t-test, paired sample t-test, effect sizes,
   graphing your results. Packages: rio, effectsize, ggpubr.
+- [Repeated Measures -
+  ANOVA](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_2_RM_ANOVA.md):
+  setting up R session, import data set, convert data from wide to long
+  format, run repeated measures anova and mixed design RM-ANOVA, effect
+  size, post-hoc pairwise and planned comparisons, plot effects.
+  Packages: rio, dplyr, reshape2, marginaleffect, afex, sjlabelled,
+  effectsize.  
 - [Linear
   regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md):
   setting up R session, import data set, simple linear regression,
