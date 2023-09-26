@@ -455,7 +455,7 @@ ind_fit_boot <- sem(ind_mod, data = dat2, meanstructure=T,
 ```
 
     Warning in lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats =
-    lavsamplestats, : lavaan WARNING: 19 bootstrap runs failed or did not converge.
+    lavsamplestats, : lavaan WARNING: 14 bootstrap runs failed or did not converge.
 
 We can look at the standard output from the summary function, but here
 we can only ask for the default type of interval.
@@ -481,15 +481,15 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
       Standard errors                            Bootstrap
       Number of requested bootstrap draws             2000
-      Number of successful bootstrap draws            1981
+      Number of successful bootstrap draws            1986
 
     Regressions:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
       Corrup ~                                                              
-        SACSECVAL (cp)   -1.111    0.020  -54.586    0.000   -1.151   -1.072
-        LCGov      (b)    0.456    0.005   90.334    0.000    0.446    0.466
+        SACSECVAL (cp)   -1.111    0.019  -59.569    0.000   -1.148   -1.076
+        LCGov      (b)    0.456    0.005   94.075    0.000    0.447    0.466
       LCGov ~                                                               
-        SACSECVAL  (a)    1.377    0.014   96.562    0.000    1.349    1.405
+        SACSECVAL  (a)    1.377    0.014   98.506    0.000    1.350    1.406
        Std.lv  Std.all
                       
        -1.111   -0.236
@@ -499,16 +499,16 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Intercepts:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            2.725    0.012  234.079    0.000    2.702    2.749
-       .LCGov             2.047    0.006  341.322    0.000    2.036    2.059
+       .Corrup            2.725    0.011  239.964    0.000    2.703    2.747
+       .LCGov             2.047    0.006  346.944    0.000    2.036    2.058
        Std.lv  Std.all
         2.725    3.305
         2.047    2.791
 
     Variances:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            0.573    0.006   96.761    0.000    0.561    0.584
-       .LCGov             0.480    0.002  211.640    0.000    0.476    0.484
+       .Corrup            0.573    0.006   99.615    0.000    0.562    0.584
+       .LCGov             0.480    0.002  213.695    0.000    0.476    0.484
        Std.lv  Std.all
         0.573    0.843
         0.480    0.892
@@ -520,8 +520,8 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Defined Parameters:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-        ab                0.628    0.009   71.736    0.000    0.611    0.645
-        tot              -0.483    0.019  -24.823    0.000   -0.521   -0.446
+        ab                0.628    0.009   73.527    0.000    0.612    0.646
+        tot              -0.483    0.018  -26.141    0.000   -0.519   -0.447
        Std.lv  Std.all
         0.628    0.133
        -0.483   -0.102
@@ -539,17 +539,17 @@ parameterestimates(ind_fit_boot, boot.ci.type="bca.simple",
 ```
 
              lhs op       rhs label    est    se ci.lower ci.upper std.lv std.all
-    1     Corrup  ~ SACSECVAL    cp -1.111 0.020   -1.151   -1.072 -1.111  -0.236
-    2     Corrup  ~     LCGov     b  0.456 0.005    0.446    0.467  0.456   0.406
-    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.349    1.405  1.377   0.328
-    4     Corrup ~~    Corrup        0.573 0.006    0.562    0.585  0.573   0.843
-    5      LCGov ~~     LCGov        0.480 0.002    0.476    0.485  0.480   0.892
+    1     Corrup  ~ SACSECVAL    cp -1.111 0.019   -1.149   -1.076 -1.111  -0.236
+    2     Corrup  ~     LCGov     b  0.456 0.005    0.447    0.466  0.456   0.406
+    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.350    1.405  1.377   0.328
+    4     Corrup ~~    Corrup        0.573 0.006    0.562    0.584  0.573   0.843
+    5      LCGov ~~     LCGov        0.480 0.002    0.476    0.484  0.480   0.892
     6  SACSECVAL ~~ SACSECVAL        0.031 0.000    0.031    0.031  0.031   1.000
-    7     Corrup ~1                  2.725 0.012    2.702    2.748  2.725   3.305
+    7     Corrup ~1                  2.725 0.011    2.704    2.748  2.725   3.305
     8      LCGov ~1                  2.047 0.006    2.036    2.059  2.047   2.791
     9  SACSECVAL ~1                  0.361 0.000    0.361    0.361  0.361   2.064
     10        ab :=       a*b    ab  0.628 0.009    0.611    0.645  0.628   0.133
-    11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.523   -0.446 -0.483  -0.102
+    11       tot :=  (a*b)+cp   tot -0.483 0.018   -0.519   -0.447 -0.483  -0.102
        std.nox
     1   -1.348
     2    0.406
@@ -595,7 +595,7 @@ monteCarloCI(ind_fit, level=0.95)
 
            est ci.lower ci.upper
     ab   0.628    0.611    0.646
-    tot -0.483   -0.518   -0.448
+    tot -0.483   -0.518   -0.449
 
 Here we find that $ab = 0.628, 95\% CI = [0.611, 0.646], \beta = 0.133$.
 We reject the null hypothesis of *Lack of confidence in the government*
@@ -631,7 +631,7 @@ monteCarloCI(ind_fit, level=0.95)
 
 We see that the *total* effect of **Secular values (SV)** on
 **Perception of corruption (PC)** is
-$c = -0.483, SE = 0.018, p < .001, 95\% CI = [-0.518, -0.449], \beta = -0.102$.
+$`c = -0.483, SE = 0.018, p < .001, 95\% CI = [-0.518, -0.449], \beta = -0.102`$.
 Indicating that as **SV** increase by 1 unit, **PC** decreases by 0.483
 units. When we include the mediator of **Lack of confidence in the
 government (LCG)**, we see that the *indirect* effect of **SV** on
