@@ -163,7 +163,8 @@ Then we can use the function ```sem``` from ```lavaan``` to estimate the model. 
 Then we can see the results from the summary, notice that we will also ask for the standardized parameters as well. These can be interpret as effect sizes (standardized slopes). And finally, we have also ask for th $R^2$ to see the proportion of explained variance. 
 
 ```{r}
-summary(tot_fit, standardized=T, rsquare=T)
+summary(tot_fit, standardized=T)
+lavInspect(tot_fit, "rsquare")
 ```
 
 Here we see that the *total* effect is $c = -0.483, SE = 0.018, p < .001$, we see that this is a small effect as the standardized slope is $\beta = -0.102$ (```Std.all``` column), and only 1% of the variance is explained by *Secular Values* ($R^2 = .01$). 
