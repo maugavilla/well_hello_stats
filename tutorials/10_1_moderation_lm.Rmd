@@ -391,7 +391,7 @@ visreg(int_cont,type="conditional",scale="response",
 
 ### Interpretation
 
-* We reject the null hypothesis of the interaction and main effects model being equally good at predicting the outcome. Or, fail to reject the null hypothesis of the 2 predictors being independent ($F(1, 71629)= 74.107, p < .001$).
+* We reject the null hypothesis of the interaction and main effects model being equally good at predicting the outcome. Or, reject the null hypothesis of the 2 predictors being independent ($F(1, 71629)= 74.107, p < .001$).
 * As the moderator *Secular Values* increase by 1 unit, the focal regression (```Corrup ~ LCGov```) decreases by 0.243 points ($b_{*} = -0.243, SE = 0.021, p < .001$)
 * For low *Secular Values*, the slope between *lack of confidence in the government* and *Perception of corruption* is 0.495 ($b_{LSV} = 0.495, SE = 0.005, p < .001$)
 * For average *Secular Values* it is 0.453 ($b_{MSV} = 0.453, SE = 0.004, p < .001$)

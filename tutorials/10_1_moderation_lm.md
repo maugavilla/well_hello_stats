@@ -2,48 +2,36 @@ Moderation with lm()
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+26 September, 2023
 
--   <a href="#what-is-moderation-analysis"
-    id="toc-what-is-moderation-analysis">What is moderation analysis?</a>
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#prepare-the-data-set" id="toc-prepare-the-data-set">Prepare
-        the data set</a>
-        -   <a href="#create-composite-scores"
-            id="toc-create-composite-scores">Create composite scores</a>
-        -   <a href="#transform-categorical-variables-to-factor"
-            id="toc-transform-categorical-variables-to-factor">Transform categorical
-            variables to <code>factor()</code></a>
-        -   <a href="#set-variables-for-analysis"
-            id="toc-set-variables-for-analysis">Set variables for analysis</a>
--   <a href="#moderation-analysis-steps"
-    id="toc-moderation-analysis-steps">Moderation analysis steps</a>
--   <a href="#categorical-moderator"
-    id="toc-categorical-moderator">Categorical moderator</a>
-    -   <a href="#main-effects" id="toc-main-effects">Main effects</a>
-        -   <a href="#interpretation" id="toc-interpretation">Interpretation</a>
-    -   <a href="#interaction-model" id="toc-interaction-model">Interaction
-        model</a>
-        -   <a href="#compare-models" id="toc-compare-models">Compare models</a>
-        -   <a href="#effect-size" id="toc-effect-size">Effect size</a>
-        -   <a href="#probing" id="toc-probing">Probing</a>
-        -   <a href="#plotting" id="toc-plotting">Plotting</a>
-        -   <a href="#interpretation-1" id="toc-interpretation-1">Interpretation</a>
--   <a href="#continuous-moderator" id="toc-continuous-moderator">Continuous
-    moderator</a>
-    -   <a href="#main-effects-1" id="toc-main-effects-1">Main effects</a>
-        -   <a href="#interpretation-2" id="toc-interpretation-2">Interpretation</a>
-    -   <a href="#interaction-model-1" id="toc-interaction-model-1">Interaction
-        model</a>
-        -   <a href="#compare-models-1" id="toc-compare-models-1">Compare models</a>
-        -   <a href="#effect-size-1" id="toc-effect-size-1">Effect size</a>
-        -   <a href="#probing-1" id="toc-probing-1">Probing</a>
-        -   <a href="#plotting-1" id="toc-plotting-1">Plotting</a>
-        -   <a href="#interpretation-3" id="toc-interpretation-3">Interpretation</a>
--   <a href="#references" id="toc-references">References</a>
+- [What is moderation analysis?](#what-is-moderation-analysis)
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Prepare the data set](#prepare-the-data-set)
+    - [Create composite scores](#create-composite-scores)
+    - [Transform categorical variables to
+      `factor()`](#transform-categorical-variables-to-factor)
+    - [Set variables for analysis](#set-variables-for-analysis)
+- [Moderation analysis steps](#moderation-analysis-steps)
+- [Categorical moderator](#categorical-moderator)
+  - [Main effects](#main-effects)
+    - [Interpretation](#interpretation)
+  - [Interaction model](#interaction-model)
+    - [Compare models](#compare-models)
+    - [Effect size](#effect-size)
+    - [Probing](#probing)
+    - [Plotting](#plotting)
+    - [Interpretation](#interpretation-1)
+- [Continuous moderator](#continuous-moderator)
+  - [Main effects](#main-effects-1)
+    - [Interpretation](#interpretation-2)
+  - [Interaction model](#interaction-model-1)
+    - [Compare models](#compare-models-1)
+    - [Effect size](#effect-size-1)
+    - [Probing](#probing-1)
+    - [Plotting](#plotting-1)
+    - [Interpretation](#interpretation-3)
+- [References](#references)
 
 # What is moderation analysis?
 
@@ -140,12 +128,12 @@ that we have created the new data correctly.
 
 The variables we will use here are:
 
--   Q260: sex, 1 = Male, 2 = Female
--   Q262: age in years
--   Y001: post-materialism index
--   SACSECVAL: secular values
--   Q112-Q120: Corruption Perception Index
--   Q65-Q73: Lack of Confidence in the government
+- Q260: sex, 1 = Male, 2 = Female
+- Q262: age in years
+- Y001: post-materialism index
+- SACSECVAL: secular values
+- Q112-Q120: Corruption Perception Index
+- Q65-Q73: Lack of Confidence in the government
 
 ### Create composite scores
 
@@ -226,16 +214,16 @@ excluding all cases with some missing values.
 
 Moderation is split into multiple steps, (a)
 
--   Estimate the *main effects* model that includes only the predictors
-    as a *normal* multiple regression.
--   Estimate the *interaction* model that now also includes the
-    interactions between predictors.
--   Compare the models: the *p-value* test the Null hypothesis of the
-    two predictors being independent, and the change in $R^2$ represents
-    the effect size magnitude of the interaction
--   Probe: estimate the simple slopes, the slope for the focal predictor
-    at fixed values of the moderator predictor.
--   Plot the simple slopes
+- Estimate the *main effects* model that includes only the predictors as
+  a *normal* multiple regression.
+- Estimate the *interaction* model that now also includes the
+  interactions between predictors.
+- Compare the models: the *p-value* test the Null hypothesis of the two
+  predictors being independent, and the change in $R^2$ represents the
+  effect size magnitude of the interaction
+- Probe: estimate the simple slopes, the slope for the focal predictor
+  at fixed values of the moderator predictor.
+- Plot the simple slopes
 
 The first three steps test the Null Hypothesis of the interaction (with
 the respective effect size), while the last two steps seek to explain
@@ -285,18 +273,18 @@ summary(main_cat)
 
 ### Interpretation
 
--   We reject the null hypothesis of both predictors being equally good
-    predictors as the mean model, $F(2, 71630) = 4341, p < .001$.
--   Both predictors explained 11% of the variance in the outcome
-    ($R^2 = 0.108$).
--   The average outcome score for *Male* with 0 *Lack of confidence in
-    the government* is 2.55 ($b_0 = 2.55, SE = 0.01, p < .001$)
--   As *Lack of confidence in the government* increase by 1 unit,
-    *Perception of corruption* increases by 0.36
-    ($b_1 = 0.36, SE = 0.004, p < .001$), holding *Sex* constant.
--   As *Sex* changes, *Perception of corruption* decreases by 0.023 for
-    *Female* ($b_2 = -0.023, SE = 0.006, p < .001$), holding *Lack of
-    confidence in the government* constant.
+- We reject the null hypothesis of both predictors being equally good
+  predictors as the mean model, $F(2, 71630) = 4341, p < .001$.
+- Both predictors explained 11% of the variance in the outcome
+  ($R^2 = 0.108$).
+- The average outcome score for *Male* with 0 *Lack of confidence in the
+  government* is 2.55 ($b_0 = 2.55, SE = 0.01, p < .001$)
+- As *Lack of confidence in the government* increase by 1 unit,
+  *Perception of corruption* increases by 0.36
+  ($b_1 = 0.36, SE = 0.004, p < .001$), holding *Sex* constant.
+- As *Sex* changes, *Perception of corruption* decreases by 0.023 for
+  *Female* ($b_2 = -0.023, SE = 0.006, p < .001$), holding *Lack of
+  confidence in the government* constant.
 
 ## Interaction model
 
@@ -493,23 +481,22 @@ so you can choose which one you preferred.
 
 ### Interpretation
 
--   We fail fail to reject the null hypothesis of the interaction and
-    main effects model being equally good at predicting the outcome. Or,
-    fail to reject the null hypothesis of the 2 predictors being
-    independent ($F(1, 71629)=1.019, p = .313$).
--   Female participants have in average a focal slope (`Corrup ~ LCGov`)
-    0.008 points lower than the male participants
-    ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
--   For *Male* participants, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.373
-    ($b_{1M} = 0.373, SE = 0.006, p < .001$).
--   For *Female* participants, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.365
-    ($b_{1F} = 0.365, SE = 0.006, p < .001$).
--   The addition of the interaction increases the model’s predictive
-    accuracy by 0.0013% ($\eta^2 = 0.000013$).
--   In the plots, we see that both groups slopes are close to each
-    other.
+- We fail fail to reject the null hypothesis of the interaction and main
+  effects model being equally good at predicting the outcome. Or, fail
+  to reject the null hypothesis of the 2 predictors being independent
+  ($F(1, 71629)=1.019, p = .313$).
+- Female participants have in average a focal slope (`Corrup ~ LCGov`)
+  0.008 points lower than the male participants
+  ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
+- For *Male* participants, the slope between *lack of confidence in the
+  government* and *Perception of corruption* is 0.373
+  ($b_{1M} = 0.373, SE = 0.006, p < .001$).
+- For *Female* participants, the slope between *lack of confidence in
+  the government* and *Perception of corruption* is 0.365
+  ($b_{1F} = 0.365, SE = 0.006, p < .001$).
+- The addition of the interaction increases the model’s predictive
+  accuracy by 0.0013% ($\eta^2 = 0.000013$).
+- In the plots, we see that both groups slopes are close to each other.
 
 # Continuous moderator
 
@@ -550,20 +537,19 @@ summary(main_cont)
 
 ### Interpretation
 
--   We reject the null hypothesis of both predictors being equally good
-    predictors as the mean model, $F(2, 71630) = 6691, p < .001$.
--   Both predictors explained 16% of the variance in the outcome
-    ($R^2 = 0.157$).
--   The average outcome score for *Perception of corruption*, when both
-    predictors are equal to 0 is 2.73
-    ($b_0 = 2.73, SE = 0.01, p < .001$)
--   As *Lack of confidence in the government* increase by 1 unit,
-    *Perception of corruption* increases by 0.46 points
-    ($b_1 = 0.46, SE = 0.004, p < .001$), holding *Secular Values*
-    constant.
--   As *Secular Value* increases by 1 unit, *Perception of corruption*
-    decreases by -1.11 points ($b_2 = -1.11, SE = 0.017, p < .001$),
-    holding *Lack of confidence in the government* constant.
+- We reject the null hypothesis of both predictors being equally good
+  predictors as the mean model, $F(2, 71630) = 6691, p < .001$.
+- Both predictors explained 16% of the variance in the outcome
+  ($R^2 = 0.157$).
+- The average outcome score for *Perception of corruption*, when both
+  predictors are equal to 0 is 2.73 ($b_0 = 2.73, SE = 0.01, p < .001$)
+- As *Lack of confidence in the government* increase by 1 unit,
+  *Perception of corruption* increases by 0.46 points
+  ($b_1 = 0.46, SE = 0.004, p < .001$), holding *Secular Values*
+  constant.
+- As *Secular Value* increases by 1 unit, *Perception of corruption*
+  decreases by -1.11 points ($b_2 = -1.11, SE = 0.017, p < .001$),
+  holding *Lack of confidence in the government* constant.
 
 ## Interaction model
 
@@ -828,27 +814,27 @@ visreg(int_cont,type="conditional",scale="response",
 
 ### Interpretation
 
--   We reject the null hypothesis of the interaction and main effects
-    model being equally good at predicting the outcome. Or, fail to
-    reject the null hypothesis of the 2 predictors being independent
-    ($F(1, 71629)= 74.107, p < .001$).
--   As the moderator *Secular Values* increase by 1 unit, the focal
-    regression (`Corrup ~ LCGov`) decreases by 0.243 points
-    ($b_{*} = -0.243, SE = 0.021, p < .001$)
--   For low *Secular Values*, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.495
-    ($b_{LSV} = 0.495, SE = 0.005, p < .001$)
--   For average *Secular Values* it is 0.453
-    ($b_{MSV} = 0.453, SE = 0.004, p < .001$)
--   For high *Secular Values* it is 0.410
-    ($b_{HSV} = 0.410, SE = 0.006, p < .001$).
--   In the general trend we see that the focal slope goes from 0.54 at
-    the minimum observed *Secular Values* to 0.32 at the maximum
-    observed *Secular values* score.
--   The addition of the interaction increases the model’s predictive
-    accuracy by 0.15% ($\eta^2 = 0.0015$).
--   In the plots, we see the decrease of the slopes across a range of
-    possible moderator values.
+- We reject the null hypothesis of the interaction and main effects
+  model being equally good at predicting the outcome. Or, reject the
+  null hypothesis of the 2 predictors being independent
+  ($F(1, 71629)= 74.107, p < .001$).
+- As the moderator *Secular Values* increase by 1 unit, the focal
+  regression (`Corrup ~ LCGov`) decreases by 0.243 points
+  ($b_{*} = -0.243, SE = 0.021, p < .001$)
+- For low *Secular Values*, the slope between *lack of confidence in the
+  government* and *Perception of corruption* is 0.495
+  ($b_{LSV} = 0.495, SE = 0.005, p < .001$)
+- For average *Secular Values* it is 0.453
+  ($b_{MSV} = 0.453, SE = 0.004, p < .001$)
+- For high *Secular Values* it is 0.410
+  ($b_{HSV} = 0.410, SE = 0.006, p < .001$).
+- In the general trend we see that the focal slope goes from 0.54 at the
+  minimum observed *Secular Values* to 0.32 at the maximum observed
+  *Secular values* score.
+- The addition of the interaction increases the model’s predictive
+  accuracy by 0.15% ($\eta^2 = 0.0015$).
+- In the plots, we see the decrease of the slopes across a range of
+  possible moderator values.
 
 # References
 
