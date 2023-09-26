@@ -2,12 +2,10 @@
 title: "Mediation with path"
 author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  github_document:
-    toc: yes
-    toc_depth: 5
-editor_options:
-  chunk_output_type: inline
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
 ---
 
 

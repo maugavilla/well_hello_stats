@@ -1,8 +1,7 @@
-Mediation with path
-================
+# Mediation with path
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-26 September, 2023
+2023-09-26
 
 - [What is mediation analysis?](#what-is-mediation-analysis)
 - [Setup the R session](#setup-the-r-session)
@@ -68,7 +67,7 @@ dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
 dim(dat)
 ```
 
-    ## [1] 76897   548
+    [1] 76897   548
 
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
@@ -85,26 +84,26 @@ dat2 <- dat[,vars]
 dim(dat2)
 ```
 
-    ## [1] 76897    17
+    [1] 76897    17
 
 ``` r
 head(dat2)
 ```
 
-    ##   Q262 Y001 SACSECVAL Q112 Q113 Q114 Q115 Q116 Q117 Q118 Q119 Q120 Q65 Q69 Q71
-    ## 1   60    0  0.287062    2   NA   NA   NA   NA   NA    1    2    6  NA   1   1
-    ## 2   47    2  0.467525   10    3    3    3    3    3    1    3    2  NA   3   4
-    ## 3   48    4  0.425304    7    2    2    2    2    2    1    2    7  NA   2   3
-    ## 4   62    2  0.556170    5    3    3    3    3    2    1    4    7  NA   3   3
-    ## 5   49    1  0.458949    5    2    2    2    2    1    1    3    7  NA   2   2
-    ## 6   51    3  0.210111    6    2    2    2    2    2    1    4    2  NA   1   2
-    ##   Q72 Q73
-    ## 1   1   1
-    ## 2   4   4
-    ## 3   3   3
-    ## 4   3   3
-    ## 5   3   2
-    ## 6   2   2
+      Q262 Y001 SACSECVAL Q112 Q113 Q114 Q115 Q116 Q117 Q118 Q119 Q120 Q65 Q69 Q71
+    1   60    0  0.287062    2   NA   NA   NA   NA   NA    1    2    6  NA   1   1
+    2   47    2  0.467525   10    3    3    3    3    3    1    3    2  NA   3   4
+    3   48    4  0.425304    7    2    2    2    2    2    1    2    7  NA   2   3
+    4   62    2  0.556170    5    3    3    3    3    2    1    4    7  NA   3   3
+    5   49    1  0.458949    5    2    2    2    2    1    1    3    7  NA   2   2
+    6   51    3  0.210111    6    2    2    2    2    2    1    4    2  NA   1   2
+      Q72 Q73
+    1   1   1
+    2   4   4
+    3   3   3
+    4   3   3
+    5   3   2
+    6   2   2
 
 Here we are first creating a vector with the variable names for the ones
 I want to keep. You can see all variable names for the full data set as
@@ -141,20 +140,20 @@ dat2$LCGov <- rowMeans(dat2[,c("Q65", "Q69", "Q71", "Q72", "Q73")], na.rm=T)
 head(dat2)
 ```
 
-    ##   Q262 Y001 SACSECVAL Q112 Q113 Q114 Q115 Q116 Q117 Q118 Q119 Q120 Q65 Q69 Q71
-    ## 1   60    0  0.287062    2   NA   NA   NA   NA   NA    1    2    6  NA   1   1
-    ## 2   47    2  0.467525   10    3    3    3    3    3    1    3    2  NA   3   4
-    ## 3   48    4  0.425304    7    2    2    2    2    2    1    2    7  NA   2   3
-    ## 4   62    2  0.556170    5    3    3    3    3    2    1    4    7  NA   3   3
-    ## 5   49    1  0.458949    5    2    2    2    2    1    1    3    7  NA   2   2
-    ## 6   51    3  0.210111    6    2    2    2    2    2    1    4    2  NA   1   2
-    ##   Q72 Q73   Corrup LCGov
-    ## 1   1   1 2.750000  1.00
-    ## 2   4   4 3.444444  3.75
-    ## 3   3   3 3.000000  2.75
-    ## 4   3   3 3.444444  3.00
-    ## 5   3   2 2.777778  2.25
-    ## 6   2   2 2.555556  1.75
+      Q262 Y001 SACSECVAL Q112 Q113 Q114 Q115 Q116 Q117 Q118 Q119 Q120 Q65 Q69 Q71
+    1   60    0  0.287062    2   NA   NA   NA   NA   NA    1    2    6  NA   1   1
+    2   47    2  0.467525   10    3    3    3    3    3    1    3    2  NA   3   4
+    3   48    4  0.425304    7    2    2    2    2    2    1    2    7  NA   2   3
+    4   62    2  0.556170    5    3    3    3    3    2    1    4    7  NA   3   3
+    5   49    1  0.458949    5    2    2    2    2    1    1    3    7  NA   2   2
+    6   51    3  0.210111    6    2    2    2    2    2    1    4    2  NA   1   2
+      Q72 Q73   Corrup LCGov
+    1   1   1 2.750000  1.00
+    2   4   4 3.444444  3.75
+    3   3   3 3.000000  2.75
+    4   3   3 3.444444  3.00
+    5   3   2 2.777778  2.25
+    6   2   2 2.555556  1.75
 
 With the `rowmeans()` we compute the mean across the specified
 variables, for each subject. Remember to include the `na.rm=T` argument,
@@ -170,19 +169,19 @@ dat2 <- na.omit(dat2[,c("Q262", "Y001", "SACSECVAL", "Corrup", "LCGov")])
 head(dat2)
 ```
 
-    ##   Q262 Y001 SACSECVAL   Corrup LCGov
-    ## 1   60    0  0.287062 2.750000  1.00
-    ## 2   47    2  0.467525 3.444444  3.75
-    ## 3   48    4  0.425304 3.000000  2.75
-    ## 4   62    2  0.556170 3.444444  3.00
-    ## 5   49    1  0.458949 2.777778  2.25
-    ## 6   51    3  0.210111 2.555556  1.75
+      Q262 Y001 SACSECVAL   Corrup LCGov
+    1   60    0  0.287062 2.750000  1.00
+    2   47    2  0.467525 3.444444  3.75
+    3   48    4  0.425304 3.000000  2.75
+    4   62    2  0.556170 3.444444  3.00
+    5   49    1  0.458949 2.777778  2.25
+    6   51    3  0.210111 2.555556  1.75
 
 ``` r
 dim(dat2)
 ```
 
-    ## [1] 71648     5
+    [1] 71648     5
 
 The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `na.omit()` function we are
@@ -285,44 +284,44 @@ $R^2$ to see the proportion of explained variance.
 summary(tot_fit, standardized=T)
 ```
 
-    ## lavaan 0.6.16 ended normally after 1 iteration
-    ## 
-    ##   Estimator                                         ML
-    ##   Optimization method                           NLMINB
-    ##   Number of model parameters                         3
-    ## 
-    ##   Number of observations                         71648
-    ## 
-    ## Model Test User Model:
-    ##                                                       
-    ##   Test statistic                                 0.000
-    ##   Degrees of freedom                                 0
-    ## 
-    ## Parameter Estimates:
-    ## 
-    ##   Standard errors                             Standard
-    ##   Information                                 Expected
-    ##   Information saturated (h1) model          Structured
-    ## 
-    ## Regressions:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##   Corrup ~                                                              
-    ##     SACSECVAL  (c)   -0.483    0.018  -27.554    0.000   -0.483   -0.102
-    ## 
-    ## Intercepts:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##    .Corrup            3.659    0.007  520.794    0.000    3.659    4.438
-    ## 
-    ## Variances:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##    .Corrup            0.673    0.004  189.272    0.000    0.673    0.990
+    lavaan 0.6.16 ended normally after 1 iteration
+
+      Estimator                                         ML
+      Optimization method                           NLMINB
+      Number of model parameters                         3
+
+      Number of observations                         71648
+
+    Model Test User Model:
+                                                          
+      Test statistic                                 0.000
+      Degrees of freedom                                 0
+
+    Parameter Estimates:
+
+      Standard errors                             Standard
+      Information                                 Expected
+      Information saturated (h1) model          Structured
+
+    Regressions:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+      Corrup ~                                                              
+        SACSECVAL  (c)   -0.483    0.018  -27.554    0.000   -0.483   -0.102
+
+    Intercepts:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+       .Corrup            3.659    0.007  520.794    0.000    3.659    4.438
+
+    Variances:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+       .Corrup            0.673    0.004  189.272    0.000    0.673    0.990
 
 ``` r
 lavInspect(tot_fit, "rsquare")
 ```
 
-    ## Corrup 
-    ##   0.01
+    Corrup 
+      0.01 
 
 Here we see that the *total* effect is
 $c = -0.483, SE = 0.018, p < .001$, we see that this is a small effect
@@ -370,52 +369,52 @@ the total effect model.
 summary(ind_fit, standardized=T, rsquare=T)
 ```
 
-    ## lavaan 0.6.16 ended normally after 1 iteration
-    ## 
-    ##   Estimator                                         ML
-    ##   Optimization method                           NLMINB
-    ##   Number of model parameters                         7
-    ## 
-    ##   Number of observations                         71648
-    ## 
-    ## Model Test User Model:
-    ##                                                       
-    ##   Test statistic                                 0.000
-    ##   Degrees of freedom                                 0
-    ## 
-    ## Parameter Estimates:
-    ## 
-    ##   Standard errors                             Standard
-    ##   Information                                 Expected
-    ##   Information saturated (h1) model          Structured
-    ## 
-    ## Regressions:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##   Corrup ~                                                              
-    ##     SACSECVAL (cp)   -1.111    0.017  -64.885    0.000   -1.111   -0.236
-    ##     LCGov      (b)    0.456    0.004  111.784    0.000    0.456    0.406
-    ##   LCGov ~                                                               
-    ##     SACSECVAL  (a)    1.377    0.015   92.974    0.000    1.377    0.328
-    ## 
-    ## Intercepts:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##    .Corrup            2.725    0.011  257.689    0.000    2.725    3.305
-    ##    .LCGov             2.047    0.006  344.940    0.000    2.047    2.791
-    ## 
-    ## Variances:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##    .Corrup            0.573    0.003  189.272    0.000    0.573    0.843
-    ##    .LCGov             0.480    0.003  189.272    0.000    0.480    0.892
-    ## 
-    ## R-Square:
-    ##                    Estimate
-    ##     Corrup            0.157
-    ##     LCGov             0.108
-    ## 
-    ## Defined Parameters:
-    ##                    Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
-    ##     ab                0.628    0.009   71.481    0.000    0.628    0.133
-    ##     tot              -0.483    0.018  -27.554    0.000   -0.483   -0.102
+    lavaan 0.6.16 ended normally after 1 iteration
+
+      Estimator                                         ML
+      Optimization method                           NLMINB
+      Number of model parameters                         7
+
+      Number of observations                         71648
+
+    Model Test User Model:
+                                                          
+      Test statistic                                 0.000
+      Degrees of freedom                                 0
+
+    Parameter Estimates:
+
+      Standard errors                             Standard
+      Information                                 Expected
+      Information saturated (h1) model          Structured
+
+    Regressions:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+      Corrup ~                                                              
+        SACSECVAL (cp)   -1.111    0.017  -64.885    0.000   -1.111   -0.236
+        LCGov      (b)    0.456    0.004  111.784    0.000    0.456    0.406
+      LCGov ~                                                               
+        SACSECVAL  (a)    1.377    0.015   92.974    0.000    1.377    0.328
+
+    Intercepts:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+       .Corrup            2.725    0.011  257.689    0.000    2.725    3.305
+       .LCGov             2.047    0.006  344.940    0.000    2.047    2.791
+
+    Variances:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+       .Corrup            0.573    0.003  189.272    0.000    0.573    0.843
+       .LCGov             0.480    0.003  189.272    0.000    0.480    0.892
+
+    R-Square:
+                       Estimate
+        Corrup            0.157
+        LCGov             0.108
+
+    Defined Parameters:
+                       Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
+        ab                0.628    0.009   71.481    0.000    0.628    0.133
+        tot              -0.483    0.018  -27.554    0.000   -0.483   -0.102
 
 See that the new parameters show at the end of the summary as
 `Defined parameters`. And now we have the *direct* and *indirect*
@@ -455,8 +454,8 @@ ind_fit_boot <- sem(ind_mod, data = dat2, meanstructure=T,
                     se="bootstrap", bootstrap=2000, verbose=F)
 ```
 
-    ## Warning in lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats =
-    ## lavsamplestats, : lavaan WARNING: 15 bootstrap runs failed or did not converge.
+    Warning in lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats =
+    lavsamplestats, : lavaan WARNING: 19 bootstrap runs failed or did not converge.
 
 We can look at the standard output from the summary function, but here
 we can only ask for the default type of interval.
@@ -465,67 +464,67 @@ we can only ask for the default type of interval.
 summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 ```
 
-    ## lavaan 0.6.16 ended normally after 1 iteration
-    ## 
-    ##   Estimator                                         ML
-    ##   Optimization method                           NLMINB
-    ##   Number of model parameters                         7
-    ## 
-    ##   Number of observations                         71648
-    ## 
-    ## Model Test User Model:
-    ##                                                       
-    ##   Test statistic                                 0.000
-    ##   Degrees of freedom                                 0
-    ## 
-    ## Parameter Estimates:
-    ## 
-    ##   Standard errors                            Bootstrap
-    ##   Number of requested bootstrap draws             2000
-    ##   Number of successful bootstrap draws            1985
-    ## 
-    ## Regressions:
-    ##                    Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-    ##   Corrup ~                                                              
-    ##     SACSECVAL (cp)   -1.111    0.019  -57.666    0.000   -1.148   -1.073
-    ##     LCGov      (b)    0.456    0.005   91.119    0.000    0.446    0.466
-    ##   LCGov ~                                                               
-    ##     SACSECVAL  (a)    1.377    0.014   95.891    0.000    1.349    1.405
-    ##    Std.lv  Std.all
-    ##                   
-    ##    -1.111   -0.236
-    ##     0.456    0.406
-    ##                   
-    ##     1.377    0.328
-    ## 
-    ## Intercepts:
-    ##                    Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-    ##    .Corrup            2.725    0.012  232.110    0.000    2.702    2.748
-    ##    .LCGov             2.047    0.006  338.563    0.000    2.036    2.059
-    ##    Std.lv  Std.all
-    ##     2.725    3.305
-    ##     2.047    2.791
-    ## 
-    ## Variances:
-    ##                    Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-    ##    .Corrup            0.573    0.006   98.786    0.000    0.561    0.584
-    ##    .LCGov             0.480    0.002  217.622    0.000    0.476    0.484
-    ##    Std.lv  Std.all
-    ##     0.573    0.843
-    ##     0.480    0.892
-    ## 
-    ## R-Square:
-    ##                    Estimate
-    ##     Corrup            0.157
-    ##     LCGov             0.108
-    ## 
-    ## Defined Parameters:
-    ##                    Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-    ##     ab                0.628    0.009   72.147    0.000    0.611    0.645
-    ##     tot              -0.483    0.019  -25.753    0.000   -0.519   -0.445
-    ##    Std.lv  Std.all
-    ##     0.628    0.133
-    ##    -0.483   -0.102
+    lavaan 0.6.16 ended normally after 1 iteration
+
+      Estimator                                         ML
+      Optimization method                           NLMINB
+      Number of model parameters                         7
+
+      Number of observations                         71648
+
+    Model Test User Model:
+                                                          
+      Test statistic                                 0.000
+      Degrees of freedom                                 0
+
+    Parameter Estimates:
+
+      Standard errors                            Bootstrap
+      Number of requested bootstrap draws             2000
+      Number of successful bootstrap draws            1981
+
+    Regressions:
+                       Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
+      Corrup ~                                                              
+        SACSECVAL (cp)   -1.111    0.020  -54.586    0.000   -1.151   -1.072
+        LCGov      (b)    0.456    0.005   90.334    0.000    0.446    0.466
+      LCGov ~                                                               
+        SACSECVAL  (a)    1.377    0.014   96.562    0.000    1.349    1.405
+       Std.lv  Std.all
+                      
+       -1.111   -0.236
+        0.456    0.406
+                      
+        1.377    0.328
+
+    Intercepts:
+                       Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
+       .Corrup            2.725    0.012  234.079    0.000    2.702    2.749
+       .LCGov             2.047    0.006  341.322    0.000    2.036    2.059
+       Std.lv  Std.all
+        2.725    3.305
+        2.047    2.791
+
+    Variances:
+                       Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
+       .Corrup            0.573    0.006   96.761    0.000    0.561    0.584
+       .LCGov             0.480    0.002  211.640    0.000    0.476    0.484
+       Std.lv  Std.all
+        0.573    0.843
+        0.480    0.892
+
+    R-Square:
+                       Estimate
+        Corrup            0.157
+        LCGov             0.108
+
+    Defined Parameters:
+                       Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
+        ab                0.628    0.009   71.736    0.000    0.611    0.645
+        tot              -0.483    0.019  -24.823    0.000   -0.521   -0.446
+       Std.lv  Std.all
+        0.628    0.133
+       -0.483   -0.102
 
 So we will use the `parameterestimates` function to ask for the
 *adjusted bootstrap percentile* interval type. So, we are providing the
@@ -539,30 +538,30 @@ parameterestimates(ind_fit_boot, boot.ci.type="bca.simple",
                    zstat = F, pvalue = F)
 ```
 
-    ##          lhs op       rhs label    est    se ci.lower ci.upper std.lv std.all
-    ## 1     Corrup  ~ SACSECVAL    cp -1.111 0.019   -1.149   -1.073 -1.111  -0.236
-    ## 2     Corrup  ~     LCGov     b  0.456 0.005    0.446    0.466  0.456   0.406
-    ## 3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.349    1.405  1.377   0.328
-    ## 4     Corrup ~~    Corrup        0.573 0.006    0.561    0.584  0.573   0.843
-    ## 5      LCGov ~~     LCGov        0.480 0.002    0.476    0.484  0.480   0.892
-    ## 6  SACSECVAL ~~ SACSECVAL        0.031 0.000    0.031    0.031  0.031   1.000
-    ## 7     Corrup ~1                  2.725 0.012    2.701    2.748  2.725   3.305
-    ## 8      LCGov ~1                  2.047 0.006    2.036    2.059  2.047   2.791
-    ## 9  SACSECVAL ~1                  0.361 0.000    0.361    0.361  0.361   2.064
-    ## 10        ab :=       a*b    ab  0.628 0.009    0.611    0.645  0.628   0.133
-    ## 11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.518   -0.444 -0.483  -0.102
-    ##    std.nox
-    ## 1   -1.348
-    ## 2    0.406
-    ## 3    1.878
-    ## 4    0.843
-    ## 5    0.892
-    ## 6    0.031
-    ## 7    3.305
-    ## 8    2.791
-    ## 9    0.361
-    ## 10   0.762
-    ## 11  -0.586
+             lhs op       rhs label    est    se ci.lower ci.upper std.lv std.all
+    1     Corrup  ~ SACSECVAL    cp -1.111 0.020   -1.151   -1.072 -1.111  -0.236
+    2     Corrup  ~     LCGov     b  0.456 0.005    0.446    0.467  0.456   0.406
+    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.349    1.405  1.377   0.328
+    4     Corrup ~~    Corrup        0.573 0.006    0.562    0.585  0.573   0.843
+    5      LCGov ~~     LCGov        0.480 0.002    0.476    0.485  0.480   0.892
+    6  SACSECVAL ~~ SACSECVAL        0.031 0.000    0.031    0.031  0.031   1.000
+    7     Corrup ~1                  2.725 0.012    2.702    2.748  2.725   3.305
+    8      LCGov ~1                  2.047 0.006    2.036    2.059  2.047   2.791
+    9  SACSECVAL ~1                  0.361 0.000    0.361    0.361  0.361   2.064
+    10        ab :=       a*b    ab  0.628 0.009    0.611    0.645  0.628   0.133
+    11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.523   -0.446 -0.483  -0.102
+       std.nox
+    1   -1.348
+    2    0.406
+    3    1.878
+    4    0.843
+    5    0.892
+    6    0.031
+    7    3.305
+    8    2.791
+    9    0.361
+    10   0.762
+    11  -0.586
 
 Here we find that $ab = 0.628, 95\% CI = [0.611, 0.646], \beta = 0.133$.
 We reject the null hypothesis of *Lack of confidence in the government*
@@ -594,9 +593,9 @@ argument `:=` in the model
 monteCarloCI(ind_fit, level=0.95)
 ```
 
-    ##        est ci.lower ci.upper
-    ## ab   0.628    0.611    0.646
-    ## tot -0.483   -0.517   -0.449
+           est ci.lower ci.upper
+    ab   0.628    0.611    0.646
+    tot -0.483   -0.518   -0.448
 
 Here we find that $ab = 0.628, 95\% CI = [0.611, 0.646], \beta = 0.133$.
 We reject the null hypothesis of *Lack of confidence in the government*
