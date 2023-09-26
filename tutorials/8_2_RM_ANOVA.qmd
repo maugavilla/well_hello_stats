@@ -134,11 +134,17 @@ summary(model)
 
 ```
 
-The output ```summary(model)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that .... 
+The output ```summary(model)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that the mean scores of the perceived celebrity congruence significantly differ across the brands.
 
-Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
+Sphericity can be evaluated using ```Mauchly's test```, which examines whether the differences between conditions have equal variances. Consequently, if the Mauchly's test statistic shows rejects the null hypothesis (i.e., a probability value below an $\alpha = .05$), we should conclude that there are noteworthy disparities in the variances of differences, indicating a lack of sphericity.
 
-And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+If the data do not meet the assumption of sphericity, there are various adjustments available to ensure the F-ratio remains valid. The frequently employed corrections rely on the sphericity estimates proposed by Greenhouse and Geisser and Huynh-Feldt.  These estimates result in a correction factor that is applied to the degrees of freedom used for evaluating the observed F-ratio. 
+
+Second, from the test of Mauchly Tests for Sphericity section we can interpret that we fail to reject the null hypothesis for the Mauchly’s test statistic (i.e., $p > .05$) which means that it is reasonable to conclude that the variances of differences are not significantly different (i.e., they are roughly equal).
+
+And third, for the ```Greenhouse-Geisser and Huynh-Feldt``` Corrections correction section, these statistics are interpreted whenever the Mauchly Tests for Sphericity is significant.
+
+
 
 ## Effect size
 
@@ -269,11 +275,16 @@ summary(model2)
 ```
 
 
-The output ```summary(model2)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that .... 
+The output ```summary(model2)``` present different sections, first from the ```ANOVA Assuming Sphericity``` section we can interpret that:
 
-Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that ...
+**Condition_Couple**: This is the effect of the between-subjects factor "Condition_Couple" on the "brand" variable. The $F(1, 30) = 0.0945, p = 0.7607$. This suggests that we fail to reject the null hypothesis of "Condition_Couple" effect on "brand."
+**Cleb_Congruence**: This is the effect of the within-subjects factor "Cleb_Congruence" on the "brand" variable. The $F(4,120) = 6.8615, p < .001$, indicating that we reject the null hypothesis of the effect of "Cleb_Congruence" on "brand."
+**Condition_Couple:Cleb_Congruence** (Interaction): This represents the interaction effect between the between-subjects factor "Condition_Couple" and the within-subjects factor "Cleb_Congruence" on the "brand" variable. The $F(4, 120) = 0.6814, p < .6062$. This suggests that we fail to reject the null hypothesis of the interaction effect between these two factors on "brand." For both "Cleb_Congruence" and "Condition_Couple:Cleb_Congruence," 
 
-And third, for the ```Greenhouse-Geisser and Huynh-Feldt Corrections``` correction section we can interpret that ....
+Second from the test of ```Mauchly Tests for Sphericity``` section we can interpret that both "Cleb_Congruence" and "Condition_Couple:Cleb_Congruence," the Mauchly test statistics have $p > 0.05$ (p = 0.18542), indicating that the assumption of sphericity is not significantly violated for these variables.
+
+
+And third, for the ```Greenhouse-Geisser and Huynh-Feldt``` Corrections correction section, these statistics are interpretated whenever the Mauchly Tests for Sphericity  is significant.
 
 ## Effect size
 
@@ -393,4 +404,6 @@ A repeated measure testing was used to determine the congruence between five spo
 
 Participants were asked their agreement level to statements such as “Adidas is a good match with the celebrities” and “Puma is a good match with the celebrities”. The repeated measure used a within factor with five levels (Adidas, Puma, Nike, H&M, Tommy Hilfiger) and a between factor with two levels (Beyonce & Jay-Z and Shakira & Piqué). The result showed that there we reject the null hypothesis of no differences in congruence between the brands ($F (4, 124) = 6.93, p < .01$). Overall Adidas had the highest mean congruence (M = 4.69, SE = 0.31). 
 
-We fail to reject the null hypothesis of equal congruence, when comparing the two celebrity couples (interaction) ($F (4, 120) = 0.68, p = 0.606$). This shows that no brands showed a significantly higher congruence with one couple compared to the other. And brand differences should be look at ignoring couple effects
+We fail to reject the null hypothesis of equal congruence, when comparing the two celebrity couples (interaction) ($F (4, 120) = 0.68, p = 0.606$). This shows that no brands showed a significantly higher congruence with one couple compared to the other. And brand differences should be look at ignoring couple effects.
+
+Since no difference in brand scores exist between couples and Adidas has the highest congruence score and differs in score with Puma, HM, Tommy_Hilfiger, the best brand to use in the experimental research would be Adidas.

@@ -1,6 +1,6 @@
 # Repeated Measures ANOVA
 Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
-2023-07-26
+2023-09-26
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -296,13 +296,33 @@ summary(model)
     Cleb_Congruence 0.9271222 7.779328e-05
 
 The output `summary(model)` present different sections, first from the
-`ANOVA Assuming Sphericity` section we can interpret that ….
+`ANOVA Assuming Sphericity` section we can interpret that the mean
+scores of the perceived celebrity congruence significantly differ across
+the brands.
 
-Second from the test of `Mauchly Tests for Sphericity` section we can
-interpret that …
+Sphericity can be evaluated using `Mauchly's test`, which examines
+whether the differences between conditions have equal variances.
+Consequently, if the Mauchly’s test statistic shows rejects the null
+hypothesis (i.e., a probability value below an $\alpha = .05$), we
+should conclude that there are noteworthy disparities in the variances
+of differences, indicating a lack of sphericity.
 
-And third, for the `Greenhouse-Geisser and Huynh-Feldt Corrections`
-correction section we can interpret that ….
+If the data do not meet the assumption of sphericity, there are various
+adjustments available to ensure the F-ratio remains valid. The
+frequently employed corrections rely on the sphericity estimates
+proposed by Greenhouse and Geisser and Huynh-Feldt. These estimates
+result in a correction factor that is applied to the degrees of freedom
+used for evaluating the observed F-ratio.
+
+Second, from the test of Mauchly Tests for Sphericity section we can
+interpret that we fail to reject the null hypothesis for the Mauchly’s
+test statistic (i.e., $p > .05$) which means that it is reasonable to
+conclude that the variances of differences are not significantly
+different (i.e., they are roughly equal).
+
+And third, for the `Greenhouse-Geisser and Huynh-Feldt` Corrections
+correction section, these statistics are interpreted whenever the
+Mauchly Tests for Sphericity is significant.
 
 ## Effect size
 
@@ -374,6 +394,7 @@ avg_predictions(model, by = c("Cleb_Congruence"))
       Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
     Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 Once we have established an overall model effect, we would be interested
 in testing specific comparisons, such as **Where do we see specific mean
@@ -403,29 +424,30 @@ summary(acmp)
 
 
                 Term                Contrast Estimate Std. Error      t Pr(>|t|)
-     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0386
-     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7298
      Cleb_Congruence HM - Adidas               -1.625      0.401 -4.053   <0.001
-     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0386
-     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0386
-     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0232
-     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4461
      Cleb_Congruence HM - Nike                 -1.500      0.339 -4.425   <0.001
-     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0373
+     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0232
+     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7298
+     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0386
+     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0386
+     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0386
      Cleb_Congruence Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1163
+     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0373
+     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4461
         S  Df
-      4.7 154
-      0.5 154
      11.3 154
-      4.7 154
-      4.7 154
-      5.4 154
-      1.2 154
      12.4 154
+      5.4 154
+      0.5 154
+      4.7 154
+      4.7 154
       4.7 154
       3.1 154
+      4.7 154
+      1.2 154
 
     Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
+    Type:  response 
 
 From these post-host, we can interpret that we reject the null
 hypothesis of equal means over conditions for the comparisons with an
@@ -461,6 +483,7 @@ p
       Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
     Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 Then we can plot it with the function `plot_predictions`, based on the
 model, and the error bars representing the variability
@@ -489,12 +512,12 @@ hypotheses(model)
 ```
 
 
-     Term Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
-       b1     4.69      0.306 15.32   <0.001 173.6  4.09   5.29
-       b2     3.94      0.277 14.24   <0.001 150.4  3.40   4.48
-       b3     4.56      0.287 15.88   <0.001 186.3  4.00   5.13
-       b4     3.06      0.317  9.65   <0.001  70.8  2.44   3.68
-       b5     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
+            Term Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+     (Intercept)     4.69      0.306 15.32   <0.001 173.6  4.09   5.29
+     (Intercept)     3.94      0.277 14.24   <0.001 150.4  3.40   4.48
+     (Intercept)     4.56      0.287 15.88   <0.001 186.3  4.00   5.13
+     (Intercept)     3.06      0.317  9.65   <0.001  70.8  2.44   3.68
+     (Intercept)     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
     Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
 
@@ -649,13 +672,33 @@ summary(model2)
     Condition_Couple:Cleb_Congruence 0.920655 5.944389e-01
 
 The output `summary(model2)` present different sections, first from the
-`ANOVA Assuming Sphericity` section we can interpret that ….
+`ANOVA Assuming Sphericity` section we can interpret that:
+
+**Condition_Couple**: This is the effect of the between-subjects factor
+“Condition_Couple” on the “brand” variable. The
+$F(1, 30) = 0.0945, p = 0.7607$. This suggests that we fail to reject
+the null hypothesis of “Condition_Couple” effect on “brand.”
+**Cleb_Congruence**: This is the effect of the within-subjects factor
+“Cleb_Congruence” on the “brand” variable. The
+$F(4,120) = 6.8615, p < .001$, indicating that we reject the null
+hypothesis of the effect of “Cleb_Congruence” on “brand.”
+**Condition_Couple:Cleb_Congruence** (Interaction): This represents the
+interaction effect between the between-subjects factor
+“Condition_Couple” and the within-subjects factor “Cleb_Congruence” on
+the “brand” variable. The $F(4, 120) = 0.6814, p < .6062$. This suggests
+that we fail to reject the null hypothesis of the interaction effect
+between these two factors on “brand.” For both “Cleb_Congruence” and
+“Condition_Couple:Cleb_Congruence,”
 
 Second from the test of `Mauchly Tests for Sphericity` section we can
-interpret that …
+interpret that both “Cleb_Congruence” and
+“Condition_Couple:Cleb_Congruence,” the Mauchly test statistics have
+$p > 0.05$ (p = 0.18542), indicating that the assumption of sphericity
+is not significantly violated for these variables.
 
-And third, for the `Greenhouse-Geisser and Huynh-Feldt Corrections`
-correction section we can interpret that ….
+And third, for the `Greenhouse-Geisser and Huynh-Feldt` Corrections
+correction section, these statistics are interpretated whenever the
+Mauchly Tests for Sphericity is significant.
 
 ## Effect size
 
@@ -762,31 +805,32 @@ summary(acmp_1)
 
 
                  Term                          Contrast Estimate Std. Error      t
-     Cleb_Congruence  Puma - Adidas                       -0.750      0.329 -2.279
-     Cleb_Congruence  Nike - Adidas                       -0.125      0.367 -0.341
      Cleb_Congruence  HM - Adidas                         -1.625      0.404 -4.026
-     Cleb_Congruence  Tommy_Hilfiger - Adidas             -1.063      0.469 -2.264
-     Cleb_Congruence  Nike - Puma                          0.625      0.261  2.395
-     Cleb_Congruence  HM - Puma                           -0.875      0.323 -2.706
-     Cleb_Congruence  Tommy_Hilfiger - Puma               -0.313      0.377 -0.829
      Cleb_Congruence  HM - Nike                           -1.500      0.342 -4.392
-     Cleb_Congruence  Tommy_Hilfiger - Nike               -0.938      0.383 -2.448
+     Cleb_Congruence  HM - Puma                           -0.875      0.323 -2.706
+     Cleb_Congruence  Nike - Adidas                       -0.125      0.367 -0.341
+     Cleb_Congruence  Nike - Puma                          0.625      0.261  2.395
+     Cleb_Congruence  Puma - Adidas                       -0.750      0.329 -2.279
+     Cleb_Congruence  Tommy_Hilfiger - Adidas             -1.063      0.469 -2.264
      Cleb_Congruence  Tommy_Hilfiger - HM                  0.563      0.338  1.664
+     Cleb_Congruence  Tommy_Hilfiger - Nike               -0.938      0.383 -2.448
+     Cleb_Congruence  Tommy_Hilfiger - Puma               -0.313      0.377 -0.829
      Condition_Couple Shakira & Piqué - Beyonce & Jay-Z    0.125      0.407  0.307
      Pr(>|t|)    S  Df
-       0.0393  4.7 149
-       0.7590  0.4 149
        <0.001 11.0 149
-       0.0393  4.7 149
-       0.0393  4.7 149
-       0.0279  5.2 149
-       0.4991  1.0 149
        <0.001 12.1 149
+       0.0279  5.2 149
+       0.7590  0.4 149
+       0.0393  4.7 149
+       0.0393  4.7 149
        0.0393  4.7 149
        0.1351  2.9 149
+       0.0393  4.7 149
+       0.4991  1.0 149
        0.7590  0.4 149
 
     Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
+    Type:  response 
 
 From `summary(acmp_1)` we will have the estimated mean difference for
 each pair comparison, and we can reject the null hypothesis for
@@ -810,49 +854,50 @@ summary(acmp_2)
 
 
                 Term                            Contrast Condition_Couple Estimate
-     Cleb_Congruence mean(Puma) - mean(Adidas)            Beyonce & Jay-Z  -1.2500
-     Cleb_Congruence mean(Puma) - mean(Adidas)            Shakira & Piqué  -0.2500
-     Cleb_Congruence mean(Nike) - mean(Adidas)            Beyonce & Jay-Z  -0.1875
-     Cleb_Congruence mean(Nike) - mean(Adidas)            Shakira & Piqué  -0.0625
      Cleb_Congruence mean(HM) - mean(Adidas)              Beyonce & Jay-Z  -1.9375
      Cleb_Congruence mean(HM) - mean(Adidas)              Shakira & Piqué  -1.3125
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Beyonce & Jay-Z  -1.4375
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Shakira & Piqué  -0.6875
-     Cleb_Congruence mean(Nike) - mean(Puma)              Beyonce & Jay-Z   1.0625
-     Cleb_Congruence mean(Nike) - mean(Puma)              Shakira & Piqué   0.1875
-     Cleb_Congruence mean(HM) - mean(Puma)                Beyonce & Jay-Z  -0.6875
-     Cleb_Congruence mean(HM) - mean(Puma)                Shakira & Piqué  -1.0625
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Beyonce & Jay-Z  -0.1875
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Shakira & Piqué  -0.4375
      Cleb_Congruence mean(HM) - mean(Nike)                Beyonce & Jay-Z  -1.7500
      Cleb_Congruence mean(HM) - mean(Nike)                Shakira & Piqué  -1.2500
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Beyonce & Jay-Z  -1.2500
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Shakira & Piqué  -0.6250
+     Cleb_Congruence mean(HM) - mean(Puma)                Beyonce & Jay-Z  -0.6875
+     Cleb_Congruence mean(HM) - mean(Puma)                Shakira & Piqué  -1.0625
+     Cleb_Congruence mean(Nike) - mean(Adidas)            Beyonce & Jay-Z  -0.1875
+     Cleb_Congruence mean(Nike) - mean(Adidas)            Shakira & Piqué  -0.0625
+     Cleb_Congruence mean(Nike) - mean(Puma)              Beyonce & Jay-Z   1.0625
+     Cleb_Congruence mean(Nike) - mean(Puma)              Shakira & Piqué   0.1875
+     Cleb_Congruence mean(Puma) - mean(Adidas)            Beyonce & Jay-Z  -1.2500
+     Cleb_Congruence mean(Puma) - mean(Adidas)            Shakira & Piqué  -0.2500
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Beyonce & Jay-Z  -1.4375
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Shakira & Piqué  -0.6875
      Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Beyonce & Jay-Z   0.5000
      Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Shakira & Piqué   0.6250
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Beyonce & Jay-Z  -1.2500
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Shakira & Piqué  -0.6250
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Beyonce & Jay-Z  -0.1875
+     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Shakira & Piqué  -0.4375
      Std. Error      t Pr(>|t|)   S  Df
-          0.465 -2.685  0.04033 4.6 149
-          0.465 -0.537  0.72019 0.5 149
-          0.519 -0.361  0.76370 0.4 149
-          0.519 -0.120  0.90434 0.1 149
           0.571 -3.395  0.00881 6.8 149
           0.571 -2.300  0.05716 4.1 149
-          0.664 -2.166  0.07086 3.8 149
-          0.664 -1.036  0.43125 1.2 149
-          0.369  2.879  0.03051 5.0 149
-          0.369  0.508  0.72019 0.5 149
-          0.457 -1.503  0.26969 1.9 149
-          0.457 -2.323  0.05716 4.1 149
-          0.533 -0.352  0.76370 0.4 149
-          0.533 -0.821  0.55077 0.9 149
           0.483 -3.623  0.00798 7.0 149
           0.483 -2.588  0.04246 4.6 149
-          0.542 -2.308  0.05716 4.1 149
-          0.542 -1.154  0.41712 1.3 149
+          0.457 -1.503  0.26969 1.9 149
+          0.457 -2.323  0.05716 4.1 149
+          0.519 -0.361  0.76370 0.4 149
+          0.519 -0.120  0.90434 0.1 149
+          0.369  2.879  0.03051 5.0 149
+          0.369  0.508  0.72019 0.5 149
+          0.465 -2.685  0.04033 4.6 149
+          0.465 -0.537  0.72019 0.5 149
+          0.664 -2.166  0.07086 3.8 149
+          0.664 -1.036  0.43125 1.2 149
           0.478  1.046  0.43125 1.2 149
           0.478  1.307  0.35128 1.5 149
+          0.542 -2.308  0.05716 4.1 149
+          0.542 -1.154  0.41712 1.3 149
+          0.533 -0.352  0.76370 0.4 149
+          0.533 -0.821  0.55077 0.9 149
 
-    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, df, predicted, predicted_hi, predicted_lo 
+    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, predicted_lo, predicted_hi, predicted, df 
+    Type:  response 
 
 This turns into larger post-hoc results, so be careful in its reading
 and interpretation
@@ -880,28 +925,29 @@ p2
 
      Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
       Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
-      Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
-      Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
-      HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
-      Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
       Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
+      Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
       Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
+      Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
       Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
+      HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
       HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
+      Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
       Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
      97.5 %
        5.73
-       4.39
-       5.49
-       3.83
-       4.36
        5.36
+       4.39
        5.01
+       5.49
        5.24
+       3.83
        4.08
+       4.36
        4.74
 
     Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 Then, we can plot the estimated means, accounting for the interactions.
 With the same function as before, but by including both predictors in
@@ -971,6 +1017,7 @@ mm2
      custom -0.313      0.561 -0.557    0.577 0.8 -1.41  0.786
 
     Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 Here we see that we fail to reject the null hypothesis of both groups
 having the same marginal mean.
@@ -996,6 +1043,7 @@ mm3
      custom -2.22e-16      0.451 -4.93e-16    1.000 0.0 -0.883  0.883
 
     Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 For both of these example, we fail to reject the null hypothesis.
 
@@ -1020,4 +1068,9 @@ We fail to reject the null hypothesis of equal congruence, when
 comparing the two celebrity couples (interaction)
 ($F (4, 120) = 0.68, p = 0.606$). This shows that no brands showed a
 significantly higher congruence with one couple compared to the other.
-And brand differences should be look at ignoring couple effects
+And brand differences should be look at ignoring couple effects.
+
+Since no difference in brand scores exist between couples and Adidas has
+the highest congruence score and differs in score with Puma, HM,
+Tommy_Hilfiger, the best brand to use in the experimental research would
+be Adidas.
