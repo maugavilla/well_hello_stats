@@ -6,6 +6,8 @@ format: gfm
 toc: true
 toc-depth: 5
 code-copy: true
+execute:
+  cache: true
 ---
 
 # Hidden Markov Models (HMM)
@@ -261,6 +263,15 @@ Here we see that all IC presents better fit for the time varying model. finally 
 1-pchisq((-2*-16481.703  - -2*-16288.147), 
          df = (22 - 18) )
 
+```
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+llratio(hmm2_fit, hmm1_fit)
 ```
 
 Based on these information we would argue that the HMM in this case should be time varying. So, in the following steps we will work with the time varying HMM. Note that here we are testing the relevance of time varying model before the class enumeration, but will do the class enumeration selection without the time constant HMM and then add the time predictor, this mainly because the models take longer to run. It depends if you want to account for it in the class enumeration, or after.
@@ -774,6 +785,9 @@ q2 + geom_bar(stat="identity") +
 ```
 
 Now its easier to read the transition probabilities to move to another state
+
+## Adding predictors
+
 
 # References
 

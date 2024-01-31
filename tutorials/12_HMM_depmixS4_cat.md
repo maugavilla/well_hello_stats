@@ -1,40 +1,27 @@
-HMM with depmixS4 (categorical indicators)
-================
+# HMM with depmixS4 (categorical indicators)
 Mauricio Garnier-Villarreal
-2/6/23
+2024-01-30
 
-- <a href="#hidden-markov-models-hmm"
-  id="toc-hidden-markov-models-hmm">Hidden Markov Models (HMM)</a>
-  - <a href="#markov-assumption" id="toc-markov-assumption">Markov
-    assumption</a>
-  - <a href="#measurement-model" id="toc-measurement-model">Measurement
-    model</a>
-  - <a href="#structural-model" id="toc-structural-model">Structural
-    model</a>
-- <a href="#depmixs4" id="toc-depmixs4"><code>depmixS4</code></a>
-- <a href="#dichotomous-indicator-example"
-  id="toc-dichotomous-indicator-example">Dichotomous indicator example</a>
-  - <a href="#depmixs4-syntax"
-    id="toc-depmixs4-syntax"><code>depmixS4</code> syntax</a>
-    - <a href="#time-variant-hmm" id="toc-time-variant-hmm">Time variant
-      HMM</a>
-  - <a href="#class-enumeration" id="toc-class-enumeration">Class
-    enumeration</a>
-    - <a href="#model-fit-indices" id="toc-model-fit-indices">Model Fit
-      Indices</a>
-  - <a href="#time-varying-hmm" id="toc-time-varying-hmm">Time varying
-    HMM</a>
-    - <a href="#classification-diagnostics"
-      id="toc-classification-diagnostics">Classification Diagnostics</a>
-    - <a href="#conditional-transition-matrices"
-      id="toc-conditional-transition-matrices">Conditional transition
-      matrices</a>
-    - <a href="#plotting-hmm" id="toc-plotting-hmm">Plotting HMM</a>
-      - <a href="#index-plot" id="toc-index-plot">Index plot</a>
-      - <a href="#density-plot" id="toc-density-plot">Density plot</a>
-      - <a href="#transition-probabilities"
-        id="toc-transition-probabilities">Transition probabilities</a>
-- <a href="#references" id="toc-references">References</a>
+- [Hidden Markov Models (HMM)](#hidden-markov-models-hmm)
+  - [Markov assumption](#markov-assumption)
+  - [Measurement model](#measurement-model)
+  - [Structural model](#structural-model)
+- [`depmixS4`](#depmixs4)
+- [Dichotomous indicator example](#dichotomous-indicator-example)
+  - [`depmixS4` syntax](#depmixs4-syntax)
+    - [Time variant HMM](#time-variant-hmm)
+  - [Class enumeration](#class-enumeration)
+    - [Model Fit Indices](#model-fit-indices)
+  - [Time varying HMM](#time-varying-hmm)
+    - [Classification Diagnostics](#classification-diagnostics)
+    - [Conditional transition
+      matrices](#conditional-transition-matrices)
+    - [Plotting HMM](#plotting-hmm)
+      - [Index plot](#index-plot)
+      - [Density plot](#density-plot)
+      - [Transition probabilities](#transition-probabilities)
+  - [Adding predictors](#adding-predictors)
+- [References](#references)
 
 # Hidden Markov Models (HMM)
 
@@ -607,6 +594,12 @@ representing the data equally well.
 
     [1] 0
 
+``` r
+llratio(hmm2_fit, hmm1_fit)
+```
+
+    log Likelihood ratio (chi^2): 387.11 (df=2), p=0.
+
 Based on these information we would argue that the HMM in this case
 should be time varying. So, in the following steps we will work with the
 time varying HMM. Note that here we are testing the relevance of time
@@ -849,7 +842,7 @@ ggplot(elbow_plot, aes(x = n_states, y = Value, group = IC))+
   theme_minimal()
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-19-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-20-1.png)
 
 From these results we see a meaningful improvement at least up to 3
 classes, and relatively flat change after 4 classes. In practice you
@@ -1266,7 +1259,7 @@ pred_trans <- lapply(hmm4c_tv_fit@transition, predict)
 is(pred_trans)
 ```
 
-    [1] "list"         "vector"       "MxCharOrList" "MxListOrNull"
+    [1] "list"         "vector"       "MxListOrNull" "MxCharOrList"
 
 ``` r
 length(pred_trans)
@@ -1460,7 +1453,7 @@ dat3 <- pivot_wider(dat3, id_cols = c(id),
 head(dat3)
 ```
 
-    # A tibble: 6 x 24
+    # A tibble: 6 × 24
          id   `0`   `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8`   `9`  `10`  `11`
       <dbl> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
     1     1     2     2     4     4     4     4     1     1     1     3     3     3
@@ -1469,7 +1462,7 @@ head(dat3)
     4     4     2     2     2     2     2     1     1     3     3     3     3     3
     5     5     2     2     2     4     4     1     1     3     3     3     1     1
     6     6     2     2     1     1     3     3     3     1     1     1     1     1
-    # ... with 11 more variables: `12` <int>, `13` <int>, `14` <int>, `15` <int>,
+    # ℹ 11 more variables: `12` <int>, `13` <int>, `14` <int>, `15` <int>,
     #   `16` <int>, `17` <int>, `18` <int>, `19` <int>, `20` <int>, `21` <int>,
     #   `22` <int>
 
@@ -1503,7 +1496,7 @@ ggseqiplot(seq_pred,
           sortv="from.start")
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-37-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-38-1.png)
 
 This plots is sorted by the states at the beginning, we can also sorted
 by the end. Now, we see that most subjects end up as alcohol users, some
@@ -1514,7 +1507,7 @@ ggseqiplot(seq_pred,
            sortv="from.end")
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-38-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-39-1.png)
 
 You can sort the index plot in function on how you want to describe the
 results
@@ -1529,7 +1522,7 @@ predicted to be in each state
 ggseqdplot(seq_pred)
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-39-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-40-1.png)
 
 We can also separate each state, and present each in separate rows or
 columns, with the `dissect` argument
@@ -1539,7 +1532,7 @@ ggseqdplot(seq_pred,
            dissect = "col")
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-40-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-41-1.png)
 
 #### Transition probabilities
 
@@ -1575,7 +1568,7 @@ dat4$to <- car::recode(dat4$to,
 dat4
 ```
 
-    # A tibble: 368 x 4
+    # A tibble: 368 × 4
        time  from           to             transition
        <fct> <fct>          <chr>               <dbl>
      1 0     Soft substance Soft substance    0.649  
@@ -1588,7 +1581,7 @@ dat4
      8 0     No users       Alcohol           0.221  
      9 0     All substances Soft substance    0.0549 
     10 0     All substances No users          0.00230
-    # ... with 358 more rows
+    # ℹ 358 more rows
 
 Now, we can plot the transitions from each starting state (column
 `from`), to each outgoing state (column `to`), with this `ggplot2`
@@ -1602,7 +1595,7 @@ q + geom_bar(stat="identity") +
   scale_color_gradient()
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-42-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-43-1.png)
 
 Not surprisingly, most subjects tend to stay in the state that they are,
 and if the transition probability to other state is low can be hard to
@@ -1618,10 +1611,12 @@ q2 + geom_bar(stat="identity") +
   scale_color_gradient()
 ```
 
-![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-43-1.png)
+![](12_HMM_depmixS4_cat_files/figure-commonmark/unnamed-chunk-44-1.png)
 
 Now its easier to read the transition probabilities to move to another
 state
+
+## Adding predictors
 
 # References
 
