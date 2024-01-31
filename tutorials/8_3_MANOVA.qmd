@@ -51,6 +51,14 @@ head(dat)
 dim(dat)
 ```
 
+Or if you want to pull it from the github site
+
+```{r, eval=F}
+dat <- import("https://github.com/maugavilla/well_hello_stats/raw/main/tutorials/OECD.xlsx")
+head(dat)
+dim(dat)
+```
+
 Before we do any arrangements with the data, it would be good if we have a look at the variables that we have with some descriptive statistics. Remember, this only makes sense for variables that are *numeric*. If we wanted to see how factors or characters are distributed in the data we would require a different approach, like frequency tables. To get the descriptive statistics we will use the `Describe` function from the `bruceR` package.
 
 ```{r, eval=T, warning = F}

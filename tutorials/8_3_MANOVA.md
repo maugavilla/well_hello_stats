@@ -1,6 +1,6 @@
 # Multivariate Analysis of Variance (MANOVA)
 Santiago Gómez-Echeverry & Mauricio Garnier-Villarreal
-2024-01-30
+2024-01-31
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -112,6 +112,14 @@ dim(dat)
 
     [1] 208  17
 
+Or if you want to pull it from the github site
+
+``` r
+dat <- import("https://github.com/maugavilla/well_hello_stats/raw/main/tutorials/OECD.xlsx")
+head(dat)
+dim(dat)
+```
+
 Before we do any arrangements with the data, it would be good if we have
 a look at the variables that we have with some descriptive statistics.
 Remember, this only makes sense for variables that are *numeric*. If we
@@ -155,7 +163,7 @@ corrplot(cor_m, type = 'lower', order = 'alphabet', method = 'color',
          tl.cex = 0.5, tl.col = 'black', addCoef.col = 1, number.cex = 0.5) # this line sets the size and color of the text in the plot
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-5-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 Now that we have already explored how the data looks like, we can
 continue with the data arrangement. For this exercise we will compare
@@ -211,7 +219,7 @@ ggplot(data = dat_lq_long, aes(x = dimension, y =value, fill = dimension)) +
         axis.ticks.x=element_blank())
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-7-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 # Perform Multivariate Analysis of Variance
 
@@ -495,7 +503,7 @@ covEllipses(dat_lq[,c('life', 'vote', 'education')], dat_lq$continent,
             col=cols, fill=c(rep(FALSE,3), TRUE), fill.alpha=.05) # this line deals with the plot esthetics
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-11-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-12-1.png)
 
 If the ellipses of different groups **overlap** significantly, it
 suggests that the groups are **not very different** with respect to the
@@ -510,7 +518,7 @@ plot with the model and the error.
 heplot(mod, fill=TRUE, fill.alpha=0.1)
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-12-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-13-1.png)
 
 The **centroid** in the middle represents the multivariate mean of the
 two dependent variables. The **shape** and **orientation** of the
@@ -529,7 +537,7 @@ is dependent on the scale of the variables**. A way to assess if the
 heplot(mod, fill=TRUE, fill.alpha=0.1, size = "effect")
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-13-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-14-1.png)
 
 We have only compared two variables. Now, let’s compare them all.
 
@@ -537,7 +545,7 @@ We have only compared two variables. Now, let’s compare them all.
 pairs(mod, variables=c('life', 'vote', 'education'))
 ```
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-14-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-15-1.png)
 
 We notice that group means for `life` and `vote` are positively
 correlated (we established that above), but there are negative
@@ -624,4 +632,4 @@ plot(cda, col=col,
 
     Vector scale factor set to 4.755
 
-![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-17-1.png)
+![](8_3_MANOVA_files/figure-commonmark/unnamed-chunk-18-1.png)
