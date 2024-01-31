@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-26 July, 2023
+31 January, 2024
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -212,6 +212,9 @@ following a course.
   size, post-hoc pairwise and planned comparisons, plot effects.
   Packages: rio, dplyr, reshape2, marginaleffect, afex, sjlabelled,
   effectsize.  
+- [MANOVA](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_3_MANOVA.md):
+  introduction to MANOVA, setting up R session, import data set, MANOVA,
+  effect sizes, homogeneity of variances, HE plots, LDA.
 - [Linear
   regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/9_1_linear_regression.md):
   setting up R session, import data set, simple linear regression,
