@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-31 January, 2024
+01 February, 2024
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -13,7 +13,7 @@ Mauricio Garnier-Villarreal
   - [Basics](#basics)
   - [Initial work with data](#initial-work-with-data)
   - [Reporting](#reporting)
-  - [Relations betwen variables](#relations-betwen-variables)
+  - [Relations between variables](#relations-between-variables)
   - [Scale evaluation](#scale-evaluation)
   - [General Linear Models](#general-linear-models)
   - [Mixture models](#mixture-models)
@@ -185,13 +185,15 @@ following a course.
 - [Creating and Exporting Tables in APA Format (7th
   Edition)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/4_3_creating_and_exporting_tables.md)
 
-## Relations betwen variables
+## Relations between variables
 
 - [Correlation](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_1_correlation.md):
   setting up R session, import data set, scatter plot, Pearson
   correlation, Spearman correlation, Kendal-tau correlation, extracting
   the matrices, correlogram, pairs plot. Packages: rio, psych, corrplot,
   ggplot2, GGally.
+- [Contingency
+  tables](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/6_2_contigency_tables.md)
 
 ## Scale evaluation
 

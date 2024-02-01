@@ -72,6 +72,14 @@ dim(dat)
 
     [1] 76257     3
 
+Or if you want to pull it from the github site
+
+``` r
+dat <- import("https://github.com/maugavilla/well_hello_stats/raw/main/tutorials/education.sav")
+head(dat)
+dim(dat)
+```
+
 In this data set we have the sex and education level of the
 participants. And the education level is set with two different
 catrgorizations. We can see the label for each value (number) with the
@@ -374,14 +382,14 @@ ggplot(data=dat, aes(x=EDU))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-14-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-1.png)
 
 ``` r
 ggplot(data=dat, aes(x=SEX))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-14-2.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-2.png)
 
 Then, if we want to include both variables in the same plot, we can do
 it in a couple of different ways. In the first example, we have one
@@ -398,14 +406,14 @@ ggplot(data=dat, aes(x=EDU))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-1.png)
 
 ``` r
 ggplot(data=dat, aes(x=EDU, fill=SEX))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-2.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-2.png)
 
 ``` r
 ggplot(data=dat, aes(x=EDU, fill=SEX))+
@@ -413,7 +421,7 @@ ggplot(data=dat, aes(x=EDU, fill=SEX))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-3.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-3.png)
 
 Note that for the previous plots we have counts on the y-axis, but we
 can swith this for proportions. We can do this by adjusting the `aes()`
@@ -427,7 +435,7 @@ ggplot(data=dat, aes(x=EDU, fill=SEX))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 Lastly, we can also use the mosaic plot, which is another graphical
 technique for showing the association between two categorical variables.
@@ -443,7 +451,7 @@ table as input.
 mosaicplot(tab1)
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-17-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-18-1.png)
 
 # References
 

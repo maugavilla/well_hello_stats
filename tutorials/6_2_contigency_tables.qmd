@@ -56,6 +56,14 @@ dim(dat)
 
 ```
 
+Or if you want to pull it from the github site
+
+```{r, eval=F}
+dat <- import("https://github.com/maugavilla/well_hello_stats/raw/main/tutorials/education.sav")
+head(dat)
+dim(dat)
+```
+
 In this data set we have the sex and education level of the participants. And the education level is set with two different catrgorizations. We can see the label for each value (number) with the ``attributes()`` function
 
 ```{r}
