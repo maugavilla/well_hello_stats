@@ -37,7 +37,7 @@ dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
 dim(dat)
 ```
 
-Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. 
+Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. If you have downaloaded a different version of the WVS these number might differ. 
 
 ## Select variables of interest
 

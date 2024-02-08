@@ -2,54 +2,38 @@ R basics: Getting started
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-31 March, 2023
+08 February, 2024
 
-- <a href="#introduction" id="toc-introduction">Introduction</a>
-  - <a href="#using-rstudio" id="toc-using-rstudio">Using RStudio</a>
-  - <a href="#running-code-from-the-r-script"
-    id="toc-running-code-from-the-r-script">Running code from the R
-    script</a>
-  - <a href="#assigning-values-to-names"
-    id="toc-assigning-values-to-names">Assigning values to names</a>
-- <a href="#data-types" id="toc-data-types">Data types</a>
-  - <a href="#numeric" id="toc-numeric">Numeric</a>
-  - <a href="#character" id="toc-character">Character</a>
-- <a href="#data-structures" id="toc-data-structures">Data structures</a>
-  - <a href="#vector" id="toc-vector">Vector</a>
-    - <a href="#selecting-elements" id="toc-selecting-elements">Selecting
-      elements</a>
-  - <a href="#dataframe" id="toc-dataframe">Data.frame</a>
-    - <a href="#selecting-rows-columns-and-elements"
-      id="toc-selecting-rows-columns-and-elements">Selecting rows, columns and
-      elements</a>
-      - <a href="#selecting-columns" id="toc-selecting-columns">selecting
-        columns</a>
-      - <a href="#selecting-rows" id="toc-selecting-rows">selecting rows</a>
-      - <a href="#selecting-rows-and-columns"
-        id="toc-selecting-rows-and-columns">selecting rows and columns</a>
-    - <a href="#subsetting-adding-and-modifying-data"
-      id="toc-subsetting-adding-and-modifying-data">Subsetting, adding and
-      modifying data</a>
-  - <a href="#other-common-data-structures"
-    id="toc-other-common-data-structures">Other common data structures</a>
-- <a href="#importing-and-saving-data"
-  id="toc-importing-and-saving-data">Importing and saving data</a>
-- <a href="#functions" id="toc-functions">Functions</a>
-  - <a href="#what-is-a-function" id="toc-what-is-a-function">What is a
-    function?</a>
-  - <a href="#using-functions" id="toc-using-functions">Using functions</a>
-    - <a href="#viewing-and-interpreting-function-documentation"
-      id="toc-viewing-and-interpreting-function-documentation">Viewing and
-      interpreting function documentation</a>
-- <a href="#packages" id="toc-packages">Packages</a>
-  - <a href="#install-and-load-packages"
-    id="toc-install-and-load-packages">Install and load packages</a>
-  - <a href="#some-error-messages" id="toc-some-error-messages">Some error
-    messages</a>
-- <a href="#working-directory" id="toc-working-directory">Working
-  directory</a>
-- <a href="#save-syntax-and-workspace"
-  id="toc-save-syntax-and-workspace">Save syntax and workspace</a>
+- [Introduction](#introduction)
+  - [Using RStudio](#using-rstudio)
+  - [Running code from the R script](#running-code-from-the-r-script)
+  - [Assigning values to names](#assigning-values-to-names)
+- [Data types](#data-types)
+  - [Numeric](#numeric)
+  - [Character](#character)
+- [Data structures](#data-structures)
+  - [Vector](#vector)
+    - [Selecting elements](#selecting-elements)
+  - [Data.frame](#dataframe)
+    - [Selecting rows, columns and
+      elements](#selecting-rows-columns-and-elements)
+      - [selecting columns](#selecting-columns)
+      - [selecting rows](#selecting-rows)
+      - [selecting rows and columns](#selecting-rows-and-columns)
+    - [Subsetting, adding and modifying
+      data](#subsetting-adding-and-modifying-data)
+  - [Other common data structures](#other-common-data-structures)
+- [Importing and saving data](#importing-and-saving-data)
+- [Functions](#functions)
+  - [What is a function?](#what-is-a-function)
+  - [Using functions](#using-functions)
+    - [Viewing and interpreting function
+      documentation](#viewing-and-interpreting-function-documentation)
+- [Packages](#packages)
+  - [Install and load packages](#install-and-load-packages)
+  - [Some error messages](#some-error-messages)
+- [Working directory](#working-directory)
+- [Save syntax and workspace](#save-syntax-and-workspace)
 
 # Introduction
 
@@ -83,7 +67,8 @@ reproducibility of your work.
 ## Running code from the R script
 
 Type the example code in the gray boxes into your R Script. Run the code
-and you should get the output shown in the white boxes.
+and you should get the output shown in the **output** boxes that start
+with `##` .
 
 ``` r
 3 + 3
@@ -869,7 +854,7 @@ This function, with the name `mean`, is given several arguments here:
 the scenes to create the arithmetic mean of the vector. We see the
 effect of the `na.rm` argument, when `TRUE` it will calculate the mean
 ignoring any missing data (`NA`), and when `FALSE` it will include the
-missing value in the claulcation, returning a missing value.
+missing value in the calculation, returning a missing value.
 
 By now we hope you have realized just how broad the use of functions is.
 The *R syntax* for performing basic mathematical operations such as
@@ -940,12 +925,13 @@ done only once per computer.
 
 ## Install and load packages
 
-There are you ways to install packages, in RStudio you can to th
-lower-left pane, and the *Packages* tab. Click the **Install** button,
-in the following window you can type the name of the package you want to
-install and when ready click the **Install** button. It’s important to
-make sure to mark the box `Install dependencies`; this is a required
-step and will install any other package that a package requires to work.
+There are several ways you can install packages, in RStudio you can to
+th lower-left pane, and the *Packages* tab. Click the **Install**
+button, in the following window you can type the name of the package you
+want to install and when ready click the **Install** button. It’s
+important to make sure to mark the box `Install dependencies`; this is a
+required step and will install any other package that a package requires
+to work.
 
 The second method is through syntax, the function is
 **install.packages()**, and we are using 2 arguments, the first is the
@@ -1015,7 +1001,7 @@ library(tidyLPA)
 ```
 
     ## You can use the function citation('tidyLPA') to create a citation for the use of {tidyLPA}.
-    ## Mplus is installed; you can use package = 'MplusAutomation' when calling estimate_profiles().
+    ## Mplus is not installed. Use only package = 'mclust' when calling estimate_profiles().
 
 Here we see a clear error, R saying that it cannot load the package
 `tidyLPA` because there is no such package installed. O, if you see this

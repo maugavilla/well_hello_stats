@@ -36,7 +36,7 @@ Furthermore, this allows transparency and reproducibility of your work.
 ## Running code from the R script
 
 Type the example code in the gray boxes into your R Script.
-Run the code and you should get the output shown in the white boxes.
+Run the code and you should get the output shown in the **output** boxes that start with ``##`` .
 
 ```{r, eval=T}
 3 + 3
@@ -473,7 +473,7 @@ mean(x = c(1, 2, NA, 1, 2, 5), na.rm = FALSE)
 
 This function, with the name `mean`, is given several arguments here: `x` and `na.rm`.
 Given this input, many operations are performed behind the scenes to create the arithmetic mean of the vector.
-We see the effect of the `na.rm` argument, when `TRUE` it will calculate the mean ignoring any missing data (`NA`), and when `FALSE` it will include the missing value in the claulcation, returning a missing value.
+We see the effect of the `na.rm` argument, when `TRUE` it will calculate the mean ignoring any missing data (`NA`), and when `FALSE` it will include the missing value in the calculation, returning a missing value.
 
 By now we hope you have realized just how broad the use of functions is.
 The *R syntax* for performing basic mathematical operations such as `sqrt()` is essentially the same as the syntax for creating a mean, performing advances statistical analysis or creating powerful visualizations.
@@ -523,7 +523,7 @@ When you want to, you can install the packages, this has to be done only once pe
 
 ## Install and load packages
 
-There are you ways to install packages, in RStudio you can to th lower-left pane, and the *Packages* tab.
+There are several ways you can install packages, in RStudio you can to th lower-left pane, and the *Packages* tab.
 Click the **Install** button, in the following window you can type the name of the package you want to install and when ready click the **Install** button.
 It's important to make sure to mark the box `Install dependencies`; this is a required step and will install any other package that a package requires to work.
 

@@ -2,16 +2,13 @@ Data management 2: variable types, and factors
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+08 February, 2024
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#select-variables-of-interest"
-        id="toc-select-variables-of-interest">Select variables of interest</a>
--   <a href="#variable-types" id="toc-variable-types">Variable types</a>
--   <a href="#factor" id="toc-factor"><code>factor</code></a>
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Select variables of interest](#select-variables-of-interest)
+- [Variable types](#variable-types)
+- [`factor`](#factor)
 
 # Setup the R session
 
@@ -43,7 +40,8 @@ dim(dat)
     ## [1] 76897   548
 
 Here we are calling our data set **dat** and asking to see the dimension
-of it. We see that the data set has 76897 subjects, and 548 columns.
+of it. We see that the data set has 76897 subjects, and 548 columns. If
+you downloaded a different version of the WVS, these number might differ
 
 ## Select variables of interest
 

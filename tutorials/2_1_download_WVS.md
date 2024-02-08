@@ -2,7 +2,7 @@ Download the World Value Survey (WVS) data set
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+08 February, 2024
 
 For the following tutorials, we want to use a data set that provides
 meaningful data for many different types of analyses. For this we will
@@ -18,7 +18,7 @@ countries around the world. The WVS will be used throughout the
 following tutorials. It is therefore a good idea to download the data
 set before continuing with the tutorials.
 
-TO download the WVS data, visitthe [WVS
+TO download the WVS data, visit the [WVS
 website](https://www.worldvaluessurvey.org/), then go to the Data and
 Documentation -\> Data Download -\> Wave 7 (2017-2020) tab from the menu
 on the left (see the screenshot below).
@@ -50,6 +50,9 @@ be asked to share information on yourself and intended data usage. These
 questions allow the WVS team to keep track of who is using the data set.
 Under “FILE USAGE”, you can select “instruction” and state that you will
 be using the data set for a university course.
+
+**For most of the tutorials we will work with the `SPSS` data set, so we
+recommend to download this one**
 
 ![](images/screen36.png)
 

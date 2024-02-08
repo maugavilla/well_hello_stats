@@ -13,7 +13,7 @@ editor_options:
 
 For the following tutorials, we want to use a data set that provides meaningful data for many different types of analyses. For this we will use the [World Values Survey (WVS)](https://www.worldvaluessurvey.org/) data set. As stated on the website, the WVS is currently "the largest non-commercial cross-national empirical time-series investigation of human beliefs and values ever executed". The WVS covers a broad range of topics that are relevant to many disciplines within the social sciences, such as Sociology, Political Science, International Relations, Economics, Public Health, Demography, Anthropology, and Social Psychology. Another strength of the WVS is the broad coverage of countries around the world. The WVS will be used throughout the following tutorials. It is therefore a good idea to download the data set before continuing with the tutorials.
 
-TO download the WVS data, visitthe [WVS website](https://www.worldvaluessurvey.org/), then go to the Data and Documentation -> Data Download -> Wave 7 (2017-2020) tab from the menu on the left (see the screenshot below). 
+TO download the WVS data, visit the [WVS website](https://www.worldvaluessurvey.org/), then go to the Data and Documentation -> Data Download -> Wave 7 (2017-2020) tab from the menu on the left (see the screenshot below). 
 
 ![](images/screen34.png)
 
@@ -28,6 +28,8 @@ Here, you can also find more documentation like the full *Questionnaire* and add
 ![](images/screen35.png)
 
 Next, you can choose which data format you want to download. In general terms, we suggest to export and share data in a text format (e.g., the `csv` format, more on this in the following tutorial), as these ones are easier to open and share across platforms (Linux, Mac, Windows) and between different software programs. In the following screen, you will be asked to share information on yourself and intended data usage. These questions allow the WVS team to keep track of who is using the data set. Under "FILE USAGE", you can select "instruction" and state that you will be using the data set for a university course.
+
+**For most of the tutorials we will work with the ``SPSS`` data set, so we recommend to download this one**
 
 ![](images/screen36.png)
 

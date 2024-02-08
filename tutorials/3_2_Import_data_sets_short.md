@@ -2,30 +2,21 @@ Importing data sets – short version
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+08 February, 2024
 
--   <a href="#introduction" id="toc-introduction">Introduction</a>
--   <a href="#intoduction-to-data-formats"
-    id="toc-intoduction-to-data-formats">Intoduction to data formats</a>
--   <a href="#the-rio-package" id="toc-the-rio-package">The <code>rio</code>
-    package</a>
-    -   <a href="#importing-text-files" id="toc-importing-text-files">Importing
-        text files</a>
-    -   <a href="#importing-spss-files" id="toc-importing-spss-files">Importing
-        SPSS files</a>
-    -   <a href="#importing-sas-files" id="toc-importing-sas-files">Importing
-        SAS files</a>
-    -   <a href="#importing-stata-files"
-        id="toc-importing-stata-files">Importing Stata files</a>
--   <a href="#additional-information"
-    id="toc-additional-information">Additional information</a>
-    -   <a href="#need-more-detail-about-the-functions"
-        id="toc-need-more-detail-about-the-functions">Need more detail about the
-        functions</a>
-    -   <a href="#file-paths" id="toc-file-paths">File paths</a>
-    -   <a href="#choosefile" id="toc-choosefile"><code>choose.file()</code></a>
-    -   <a href="#general-recommendations"
-        id="toc-general-recommendations">General recommendations</a>
+- [Introduction](#introduction)
+- [Intoduction to data formats](#intoduction-to-data-formats)
+- [The `rio` package](#the-rio-package)
+  - [Importing text files](#importing-text-files)
+  - [Importing SPSS files](#importing-spss-files)
+  - [Importing SAS files](#importing-sas-files)
+  - [Importing Stata files](#importing-stata-files)
+- [Additional information](#additional-information)
+  - [Need more detail about the
+    functions](#need-more-detail-about-the-functions)
+  - [File paths](#file-paths)
+  - [`choose.file()`](#choosefile)
+  - [General recommendations](#general-recommendations)
 
 # Introduction
 
@@ -74,7 +65,8 @@ These include the most common formats you will encounter, namely
 data sharing rules of the WVS forbid us to upload the data, but you can
 simply download it from the [WVS
 website](https://www.worldvaluessurvey.org/). Tutorial 3.1 shows you how
-to do this.
+to do this. Here we will work with the *Wave 7 cross sectional* data set
+in text, SPSS, SAS, and Stata data formats.
 
 # The `rio` package
 
@@ -360,10 +352,10 @@ reproducibility.
 
 Some recommendations for general practice are:
 
--   Use the `import()` function from the `rio` package, this works well
-    for most common data types, and it is user friendly.
--   Save the data sets in the working directory folder, for facility to
-    have all files for a respective analysis in a single place.
--   Specify the full file name in the functions reading in the data.
-    This would give us more tractability of the data analysis process
-    and ease to reproduce it.
+- Use the `import()` function from the `rio` package, this works well
+  for most common data types, and it is user friendly.
+- Save the data sets in the working directory folder, for facility to
+  have all files for a respective analysis in a single place.
+- Specify the full file name in the functions reading in the data. This
+  would give us more tractability of the data analysis process and ease
+  to reproduce it.

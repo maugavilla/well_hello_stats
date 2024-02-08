@@ -2,31 +2,23 @@ Data management 1
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+08 February, 2024
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#select-variables-of-interest"
-        id="toc-select-variables-of-interest">Select variables of interest</a>
--   <a href="#recode-items" id="toc-recode-items">Recode items</a>
-    -   <a href="#reverse-code" id="toc-reverse-code">Reverse code</a>
-    -   <a href="#reverse-code-missing-value-codes"
-        id="toc-reverse-code-missing-value-codes">Reverse code missing value
-        codes</a>
-    -   <a href="#dummy-code" id="toc-dummy-code">Dummy code</a>
--   <a href="#create-composite-scores"
-    id="toc-create-composite-scores">Create composite scores</a>
-    -   <a href="#sum-score" id="toc-sum-score">Sum score</a>
-    -   <a href="#mean-score" id="toc-mean-score">Mean score</a>
--   <a href="#variable-calculations" id="toc-variable-calculations">Variable
-    calculations</a>
-    -   <a href="#equation-calculations" id="toc-equation-calculations">Equation
-        calculations</a>
-    -   <a href="#scale" id="toc-scale">Scale</a>
--   <a href="#selecting-subsets" id="toc-selecting-subsets">Selecting
-    subsets</a>
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Select variables of interest](#select-variables-of-interest)
+- [Recode items](#recode-items)
+  - [Reverse code](#reverse-code)
+  - [Reverse code missing value
+    codes](#reverse-code-missing-value-codes)
+  - [Dummy code](#dummy-code)
+- [Create composite scores](#create-composite-scores)
+  - [Sum score](#sum-score)
+  - [Mean score](#mean-score)
+- [Variable calculations](#variable-calculations)
+  - [Equation calculations](#equation-calculations)
+  - [Scale](#scale)
+- [Selecting subsets](#selecting-subsets)
 
 # Setup the R session
 
@@ -72,7 +64,9 @@ dim(dat)
     ## [1] 76897   548
 
 Here we are calling our data set **dat** and asking to see the dimension
-of it. We see that the data set has 76897 subjects, and 548 columns.
+of it. We see that the data set has 76897 subjects, and 548 columns. If
+you have downaloaded a different version of the WVS these number might
+differ.
 
 ## Select variables of interest
 
