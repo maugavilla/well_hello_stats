@@ -37,7 +37,7 @@ dat <- import("WVS_Cross-National_Wave_7_sav_v2_0.sav")
 dim(dat)
 ```
 
-Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns. 
+Here we are calling our data set **dat** and asking to see the dimension of it. We see that the data set has 76897 subjects, and 548 columns (if you downloaded another version of the WVS you will have different numbers). 
 
 ## Select variables of interest
 
@@ -50,20 +50,20 @@ dim(dat2)
 head(dat2)
 ```
 
-Here we are first creating a vector with the variable names for the ones I want to keep. You can see all variable names for the full data set as well:
+Here we are first creating a vector with the variable names for the ones we want to keep. You can see all variable names for the full data set as well:
 
 ```{r, eval=F}
 colnames(dat)
 ```
 
-After identifying which variables we will work with, we create a new data set **dat2** with only these 7 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
+After identifying which variables we will work with, we create a new data set **dat2** with only these 6 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
 
 
 # Continuous items
 
 When talking about descriptive statistics, we first need to know what type of variable each item is. For continuous items, the type of descriptive statistics we present are related to central tendency and variability measures. We will use the ```descr()``` function from the ```summarytools``` package. 
 
-Be aware that this function will give you resutls if you use them with categorical variables, but these would not be meaningful.
+Be aware that this function will give you results if you use them with categorical variables, but these would not be meaningful.
 
 From the selected variables the only ones that are truly continuous are *age*
 ```{r}
@@ -98,6 +98,14 @@ desc1
 ## Descritive for multiple groups
 
 We have already presented the basic descriptive information for continuous variables. But a common next step is to evaluate these descriptive information for multiple groups. We can do this with the ```stby()``` function. In the first argument you specify the data set, with all the continuous variables, in the INDICES argument you specify the group variable. 
+
+For this example we will use ``Sex`` as our grouping variable, ans see that ``1=Male`` , and ``2=Female`` .
+
+```{r}
+attributes(dat2$Q260)
+freq(dat2$Q260)
+```
+Now, we ask for the descriptive statistics for each ``Sex`` separately
 
 ```{r}
 stby(data = dat2[,c("SACSECVAL","Q262")], 

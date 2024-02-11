@@ -2,37 +2,26 @@ Reliability analysis
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+11 February, 2024
 
--   <a href="#what-is-reliability-analysis"
-    id="toc-what-is-reliability-analysis">What is reliability analysis?</a>
--   <a href="#preparation" id="toc-preparation">Preparation</a>
-    -   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-        session</a>
-    -   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-        data set</a>
-        -   <a href="#select-variables-of-interest"
-            id="toc-select-variables-of-interest">Select variables of interest</a>
-        -   <a href="#data-preparation" id="toc-data-preparation">Data
-            preparation</a>
--   <a href="#reliability-analysis"
-    id="toc-reliability-analysis">Reliability analysis</a>
-    -   <a href="#cronbachs-alpha" id="toc-cronbachs-alpha">Cronbach’s alpha</a>
-        -   <a href="#interpreting-the-output"
-            id="toc-interpreting-the-output">Interpreting the output</a>
-        -   <a href="#mix-of-positively-and-negatively-scored-items"
-            id="toc-mix-of-positively-and-negatively-scored-items">Mix of positively
-            and negatively scored items</a>
-        -   <a href="#squared-multiple-correlation-smc"
-            id="toc-squared-multiple-correlation-smc">Squared multiple correlation
-            (SMC)</a>
-    -   <a href="#mcdonalds-omega" id="toc-mcdonalds-omega">McDonald’s omega</a>
-        -   <a href="#interpreting-the-output-1"
-            id="toc-interpreting-the-output-1">Interpreting the output</a>
-        -   <a href="#mix-of-positively-and-negatively-scored-items-1"
-            id="toc-mix-of-positively-and-negatively-scored-items-1">Mix of
-            positively and negatively scored items</a>
--   <a href="#references" id="toc-references">References</a>
+- [What is reliability analysis?](#what-is-reliability-analysis)
+- [Preparation](#preparation)
+  - [Setup the R session](#setup-the-r-session)
+  - [Import the data set](#import-the-data-set)
+    - [Select variables of interest](#select-variables-of-interest)
+    - [Data preparation](#data-preparation)
+- [Reliability analysis](#reliability-analysis)
+  - [Cronbach’s alpha](#cronbachs-alpha)
+    - [Interpreting the output](#interpreting-the-output)
+    - [Mix of positively and negatively scored
+      items](#mix-of-positively-and-negatively-scored-items)
+    - [Squared multiple correlation
+      (SMC)](#squared-multiple-correlation-smc)
+  - [McDonald’s omega](#mcdonalds-omega)
+    - [Interpreting the output](#interpreting-the-output-1)
+    - [Mix of positively and negatively scored
+      items](#mix-of-positively-and-negatively-scored-items-1)
+- [References](#references)
 
 # What is reliability analysis?
 
@@ -131,7 +120,7 @@ comma tells r which columns/variables to keep, and we tell R to keep the
 columns with the names stored in the vector `vars`. We check the
 dimensions (`dim(dat2)`) and the first few rows of the data set
 (`head(dat2)`). This is a quick check whether everything went well and
-that we now have a data frame with just the 9 variables we wanted to
+that we now have a data frame with just the 5 variables we wanted to
 select.
 
 ``` r
@@ -226,9 +215,9 @@ describe(dat2)
     ## Q72    4 74317 2.94 0.90      3    3.01 1.48   1   4     3 -0.44    -0.66  0
     ## Q73    5 74277 2.78 0.95      3    2.85 1.48   1   4     3 -0.24    -0.91  0
 
-From the description of the items we can see that the values 1, 2, 3,
-and 4 occur in the data for these variables. This means that all other
-responses have correctly been coded as missing `NA`.
+From the description of the items we can see that the values range from
+1 to 4 in the data for these variables (min and max). This means that
+all other responses have correctly been coded as missing `NA`.
 
 To reverse code the variables, will use the `recode()` function from the
 `car` package.
@@ -323,9 +312,9 @@ Now that our data is well prepared, getting the reliability estimates is
 actually super easy. We look at Cronbach’s alpha and McDonald’s omega
 total as two measures of reliability. Cronbach’s alpha is not a measure
 of reliability, but a measure of inter-item correlation, that
-approximates reliability when *tau-equivalence* assumption is met. On
-the other side, McDonald’s omega is an improved measure of reliability
-based on the congeneric measurement model (Cho & Kim, 2015)
+approximates reliability when *tau-equivalence* assumption is met.
+McDonald’s omega is an improved measure of reliability based on the
+congeneric measurement model (Cho & Kim, 2015)
 
 ## Cronbach’s alpha
 
@@ -352,9 +341,9 @@ alpha(dat3)               # note that ggplot2 also has a function called `alpha`
     ##  Reliability if an item is dropped:
     ##       raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
     ## Q65_r      0.84      0.84    0.82      0.57 5.4  0.00093 0.020  0.57
-    ## Q69_r      0.81      0.81    0.80      0.52 4.3  0.00112 0.041  0.51
+    ## Q69_r      0.81      0.81    0.80      0.52 4.3  0.00112 0.042  0.51
     ## Q71_r      0.77      0.77    0.76      0.45 3.3  0.00140 0.024  0.43
-    ## Q72_r      0.78      0.78    0.76      0.47 3.5  0.00131 0.017  0.46
+    ## Q72_r      0.78      0.78    0.76      0.47 3.5  0.00131 0.018  0.46
     ## Q73_r      0.76      0.76    0.73      0.45 3.2  0.00140 0.015  0.44
     ## 
     ##  Item statistics 
@@ -420,11 +409,11 @@ dat4 <- dat2[, forgot_reverse]
 alpha(dat4)
 ```
 
-    ## Warning in alpha(dat4): Some items were negatively correlated with the total scale and probably 
+    ## Warning in alpha(dat4): Some items were negatively correlated with the first principal component and probably 
     ## should be reversed.  
     ## To do this, run the function again with the 'check.keys=TRUE' option
 
-    ## Some items ( Q65 Q69 ) were negatively correlated with the total scale and 
+    ## Some items ( Q65 Q69 ) were negatively correlated with the first principal component and 
     ## probably should be reversed.  
     ## To do this, run the function again with the 'check.keys=TRUE' option
 
@@ -433,7 +422,7 @@ alpha(dat4)
     ## Call: alpha(x = dat4)
     ## 
     ##   raw_alpha std.alpha G6(smc) average_r  S/N    ase mean   sd median_r
-    ##       0.11      0.11    0.52     0.023 0.12 0.0052  2.2 0.46    -0.32
+    ##       0.11      0.11    0.52     0.024 0.12 0.0052  2.2 0.46    -0.32
     ## 
     ##     95% confidence boundaries 
     ##          lower alpha upper
@@ -442,18 +431,18 @@ alpha(dat4)
     ## 
     ##  Reliability if an item is dropped:
     ##       raw_alpha std.alpha G6(smc) average_r   S/N alpha se var.r med.r
-    ## Q65        0.37      0.37    0.64     0.127  0.58   0.0033  0.39  0.12
-    ## Q69        0.48      0.47    0.66     0.183  0.90   0.0028  0.32  0.17
+    ## Q65        0.37      0.37    0.65     0.127  0.58   0.0033  0.40  0.12
+    ## Q69        0.48      0.47    0.66     0.184  0.90   0.0028  0.32  0.18
     ## Q71_r     -0.22     -0.22    0.33    -0.047 -0.18   0.0079  0.27 -0.32
     ## Q72_r     -0.37     -0.37    0.25    -0.073 -0.27   0.0087  0.27 -0.35
     ## Q73_r     -0.38     -0.37    0.21    -0.072 -0.27   0.0088  0.25 -0.33
     ## 
     ##  Item statistics 
     ##           n raw.r std.r r.cor r.drop mean   sd
-    ## Q65   73362 0.208 0.203 -0.16  -0.23  2.1 0.92
-    ## Q69   74827 0.066 0.059 -0.30  -0.35  2.3 0.94
-    ## Q71_r 74235 0.663 0.648  0.64   0.27  2.4 0.99
-    ## Q72_r 74317 0.716 0.715  0.74   0.40  2.1 0.90
+    ## Q65   73362 0.208 0.204 -0.16  -0.23  2.1 0.92
+    ## Q69   74827 0.066 0.057 -0.30  -0.35  2.3 0.94
+    ## Q71_r 74235 0.663 0.649  0.64   0.27  2.4 0.99
+    ## Q72_r 74317 0.716 0.716  0.74   0.40  2.1 0.90
     ## Q73_r 74277 0.720 0.713  0.77   0.39  2.2 0.95
     ## 
     ## Non missing response frequency for each item
@@ -475,15 +464,15 @@ option to get around this problem, so let’s try that:
 alpha(dat4, check.keys = TRUE)
 ```
 
-    ## Warning in alpha(dat4, check.keys = TRUE): Some items were negatively correlated with total scale and were automatically reversed.
+    ## Warning in alpha(dat4, check.keys = TRUE): Some items were negatively correlated with the first principal component and were automatically reversed.
     ##  This is indicated by a negative sign for the variable name.
 
     ## 
     ## Reliability analysis   
     ## Call: alpha(x = dat4, check.keys = TRUE)
     ## 
-    ##   raw_alpha std.alpha G6(smc) average_r S/N     ase mean   sd median_r
-    ##       0.83      0.83    0.82      0.49 4.8 0.00099  2.4 0.74     0.46
+    ##   raw_alpha std.alpha G6(smc) average_r  S/N     ase mean   sd median_r
+    ##       0.83      0.11    0.52     0.024 0.12 0.00099  2.4 0.74    -0.32
     ## 
     ##     95% confidence boundaries 
     ##          lower alpha upper
@@ -491,20 +480,20 @@ alpha(dat4, check.keys = TRUE)
     ## Duhachek  0.83  0.83  0.83
     ## 
     ##  Reliability if an item is dropped:
-    ##       raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
-    ## Q65-       0.84      0.84    0.82      0.57 5.4  0.00093 0.020  0.57
-    ## Q69-       0.81      0.81    0.80      0.52 4.3  0.00112 0.041  0.51
-    ## Q71_r      0.77      0.77    0.76      0.45 3.3  0.00140 0.024  0.43
-    ## Q72_r      0.78      0.78    0.76      0.47 3.5  0.00131 0.017  0.46
-    ## Q73_r      0.76      0.76    0.73      0.45 3.2  0.00140 0.015  0.44
+    ##       raw_alpha std.alpha G6(smc) average_r   S/N alpha se var.r med.r
+    ## Q65-       0.84      0.37    0.65     0.127  0.58  0.00093  0.40  0.12
+    ## Q69-       0.81      0.47    0.66     0.184  0.90  0.00112  0.32  0.18
+    ## Q71_r      0.77     -0.22    0.33    -0.047 -0.18  0.00140  0.27 -0.32
+    ## Q72_r      0.78     -0.37    0.25    -0.073 -0.27  0.00131  0.27 -0.35
+    ## Q73_r      0.76     -0.37    0.21    -0.072 -0.27  0.00140  0.25 -0.33
     ## 
     ##  Item statistics 
     ##           n raw.r std.r r.cor r.drop mean   sd
-    ## Q65-  73362  0.64  0.64  0.49   0.45  2.9 0.92
-    ## Q69-  74827  0.73  0.73  0.62   0.57  2.7 0.94
-    ## Q71_r 74235  0.84  0.83  0.79   0.72  2.4 0.99
-    ## Q72_r 74317  0.81  0.81  0.77   0.68  2.1 0.90
-    ## Q73_r 74277  0.84  0.84  0.82   0.73  2.2 0.95
+    ## Q65-  73362  0.64 0.204 -0.16   0.45  2.9 0.92
+    ## Q69-  74827  0.73 0.057 -0.30   0.57  2.7 0.94
+    ## Q71_r 74235  0.84 0.649  0.64   0.72  2.4 0.99
+    ## Q72_r 74317  0.81 0.716  0.74   0.68  2.1 0.90
+    ## Q73_r 74277  0.84 0.713  0.77   0.73  2.2 0.95
     ## 
     ## Non missing response frequency for each item
     ##          1    2    3    4 miss
@@ -586,7 +575,7 @@ omega(dat3)
     ## Q72_r 0.61  0.54             0.67 0.33 0.56
     ## Q73_r 0.66  0.62             0.83 0.17 0.54
     ## 
-    ## With eigenvalues of:
+    ## With Sums of squares  of:
     ##    g  F1*  F2*  F3* 
     ## 1.94 0.87 0.31 0.03 
     ## 

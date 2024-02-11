@@ -82,7 +82,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram()
 ```
 
-The function finds a number of ```bins``` for the plot, but you can modify it as you wish, to what you consider looks better in your plot
+The function finds a number of ```bins``` for the plot, but you can modify it as you wish, to what you consider looks better in your plot. We also see a ``Warning`` message about some removed rows, these are the missing values in the respective variables. 
 
 ```{r}
 ggplot(dat2, aes(x=SACSECVAL))+
@@ -90,7 +90,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
 ```
 
 
-Similar to a histogram, we can plot the density
+Similar to a histogram, we can plot the density (which is a smoothed version of the histogram)
 
 ```{r}
 ggplot(dat2, aes(x=SACSECVAL))+
@@ -113,7 +113,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
 ## Divide by color
 
-We could be interested in seeing the histogram for different groups; this can be be done by specifying color differences according a one grouping variable like this:
+We could be interested in seeing the histogram for different groups; in this case we will use the variable ``Sex`` (``Q260``). This can be be done by specifying color differences according a one grouping variable like this:
 ```{r}
 ggplot(dat2, aes(x = SACSECVAL, fill = as.factor(Q260) ))+
   geom_histogram()
@@ -134,7 +134,10 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Sex ))+
   geom_histogram()
 ```
 
-Now that we have meaningful labels, we can see the histogram for both male and female subjects. Let's now look at the plots by the *edcuation* variable. We modify it with the ```factor()``` function the same way.
+This presents the histograms for each grouped stacked on top of each other, so the count for ``Male`` starts when the count for ``Female`` ends. 
+
+
+Now that we have meaningful labels, we can see the histogram for both male and female subjects. Let's now look at the plots by the *education* variable. We modify it with the ```factor()``` function the same way.
 
 ```{r}
 dat2$Education <- factor(dat2$Q275, 
@@ -175,6 +178,8 @@ ggplot(subset(dat2, !is.na(Sex)), aes(x = SACSECVAL, fill = Education ))+
 
 ## Final plot
 
+We are first getting rid of ``NA`` for each variable, by sub-setting the data, excluding rows where either Sex or Education are missing ```subset(dat2, !is.na(Sex) & !is.na(Education))```
+
 Let's add one last modification. We want clear labels for the axis and title for the plot. We can do this with  
 ```{r}
 ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)), 
@@ -192,7 +197,7 @@ That is a histogram ready for a paper!!
 When we have 2 continuous variables, the most common plot is a scatter plot with one variable on the *x* axis and another variable on the *y* axis. For this we are going to start by creating 2 scale variables *Corruption Perception* and *Lack Confidence in the Government*
 
 ```{r}
-dat2$Corrup <- rowMeans(dat2[,paste0("Q",112:120)],na.rm = T)
+dat2$Corrup <- rowMeans(dat2[,c("Q112","Q113","Q114","Q115","Q116","Q117","Q118","Q119","Q120")],na.rm = T)
 dat2$GovConf <- rowMeans(dat2[,c("Q65","Q69","Q71","Q72","Q73")],na.rm=T)
 ```
 

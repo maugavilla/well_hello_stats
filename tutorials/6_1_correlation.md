@@ -2,32 +2,23 @@ Correlation
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+11 February, 2024
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#select-variables-of-interest"
-        id="toc-select-variables-of-interest">Select variables of interest</a>
-    -   <a href="#create-composite-scores"
-        id="toc-create-composite-scores">Create composite scores</a>
--   <a href="#scatter-plot" id="toc-scatter-plot">Scatter-plot</a>
--   <a href="#pearson-correlation" id="toc-pearson-correlation">Pearson
-    correlation</a>
-    -   <a href="#subset-of-variables" id="toc-subset-of-variables">Subset of
-        variables</a>
-    -   <a href="#confidence-intervals" id="toc-confidence-intervals">Confidence
-        Intervals</a>
--   <a href="#spearman-correlation" id="toc-spearman-correlation">Spearman
-    correlation</a>
--   <a href="#kendall-tau-correlation"
-    id="toc-kendall-tau-correlation">Kendall-tau correlation</a>
--   <a href="#extracting-the-different-matrices"
-    id="toc-extracting-the-different-matrices">Extracting the different
-    matrices</a>
--   <a href="#correlogram" id="toc-correlogram">Correlogram</a>
--   <a href="#pairs-plot" id="toc-pairs-plot">Pairs plot</a>
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Select variables of interest](#select-variables-of-interest)
+  - [Create composite scores](#create-composite-scores)
+- [Scatter-plot](#scatter-plot)
+- [Pearson correlation](#pearson-correlation)
+  - [Adjusting p-values](#adjusting-p-values)
+  - [Subset of variables](#subset-of-variables)
+  - [Confidence Intervals](#confidence-intervals)
+- [Spearman correlation](#spearman-correlation)
+- [Kendall-tau correlation](#kendall-tau-correlation)
+- [Extracting the different
+  matrices](#extracting-the-different-matrices)
+- [Correlogram](#correlogram)
+- [Pairs plot](#pairs-plot)
 
 # Setup the R session
 
@@ -126,19 +117,19 @@ colnames(dat)
 ```
 
 After identifying which variables we will work with, we create a new
-data set **dat2** with only these 17 variables, and make sure we did it
+data set **dat2** with only these 18 variables, and make sure we did it
 correctly by looking at the the dimension of the data **dim(dat2)**. We
 also look at the first 6 rows: **head(dat2)**. These are quick checks
 that we have created the new data correctly.
 
 The variables we will use here are:
 
--   Q260: sex, 1 = Male, 2 = Female
--   Q262: age in years
--   Y001: post-materialism index
--   SACSECVAL: secular values
--   Q112-Q120: Corruption Perception Index
--   Q65-Q73: Lack of Confidence in the government
+- Q260: sex, 1 = Male, 2 = Female
+- Q262: age in years
+- Y001: post-materialism index
+- SACSECVAL: secular values
+- Q112-Q120: Corruption Perception Index
+- Q65-Q73: Lack of Confidence in the government
 
 ## Create composite scores
 
@@ -203,7 +194,7 @@ ggplot(data=dat2, aes(x=SACSECVAL, y=LCGov))+
   geom_smooth(method = "lm", se=T)
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
 ![](6_1_correlation_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
@@ -218,6 +209,53 @@ between these variables with `geom_smooth(method = "lm", se=T)`
 For estimating the correlations for multiple pairs of variables we are
 using the `corr.test()` function from the `psych` package. To estimate
 all correlations in the data set,
+
+``` r
+cor_pear0 <- corr.test(dat2[,-1], method = "pearson", adjust = "none")
+cor_pear0
+```
+
+    ## Call:corr.test(x = dat2[, -1], method = "pearson", adjust = "none")
+    ## Correlation matrix 
+    ##            Q262  Y001 SACSECVAL Corrup LCGov
+    ## Q262       1.00 -0.06     -0.06  -0.10 -0.06
+    ## Y001      -0.06  1.00      0.15  -0.10  0.08
+    ## SACSECVAL -0.06  0.15      1.00  -0.10  0.33
+    ## Corrup    -0.10 -0.10     -0.10   1.00  0.32
+    ## LCGov     -0.06  0.08      0.33   0.32  1.00
+    ## Sample Size 
+    ##            Q262  Y001 SACSECVAL Corrup LCGov
+    ## Q262      76579 72058     76330  76455 76130
+    ## Y001      72058 72313     72227  72256 72010
+    ## SACSECVAL 76330 72227     76635  76549 76271
+    ## Corrup    76455 72256     76549  76767 76342
+    ## LCGov     76130 72010     76271  76342 76441
+    ## Probability values (Entries above the diagonal are adjusted for multiple tests.) 
+    ##           Q262 Y001 SACSECVAL Corrup LCGov
+    ## Q262         0    0         0      0     0
+    ## Y001         0    0         0      0     0
+    ## SACSECVAL    0    0         0      0     0
+    ## Corrup       0    0         0      0     0
+    ## LCGov        0    0         0      0     0
+    ## 
+    ##  To see confidence intervals of the correlations, print with the short=FALSE option
+
+In this case we are excluding the first column, with the `[,-1]`, this
+way we are not including *sex* in the correlation estimates.
+
+When we provide the full data set, it will estimate the correlations
+between *all* the variables. With the `method` argument we specify the
+type of correlation we want to estimate, in this case *pearson*.
+
+The correlation results are presented in 3 tables, first we see the
+correlation matrix which presents the correlation coefficients. Second,
+we see the sample size matrix, since we have missing data each estimated
+correlation did not included the same subjects, here we can see how many
+subjects were included for each correlation. The last table include the
+*p-values* for each correlation, the the lower diagonal presents the
+un-adjusted ones, and the ones on the upper diagonal are the *p-values*.
+
+## Adjusting p-values
 
 ``` r
 cor_pear1 <- corr.test(dat2[,-1], method = "pearson", adjust = "holm")
@@ -249,24 +287,14 @@ cor_pear1
     ## 
     ##  To see confidence intervals of the correlations, print with the short=FALSE option
 
-In this case we are excluding the first column, with the `[,-1]`, this
-way we are not including *sex* in the correlation estimates.
+The `adjust` argument specifies which method we want to use to adjust
+the *p-values* for multiple tests, here we choose *holm*. When *none* is
+specified, no adjustment will be made, presenting the *standard* ones.
 
-When we provide the full data set, it will estimate the correlations
-between *all* the variables. With the `method` argument we specify the
-type of correlation we want to estimate, in this case *pearson*. And the
-`adjust` argument specifies which method we want to use to adjust the
-*p-values* for multiple tests, here we choose *holm*.
-
-The correlation results are presented in 3 tables, first we see the
-correlation matrix which presents the correlation coefficients. Second,
-we see the sample size matrix, since we have missing data each estimated
-correlation did not included the same subjects, here we can see how many
-subjects were included for each correlation. The last table include the
-*p-values* for each correlation, the the lower diagonal presents the
-un-adjusted ones, and the ones on the upper diagonal are the adjusted
-(*holm*) *p-values*. In this case, we see no practical difference when
-adjusting the *p-values*, as all of them are lower than *0.001*.
+The only difference in the output, is that the the *p-values* presented
+them adjusted for multiple tests. In this case, we see no practical
+difference when adjusting the *p-values*, as all of them are lower than
+*0.001*.
 
 ## Subset of variables
 
@@ -508,7 +536,7 @@ magnitude of the correlation is represented by the size of the cicles.
 corrplot(cor_pear1$r)
 ```
 
-![](6_1_correlation_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](6_1_correlation_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 # Pairs plot
 
@@ -520,7 +548,7 @@ functions.
 ggpairs(dat2, columns=2:6)
 ```
 
-![](6_1_correlation_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](6_1_correlation_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 The pairs plot presents the density plot for each variable in the
 diagonal, the scatter-plot in the lower triangle, and the pearson
@@ -531,7 +559,7 @@ to plot with the `columns` argument
 ggpairs(dat2, columns=4:6)
 ```
 
-![](6_1_correlation_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](6_1_correlation_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 One last plot modification we want to show is to the pairs plots for
 multiple groups. Girst we need to change the sex variable into a
@@ -553,4 +581,4 @@ ggpairs(dat2,
             alpha = 0.5))  # Transparency
 ```
 
-![](6_1_correlation_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](6_1_correlation_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->

@@ -2,35 +2,30 @@ Basic plots
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+11 February, 2024
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#select-variables-of-interest"
-        id="toc-select-variables-of-interest">Select variables of interest</a>
--   <a href="#ggplot2-basics" id="toc-ggplot2-basics"><code>ggplot2</code>
-    basics</a>
--   <a href="#histograms" id="toc-histograms">Histograms</a>
-    -   <a href="#divide-by-color" id="toc-divide-by-color">Divide by color</a>
-    -   <a href="#grid-of-plots" id="toc-grid-of-plots">Grid of plots</a>
-    -   <a href="#final-plot" id="toc-final-plot">Final plot</a>
--   <a href="#scatter-plot" id="toc-scatter-plot">Scatter plot</a>
-    -   <a href="#prediction-line" id="toc-prediction-line">Prediction line</a>
-    -   <a href="#divide-by-color-1" id="toc-divide-by-color-1">Divide by
-        color</a>
-    -   <a href="#grid-of-plots-1" id="toc-grid-of-plots-1">Grid of plots</a>
-    -   <a href="#final-plot-1" id="toc-final-plot-1">Final plot</a>
--   <a href="#bar-plot" id="toc-bar-plot">Bar plot</a>
-    -   <a href="#adding-color" id="toc-adding-color">Adding color</a>
-    -   <a href="#grid-of-plots-2" id="toc-grid-of-plots-2">Grid of plots</a>
--   <a href="#box-plot" id="toc-box-plot">Box plot</a>
-    -   <a href="#by-category" id="toc-by-category">By category</a>
-    -   <a href="#add-statistic" id="toc-add-statistic">Add statistic</a>
-    -   <a href="#grid-of-plots-3" id="toc-grid-of-plots-3">Grid of plots</a>
-    -   <a href="#final-plot-2" id="toc-final-plot-2">Final plot</a>
--   <a href="#reference" id="toc-reference">Reference</a>
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Select variables of interest](#select-variables-of-interest)
+- [`ggplot2` basics](#ggplot2-basics)
+- [Histograms](#histograms)
+  - [Divide by color](#divide-by-color)
+  - [Grid of plots](#grid-of-plots)
+  - [Final plot](#final-plot)
+- [Scatter plot](#scatter-plot)
+  - [Prediction line](#prediction-line)
+  - [Divide by color](#divide-by-color-1)
+  - [Grid of plots](#grid-of-plots-1)
+  - [Final plot](#final-plot-1)
+- [Bar plot](#bar-plot)
+  - [Adding color](#adding-color)
+  - [Grid of plots](#grid-of-plots-2)
+- [Box plot](#box-plot)
+  - [By category](#by-category)
+  - [Add statistic](#add-statistic)
+  - [Grid of plots](#grid-of-plots-3)
+  - [Final plot](#final-plot-2)
+- [Reference](#reference)
 
 # Setup the R session
 
@@ -159,30 +154,33 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 The function finds a number of `bins` for the plot, but you can modify
-it as you wish, to what you consider looks better in your plot
+it as you wish, to what you consider looks better in your plot. We also
+see a `Warning` message about some removed rows, these are the missing
+values in the respective variables.
 
 ``` r
 ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram(bins=50)
 ```
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-Similar to a histogram, we can plot the density
+Similar to a histogram, we can plot the density (which is a smoothed
+version of the histogram)
 
 ``` r
 ggplot(dat2, aes(x=SACSECVAL))+
   geom_density()
 ```
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_density).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_density()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
@@ -199,7 +197,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -211,17 +209,24 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram(aes(y = ..density..))
 ```
 
+    ## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `after_stat(density)` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ## Divide by color
 
-We could be interested in seeing the histogram for different groups;
-this can be be done by specifying color differences according a one
-grouping variable like this:
+We could be interested in seeing the histogram for different groups; in
+this case we will use the variable `Sex` (`Q260`). This can be be done
+by specifying color differences according a one grouping variable like
+this:
 
 ``` r
 ggplot(dat2, aes(x = SACSECVAL, fill = as.factor(Q260) ))+
@@ -230,7 +235,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = as.factor(Q260) ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
@@ -258,12 +263,15 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Sex ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
+This presents the histograms for each grouped stacked on top of each
+other, so the count for `Male` starts when the count for `Female` ends.
+
 Now that we have meaningful labels, we can see the histogram for both
-male and female subjects. Let’s now look at the plots by the *edcuation*
+male and female subjects. Let’s now look at the plots by the *education*
 variable. We modify it with the `factor()` function the same way.
 
 ``` r
@@ -301,7 +309,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
@@ -323,7 +331,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
@@ -341,11 +349,15 @@ ggplot(subset(dat2, !is.na(Sex)), aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 252 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 252 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ## Final plot
+
+We are first getting rid of `NA` for each variable, by sub-setting the
+data, excluding rows where either Sex or Education are missing
+`subset(dat2, !is.na(Sex) & !is.na(Education))`
 
 Let’s add one last modification. We want clear labels for the axis and
 title for the plot. We can do this with
@@ -361,7 +373,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 220 rows containing non-finite values (stat_bin).
+    ## Warning: Removed 220 rows containing non-finite values (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
@@ -375,7 +387,7 @@ axis. For this we are going to start by creating 2 scale variables
 *Corruption Perception* and *Lack Confidence in the Government*
 
 ``` r
-dat2$Corrup <- rowMeans(dat2[,paste0("Q",112:120)],na.rm = T)
+dat2$Corrup <- rowMeans(dat2[,c("Q112","Q113","Q114","Q115","Q116","Q117","Q118","Q119","Q120")],na.rm = T)
 dat2$GovConf <- rowMeans(dat2[,c("Q65","Q69","Q71","Q72","Q73")],na.rm=T)
 ```
 
@@ -388,7 +400,7 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
   geom_point()
 ```
 
-    ## Warning: Removed 555 rows containing missing values (geom_point).
+    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
@@ -405,11 +417,11 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
   geom_smooth(method = "lm", se=T)
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 555 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 555 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 555 rows containing missing values (geom_point).
+    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
@@ -425,11 +437,11 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
   geom_smooth(method = "loess", se=F)
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 555 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 555 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 555 rows containing missing values (geom_point).
+    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
@@ -447,11 +459,11 @@ ggplot(subset(dat2, !is.na(Sex)),
   geom_smooth(method = "loess", se=F)
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 547 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 547 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 547 rows containing missing values (geom_point).
+    ## Warning: Removed 547 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
@@ -471,11 +483,11 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
   facet_wrap(vars(Education) )
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 516 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 516 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 516 rows containing missing values (geom_point).
+    ## Warning: Removed 516 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
@@ -494,11 +506,11 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
        title = "This is some cool Plot!")
 ```
 
-    ## `geom_smooth()` using formula 'y ~ x'
+    ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 516 rows containing non-finite values (stat_smooth).
+    ## Warning: Removed 516 rows containing non-finite values (`stat_smooth()`).
 
-    ## Warning: Removed 516 rows containing missing values (geom_point).
+    ## Warning: Removed 516 rows containing missing values (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
@@ -604,7 +616,7 @@ ggplot(dat2,
   geom_boxplot()
 ```
 
-    ## Warning: Removed 130 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 130 rows containing non-finite values (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 This example, however, is not very informative.
@@ -621,7 +633,7 @@ ggplot(subset(dat2, !is.na(Sex) ),
   geom_boxplot()
 ```
 
-    ## Warning: Removed 125 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 125 rows containing non-finite values (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
 
@@ -634,7 +646,7 @@ ggplot(subset(dat2, !is.na(Education) ),
   geom_boxplot()
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
@@ -654,9 +666,9 @@ ggplot(subset(dat2, !is.na(Education) ),
   stat_summary(fun=mean, geom="point", shape=5, size=2)
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_summary).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
@@ -673,9 +685,9 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
   facet_wrap(vars(Sex) )
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_summary).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
 
@@ -694,9 +706,9 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
          title = "This is some cool Plot!")
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (stat_summary).
+    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
 
@@ -707,6 +719,6 @@ well as many ways to edit them to look how you want. But this usually
 needs some extra work and figuring out how the different functionality
 works. For additional help we suggest the following book
 
--   Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis.
-    Springer-Verlag New York. ISBN 978-3-319-24277-4,
-    <https://ggplot2.tidyverse.org>.
+- Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis.
+  Springer-Verlag New York. ISBN 978-3-319-24277-4,
+  <https://ggplot2.tidyverse.org>.

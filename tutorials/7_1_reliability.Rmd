@@ -56,7 +56,7 @@ To select these variables, we first create a vector named `vars` containing the 
 vars <- c("Q65", "Q69", "Q71", "Q72", "Q73")
 ```
 
-Next, we tell **R** to create a data set **dat2** which only contains the columns with the names in the vector `vars`. In `dat[, vars]`, the argument before the comma specifies which rows to keep (here, we keep it empty to keep all rows/respondents in the data). The argument after the comma tells r which columns/variables to keep, and we tell R to keep the columns with the names stored in the vector `vars`. We check the dimensions (`dim(dat2)`) and the first few rows of the data set (`head(dat2)`). This is a quick check whether everything went well and that we now have a data frame with just the 9 variables we wanted to select.
+Next, we tell **R** to create a data set **dat2** which only contains the columns with the names in the vector `vars`. In `dat[, vars]`, the argument before the comma specifies which rows to keep (here, we keep it empty to keep all rows/respondents in the data). The argument after the comma tells r which columns/variables to keep, and we tell R to keep the columns with the names stored in the vector `vars`. We check the dimensions (`dim(dat2)`) and the first few rows of the data set (`head(dat2)`). This is a quick check whether everything went well and that we now have a data frame with just the 5 variables we wanted to select.
 
 ```{r}
 dat2 <- dat[, vars]            
@@ -90,7 +90,7 @@ First, we check which values actually occur in the data. To do this, we request 
 describe(dat2)
 ```
 
-From the description of the items we can see that the values 1, 2, 3, and 4 occur in the data for these variables. This means that all other responses have correctly been coded as missing `NA`. 
+From the description of the items we can see that the values range from 1 to 4 in the data for these variables (min and max). This means that all other responses have correctly been coded as missing `NA`. 
 
 To reverse code the variables, will use the `recode()` function from the `car` package.
 
@@ -122,7 +122,7 @@ dat3 <- dat2[, reverse_coded]
 
 # Reliability analysis
 
-Now that our data is well prepared, getting the reliability estimates is actually super easy. We look at Cronbach's alpha and McDonald's omega total as two measures of reliability. Cronbach's alpha is not a measure of reliability, but a measure of inter-item correlation, that approximates reliability when *tau-equivalence* assumption is met. On the other side, McDonald's omega is an improved measure of reliability based on the congeneric measurement model (Cho & Kim, 2015)  
+Now that our data is well prepared, getting the reliability estimates is actually super easy. We look at Cronbach's alpha and McDonald's omega total as two measures of reliability. Cronbach's alpha is not a measure of reliability, but a measure of inter-item correlation, that approximates reliability when *tau-equivalence* assumption is met. McDonald's omega is an improved measure of reliability based on the congeneric measurement model (Cho & Kim, 2015)  
 
 ## Cronbach's alpha 
 

@@ -61,7 +61,7 @@ Here we are first creating a vector with the variable names for the ones I want 
 colnames(dat)
 ```
 
-After identifying which variables we will work with, we create a new data set **dat2** with only these 17 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
+After identifying which variables we will work with, we create a new data set **dat2** with only these 18 variables, and make sure we did it correctly by looking at the the dimension of the data **dim(dat2)**. We also look at the first 6 rows: **head(dat2)**. These are quick checks that we have created the new data correctly. 
 
 The variables we will use here are:
 
@@ -110,15 +110,28 @@ Now, in the ```ggplot()``` function we need to specify the data set, and with th
 For estimating the correlations for multiple pairs of variables we are using the ```corr.test()``` function from the ```psych``` package. To estimate all correlations in the data set, 
 
 ```{r}
-cor_pear1 <- corr.test(dat2[,-1], method = "pearson", adjust = "holm")
-cor_pear1
+cor_pear0 <- corr.test(dat2[,-1], method = "pearson", adjust = "none")
+cor_pear0
 ```
 
 In this case we are excluding the first column, with the ```[,-1]```, this way we are not including *sex* in the correlation estimates. 
 
-When we provide the full data set, it will estimate the correlations between *all* the variables. With the ```method``` argument we specify the type of correlation we want to estimate, in this case *pearson*. And the ```adjust``` argument specifies which method we want to use to adjust the *p-values* for multiple tests, here we choose *holm*. 
+When we provide the full data set, it will estimate the correlations between *all* the variables. With the ```method``` argument we specify the type of correlation we want to estimate, in this case *pearson*. 
 
-The correlation results are presented in 3 tables, first we see the correlation matrix which presents the correlation coefficients. Second, we see the sample size matrix, since we have missing data each estimated correlation did not included the same subjects, here we can see how many subjects were included for each correlation. The last table include the *p-values* for each correlation, the the lower diagonal presents the un-adjusted ones, and the ones on the upper diagonal are the adjusted (*holm*) *p-values*. In this case, we see no practical difference when adjusting the *p-values*, as all of them are lower than *0.001*.
+The correlation results are presented in 3 tables, first we see the correlation matrix which presents the correlation coefficients. Second, we see the sample size matrix, since we have missing data each estimated correlation did not included the same subjects, here we can see how many subjects were included for each correlation. The last table include the *p-values* for each correlation, the the lower diagonal presents the un-adjusted ones, and the ones on the upper diagonal are the *p-values*. 
+
+
+## Adjusting p-values
+
+```{r}
+cor_pear1 <- corr.test(dat2[,-1], method = "pearson", adjust = "holm")
+cor_pear1
+```
+
+The ```adjust``` argument specifies which method we want to use to adjust the *p-values* for multiple tests, here we choose *holm*. When *none* is specified, no adjustment will be made, presenting the *standard* ones.  
+
+The only difference in the output, is that the the *p-values* presented them adjusted for multiple tests. In this case, we see no practical difference when adjusting the *p-values*, as all of them are lower than *0.001*.
+
 
 
 ## Subset of variables

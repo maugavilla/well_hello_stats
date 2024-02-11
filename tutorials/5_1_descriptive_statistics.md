@@ -2,26 +2,17 @@ Descriptive Statistics
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+11 February, 2024
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#select-variables-of-interest"
-        id="toc-select-variables-of-interest">Select variables of interest</a>
--   <a href="#continuous-items" id="toc-continuous-items">Continuous
-    items</a>
-    -   <a href="#descritive-for-multiple-groups"
-        id="toc-descritive-for-multiple-groups">Descritive for multiple
-        groups</a>
--   <a href="#categorical-items" id="toc-categorical-items">Categorical
-    items</a>
-    -   <a href="#frequency-tables" id="toc-frequency-tables">Frequency
-        tables</a>
-    -   <a href="#cross-tables" id="toc-cross-tables">Cross-tables</a>
--   <a href="#data-frame-summary" id="toc-data-frame-summary">Data frame
-    Summary</a>
+- [Setup the R session](#setup-the-r-session)
+- [Import the data set](#import-the-data-set)
+  - [Select variables of interest](#select-variables-of-interest)
+- [Continuous items](#continuous-items)
+  - [Descritive for multiple groups](#descritive-for-multiple-groups)
+- [Categorical items](#categorical-items)
+  - [Frequency tables](#frequency-tables)
+  - [Cross-tables](#cross-tables)
+- [Data frame Summary](#data-frame-summary)
 
 # Setup the R session
 
@@ -54,7 +45,9 @@ dim(dat)
     ## [1] 76897   548
 
 Here we are calling our data set **dat** and asking to see the dimension
-of it. We see that the data set has 76897 subjects, and 548 columns.
+of it. We see that the data set has 76897 subjects, and 548 columns (if
+you downloaded another version of the WVS you will have different
+numbers).
 
 ## Select variables of interest
 
@@ -83,7 +76,7 @@ head(dat2)
     ## 6    1    2   51    3             AND  0.210111
 
 Here we are first creating a vector with the variable names for the ones
-I want to keep. You can see all variable names for the full data set as
+we want to keep. You can see all variable names for the full data set as
 well:
 
 ``` r
@@ -91,7 +84,7 @@ colnames(dat)
 ```
 
 After identifying which variables we will work with, we create a new
-data set **dat2** with only these 7 variables, and make sure we did it
+data set **dat2** with only these 6 variables, and make sure we did it
 correctly by looking at the the dimension of the data **dim(dat2)**. We
 also look at the first 6 rows: **head(dat2)**. These are quick checks
 that we have created the new data correctly.
@@ -104,7 +97,7 @@ descriptive statistics we present are related to central tendency and
 variability measures. We will use the `descr()` function from the
 `summarytools` package.
 
-Be aware that this function will give you resutls if you use them with
+Be aware that this function will give you results if you use them with
 categorical variables, but these would not be meaningful.
 
 From the selected variables the only ones that are truly continuous are
@@ -212,12 +205,12 @@ desc1 <- tb(descr(dat2[,c("SACSECVAL","Q262")],
 desc1
 ```
 
-    ## # A tibble: 2 x 16
+    ## # A tibble: 2 × 16
     ##   variable    mean     sd   min     q1    med     q3   max    mad    iqr    cv
     ##   <chr>      <dbl>  <dbl> <dbl>  <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl> <dbl>
     ## 1 Q262      43.0   16.4      16 29     41     55       103 19.3   26     0.381
     ## 2 SACSECVAL  0.361  0.175     0  0.234  0.359  0.484     1  0.185  0.250 0.484
-    ## # ... with 5 more variables: skewness <dbl>, se.skewness <dbl>, kurtosis <dbl>,
+    ## # ℹ 5 more variables: skewness <dbl>, se.skewness <dbl>, kurtosis <dbl>,
     ## #   n.valid <dbl>, pct.valid <dbl>
 
 ## Descritive for multiple groups
@@ -228,6 +221,49 @@ descriptive information for multiple groups. We can do this with the
 `stby()` function. In the first argument you specify the data set, with
 all the continuous variables, in the INDICES argument you specify the
 group variable.
+
+For this example we will use `Sex` as our grouping variable, ans see
+that `1=Male` , and `2=Female` .
+
+``` r
+attributes(dat2$Q260)
+```
+
+    ## $label
+    ## [1] "Sex"
+    ## 
+    ## $format.spss
+    ## [1] "F3.0"
+    ## 
+    ## $labels
+    ## Other missing; Multiple answers Mail (EVS) 
+    ##                                         -5 
+    ##                                  Not asked 
+    ##                                         -4 
+    ##                                  No answer 
+    ##                                         -2 
+    ##                                       Male 
+    ##                                          1 
+    ##                                     Female 
+    ##                                          2
+
+``` r
+freq(dat2$Q260)
+```
+
+    ## Frequencies  
+    ## dat2$Q260  
+    ## Label: Sex  
+    ## Type: Numeric  
+    ## 
+    ##                Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+    ## ----------- ------- --------- -------------- --------- --------------
+    ##           1   36556    47.570         47.570    47.539         47.539
+    ##           2   40290    52.430        100.000    52.395         99.934
+    ##        <NA>      51                              0.066        100.000
+    ##       Total   76897   100.000        100.000   100.000        100.000
+
+Now, we ask for the descriptive statistics for each `Sex` separately
 
 ``` r
 stby(data = dat2[,c("SACSECVAL","Q262")], 
@@ -268,7 +304,7 @@ desc2 <- tb(stby(data = dat2[,c("SACSECVAL","Q262")],
 desc2
 ```
 
-    ## # A tibble: 4 x 9
+    ## # A tibble: 4 × 9
     ##   Q260  variable    mean     sd   min    med     max n.valid pct.valid
     ##   <fct> <chr>      <dbl>  <dbl> <dbl>  <dbl>   <dbl>   <dbl>     <dbl>
     ## 1 1     Q262      43.3   16.5      16 42     100       36460      99.7
@@ -496,7 +532,7 @@ fq1 <- tb(freq(dat2$edu_fac, plain.ascii = FALSE, style = "rmarkdown"))
 fq1
 ```
 
-    ## # A tibble: 10 x 6
+    ## # A tibble: 10 × 6
     ##    edu_fac                      freq pct_valid pct_valid_cum pct_tot pct_tot_cum
     ##    <fct>                       <dbl>     <dbl>         <dbl>   <dbl>       <dbl>
     ##  1 Early childhood              4126      5.41          5.41   5.37         5.37
