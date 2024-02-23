@@ -24,7 +24,7 @@ When we start working in R, we always need to setup our session. For this we nee
 setwd("~path_to_your_file")
 ```
 
-The next step for setting up our session will be to load the packages that we will be using. We will use a packages like `dplyr` for data management, as well as the `rio` package for importing our data. Additionally, we need the `summarytools` for calculation of marginal probabilities, `effectsize` to calculate the ffect sizes, and the `ggplot2` packages for plots. Note that you potentially need to install some of these packages, however.
+The next step for setting up our session will be to load the packages that we will be using. We will use a packages like `car` for data management, as well as the `rio` package for importing our data. Additionally, we need the `summarytools` for calculation of marginal probabilities, `effectsize` to calculate the effect sizes, and the `ggplot2` packages for plots. Note that you potentially need to install some of these packages, however.
 
 ```{r}
 #| echo: true
@@ -170,7 +170,7 @@ ctable(dat$EDU, dat$SEX, prop="n")
 
 A $\chi^2$ contingency analysis allows us to test the null hypothesis that two categorical variables are independent of each other.
 
-Because this is the easiest test to calculate by hand, it is one of the most common tests used. However, remember that the $\chi^2$ test is an approximation, and requires that all of the expected values are greater than 1 and that at least 80% are greater than 5. When doing such a test of independence on a computer, it is probably better to use Fisher’s exact test, which doesn’t have this restriction.
+Because this is the easiest test to calculate by hand, it is one of the most common tests used. However, remember that the $\chi^2$ test is an approximation, and requires that all of the expected values are greater than 1 and that at least 80% are greater than 5, some would say that 100% should be above 5. When doing such a test of independence on a computer, it is probably better to use Fisher’s exact test, which doesn’t have this restriction.
 
 The $\chi^2$ contingency test can be done with the function ``chisq.test()``. If we give a frequency table as input, this function will calculate the $\chi^2$ test for us.
 
@@ -214,6 +214,40 @@ cramers_v(tab1)
 ```
 
 Cramer's $V$ is an association effect size that ranges between 0 (indicating no relationship) to 1 (indicating a perfect relationship). In this example we see that it is very close to 0 ($V = .04$) indicating an small effect size of the association
+
+For a 2-by-2 contingency table you can calculate the Odds Ratio and Risk Ratio as effect size measures. For this example, we are first recoding education into a binary variable. From none to post seconday as category 1, and any college degrees as category 2
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+dat$EDU2 <- recode(dat$EDU_fac, "1='1nonetosec';
+                      2='1nonetosec';
+                      3='2pastsec';
+                      4='2pastsec';
+                      5='2pastsec' ")
+```
+
+Then we first need to estimate the new contigency table with the new education variable. Then you can estimate the Odds Ratio and Risk Ratio with the respective functions
+
+```{r}
+#| echo: true
+#| code-fold: false
+#| eval: true
+#| warning: false
+
+tab22 <- table(dat$EDU2, dat$SEX)
+tab22
+
+chisq.test(tab22)
+
+oddsratio(tab22)
+
+riskratio(tab22)
+
+```
 
 ## Plots
 

@@ -1,6 +1,6 @@
 # Contingency tables
 Mauricio Garnier-Villarreal
-2024-02-01
+2024-02-23
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -36,10 +36,10 @@ setwd("~path_to_your_file")
 ```
 
 The next step for setting up our session will be to load the packages
-that we will be using. We will use a packages like `dplyr` for data
+that we will be using. We will use a packages like `car` for data
 management, as well as the `rio` package for importing our data.
 Additionally, we need the `summarytools` for calculation of marginal
-probabilities, `effectsize` to calculate the ffect sizes, and the
+probabilities, `effectsize` to calculate the effect sizes, and the
 `ggplot2` packages for plots. Note that you potentially need to install
 some of these packages, however.
 
@@ -296,9 +296,10 @@ that two categorical variables are independent of each other.
 Because this is the easiest test to calculate by hand, it is one of the
 most common tests used. However, remember that the $\chi^2$ test is an
 approximation, and requires that all of the expected values are greater
-than 1 and that at least 80% are greater than 5. When doing such a test
-of independence on a computer, it is probably better to use Fisher’s
-exact test, which doesn’t have this restriction.
+than 1 and that at least 80% are greater than 5, some would say that
+100% should be above 5. When doing such a test of independence on a
+computer, it is probably better to use Fisher’s exact test, which
+doesn’t have this restriction.
 
 The $\chi^2$ contingency test can be done with the function
 `chisq.test()`. If we give a frequency table as input, this function
@@ -369,6 +370,59 @@ Cramer’s $V$ is an association effect size that ranges between 0
 In this example we see that it is very close to 0 ($V = .04$) indicating
 an small effect size of the association
 
+For a 2-by-2 contingency table you can calculate the Odds Ratio and Risk
+Ratio as effect size measures. For this example, we are first recoding
+education into a binary variable. From none to post seconday as category
+1, and any college degrees as category 2
+
+``` r
+dat$EDU2 <- recode(dat$EDU_fac, "1='1nonetosec';
+                      2='1nonetosec';
+                      3='2pastsec';
+                      4='2pastsec';
+                      5='2pastsec' ")
+```
+
+Then we first need to estimate the new contigency table with the new
+education variable. Then you can estimate the Odds Ratio and Risk Ratio
+with the respective functions
+
+``` r
+tab22 <- table(dat$EDU2, dat$SEX)
+tab22
+```
+
+                
+                   Men Women
+      1nonetosec 27053 30693
+      2pastsec    9247  9264
+
+``` r
+chisq.test(tab22)
+```
+
+
+        Pearson's Chi-squared test with Yates' continuity correction
+
+    data:  tab22
+    X-squared = 54.086, df = 1, p-value = 1.919e-13
+
+``` r
+oddsratio(tab22)
+```
+
+    Odds ratio |       95% CI
+    -------------------------
+    0.88       | [0.85, 0.91]
+
+``` r
+riskratio(tab22)
+```
+
+    Risk ratio |       95% CI
+    -------------------------
+    0.97       | [0.96, 0.98]
+
 ## Plots
 
 There are different ways to present plots for contigency tables, first
@@ -382,14 +436,14 @@ ggplot(data=dat, aes(x=EDU))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 ``` r
 ggplot(data=dat, aes(x=SEX))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-15-2.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-17-2.png)
 
 Then, if we want to include both variables in the same plot, we can do
 it in a couple of different ways. In the first example, we have one
@@ -406,14 +460,14 @@ ggplot(data=dat, aes(x=EDU))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-18-1.png)
 
 ``` r
 ggplot(data=dat, aes(x=EDU, fill=SEX))+
   geom_bar()
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-2.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-18-2.png)
 
 ``` r
 ggplot(data=dat, aes(x=EDU, fill=SEX))+
@@ -421,7 +475,7 @@ ggplot(data=dat, aes(x=EDU, fill=SEX))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-16-3.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-18-3.png)
 
 Note that for the previous plots we have counts on the y-axis, but we
 can swith this for proportions. We can do this by adjusting the `aes()`
@@ -435,7 +489,7 @@ ggplot(data=dat, aes(x=EDU, fill=SEX))+
   facet_wrap(vars(SEX) )
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-17-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-19-1.png)
 
 Lastly, we can also use the mosaic plot, which is another graphical
 technique for showing the association between two categorical variables.
@@ -451,7 +505,7 @@ table as input.
 mosaicplot(tab1)
 ```
 
-![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-18-1.png)
+![](6_2_contigency_tables_files/figure-commonmark/unnamed-chunk-20-1.png)
 
 # References
 

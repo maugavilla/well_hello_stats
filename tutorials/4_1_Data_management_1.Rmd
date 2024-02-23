@@ -278,7 +278,7 @@ dim(dat2_ed6)
 
 We first named our new data set, ```dat2_ed6``` in this case. Then use use the subset function, the first argument is the full data set. And the second argument is a (series) logical argument(s) to do the selection. In this case that **Q275 == 6** this indicating that only values equal to 6 will be selected. Note that these are 2 equal signs, not one. 
 
-Here we present to logical operatiors you can use in R. 
+Here we present to logical operators you can use in R. 
 
 Operator     | Description
 ----------   | --------------------

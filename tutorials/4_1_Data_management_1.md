@@ -2,7 +2,7 @@ Data management 1
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-08 February, 2024
+12 February, 2024
 
 - [Setup the R session](#setup-the-r-session)
 - [Import the data set](#import-the-data-set)
@@ -686,7 +686,7 @@ second argument is a (series) logical argument(s) to do the selection.
 In this case that **Q275 == 6** this indicating that only values equal
 to 6 will be selected. Note that these are 2 equal signs, not one.
 
-Here we present to logical operatiors you can use in R.
+Here we present to logical operators you can use in R.
 
 | Operator | Description          |
 |----------|----------------------|
