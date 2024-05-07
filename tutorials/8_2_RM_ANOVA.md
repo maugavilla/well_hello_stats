@@ -1,6 +1,6 @@
 # Repeated Measures ANOVA
 Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
-2023-09-26
+2024-05-07
 
 - [Introduction](#introduction)
 - [Set up the R Session](#set-up-the-r-session)
@@ -419,7 +419,7 @@ acmp <- avg_comparisons(model,
                        p_adjust = "fdr", conf_level = 0.95,
                        df = insight::get_df(model))
 
-summary(acmp)
+acmp
 ```
 
 
@@ -800,7 +800,7 @@ acmp_1 <- avg_comparisons(model2,
                           p_adjust = "fdr", conf_level = 0.95,
                           df = insight::get_df(model2))
 
-summary(acmp_1)
+acmp_1
 ```
 
 
@@ -849,7 +849,7 @@ acmp_2 <- avg_comparisons(model2,
                           by = "Condition_Couple",
                           df = insight::get_df(model2))
 
-summary(acmp_2)
+acmp_2
 ```
 
 
@@ -925,25 +925,25 @@ p2
 
      Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
       Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
-      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
       Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
-      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
       Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
-      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
       HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
-      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
       Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
+      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
+      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
+      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
+      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
       Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
      97.5 %
        5.73
-       5.36
        4.39
-       5.01
        5.49
-       5.24
        3.83
-       4.08
        4.36
+       5.36
+       5.01
+       5.24
+       4.08
        4.74
 
     Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
@@ -967,39 +967,45 @@ plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
 I am writing some as understandable examples)
 
 For planned comparisons while having cross factors we will use the
-`marginal_means` function, which estimates all cross factor means
-(similar to `avg_predictions`). If you run the function with the default
+`predictions` function, which estimates all cross factor means (similar
+to `avg_predictions`). If you run the function with the default
 arguments it will estimate the marginal means for each factor, and we
 need to add the argument `cross=T` to estimate all possible cross
 marginal means.
 
 ``` r
-mm <- marginal_means(model2, cross=T)
-data.frame(mm)
+mm <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced")  )
+mm
 ```
 
-       rowid Condition_Couple Cleb_Congruence estimate std.error statistic
-    1      1  Beyonce & Jay-Z          Adidas   4.8750 0.4372023 11.150445
-    2      2  Beyonce & Jay-Z            Puma   3.6250 0.3893103  9.311339
-    3      3  Beyonce & Jay-Z            Nike   4.6875 0.4117417 11.384564
-    4      4  Beyonce & Jay-Z              HM   2.9375 0.4550069  6.455947
-    5      5  Beyonce & Jay-Z  Tommy_Hilfiger   3.4375 0.4707596  7.302029
-    6      6  Shakira & Piqué          Adidas   4.5000 0.4372023 10.292719
-    7      7  Shakira & Piqué            Puma   4.2500 0.3893103 10.916742
-    8      8  Shakira & Piqué            Nike   4.4375 0.4117417 10.777387
-    9      9  Shakira & Piqué              HM   3.1875 0.4550069  7.005389
-    10    10  Shakira & Piqué  Tommy_Hilfiger   3.8125 0.4707596  8.098614
-            p.value  s.value conf.low conf.high brand id wts
-    1  7.124910e-29 93.50304 4.018099  5.731901 3.975  1   1
-    2  1.262310e-20 66.10250 2.861966  4.388034 3.975  1   1
-    3  4.991735e-30 97.33830 3.880501  5.494499 3.975  1   1
-    4  1.075446e-10 33.11435 2.045703  3.829297 3.975  1   1
-    5  2.834607e-13 41.68192 2.514828  4.360172 3.975  1   1
-    6  7.599981e-25 80.12221 3.643099  5.356901 3.975  1   1
-    7  9.587335e-28 89.75286 3.486966  5.013034 3.975  1   1
-    8  4.402126e-27 87.55386 3.630501  5.244499 3.975  1   1
-    9  2.463010e-12 38.56271 2.295703  4.079297 3.975  1   1
-    10 5.558899e-16 50.67605 2.889828  4.735172 3.975  1   1
+
+     Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
+      Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
+      Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
+      Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
+      HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
+      Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
+      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
+      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
+      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
+      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
+      Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
+     97.5 %
+       5.73
+       4.39
+       5.49
+       3.83
+       4.36
+       5.36
+       5.01
+       5.24
+       4.08
+       4.74
+
+    Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Type:  response 
 
 Once we have seen the cross means, we can build comparisons with weights
 vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs
@@ -1007,17 +1013,11 @@ vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs
 `hypothesis` argument
 
 ``` r
-mm2 <- marginal_means(model2, cross=T, 
-                      hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2))
-mm2
+mm2 <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced"),
+                   hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2)  )
 ```
-
-
-       Term   Mean Std. Error      z Pr(>|z|)   S 2.5 % 97.5 %
-     custom -0.313      0.561 -0.557    0.577 0.8 -1.41  0.786
-
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
 
 Here we see that we fail to reject the null hypothesis of both groups
 having the same marginal mean.
@@ -1032,13 +1032,16 @@ and each row represents a group
 ``` r
 cont_mat2 <- cbind(c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2),
                    c(1/3,1/3,1/3,0,0,-1/3,-1/3,-1/3,0,0))
-mm3 <- marginal_means(model2, cross=T, 
-                      hypothesis = cont_mat2)
+
+mm3 <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced"),
+                   hypothesis = cont_mat2  )
 mm3
 ```
 
 
-       Term      Mean Std. Error         z Pr(>|z|)   S  2.5 % 97.5 %
+       Term  Estimate Std. Error         z Pr(>|z|)   S  2.5 % 97.5 %
      custom -3.13e-01      0.561 -5.57e-01    0.577 0.8 -1.411  0.786
      custom -2.22e-16      0.451 -4.93e-16    1.000 0.0 -0.883  0.883
 

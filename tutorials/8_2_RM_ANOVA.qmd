@@ -178,7 +178,7 @@ acmp <- avg_comparisons(model,
                        p_adjust = "fdr", conf_level = 0.95,
                        df = insight::get_df(model))
 
-summary(acmp)
+acmp
 ```
 
 From these post-host, we can interpret that we reject the null hypothesis of equal means over conditions for the comparisons with an adjusted $p-value < .05$, as the most commonly use $\alpha$ level. 
@@ -322,7 +322,7 @@ acmp_1 <- avg_comparisons(model2,
                           p_adjust = "fdr", conf_level = 0.95,
                           df = insight::get_df(model2))
 
-summary(acmp_1)
+acmp_1
 ```
 
 From ```summary(acmp_1)``` we will have the estimated mean difference for each pair comparison, and we can reject the null hypothesis for comparisons where the adjusted $p -value < .05$
@@ -336,7 +336,7 @@ acmp_2 <- avg_comparisons(model2,
                           by = "Condition_Couple",
                           df = insight::get_df(model2))
 
-summary(acmp_2)
+acmp_2
 ```
 
 This turns into larger post-hoc results, so be careful in its reading and interpretation
@@ -367,19 +367,25 @@ plot_predictions(model2, by = c("Cleb_Congruence","Condition_Couple") )
 
 (Note, I have no theoretical reason for meaningful comparisons here, so I am writing some as understandable examples)
 
-For planned comparisons while having cross factors we will use the ```marginal_means``` function, which estimates all cross factor means (similar to ```avg_predictions```). If you run the function with the default arguments it will estimate the marginal means for each factor, and we need to add the argument ```cross=T``` to estimate all possible cross marginal means. 
+For planned comparisons while having cross factors we will use the ```predictions``` function, which estimates all cross factor means (similar to ```avg_predictions```). If you run the function with the default arguments it will estimate the marginal means for each factor, and we need to add the argument ```cross=T``` to estimate all possible cross marginal means. 
 
 ```{r}
-mm <- marginal_means(model2, cross=T)
-data.frame(mm)
+
+mm <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced")  )
+mm
+
 ```
 
 Once we have seen the cross means, we can build comparisons with weights vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs **Casual-Shakira & Piqué** we can use the following weight vector in the ```hypothesis``` argument
 
 ```{r}
-mm2 <- marginal_means(model2, cross=T, 
-                      hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2))
-mm2
+
+mm2 <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced"),
+                   hypothesis = c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2)  )
 ```
 
 Here we see that we fail to reject the null hypothesis of both groups having the same marginal mean. 
@@ -391,8 +397,11 @@ Note that for the matrix, each column represents a different hypothesis and each
 ```{r}
 cont_mat2 <- cbind(c(0,0,0,1/2,1/2,0,0,0,-1/2,-1/2),
                    c(1/3,1/3,1/3,0,0,-1/3,-1/3,-1/3,0,0))
-mm3 <- marginal_means(model2, cross=T, 
-                      hypothesis = cont_mat2)
+
+mm3 <- predictions(model2,
+                   by = c("Cleb_Congruence","Condition_Couple"),
+                   newdata = datagrid(grid_type = "balanced"),
+                   hypothesis = cont_mat2  )
 mm3
 ```
 
