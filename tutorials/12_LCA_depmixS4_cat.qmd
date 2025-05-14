@@ -25,7 +25,7 @@ An interesting extension of this, is that any variable-centered approach can be 
 As you might have seen already, there are several terms related to these types of models. Here we have a short list of terms to keep in mind when talking about these models
 
 -   Mixture: general terms to denote models that identify **unknown groups** defined by some probabilistic model.
--   LCA: latent class analysis, mixture model that defines a categorical latent variable that describes the heterogeneity between groups. Ususally applied only with categorical indicators
+-   LCA: latent class analysis, mixture model that defines a categorical latent variable that describes the heterogeneity between groups. Usually applied only with categorical indicators
 -   LPA: latent profile analysis, same as LCA, but usually applied with continuous indicators
 -   Latent variable: an unobserved variable, that cannot be measured with direct items. This variable is the reason people answer in a certain the way the observed indicators. Corrected for (some) measuremet error
 -   Indicator: observed item that helps approximate the latent variable

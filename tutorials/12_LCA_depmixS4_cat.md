@@ -1,29 +1,20 @@
-LCA with depmixS4 (categorical indicators)
-================
+# LCA with depmixS4 (categorical indicators)
 Mauricio Garnier-Villarreal
-1/19/23
+2025-05-15
 
-- <a href="#latent-class-analysis-lca"
-  id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
-  - <a href="#person-centered-vs-variable-centered"
-    id="toc-person-centered-vs-variable-centered">Person-centered vs
-    Variable-centered</a>
-  - <a href="#terminology" id="toc-terminology">Terminology</a>
-- <a href="#depmixs4" id="toc-depmixs4"><code>depmixS4</code></a>
-- <a href="#dichotomous-indicator-example"
-  id="toc-dichotomous-indicator-example">Dichotomous indicator example</a>
-  - <a href="#depmixs4-syntax"
-    id="toc-depmixs4-syntax"><code>depmixS4</code> syntax</a>
-  - <a href="#class-enumeration" id="toc-class-enumeration">Class
-    enumeration</a>
-    - <a href="#model-fit-indices" id="toc-model-fit-indices">Model Fit
-      Indices</a>
-    - <a href="#classification-diagnostics"
-      id="toc-classification-diagnostics">Classification Diagnostics</a>
-    - <a href="#interpreting-the-final-class-solution"
-      id="toc-interpreting-the-final-class-solution">Interpreting the Final
-      Class Solution</a>
-- <a href="#references" id="toc-references">References</a>
+- [Latent Class Analysis (LCA)](#latent-class-analysis-lca)
+  - [Person-centered vs
+    Variable-centered](#person-centered-vs-variable-centered)
+  - [Terminology](#terminology)
+- [`depmixS4`](#depmixs4)
+- [Dichotomous indicator example](#dichotomous-indicator-example)
+  - [`depmixS4` syntax](#depmixs4-syntax)
+  - [Class enumeration](#class-enumeration)
+    - [Model Fit Indices](#model-fit-indices)
+    - [Classification Diagnostics](#classification-diagnostics)
+    - [Interpreting the Final Class
+      Solution](#interpreting-the-final-class-solution)
+- [References](#references)
 
 # Latent Class Analysis (LCA)
 
@@ -78,7 +69,7 @@ talking about these models
   groups** defined by some probabilistic model.
 - LCA: latent class analysis, mixture model that defines a categorical
   latent variable that describes the heterogeneity between groups.
-  Ususally applied only with categorical indicators
+  Usually applied only with categorical indicators
 - LPA: latent profile analysis, same as LCA, but usually applied with
   continuous indicators
 - Latent variable: an unobserved variable, that cannot be measured with
@@ -319,7 +310,7 @@ lca1_fit <- fit(lca1_mod,
                 emcontrol=em.control(maxit=50000,random.start = TRUE))
 ```
 
-    converged at iteration 138 with logLik: -3666.872 
+    converged at iteration 140 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -327,7 +318,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.4012439 0.5987561 
+    0.5987236 0.4012764 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -336,11 +327,11 @@ summary(lca1_fit)
     Resp 4 : multinomial 
     Resp 5 : multinomial 
             Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.6771718 0.3228282 0.9784997 0.02150025 0.7343746 0.2656254 0.6094626
-    St2 0.3148135 0.6851865 0.5809834 0.41901660 0.5813222 0.4186778 0.2922843
+    St1 0.3148046 0.6851954 0.5809705 0.41902950 0.5813181 0.4186819 0.2922750
+    St2 0.6771559 0.3228441 0.9784869 0.02151314 0.7343683 0.2656317 0.6094509
             Re4.2     Re5.1     Re5.2
-    St1 0.3905374 0.6936967 0.3063033
-    St2 0.7077157 0.1708229 0.8291771
+    St1 0.7077250 0.1708082 0.8291918
+    St2 0.3905491 0.6936764 0.3063236
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first
@@ -704,10 +695,10 @@ that class solution.
 cl_diag$mostlikely.class
 ```
 
-               [,1]        [,2]       [,3]
-    [1,] 0.89562584 0.005255304 0.09911885
-    [2,] 0.10400296 0.755372585 0.14062446
-    [3,] 0.04490748 0.137569462 0.81752306
+              assigned.1  assigned.2 assigned.3
+    avgprob.1 0.89562584 0.005255304 0.09911885
+    avgprob.2 0.10400296 0.755372585 0.14062446
+    avgprob.3 0.04490748 0.137569462 0.81752306
 
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
@@ -717,10 +708,10 @@ where k is the number of classes.
 cl_diag$avg.mostlikely
 ```
 
-                  S1        S2         S3
-    [1,] 0.729344973 0.1972216 0.07343343
-    [2,] 0.002575512 0.8620439 0.13538063
-    [3,] 0.047925456 0.1583337 0.79374088
+               meanprob.S1 meanprob.S2 meanprob.S3
+    assigned.1 0.729344973   0.1972216  0.07343343
+    assigned.2 0.002575512   0.8620439  0.13538063
+    assigned.3 0.047925456   0.1583337  0.79374088
 
 `AvePP` is presented as diagonal of `$avg.mostlikely`, the average
 posterior class probability (mean) for the subjects classified in the
@@ -810,9 +801,6 @@ sum_list(lca_res[[3]], dat[,1:5])
 ```
 
     $Mix_probs
-    Model of type multinomial (identity), formula: ~1
-    <environment: 0x0000000043a3af38>
-    Coefficients: 
           pr1       pr2       pr3 
     0.1873907 0.4363399 0.3762694 
 

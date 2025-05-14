@@ -256,6 +256,7 @@ res_cors <- function(x, dat,
   return(res_cor)
 }
 
+## presentable table for categorical items
 sum_list <- function(x, dat){
   y <- dat
   sm <- as.data.frame(sum_pars(x))
@@ -269,8 +270,34 @@ sum_list <- function(x, dat){
   }
   names(probs) <- colnames(y)
   
-  return(list(Mix_probs=x@prior, 
+  return(list(Mix_probs=x@prior@parameters[[1]], 
               Pobrabilities=probs))
+}
+
+
+## presentable table for continuous items
+sum_cont <- function(x, dat, digits=3){
+  
+  Mix_probs <- x@prior@parameters[[1]]
+  
+  nclass <- length(Mix_probs[[1]])
+  resps <- x@nresp
+  
+  sm <- as.data.frame(sum_pars(x))
+  a <- 1:ncol(sm)
+  a1 <- a[seq(1,length(a),2)]
+  a2 <- a[seq(1,length(a),2)]+1
+  
+  res <- list()
+  for(j in 1:resps){
+    res[[j]] <- round(sm[,c(a1[j],a2[j])], digits)
+  }
+  
+  names(res) <- colnames(dat)
+  
+  return(list(Mix_probs=Mix_probs, 
+              Means=res))
+  
 }
 
 
