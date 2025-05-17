@@ -316,7 +316,7 @@ sum_mix <- function(temp, digits = 3){
   res_class <- vector("list", length = nvar)
   for(j in 1:nvar){
     
-    res_var <- list()
+    res_var <- NULL
     for(k in 1:nclass){
       temp2 <- temp@response[[k]][[j]]
       fam <- temp2@family$family
