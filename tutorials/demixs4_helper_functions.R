@@ -301,6 +301,53 @@ sum_cont <- function(x, dat, digits=3){
 }
 
 
+#####
+#####
+#####
+
+
+sum_mix <- function(temp, digits = 3){
+  
+  Mix_probs <- temp@prior@parameters[[1]]
+  
+  nclass <- temp@nstates
+  nvar <- temp@nresp
+  
+  res_class <- vector("list", length = nvar)
+  for(j in 1:nvar){
+    
+    res_var <- list()
+    for(k in 1:nclass){
+      temp2 <- temp@response[[k]][[j]]
+      fam <- temp2@family$family
+      lnk <- temp2@family$link
+      
+      
+      if(fam == "gaussian" & lnk == "identity"){
+        temp3 <- c(Mean = temp2@parameters$coefficients[[1]],
+                   SD = temp2@parameters$sd[[1]])
+      }
+      if(fam == "multinomial" & lnk == "identity"){
+        temp3 <- temp2@parameters$coefficients
+        names(temp3) <- paste0("Pr_", names(temp3))
+      }
+      
+      temp3 <- round(temp3, digits)
+      
+      res_var <- do.call(rbind, list(res_var, temp3))
+      rownames(res_var) <- paste0("S",1:nrow(res_var))
+    }
+    res_class[[j]] <- res_var
+    names(res_class)[j] <- as.character(temp@response[[1]][[j]]@formula[[2]])
+  }
+  
+  
+  return(list(Mix_probs=Mix_probs, 
+              Summary=res_class))
+  
+}
+  
+  
 ####
 #### test
 ####
