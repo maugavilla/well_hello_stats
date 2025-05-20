@@ -74,7 +74,7 @@ avepp <- function(x){
   unq <- sort(unique(x[,"predicted"]))
   out <- NULL
   for(j in 1:length(unq)){
-    temp <- desc_k[as.character(unq[j])][[1]][paste0("S",j),c("mean","sd","min","max")]
+    temp <- desc_k[as.character(unq[j])][[1]][paste0("S",j),c("mean","sd","median","min","max")]
     out <- do.call(rbind, list(out, temp))
   }
   return(out)
