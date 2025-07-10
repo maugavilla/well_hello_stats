@@ -176,6 +176,24 @@ avgprobs_mostlikely <- function (post_prob, class = NULL) {
 }
 
 
+icl_default <- function (post_prob, BIC) 
+{
+  tryCatch({
+    if (!is.null(dim(post_prob))) {
+      C <- post_prob == apply(post_prob, 1, max)
+      (-1 * BIC) + 2 * sum(C * log(apply(post_prob, 1, 
+                                         function(x) {
+                                           x[which.max(x)]
+                                         }) + 1e-12))
+    }
+    else {
+      (-1 * BIC) + 2 * sum(post_prob * log(post_prob))
+    }
+  }, error = function(e) {
+    NA
+  })
+}
+
 ###
 ### summary of parameters without printing
 ###
