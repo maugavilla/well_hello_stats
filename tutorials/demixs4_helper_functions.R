@@ -2,7 +2,7 @@
 
 library(tidyr)
 library(stringr)
-library(tidySEM)
+#library(tidySEM)
 library(psych)
 
 
@@ -33,6 +33,23 @@ df_probs <- function(x){
 #### fit indices
 ####
 
+#tidySEM
+classification_probs_mostlikely <- function (post_prob, class = NULL){
+  if (is.null(dim(post_prob))) 
+    return(1)
+  if (is.null(class)) 
+    class <- apply(post_prob, 1, which.max)
+  avg_probs <- avgprobs_mostlikely(post_prob, class)
+  avg_probs[is.na(avg_probs)] <- 0
+  class_counts <- as.integer(table(ordered(class, levels = 1:ncol(post_prob))))
+  tab <- avg_probs * class_counts
+  tab <- tab/matrix(colSums(avg_probs * class_counts), ncol = ncol(tab), 
+                    nrow = nrow(tab), byrow = TRUE)
+  rownames(tab) <- paste0("assigned.", 1:nrow(tab))
+  colnames(tab) <- paste0("avgprob.", 1:nrow(tab))
+  return(t(tab))
+}
+
 calc_fitindices <- function (model){
   post_prob <- model@posterior[-1]
   class <- apply(post_prob, 1, which.max)
@@ -47,16 +64,38 @@ calc_fitindices <- function (model){
     ifelse(ncol(post_prob) == 1, 1, 1 + (1/(nrow(post_prob) *
                                               log(ncol(post_prob)))) * (sum(rowSums(post_prob *
                                                                                       log(post_prob + 1e-12))))),
-    range(diag(tidySEM:::classification_probs_mostlikely(post_prob, class))),
+    range(diag(classification_probs_mostlikely(post_prob, class))),
     prop_n)
   names(fits) <- c("Entropy", "prob_min", "prob_max", "n_min", "n_max")
   
   return(fits)
 }
 
+# tidySEM
+make_fitvector <- function (ll, parameters, n, postprob = NULL, fits = NULL) {
+  out <- vector("numeric")
+  out["LogLik"] <- ll
+  out["parameters"] <- parameters
+  out["n"] <- n
+  out["AIC"] <- -2 * ll + (2 * parameters)
+  if (!is.null(fits)) 
+    out["AWE"] <- -2 * (ll + unname(fits[1])) + 2 * parameters * 
+    (3/2 + log(n))
+  out["BIC"] <- -2 * ll + (parameters * log(n))
+  out["CAIC"] <- -2 * ll + (parameters * (log(n) + 1))
+  if (!is.null(fits)) 
+    out["CLC"] <- -2 * ll + (2 * unname(fits[1]))
+  out["KIC"] <- -2 * ll + (3 * (parameters + 1))
+  out["SABIC"] <- -2 * ll + (parameters * log(((n + 2)/24)))
+  if (!is.null(postprob)) 
+    out["ICL"] <- icl_default(postprob, out["BIC"])
+  c(out, fits)
+}
+
+
 get_fits <- function(x){
   
-  fits <- c(tidySEM:::make_fitvector(ll=logLik(x),
+  fits <- c(make_fitvector(ll=logLik(x),
                            parameters=x@npars,
                            n=nrow(x@posterior),
                            postprob=x@posterior[,-1] ), 
@@ -111,8 +150,8 @@ class_prob_dm <- function(x, priors=NULL,
   
   out <- lapply(type, function(thetype){
     switch(thetype,
-           "mostlikely.class" = tidySEM:::classification_probs_mostlikely(post_probs),
-           "avg.mostlikely" = tidySEM:::avgprobs_mostlikely(post_probs),
+           "mostlikely.class" = classification_probs_mostlikely(post_probs), # tidysem
+           "avg.mostlikely" = avgprobs_mostlikely(post_probs), # tidysem
            "sum.posterior" = sum_postprob(x, priors=priors), ###
            "sum.mostlikely" = sum_mostlikely(x), ###
            #"AvePP"= avepp(post_probs_pred),
@@ -122,6 +161,19 @@ class_prob_dm <- function(x, priors=NULL,
   out
 }
 
+
+avgprobs_mostlikely <- function (post_prob, class = NULL) {
+  if (is.null(dim(post_prob))) 
+    return(1)
+  if (is.null(class)) 
+    class <- apply(post_prob, 1, which.max)
+  tab <- t(sapply(1:ncol(post_prob), function(i) {
+    colMeans(post_prob[class == i, , drop = FALSE])
+  }))
+  rownames(tab) <- paste0("assigned.", 1:nrow(tab))
+  colnames(tab) <- paste0("meanprob.", colnames(tab))
+  return(tab)
+}
 
 
 ###
@@ -327,7 +379,7 @@ sum_mix <- function(temp, digits = 3){
         temp3 <- c(Mean = temp2@parameters$coefficients[[1]],
                    SD = temp2@parameters$sd[[1]])
       }
-      if(fam == "multinomial" & lnk == "identity"){
+      if(fam == "multinomial" ){
         temp3 <- temp2@parameters$coefficients
         names(temp3) <- paste0("Pr_", names(temp3))
       }
