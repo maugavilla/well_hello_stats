@@ -1,7 +1,7 @@
 # Mediation with path
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-2023-09-26
+2025-08-28
 
 - [What is mediation analysis?](#what-is-mediation-analysis)
 - [Setup the R session](#setup-the-r-session)
@@ -56,6 +56,7 @@ inference of the mediation effect.
 library(rio)
 library(lavaan)
 library(semTools)
+library(parameters)
 ```
 
 # Import the data set
@@ -277,14 +278,14 @@ specify the `meanstructure=T`.
 
 Then we can see the results from the summary, notice that we will also
 ask for the standardized parameters as well. These can be interpret as
-effect sizes (standardized slopes). And finally, we have also ask for th
-$R^2$ to see the proportion of explained variance.
+effect sizes (standardized slopes). And finally, we have also ask for
+the $R^2$ to see the proportion of explained variance.
 
 ``` r
-summary(tot_fit, standardized=T)
+summary(tot_fit, standardized=T, rsquare=T)
 ```
 
-    lavaan 0.6.16 ended normally after 1 iteration
+    lavaan 0.6-19 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -316,17 +317,34 @@ summary(tot_fit, standardized=T)
                        Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
        .Corrup            0.673    0.004  189.272    0.000    0.673    0.990
 
+    R-Square:
+                       Estimate
+        Corrup            0.010
+
+Here we see that the *total* effect is
+$c = -0.483, SE = 0.018, p < .001$, we see that this is a small effect
+as the standardized slope is $\beta = -0.102$ (`Std.all` column), and
+only 1% of the variance is explained by *Secular Values* ($R^2 = .01$).
+
+Can export only the regressions with the `parameters` package, and the
+`lavInspect` function to get the $R^2$
+
+``` r
+parameters(tot_fit)
+```
+
+    # Regression
+
+    Link                   | Coefficient |   SE |         95% CI |      z |      p
+    ------------------------------------------------------------------------------
+    Corrup ~ SACSECVAL (c) |       -0.48 | 0.02 | [-0.52, -0.45] | -27.55 | < .001
+
 ``` r
 lavInspect(tot_fit, "rsquare")
 ```
 
     Corrup 
       0.01 
-
-Here we see that the *total* effect is
-$c = -0.483, SE = 0.018, p < .001$, we see that this is a small effect
-as the standardized slope is $\beta = -0.102$ (`Std.all` column), and
-only 1% of the variance is explained by *Secular Values* ($R^2 = .01$).
 
 ### Indirect effect
 
@@ -369,7 +387,7 @@ the total effect model.
 summary(ind_fit, standardized=T, rsquare=T)
 ```
 
-    lavaan 0.6.16 ended normally after 1 iteration
+    lavaan 0.6-19 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -416,6 +434,34 @@ summary(ind_fit, standardized=T, rsquare=T)
         ab                0.628    0.009   71.481    0.000    0.628    0.133
         tot              -0.483    0.018  -27.554    0.000   -0.483   -0.102
 
+Or the shorter table
+
+``` r
+parameters(ind_fit)
+```
+
+    # Regression
+
+    Link                    | Coefficient |       SE |         95% CI |      z |      p
+    -----------------------------------------------------------------------------------
+    Corrup ~ SACSECVAL (cp) |       -1.11 |     0.02 | [-1.15, -1.08] | -64.89 | < .001
+    Corrup ~ LCGov (b)      |        0.46 | 4.08e-03 | [ 0.45,  0.46] | 111.78 | < .001
+    LCGov ~ SACSECVAL (a)   |        1.38 |     0.01 | [ 1.35,  1.41] |  92.97 | < .001
+
+    # Defined
+
+    To    | Coefficient |       SE |         95% CI |      z |      p
+    -----------------------------------------------------------------
+    (ab)  |        0.63 | 8.79e-03 | [ 0.61,  0.65] |  71.48 | < .001
+    (tot) |       -0.48 |     0.02 | [-0.52, -0.45] | -27.55 | < .001
+
+``` r
+lavInspect(ind_fit, "rsquare")
+```
+
+    Corrup  LCGov 
+     0.157  0.108 
+
 See that the new parameters show at the end of the summary as
 `Defined parameters`. And now we have the *direct* and *indirect*
 effects. The Null Hypothesis Significance Test (NHST) done with the
@@ -454,8 +500,8 @@ ind_fit_boot <- sem(ind_mod, data = dat2, meanstructure=T,
                     se="bootstrap", bootstrap=2000, verbose=F)
 ```
 
-    Warning in lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats =
-    lavsamplestats, : lavaan WARNING: 11 bootstrap runs failed or did not converge.
+    Warning: lavaan->lav_model_nvcov_bootstrap():  
+       19 bootstrap runs failed or did not converge.
 
 We can look at the standard output from the summary function, but here
 we can only ask for the default type of interval.
@@ -464,7 +510,7 @@ we can only ask for the default type of interval.
 summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 ```
 
-    lavaan 0.6.16 ended normally after 1 iteration
+    lavaan 0.6-19 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -481,15 +527,15 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
       Standard errors                            Bootstrap
       Number of requested bootstrap draws             2000
-      Number of successful bootstrap draws            1989
+      Number of successful bootstrap draws            1981
 
     Regressions:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
       Corrup ~                                                              
-        SACSECVAL (cp)   -1.111    0.019  -58.467    0.000   -1.148   -1.075
-        LCGov      (b)    0.456    0.005   92.246    0.000    0.447    0.466
+        SACSECVAL (cp)   -1.111    0.020  -56.606    0.000   -1.151   -1.074
+        LCGov      (b)    0.456    0.005   90.386    0.000    0.446    0.466
       LCGov ~                                                               
-        SACSECVAL  (a)    1.377    0.014   95.765    0.000    1.348    1.405
+        SACSECVAL  (a)    1.377    0.014   95.931    0.000    1.348    1.406
        Std.lv  Std.all
                       
        -1.111   -0.236
@@ -499,16 +545,16 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Intercepts:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            2.725    0.012  228.400    0.000    2.701    2.748
-       .LCGov             2.047    0.006  343.389    0.000    2.036    2.059
+       .Corrup            2.725    0.012  229.248    0.000    2.701    2.748
+       .LCGov             2.047    0.006  341.379    0.000    2.035    2.059
        Std.lv  Std.all
         2.725    3.305
         2.047    2.791
 
     Variances:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            0.573    0.006   99.037    0.000    0.562    0.584
-       .LCGov             0.480    0.002  214.013    0.000    0.476    0.484
+       .Corrup            0.573    0.006  101.537    0.000    0.562    0.584
+       .LCGov             0.480    0.002  211.702    0.000    0.476    0.485
        Std.lv  Std.all
         0.573    0.843
         0.480    0.892
@@ -520,11 +566,37 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Defined Parameters:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-        ab                0.628    0.009   71.554    0.000    0.612    0.645
-        tot              -0.483    0.019  -25.375    0.000   -0.519   -0.446
+        ab                0.628    0.009   72.442    0.000    0.611    0.645
+        tot              -0.483    0.019  -25.278    0.000   -0.520   -0.448
        Std.lv  Std.all
         0.628    0.133
        -0.483   -0.102
+
+``` r
+parameters(ind_fit_boot, ci.method="bcai")
+```
+
+    # Regression
+
+    Link                    | Coefficient |       SE |         95% CI |      z |      p
+    -----------------------------------------------------------------------------------
+    Corrup ~ SACSECVAL (cp) |       -1.11 |     0.02 | [-1.15, -1.07] | -56.61 | < .001
+    Corrup ~ LCGov (b)      |        0.46 | 5.05e-03 | [ 0.45,  0.47] |  90.39 | < .001
+    LCGov ~ SACSECVAL (a)   |        1.38 |     0.01 | [ 1.35,  1.41] |  95.93 | < .001
+
+    # Defined
+
+    To    | Coefficient |       SE |         95% CI |      z |      p
+    -----------------------------------------------------------------
+    (ab)  |        0.63 | 8.67e-03 | [ 0.61,  0.65] |  72.44 | < .001
+    (tot) |       -0.48 |     0.02 | [-0.52, -0.45] | -25.28 | < .001
+
+``` r
+lavInspect(ind_fit_boot, "rsquare")
+```
+
+    Corrup  LCGov 
+     0.157  0.108 
 
 So we will use the `parameterestimates` function to ask for the
 *adjusted bootstrap percentile* interval type. So, we are providing the
@@ -539,16 +611,16 @@ parameterestimates(ind_fit_boot, boot.ci.type="bca.simple",
 ```
 
              lhs op       rhs label    est    se ci.lower ci.upper std.lv std.all
-    1     Corrup  ~ SACSECVAL    cp -1.111 0.019   -1.149   -1.075 -1.111  -0.236
-    2     Corrup  ~     LCGov     b  0.456 0.005    0.447    0.466  0.456   0.406
-    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.349    1.406  1.377   0.328
-    4     Corrup ~~    Corrup        0.573 0.006    0.562    0.585  0.573   0.843
+    1     Corrup  ~ SACSECVAL    cp -1.111 0.020   -1.151   -1.073 -1.111  -0.236
+    2     Corrup  ~     LCGov     b  0.456 0.005    0.446    0.466  0.456   0.406
+    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.348    1.406  1.377   0.328
+    4     Corrup ~~    Corrup        0.573 0.006    0.562    0.584  0.573   0.843
     5      LCGov ~~     LCGov        0.480 0.002    0.476    0.485  0.480   0.892
     6  SACSECVAL ~~ SACSECVAL        0.031 0.000    0.031    0.031  0.031   1.000
-    7     Corrup ~1                  2.725 0.012    2.702    2.748  2.725   3.305
-    8      LCGov ~1                  2.047 0.006    2.036    2.060  2.047   2.791
+    7     Corrup ~1                  2.725 0.012    2.700    2.748  2.725   3.305
+    8      LCGov ~1                  2.047 0.006    2.035    2.059  2.047   2.791
     9  SACSECVAL ~1                  0.361 0.000    0.361    0.361  0.361   2.064
-    10        ab :=       a*b    ab  0.628 0.009    0.612    0.645  0.628   0.133
+    10        ab :=       a*b    ab  0.628 0.009    0.611    0.645  0.628   0.133
     11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.520   -0.447 -0.483  -0.102
        std.nox
     1   -1.348
@@ -594,8 +666,8 @@ monteCarloCI(ind_fit, level=0.95)
 ```
 
            est ci.lower ci.upper
-    ab   0.628    0.611    0.645
-    tot -0.483   -0.518   -0.449
+    ab   0.628    0.611    0.646
+    tot -0.483   -0.518   -0.448
 
 Here we find that $ab = 0.628, 95\% CI = [0.611, 0.646], \beta = 0.133$.
 We reject the null hypothesis of *Lack of confidence in the government*
@@ -633,18 +705,22 @@ We see that the *total* effect of **Secular values (SV)** on
 **Perception of corruption (PC)** is
 $`c = -0.483, SE = 0.018, p < .001, 95\% CI = [-0.518, -0.449], \beta = -0.102`$.
 Indicating that as **SV** increase by 1 unit, **PC** decreases by 0.483
-units. When we include the mediator of **Lack of confidence in the
-government (LCG)**, we see that the *indirect* effect of **SV** on
-**PC** through **LCG** is
+units.
+
+When we include the mediator of **Lack of confidence in the government
+(LCG)**, we see that the *indirect* effect of **SV** on **PC** through
+**LCG** is
 $`ab = 0.628, SE = 0.009, 95\% CI = [0.611, 0.649], \beta = 0.133`$.
 Indicating that as **SV** increase by 1 unit, **PC** increases by 0.628
-units through its effect on **LCG**. In further detail, the *direct*
-effect of **SV** on PC is
+units through its effect on **LCG**.
+
+In further detail, the *direct* effect of **SV** on PC is
 $`cp = -1.111, SE = 0.017, p < .001, 95\% CI = [-1.145, -1.078], \beta = -0.236`$,
 and the *direct* effect of **SV** on **LCG** is
 $`a = 1.377, SE = 0.015, p < .001, 95\% CI = [1.348, 1.406], \beta = 0.328`$,
 and the *direct* effect of **LCG** on **PC** is
 $`b = 0.456, SE = 0.004, p < .001, 95\% CI = [0.448, 0.464], \beta = 0.406`$.
+
 With these pattern of results, we see that as **SV** increases **LCG**
 increases, and as **LCG** increases **PC** increases. While the direct
 effect of **SV** on **PC** presents a negative effect.

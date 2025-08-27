@@ -28,8 +28,10 @@ The next step for setting up our session will be to load the packages that we wi
 ```{r, eval=T, message=F}
 library(rio)
 library(effectsize)
-library(visreg)
-library(reghelper)
+library(marginaleffects)
+library(ggplot2)
+library(parameters)
+library(car)
 ```
 
 
@@ -133,6 +135,7 @@ The main effects model presents both the effects of each predictor on the outcom
 ```{r}
 main_cat <- lm(Corrup ~ LCGov + Sex, data=dat2)
 summary(main_cat)
+parameters(main_cat)
 ```
 
 
@@ -151,9 +154,10 @@ The interaction model is an extension from the main effects, we can add the inte
 ```{r}
 int_cat <- lm(Corrup ~ LCGov + Sex + LCGov*Sex, data=dat2)
 summary(int_cat)
+parameters(int_cat)
 ```
 
-We see the interaction term ```LCGov:SexFemale```. The *p-value* for this terms tests of the Null Hypothesis of the 2 predictors being independent. 
+We see the interaction term ```LCGov:SexFemale``` (```LCGov × Sex [Female]```). The *p-value* for this terms tests of the Null Hypothesis of the 2 predictors being independent. 
 
 ### Compare models
 
@@ -173,10 +177,10 @@ The next way to compare the models relates to the effect size of the interaction
 summary(int_cat)$r.squared - summary(main_cat)$r.squared
 ```
 
-We see that in this case the change in the explained variance is down to the fifth decimal, so a negligible effect size. We can see this effect size also as the $\eta^2$ of the interaction term, as this is the proportion of explained variance uniquely by the interaction. We can get this with ```eta_squared()``` function, make sure to set the argument ```partial = F``` as this will ask for the full $\eta^2$ instead of the partial. 
+We see that in this case the change in the explained variance is down to the fifth decimal, so a negligible effect size. We can see this effect size also as the $\eta^2$ of the interaction term, as this is the proportion of explained variance uniquely by the interaction. We can get this with ```eta_squared()``` function, make sure to set the argument ```partial = F``` as this will ask for the full $\eta^2$ instead of the partial. And we use the ```Anova()``` function to use the type 2 sum of of squares 
 
 ```{r}
-eta_squared(int_cat, partial = F)
+eta_squared(Anova(int_cat,type=2), partial = F)
 ```
 
 ### Probing
@@ -185,54 +189,36 @@ Probing the interaction means to estimate the dependent focal regressions at spe
 
 When including a categorical variable, most likely this one will be the moderator, so in our case *Sex* will be treated as the moderator.
 
-We can test this with the ```simple_slopes``` function from the ```reghelper``` package. Here we first need to specify the ```lm()``` model that includes the interaction, then we can ask for the confidence interval, and lastly we need to define our moderator predictor in the ```levels``` argument (with the respective values of interest to test). With categorical moderators we will ask for the regression of interest for each category. 
+We can test this with the ```avg_slopes``` function from the ```marginaleffects``` package. Here we first need to specify the ```lm()``` model that includes the interaction, then we can ask for the confidence interval, and lastly we need to define our focal and moderator predictors. In the ```variable``` argument we specify the focal predictor, and in the ```by``` argument we specify the moderator. With categorical moderators will ask for the regression of interest for each category of the moderator by default. 
 
 ```{r}
-simp_sl_cat <- simple_slopes(int_cat, confint = T,ci.width = 0.95,
-                             levels=list(Sex=c("Male","Female"))) 
-simp_sl_cat
+avg_slopes(int_cat, conf_level = 0.95, 
+           variables=c("LCGov"),by="Sex")
 ```
 
 Here we see that for the *Male* participants, the slope between *lack of confidence in the government* and *Perception of corruption* is 0.373 ($b_{1M} = 0.373, SE = 0.006, p < .001$), and for the *Female* participants it is 0.365 ($b_{1F} = 0.365, SE = 0.006, p < .001$)
 
-If we back to the ```summary()``` output, you will see that the slope for the interaction term ```LCGov:SexFemale``` is -0.008, which is the slope difference between mean and women (0.3733 - 0.3653), this is an ease of interpretation when the moderator is categorical. 
+If we back to the ```parameters()``` output, you will see that the slope for the interaction term ```LCGov:SexFemale``` is -0.008, which is the slope difference between mean and women (0.3733 - 0.3653), this is an ease of interpretation when the moderator is categorical. 
 
 ```{r, eval=F}
-summary(int_cat)
+parameters(int_cat)
 ```
 
 
 ### Plotting 
 
-A last part is to plot the interactions, here we will show a couple of ways on how to plot these interactions. first with the ```visreg``` package
+A last part is to plot the interactions, here we will show how to plot the interactions with the ```marginaleffects``` package
 
-In the ```visreg``` package, we have to first specify on ```lm()``` model that includes the interaction, we are plotting the *conditional* relation, and the same scale as the outcome variable in the *y-axis*. Then we need to specify our focal predictor with ```xvar```, and our moderator with ```by```. lastly, with the ```overlay=T``` argument you specify that we want the multiple regression lines in the same figure. We can make our prettier by putting some meaningful labels to the axes with ```ylab``` and ```xlab```.
-
-```{r}
-visreg(int_cat,type="conditional",scale="response",
-       xvar = "LCGov",by="Sex",overlay=T,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
-```
-
-So, you can also ask to have each regression line on separate plots by modifying the ```ovarlay``` argument. 
+In the ```marginaleffects``` package, we have to first specify on ```lm()``` model that includes the interaction, we are plotting the *conditional* relation, and the same scale as the outcome variable in the *y-axis*. Then we need to specify our focal and moderator predictor in the ```by``` argument, the function will see the first variable as the focal one and the second one as the moderator.
 
 ```{r}
-visreg(int_cat,type="conditional",scale="response",
-       xvar = "LCGov",by="Sex",overlay=F,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cat,
+                 by = c("LCGov", "Sex") )
 ```
 
-Notice that when the moderator is a ```factor()``` type variable, ```visreg``` will automatically plot the focal regression for all categories, and set the respective labels. 
 
-The second method for plotting that we will show is with the ```graph_model()``` function from the ```reghelper``` package. Here we have to specify the ```lm()``` model that includes the interaction, with is the outcome variable ```y```, which is the focal predictor ```x```, and which is the moderator ```lines```. 
+Notice that when the moderator is a ```factor()``` type variable, ```plot_predictions``` will automatically plot the focal regression for all categories, and set the respective labels. 
 
-```{r}
-graph_model(int_cat, y = Corrup, x = LCGov, lines = Sex, errorbars = "CI")
-```
-
-So, we see this is equivalent to the first plot with ```visreg```. Presenting the same 2 regression lines. We are showing these 2 methods so you can choose which one you preferred. 
 
 ### Interpretation
 
@@ -256,6 +242,7 @@ The main effects model presents both the effects of each predictor on the outcom
 ```{r}
 main_cont <- lm(Corrup ~ LCGov + SACSECVAL, data=dat2)
 summary(main_cont)
+parameters(main_cont)
 ```
 
 ### Interpretation
@@ -274,9 +261,10 @@ The interaction model is an extension from the main effects, we can add the inte
 ```{r}
 int_cont <- lm(Corrup ~ LCGov + SACSECVAL + LCGov*SACSECVAL, data=dat2)
 summary(int_cont)
+parameters(int_cont)
 ```
 
-We see the interaction term ```LCGov:SACSECVAL```. The *p-value* for this terms tests of the Null Hypothesis of the 2 predictors being independent. 
+We see the interaction term ```LCGov:SACSECVAL``` (```LCGov × SACSECVAL```). The *p-value* for this terms tests of the Null Hypothesis of the 2 predictors being independent. 
 
 ### Compare models
 
@@ -301,7 +289,7 @@ We see that in this case the change in the explained variance is
 $\Delta R^2 = 0.0015$. We can see this effect size also as the $\eta^2$ of the interaction term, as this is the proportion of explained variance uniquely by the interaction. We can get this with ```eta_squared()``` function, make sure to set the argument ```partial = F``` as this will ask for the full $\eta^2$ instead of the partial. 
 
 ```{r}
-eta_squared(int_cont, partial = F)
+eta_squared(Anova(int_cont, type=2), partial = F)
 ```
 
 
@@ -311,7 +299,7 @@ Probing the interaction means to estimate the dependent focal regressions at spe
 
 Here we are choosing to treat *Secular Values* as the moderator variable
 
-We can test this with the ```simple_slopes``` function from the ```reghelper``` package. Here we first need to specify the ```lm()``` model that includes the interaction, then we can ask for the confidence interval, and lastly we need to define our moderator predictor in the ```levels``` argument (with the respective values of interest to test). 
+We can test this with the ```avg_slopes``` function from the ```marginaleffects``` package. Here we first need to specify the ```lm()``` model that includes the interaction, then we can ask for the confidence interval, and lastly we need to define our moderator predictor in the ```by``` argument.
 
 With a continuous moderator we need to choose values of interest of the moderator to estimate the simple slopes. Ideally, there are meaningful values for you to choose. Otherwise, the most common is to use the mean, mean minus 1 SD, and mean + 1 SD. This represents average, low, and high. 
 
@@ -324,22 +312,22 @@ vals <- round(vals, 3)
 vals
 ```
 
-Then we can provide the saved values as the levels for the moderator
+Then we can provide the saved values as the levels for the moderator in the ```newdata = datagrid(SACSECVAL = vals)``` argument 
 
 ```{r}
-simp_sl_cont <- simple_slopes(int_cont, confint = T,ci.width = 0.95,
-                             levels=list(SACSECVAL = vals )) 
-simp_sl_cont
+avg_slopes(int_cont, conf_level = 0.95, 
+           newdata = datagrid(SACSECVAL = vals),
+           variables=c("LCGov"),by="SACSECVAL" )
 ```
 
 Here we see that for the low *Secular Values*, the slope between *lack of confidence in the government* and *Perception of corruption* is 0.495 ($b_{LSV} = 0.495, SE = 0.005, p < .001$), for average *Secular Values* it is 0.453 ($b_{MSV} = 0.453, SE = 0.004, p < .001$), and for high *Secular Values* it is 0.410 ($b_{HSV} = 0.410, SE = 0.006, p < .001$). 
 
 This way we see a a general trend, as *Secular Values* increases, the focal regression decreases strength. 
 
-If we back to the ```summary()``` output, you will see that the slope for the interaction term ```LCGov:SACSECVAL``` is -0.243, which is the change in the slope when the moderator increases by 1 unit. This is a harder parameter to interpret, unless you have very clear metric of the moderator, otherwise it is easier to interpret that change with simple slopes
+If we back to the ```parameters()``` output, you will see that the slope for the interaction term ```LCGov:SACSECVAL``` is -0.243, which is the change in the slope when the moderator increases by 1 unit. This is a harder parameter to interpret, unless you have very clear metric of the moderator, otherwise it is easier to interpret that change with simple slopes
 
 ```{r, eval=F}
-summary(int_cont)
+parameters(int_cont)
 ```
 
 Another option with a continuous moderator is to estimate simple slopes for a long array of moderator values. A recommendation would be to test across a large number of possible values, get the minimum and maximum of values for the moderator
@@ -355,38 +343,34 @@ vals2 <- seq(from=min(dat2$SACSECVAL, na.rm=T), to=max(dat2$SACSECVAL, na.rm=T),
 vals2
 ```
 
-Now we can add the new set of testing values to the simple slopes function. This way we can see the change in the slope of interest at smaller steps of change of the moderator. 
+Now we can add the new set of testing values to the ```avg_slopes``` function. This way we can see the change in the slope of interest at smaller steps of change of the moderator. 
 
 ```{r}
-simp_sl_cont2 <- simple_slopes(int_cont, confint = T,ci.width = 0.95,
-                             levels=list(SACSECVAL = vals2 )) 
-simp_sl_cont2
+avg_slopes(int_cont, conf_level = 0.95, 
+           newdata = datagrid(SACSECVAL = vals2),
+           variables=c("LCGov"),by="SACSECVAL" )
 ```
 
 Here we see that the slope of interest changes from 0.54 to 0.32 from the lowest and highest values. And for every one of them we reject the null hypothesis of each simple slope being equal to 0 
 
 ### Plotting 
 
-In this section we will only show the plots with the ```visreg``` package, but any of them can be also done with the ```graph_model``` function. 
-
-The only new argument we need to add is ```breaks```, where we define which values of the moderator do we wish to plot. We already have same these from probing simple slopes
+The only new argument we need to add is ```newdata```, where we define which values of the moderator do we wish to plot, and all observed values for the focal predictor. We already have same these from probing simple slopes
 
 ```{r}
-visreg(int_cont,type="conditional",scale="response",
-       xvar = "LCGov",by="SACSECVAL",overlay=T,
-       breaks=vals,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cont, 
+                 newdata = datagrid(LCGov=unique(dat2$LCGov),
+                                    SACSECVAL = vals),
+                 by = c("LCGov", "SACSECVAL"))
 ```
 
 We can also plot the simple slopes for a larger number of of test values, like the larger sequence set we created. For that we simply use the larger values we created before. This plot allow us to see the changes in greater detail. 
 
 ```{r}
-visreg(int_cont,type="conditional",scale="response",
-       xvar = "LCGov",by="SACSECVAL",overlay=T,
-       breaks=vals2,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cont, 
+                 newdata = datagrid(LCGov=unique(dat2$LCGov),
+                                    SACSECVAL = vals2),
+                 by = c("LCGov", "SACSECVAL"))
 ```
 
 ### Interpretation

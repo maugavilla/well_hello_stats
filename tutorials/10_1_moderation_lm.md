@@ -2,7 +2,7 @@ Moderation with lm()
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-26 September, 2023
+27 August, 2025
 
 - [What is moderation analysis?](#what-is-moderation-analysis)
 - [Setup the R session](#setup-the-r-session)
@@ -61,8 +61,10 @@ that we will be using
 ``` r
 library(rio)
 library(effectsize)
-library(visreg)
-library(reghelper)
+library(marginaleffects)
+library(ggplot2)
+library(parameters)
+library(car)
 ```
 
 # Import the data set
@@ -271,6 +273,20 @@ summary(main_cat)
     ## Multiple R-squared:  0.1081, Adjusted R-squared:  0.1081 
     ## F-statistic:  4341 on 2 and 71630 DF,  p-value: < 2.2e-16
 
+``` r
+parameters(main_cat)
+```
+
+    ## Parameter    | Coefficient |       SE |         95% CI | t(71630) |      p
+    ## --------------------------------------------------------------------------
+    ## (Intercept)  |        2.56 |     0.01 | [ 2.54,  2.58] |   233.70 | < .001
+    ## LCGov        |        0.37 | 3.97e-03 | [ 0.36,  0.38] |    93.07 | < .001
+    ## Sex [Female] |       -0.02 | 5.82e-03 | [-0.03, -0.01] |    -4.01 | < .001
+
+    ## 
+    ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+    ##   using a Wald t-distribution approximation.
+
 ### Interpretation
 
 - We reject the null hypothesis of both predictors being equally good
@@ -318,9 +334,24 @@ summary(int_cat)
     ## Multiple R-squared:  0.1081, Adjusted R-squared:  0.1081 
     ## F-statistic:  2895 on 3 and 71629 DF,  p-value: < 2.2e-16
 
-We see the interaction term `LCGov:SexFemale`. The *p-value* for this
-terms tests of the Null Hypothesis of the 2 predictors being
-independent.
+``` r
+parameters(int_cat)
+```
+
+    ## Parameter            | Coefficient |       SE |        95% CI | t(71629) |      p
+    ## ---------------------------------------------------------------------------------
+    ## (Intercept)          |        2.55 |     0.02 | [ 2.52, 2.58] |   169.35 | < .001
+    ## LCGov                |        0.37 | 5.67e-03 | [ 0.36, 0.38] |    65.85 | < .001
+    ## Sex [Female]         |   -2.99e-03 |     0.02 | [-0.04, 0.04] |    -0.14 | 0.887 
+    ## LCGov × Sex [Female] |   -8.01e-03 | 7.94e-03 | [-0.02, 0.01] |    -1.01 | 0.313
+
+    ## 
+    ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+    ##   using a Wald t-distribution approximation.
+
+We see the interaction term `LCGov:SexFemale` (`LCGov × Sex [Female]`).
+The *p-value* for this terms tests of the Null Hypothesis of the 2
+predictors being independent.
 
 ### Compare models
 
@@ -362,17 +393,18 @@ size also as the $\eta^2$ of the interaction term, as this is the
 proportion of explained variance uniquely by the interaction. We can get
 this with `eta_squared()` function, make sure to set the argument
 `partial = F` as this will ask for the full $\eta^2$ instead of the
-partial.
+partial. And we use the `Anova()` function to use the type 2 sum of of
+squares
 
 ``` r
-eta_squared(int_cat, partial = F)
+eta_squared(Anova(int_cat,type=2), partial = F)
 ```
 
-    ## # Effect Size for ANOVA (Type I)
+    ## # Effect Size for ANOVA (Type II)
     ## 
     ## Parameter |     Eta2 |       95% CI
     ## -----------------------------------
-    ## LCGov     |     0.11 | [0.09, 1.00]
+    ## LCGov     |     0.11 | [0.10, 1.00]
     ## Sex       | 2.00e-04 | [0.00, 1.00]
     ## LCGov:Sex | 1.27e-05 | [0.00, 1.00]
     ## 
@@ -391,93 +423,65 @@ does not know which predictor is which, you have to decide this.
 When including a categorical variable, most likely this one will be the
 moderator, so in our case *Sex* will be treated as the moderator.
 
-We can test this with the `simple_slopes` function from the `reghelper`
-package. Here we first need to specify the `lm()` model that includes
-the interaction, then we can ask for the confidence interval, and lastly
-we need to define our moderator predictor in the `levels` argument (with
-the respective values of interest to test). With categorical moderators
-we will ask for the regression of interest for each category.
+We can test this with the `avg_slopes` function from the
+`marginaleffects` package. Here we first need to specify the `lm()`
+model that includes the interaction, then we can ask for the confidence
+interval, and lastly we need to define our focal and moderator
+predictors. In the `variable` argument we specify the focal predictor,
+and in the `by` argument we specify the moderator. With categorical
+moderators will ask for the regression of interest for each category of
+the moderator by default.
 
 ``` r
-simp_sl_cat <- simple_slopes(int_cat, confint = T,ci.width = 0.95,
-                             levels=list(Sex=c("Male","Female"))) 
-simp_sl_cat
+avg_slopes(int_cat, conf_level = 0.95, 
+           variables=c("LCGov"),by="Sex")
 ```
 
-    ##    LCGov    Sex Test Estimate Std. Error   2.5%  97.5% t value    df  Pr(>|t|)
-    ## 1 sstest   Male        0.3733     0.0057 0.3622 0.3844 65.8471 71629 < 2.2e-16
-    ## 2 sstest Female        0.3653     0.0056 0.3544 0.3762 65.7842 71629 < 2.2e-16
-    ##   Sig.
-    ## 1  ***
-    ## 2  ***
+    ## 
+    ##     Sex Estimate Std. Error    z Pr(>|z|)   S 2.5 % 97.5 %
+    ##  Male      0.373    0.00567 65.8   <0.001 Inf 0.362  0.384
+    ##  Female    0.365    0.00555 65.8   <0.001 Inf 0.354  0.376
+    ## 
+    ## Term: LCGov
+    ## Type: response
+    ## Comparison: dY/dX
 
 Here we see that for the *Male* participants, the slope between *lack of
 confidence in the government* and *Perception of corruption* is 0.373
 ($b_{1M} = 0.373, SE = 0.006, p < .001$), and for the *Female*
 participants it is 0.365 ($b_{1F} = 0.365, SE = 0.006, p < .001$)
 
-If we back to the `summary()` output, you will see that the slope for
+If we back to the `parameters()` output, you will see that the slope for
 the interaction term `LCGov:SexFemale` is -0.008, which is the slope
 difference between mean and women (0.3733 - 0.3653), this is an ease of
 interpretation when the moderator is categorical.
 
 ``` r
-summary(int_cat)
+parameters(int_cat)
 ```
 
 ### Plotting
 
-A last part is to plot the interactions, here we will show a couple of
-ways on how to plot these interactions. first with the `visreg` package
+A last part is to plot the interactions, here we will show how to plot
+the interactions with the `marginaleffects` package
 
-In the `visreg` package, we have to first specify on `lm()` model that
-includes the interaction, we are plotting the *conditional* relation,
-and the same scale as the outcome variable in the *y-axis*. Then we need
-to specify our focal predictor with `xvar`, and our moderator with `by`.
-lastly, with the `overlay=T` argument you specify that we want the
-multiple regression lines in the same figure. We can make our prettier
-by putting some meaningful labels to the axes with `ylab` and `xlab`.
+In the `marginaleffects` package, we have to first specify on `lm()`
+model that includes the interaction, we are plotting the *conditional*
+relation, and the same scale as the outcome variable in the *y-axis*.
+Then we need to specify our focal and moderator predictor in the `by`
+argument, the function will see the first variable as the focal one and
+the second one as the moderator.
 
 ``` r
-visreg(int_cat,type="conditional",scale="response",
-       xvar = "LCGov",by="Sex",overlay=T,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cat,
+                 by = c("LCGov", "Sex") )
 ```
 
 ![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
-So, you can also ask to have each regression line on separate plots by
-modifying the `ovarlay` argument.
-
-``` r
-visreg(int_cat,type="conditional",scale="response",
-       xvar = "LCGov",by="Sex",overlay=F,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
-```
-
-![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
-
-Notice that when the moderator is a `factor()` type variable, `visreg`
-will automatically plot the focal regression for all categories, and set
-the respective labels.
-
-The second method for plotting that we will show is with the
-`graph_model()` function from the `reghelper` package. Here we have to
-specify the `lm()` model that includes the interaction, with is the
-outcome variable `y`, which is the focal predictor `x`, and which is the
-moderator `lines`.
-
-``` r
-graph_model(int_cat, y = Corrup, x = LCGov, lines = Sex, errorbars = "CI")
-```
-
-![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
-So, we see this is equivalent to the first plot with `visreg`.
-Presenting the same 2 regression lines. We are showing these 2 methods
-so you can choose which one you preferred.
+Notice that when the moderator is a `factor()` type variable,
+`plot_predictions` will automatically plot the focal regression for all
+categories, and set the respective labels.
 
 ### Interpretation
 
@@ -535,6 +539,20 @@ summary(main_cont)
     ## Multiple R-squared:  0.1574, Adjusted R-squared:  0.1574 
     ## F-statistic:  6691 on 2 and 71630 DF,  p-value: < 2.2e-16
 
+``` r
+parameters(main_cont)
+```
+
+    ## Parameter   | Coefficient |       SE |         95% CI | t(71630) |      p
+    ## -------------------------------------------------------------------------
+    ## (Intercept) |        2.73 |     0.01 | [ 2.70,  2.75] |   257.65 | < .001
+    ## LCGov       |        0.46 | 4.08e-03 | [ 0.45,  0.46] |   111.76 | < .001
+    ## SACSECVAL   |       -1.11 |     0.02 | [-1.15, -1.08] |   -64.87 | < .001
+
+    ## 
+    ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+    ##   using a Wald t-distribution approximation.
+
 ### Interpretation
 
 - We reject the null hypothesis of both predictors being equally good
@@ -584,9 +602,24 @@ summary(int_cont)
     ## Multiple R-squared:  0.1589, Adjusted R-squared:  0.1589 
     ## F-statistic:  4512 on 3 and 71629 DF,  p-value: < 2.2e-16
 
-We see the interaction term `LCGov:SACSECVAL`. The *p-value* for this
-terms tests of the Null Hypothesis of the 2 predictors being
-independent.
+``` r
+parameters(int_cont)
+```
+
+    ## Parameter         | Coefficient |       SE |         95% CI | t(71629) |      p
+    ## -------------------------------------------------------------------------------
+    ## (Intercept)       |        2.52 |     0.02 | [ 2.47,  2.56] |   118.63 | < .001
+    ## LCGov             |        0.54 | 8.43e-03 | [ 0.52,  0.56] |    64.07 | < .001
+    ## SACSECVAL         |       -0.48 |     0.06 | [-0.59, -0.36] |    -8.20 | < .001
+    ## LCGov × SACSECVAL |       -0.24 |     0.02 | [-0.28, -0.20] |   -11.38 | < .001
+
+    ## 
+    ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
+    ##   using a Wald t-distribution approximation.
+
+We see the interaction term `LCGov:SACSECVAL` (`LCGov × SACSECVAL`). The
+*p-value* for this terms tests of the Null Hypothesis of the 2
+predictors being independent.
 
 ### Compare models
 
@@ -632,16 +665,16 @@ function, make sure to set the argument `partial = F` as this will ask
 for the full $\eta^2$ instead of the partial.
 
 ``` r
-eta_squared(int_cont, partial = F)
+eta_squared(Anova(int_cont, type=2), partial = F)
 ```
 
-    ## # Effect Size for ANOVA (Type I)
+    ## # Effect Size for ANOVA (Type II)
     ## 
     ## Parameter       |     Eta2 |       95% CI
     ## -----------------------------------------
-    ## LCGov           |     0.11 | [0.09, 1.00]
+    ## LCGov           |     0.14 | [0.14, 1.00]
     ## SACSECVAL       |     0.05 | [0.05, 1.00]
-    ## LCGov:SACSECVAL | 1.52e-03 | [0.00, 1.00]
+    ## LCGov:SACSECVAL | 1.46e-03 | [0.00, 1.00]
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
@@ -657,11 +690,11 @@ does not know which predictor is which, you have to decide this.
 
 Here we are choosing to treat *Secular Values* as the moderator variable
 
-We can test this with the `simple_slopes` function from the `reghelper`
-package. Here we first need to specify the `lm()` model that includes
-the interaction, then we can ask for the confidence interval, and lastly
-we need to define our moderator predictor in the `levels` argument (with
-the respective values of interest to test).
+We can test this with the `avg_slopes` function from the
+`marginaleffects` package. Here we first need to specify the `lm()`
+model that includes the interaction, then we can ask for the confidence
+interval, and lastly we need to define our moderator predictor in the
+`by` argument.
 
 With a continuous moderator we need to choose values of interest of the
 moderator to estimate the simple slopes. Ideally, there are meaningful
@@ -681,22 +714,24 @@ vals
 
     ## [1] 0.186 0.361 0.535
 
-Then we can provide the saved values as the levels for the moderator
+Then we can provide the saved values as the levels for the moderator in
+the `newdata = datagrid(SACSECVAL = vals)` argument
 
 ``` r
-simp_sl_cont <- simple_slopes(int_cont, confint = T,ci.width = 0.95,
-                             levels=list(SACSECVAL = vals )) 
-simp_sl_cont
+avg_slopes(int_cont, conf_level = 0.95, 
+           newdata = datagrid(SACSECVAL = vals),
+           variables=c("LCGov"),by="SACSECVAL" )
 ```
 
-    ##    LCGov SACSECVAL Test Estimate Std. Error   2.5%  97.5%  t value    df
-    ## 1 sstest     0.186        0.4950     0.0053 0.4846 0.5054  93.0904 71629
-    ## 2 sstest     0.361        0.4525     0.0041 0.4445 0.4605 110.6313 71629
-    ## 3 sstest     0.535        0.4103     0.0057 0.3990 0.4215  71.5725 71629
-    ##    Pr(>|t|) Sig.
-    ## 1 < 2.2e-16  ***
-    ## 2 < 2.2e-16  ***
-    ## 3 < 2.2e-16  ***
+    ## 
+    ##  SACSECVAL Estimate Std. Error     z Pr(>|z|)   S 2.5 % 97.5 %
+    ##      0.186    0.495    0.00532  93.1   <0.001 Inf 0.485  0.505
+    ##      0.361    0.453    0.00409 110.6   <0.001 Inf 0.444  0.461
+    ##      0.535    0.410    0.00573  71.6   <0.001 Inf 0.399  0.422
+    ## 
+    ## Term: LCGov
+    ## Type: response
+    ## Comparison: dY/dX
 
 Here we see that for the low *Secular Values*, the slope between *lack
 of confidence in the government* and *Perception of corruption* is 0.495
@@ -707,7 +742,7 @@ it is 0.453 ($b_{MSV} = 0.453, SE = 0.004, p < .001$), and for high
 This way we see a a general trend, as *Secular Values* increases, the
 focal regression decreases strength.
 
-If we back to the `summary()` output, you will see that the slope for
+If we back to the `parameters()` output, you will see that the slope for
 the interaction term `LCGov:SACSECVAL` is -0.243, which is the change in
 the slope when the moderator increases by 1 unit. This is a harder
 parameter to interpret, unless you have very clear metric of the
@@ -715,7 +750,7 @@ moderator, otherwise it is easier to interpret that change with simple
 slopes
 
 ``` r
-summary(int_cont)
+parameters(int_cont)
 ```
 
 Another option with a continuous moderator is to estimate simple slopes
@@ -741,38 +776,32 @@ vals2
 
     ##  [1] 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9
 
-Now we can add the new set of testing values to the simple slopes
+Now we can add the new set of testing values to the `avg_slopes`
 function. This way we can see the change in the slope of interest at
 smaller steps of change of the moderator.
 
 ``` r
-simp_sl_cont2 <- simple_slopes(int_cont, confint = T,ci.width = 0.95,
-                             levels=list(SACSECVAL = vals2 )) 
-simp_sl_cont2
+avg_slopes(int_cont, conf_level = 0.95, 
+           newdata = datagrid(SACSECVAL = vals2),
+           variables=c("LCGov"),by="SACSECVAL" )
 ```
 
-    ##     LCGov SACSECVAL Test Estimate Std. Error   2.5%  97.5%  t value    df
-    ## 1  sstest         0        0.5401     0.0084 0.5236 0.5567  64.0714 71629
-    ## 2  sstest       0.1        0.5159     0.0066 0.5028 0.5289  77.6364 71629
-    ## 3  sstest       0.2        0.4916     0.0051 0.4815 0.5016  95.8111 71629
-    ## 4  sstest       0.3        0.4673     0.0042 0.4591 0.4755 111.4161 71629
-    ## 5  sstest       0.4        0.4430     0.0042 0.4347 0.4514 104.5663 71629
-    ## 6  sstest       0.5        0.4188     0.0052 0.4085 0.4290  79.9972 71629
-    ## 7  sstest       0.6        0.3945     0.0068 0.3812 0.4078  58.1994 71629
-    ## 8  sstest       0.7        0.3702     0.0086 0.3534 0.3870  43.1601 71629
-    ## 9  sstest       0.8        0.3460     0.0105 0.3254 0.3665  32.9393 71629
-    ## 10 sstest       0.9        0.3217     0.0125 0.2972 0.3462  25.7448 71629
-    ##     Pr(>|t|) Sig.
-    ## 1  < 2.2e-16  ***
-    ## 2  < 2.2e-16  ***
-    ## 3  < 2.2e-16  ***
-    ## 4  < 2.2e-16  ***
-    ## 5  < 2.2e-16  ***
-    ## 6  < 2.2e-16  ***
-    ## 7  < 2.2e-16  ***
-    ## 8  < 2.2e-16  ***
-    ## 9  < 2.2e-16  ***
-    ## 10 < 2.2e-16  ***
+    ## 
+    ##  SACSECVAL Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
+    ##        0.0    0.540    0.00843  64.1   <0.001   Inf 0.524  0.557
+    ##        0.1    0.516    0.00665  77.6   <0.001   Inf 0.503  0.529
+    ##        0.2    0.492    0.00512  95.9   <0.001   Inf 0.482  0.502
+    ##        0.3    0.467    0.00419 111.4   <0.001   Inf 0.459  0.476
+    ##        0.4    0.443    0.00423 104.7   <0.001   Inf 0.435  0.451
+    ##        0.5    0.419    0.00524  80.0   <0.001   Inf 0.409  0.429
+    ##        0.6    0.395    0.00678  58.2   <0.001   Inf 0.381  0.408
+    ##        0.7    0.370    0.00858  43.2   <0.001   Inf 0.353  0.387
+    ##        0.8    0.346    0.01050  33.0   <0.001 788.8 0.325  0.367
+    ##        0.9    0.322    0.01250  25.7   <0.001 482.8 0.297  0.346
+    ## 
+    ## Term: LCGov
+    ## Type: response
+    ## Comparison: dY/dX
 
 Here we see that the slope of interest changes from 0.54 to 0.32 from
 the lowest and highest values. And for every one of them we reject the
@@ -780,22 +809,19 @@ null hypothesis of each simple slope being equal to 0
 
 ### Plotting
 
-In this section we will only show the plots with the `visreg` package,
-but any of them can be also done with the `graph_model` function.
-
-The only new argument we need to add is `breaks`, where we define which
-values of the moderator do we wish to plot. We already have same these
-from probing simple slopes
+The only new argument we need to add is `newdata`, where we define which
+values of the moderator do we wish to plot, and all observed values for
+the focal predictor. We already have same these from probing simple
+slopes
 
 ``` r
-visreg(int_cont,type="conditional",scale="response",
-       xvar = "LCGov",by="SACSECVAL",overlay=T,
-       breaks=vals,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cont, 
+                 newdata = datagrid(LCGov=unique(dat2$LCGov),
+                                    SACSECVAL = vals),
+                 by = c("LCGov", "SACSECVAL"))
 ```
 
-![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 We can also plot the simple slopes for a larger number of of test
 values, like the larger sequence set we created. For that we simply use
@@ -803,14 +829,13 @@ the larger values we created before. This plot allow us to see the
 changes in greater detail.
 
 ``` r
-visreg(int_cont,type="conditional",scale="response",
-       xvar = "LCGov",by="SACSECVAL",overlay=T,
-       breaks=vals2,
-       ylab="Perception of corruption", 
-       xlab="Lack of confidence in the government")
+plot_predictions(int_cont, 
+                 newdata = datagrid(LCGov=unique(dat2$LCGov),
+                                    SACSECVAL = vals2),
+                 by = c("LCGov", "SACSECVAL"))
 ```
 
-![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 ### Interpretation
 

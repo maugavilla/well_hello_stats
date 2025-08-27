@@ -25,9 +25,11 @@ The next step for setting up our session will be to load the packages that we wi
 library(rio)
 library(psych)
 library(effectsize)
-library(visreg)
-library(rockchalk)
+library(marginaleffects)
 library(ggplot2)
+library(parameters)
+library(car)
+library(patchwork)
 ```
 
 
@@ -131,27 +133,27 @@ confint(mod1, level = 0.95)
 
 For this we need to specify the regression model, and confidence level. This example will estimate the 95% Confidence Interval for all the parameters in the model. 
 
+We can also use the package ```parameters``` to create a summary table with the coefficients, standard errors, and confidence intervals
+
+```{r}
+parameters(mod1, digits=3)
+```
+
 
 ## Standardize solution
 
-It is common to look at the standardize regression slopes, we can estimate this with the ```standardize()``` function from the ```rockchalk```package
+It is common to look at the standardize regression slopes, we can estimate this with the ```standardize_parameters()``` function from the ```parameters```package
 
 ```{r}
-mod1_st <- standardize(mod1)
-summary(mod1_st)
+standardize_parameters(mod1)
 ```
 
-The ```standardize()``` function only requires the previous regression model. It estimates the fully standardize regression. It is worth to note that when you have only 1 predictor, the standardize regression slope is equivalent to the *Pearson* correlation coefficient. 
+The ```standardize_parameters()``` function only requires the previous regression model, and it reports the CI automatically. It estimates the fully standardize regression. It is worth to note that when you have only 1 predictor, the standardize regression slope is equivalent to the *Pearson* correlation coefficient. 
 
 ```{r}
 corr.test(dat2[,c("Corrup","LCGov")], method="pearson")
 ```
 
-We can also get confidence intervals for the standardize solution, with the same function as before. 
-
-```{r}
-confint(mod1_st, level=0.95)
-```
 
 
 ## Assumptions
@@ -183,6 +185,12 @@ We can see the overall model ones from the ```summary()``` output
 summary(mod1)
 ```
 
+Or you can only extract the $R^2$ by calling only that object of the summary with the ```$``` operator
+
+```{r}
+summary(mod1)$r.squared
+```
+
 In this case we see that $R^2 = 0.1079$, meaning that Lack of confidence in the government explains 10.8% of the variance in Perception of Corruption. 
 
 ```{r}
@@ -195,32 +203,33 @@ We can see that $R^2$, $R^2_{adj}$, $\eta^2$, and $\omega^2$ presents the same e
 
 ## Slope plots
 
-We also want to plot the regression line, as the predicted scores next to the observed data. We can do this with the ````visreg``` package. 
+We also want to plot the regression line, as the predicted scores next to the observed data. We can do this with the ````marginaleffects``` package. 
 
 ```{r}
-visreg(mod1, type="conditional")
+plot_predictions(mod1, condition="LCGov")
 ```
 
-The ```visreg()``` function takes the ````lm()``` model, and will plot the regression line with the confidence intervals in grey (we can not see the CI bands because of the large sample they are very small) on top the observed points.
+The ```plot_predictions()``` function takes the ````lm()``` model and the predictor to plot in the argument ```condition```, and will plot the regression line with the confidence intervals in grey (we can not see the CI bands because of the large sample they are very small) on top the observed points.
 
 with a single predictor, this is equivalent to the observed scatter-plot. when we add multiple predictors this change to conditional regression lines. 
 
 ## Interpretation of the results
 
-Here we will present how to interpret the model results. With a single indicator we get all the information we need from the ```summary()``` function. 
+Here we will present how to interpret the model results. With a single indicator we get all the information we need from the ```summary()``` or ```parameters``` function. 
 
 ```{r}
 summary(mod1)
+parameters(mod1, digits=3)
 ```
 
 * From the overall model test, we reject the null hypothesis of the model being as good as the sample mean at predicting the outcome. Also could be seen as rejecting the null hypothesis of $R^2 = 0$. $F(1, 71631) = 8665, p < .001$. 
 * The model explains 10.8% of the variance in Perception of corruption ($R^2 = 0.1079$).
 * When the Lack of confidence in the government is equal to 0, the expected score in Perception of corruption is 2.55, and we reject the null hypothesis of this intercept being equal to 0, $b_0 = 2.55, SE = 0.01, p < .001$.
 * As Lack of confidence in the government increases by 1, the perception in corruption increases by 0.366 points, and we reject the null hypothesis of this slope being equal to 0, $b_1 = 0.369, SE = 0.004, p < .001$.
-* From the standardize solution we see that as Lack of government confidence increases by 1 standard deviation, Perception of corruption increases by 0.328 standard deviations.
+* From the standardize solution we see that as Lack of government confidence increases by 1 standard deviation, Perception of corruption increases by 0.33 standard deviations.
 
 ```{r}
-summary(mod1_st)
+standardize_parameters(mod1)
 ```
 
 
@@ -231,6 +240,7 @@ We can run a regression where the predictor is a binary/categorical variable. Wi
 ```{r}
 mod2 <- lm(Corrup ~ Sex, data = dat2)
 summary(mod2)
+parameters(mod2, digits=3)
 ```
 
 We see the way to implement is the same as before, it is important to remember to set up the predictor as categorical with the ```factor()``` function. We will present the difference in the interpretation in a following sections.
@@ -242,11 +252,14 @@ It is worth noting that since our predictor is categorical, we see that in the `
 There are divided opinions about the worthiness of standardized slopes for categorical predictors. I particularly don't recommend it as it sets up the slope in an uninterpretable metric, and the measures of relative relevance such as $\eta^2$ are better to compare multiple predictors effects. 
 
 ```{r}
-mod2_st <- standardize(mod2)
-summary(mod2_st)
+standardize_parameters(mod2)
 ```
 
-But ... if you still want to estimate the respective standardize slope, can use the same ```standardize()``` function. Like shown above. 
+As you can see, the ```standardize_parameters()``` doesnt standardize the slopes for categorical predictors. But... if you really want to get the standardize estimates, you can add the ```method="basic" ``` argument 
+
+```{r}
+standardize_parameters(mod2, method = "basic")
+```
 
 ## Assumptions
 
@@ -269,13 +282,13 @@ omega_squared(mod2, partial=F)
 
 ## Slope plots
 
-When we plot the slopes for a categorical predictor ```visreg``` will present it like a box plot for each group. It will do this if the predictor is set as a ```factor``` type variable. 
+When we plot the slopes for a categorical predictor ```plot_predictions``` will present it like a box plot for each group. It will do this if the predictor is set as a ```factor``` type variable. 
 
 ```{r}
-visreg(mod2, type = "conditional")
+plot_predictions(mod2, condition="Sex")
 ```
 
-The blue line is the mean for each group, and the points are the observed data. We see a wide spread of points above and below the mean, and the means are very close to each other. 
+The point is the mean for each group and the lines represent the SE.
 
 
 ## Interpretation of the results
@@ -284,6 +297,7 @@ We will get the interpretation from the ```summary()``` output
 
 ```{r}
 summary(mod2)
+parameters(mod2)
 ```
 
 
@@ -313,6 +327,12 @@ summary(mod3)
 confint(mod3, level=0.95)
 ```
 
+Or the simpler table with ```parameters``` 
+
+```{r}
+parameters(mod3, digits=3)
+```
+
 ## Model comparison
 
 Before we had done two models, the first one with Just *Lack of confidence* as predictor, and the second with just *Sex* as predictor. Now we have added a total of five predictors. 
@@ -330,12 +350,10 @@ Here the degrees of freedom (*df*) are the difference in number of estimated par
 
 ## Standardize solution
 
-Once we have decided to continue with ```mod3```, we can also look at the standardized slopes
+Once we have decided to continue with ```mod3```, we can also look at the standardized slopes. Remember that this function *does not* standardized the slopes for categroical predictors by defafault
 
 ```{r}
-mod3_st <- standardize(mod3)
-summary(mod3_st)
-confint(mod3_st, level=0.95)
+standardize_parameters(mod3)
 ```
 
 If we use these standardized slopes to rank the predictors effects, we would conclude that *lack of confidence* if the one with the larger effect, and *Sex* is the with with the smallest effect. Remember that with this we can only rank the effects, but cannot test if a predictor has an effect *significantly* larger than another. 
@@ -365,19 +383,21 @@ Here we see that the overall model explains 17.5% of the variance in *Perception
 
 We can identiy each predictor's predictive effect with the full $\eta^2$ and $\omega^2$. Notice to estimate the *full* version of these metrics we need to specify ```partial=F```, so it does not estimate the partial version. 
 
-These can be interpreted as the proportion of variance in the outcome that es explained uniquely by each predictor
+These can be interpreted as the **proportion of variance in the outcome that es explained uniquely by each predictor**
+
+When we have more than 1 predictor we need to change type of sum of squares used to calculate the ffect sizes, We can do that with ```Anova()``` function from the ```car``` package. this way we change it to ```type=2``` sum of squares. 
 
 ```{r}
-eta_squared(mod3, partial=F)
-omega_squared(mod3, partial=F)
+eta_squared(Anova(mod3,type=2), partial=F)
+omega_squared(Anova(mod3,type=2), partial=F)
 ```
 
 
-We can also estimate the partial version of these metrics $\eta^2_p$ and $\omega^2_p$. Which are interpreted as the proportion of variance in the outcome that uniquely explained by each predictor, that is not explained by any other predictor. 
+We can also estimate the partial version of these metrics $\eta^2_p$ and $\omega^2_p$. Which are interpreted as the **proportion of variance in the outcome that uniquely explained by each predictor, that is not explained by any other predictor**. 
 
 ```{r}
-eta_squared(mod3, partial=T)
-omega_squared(mod3, partial=T)
+eta_squared(Anova(mod3,type=2), partial=T)
+omega_squared(Anova(mod3,type=2), partial=T)
 ```
 
 Here we recommend the use of the *full* version of these metrics as it presents a more direct interpretation, but the partial versions might be commonly found in publications as they are default in other software.
@@ -386,15 +406,26 @@ $\eta^2$ can bee seen as the equivalent to the $R^2$, and $\omega^2$ as the equi
 
 ## Conditional Slope plots
 
-For plotting the regression slopes, when we had a single predictor the regression slope was equivalent to the scatter-plot. Now that we have multiple predictors, the plots present the regression line when all the other predictors are held constant, the conditional slopes. We can plot these with the ```visreg()``` function, and specify which predictor to plot with the ```xvar``` argument
+For plotting the regression slopes, when we had a single predictor the regression slope was equivalent to the scatter-plot. Now that we have multiple predictors, the plots present the regression line when all the other predictors are held constant, the conditional slopes. We can plot these with the ```plot_predictions()``` function, and specify which predictor to plot with the ```condition``` argument
 
 ```{r}
-visreg(mod3, type = "conditional", xvar = "Sex")
-visreg(mod3, type = "conditional", xvar = "Q262")
-visreg(mod3, type = "conditional", xvar = "Y001")
-visreg(mod3, type = "conditional", xvar = "SACSECVAL")
-visreg(mod3, type = "conditional", xvar = "LCGov")
+plot_predictions(mod3, condition = "Sex")
+plot_predictions(mod3, condition = "Q262")
+plot_predictions(mod3, condition = "Y001")
+plot_predictions(mod3, condition = "SACSECVAL")
+plot_predictions(mod3, condition = "LCGov")
 ```
+
+If we want to export all the plots together we can use the functionality from the package ```patchwork```. So that when it is loaded (```library(patchwork)```) we can simple add ```+``` between plots and they will be presented together
+
+```{r}
+plot_predictions(mod3, condition = "Sex")+
+plot_predictions(mod3, condition = "Q262")+
+plot_predictions(mod3, condition = "Y001")+
+plot_predictions(mod3, condition = "SACSECVAL")+
+plot_predictions(mod3, condition = "LCGov")
+```
+
 
 ## Interpretation of the results
 
@@ -402,14 +433,14 @@ Now, there are a lot more pieces to add to the interpretation. Lets start with t
 
 * We reject the null hypothesis that the overall model is equivalent to the mean model at predicting *Perception of corruption*, $F(5, 71627) = 3028, p < .001$. With the overall model explaining 17.5% ($R^2 = 0.1745$) of the variance in the outcome
 
-Then we can continue to explain the effect of each predictor, by adding information from the ```summary()```, ```standardize()```, and ```eta_squared()``` functions
+Then we can continue to explain the effect of each predictor, by adding information from the ```parameters()```, ```standardize_parameters()```, and ```eta_squared()``` functions
 
 * The expected average score of *Perception of corruption* for *Males*, and with 0 scores in all predictors is 3.07 ($b_0 = 3.06, SE = 0.01, p < .001$), and we reject the null hypothesis of this expected score being equal to 0.
-* We find that *Female* have in average a *Perception of corruption* 0.03 points lower than *Male* ($b_1 = -0.035, SE = 0.005, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this mean difference being equal to 0. We see that *Sex* uniquely explains 0.03% ($\eta^2 = 0.0003$) of the variance of the outcome. 
-* As *Age* increases by 1 year, *Perception of corruption* decreases by 0.005 points in average($b_2 = -0.005, SE = 0.0002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Age* uniquely explains 0.93% ($\eta^2 = 0.0093$) of the variance of the outcome. 
-* As *Post-materialism* increases by 1 unit, *Perception of corruption* decreases by 0.066 points in average($b_3 = -0.066, SE = 0.002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Post-materialism* uniquely explains 0.99% ($\eta^2 = 0.0098$) of the variance of the outcome. 
-* As *Secular values* increases by 1 unit, *Perception of corruption* decreases by 1.07 points in average($b_4 = -1.07, SE = 0.017, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Secular values* uniquely explains 0.91% ($\eta^2 = 0.0091$) of the variance of the outcome. 
-* As *Lack of Confidence in the Government* increases by 1 unit, *Perception of corruption* increases by 0.455 points in average($b_5 = 0.455, SE = 0.004, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Lack of Confidence in the Government* uniquely explains 14.6% ($\eta^2 = 0.146$) of the variance of the outcome. 
+* We find that *Female* have in average a *Perception of corruption* 0.03 points lower than *Male* ($b_1 = -0.035, SE = 0.005, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this mean difference being equal to 0. We see that *Sex* uniquely explains 0.03% ($\eta^2 = 0.0005$) of the variance of the outcome. 
+* As *Age* increases by 1 year, *Perception of corruption* decreases by 0.005 points in average($b_2 = -0.005, SE = 0.0002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Age* uniquely explains 0.93% ($\eta^2 = 0.008$) of the variance of the outcome. 
+* As *Post-materialism* increases by 1 unit, *Perception of corruption* decreases by 0.066 points in average($b_3 = -0.066, SE = 0.002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Post-materialism* uniquely explains 0.99% ($\eta^2 = 0.008$) of the variance of the outcome. 
+* As *Secular values* increases by 1 unit, *Perception of corruption* decreases by 1.07 points in average($b_4 = -1.07, SE = 0.017, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Secular values* uniquely explains 0.91% ($\eta^2 = 0.04$) of the variance of the outcome. 
+* As *Lack of Confidence in the Government* increases by 1 unit, *Perception of corruption* increases by 0.455 points in average($b_5 = 0.455, SE = 0.004, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Lack of Confidence in the Government* uniquely explains 14.6% ($\eta^2 = 0.14$) of the variance of the outcome. 
 * Based on the relative effect measure of $\eta^2$ we can conclude that *Lack of Confidence in the Government* presents the stronger predictive effect, while *Sex* presents the lowest predictive effect. After controlling for the other predictors.  
 
 

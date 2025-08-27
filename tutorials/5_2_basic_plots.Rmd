@@ -62,9 +62,7 @@ After writing which variables we want to work with, we create a new data set **d
 
 # ```ggplot2``` basics
 
-We will use the package ```ggplot2``` for most plots. Lets first go over some of the basics. 
-
-```ggplot2``` creates packages in layers. Think about starting with a simple plot. Once we have a base, we can add layers on top. We will see in our examples how to start from simple plots and then add complexity. 
+We will use the package ```ggplot2``` for most plots. Lets first go over some of the basics. ```ggplot2``` creates plots in layers. Think about starting with a simple plot. Once we have a base, we can add layers on top. We will see in our examples how to start from simple plots and then add complexity. 
 
 This makes ```ggplot2``` able to to manipulate the plot's features with great flexibility. We will start simple, but ```ggplot2``` can do much more than what we will see here. 
 

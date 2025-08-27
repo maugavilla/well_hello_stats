@@ -2,7 +2,7 @@ Basic plots
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-11 February, 2024
+27 August, 2025
 
 - [Setup the R session](#setup-the-r-session)
 - [Import the data set](#import-the-data-set)
@@ -112,11 +112,10 @@ that we have done this correctly.
 # `ggplot2` basics
 
 We will use the package `ggplot2` for most plots. Lets first go over
-some of the basics.
-
-`ggplot2` creates packages in layers. Think about starting with a simple
-plot. Once we have a base, we can add layers on top. We will see in our
-examples how to start from simple plots and then add complexity.
+some of the basics. `ggplot2` creates plots in layers. Think about
+starting with a simple plot. Once we have a base, we can add layers on
+top. We will see in our examples how to start from simple plots and then
+add complexity.
 
 This makes `ggplot2` able to to manipulate the plot’s features with
 great flexibility. We will start simple, but `ggplot2` can do much more
@@ -154,7 +153,8 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
@@ -168,7 +168,8 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram(bins=50)
 ```
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
@@ -180,7 +181,8 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_density()
 ```
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_density()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_density()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
@@ -197,7 +199,8 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -217,7 +220,8 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
@@ -235,7 +239,8 @@ ggplot(dat2, aes(x = SACSECVAL, fill = as.factor(Q260) ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
@@ -263,7 +268,8 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Sex ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
@@ -309,7 +315,8 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
@@ -331,7 +338,8 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 262 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 262 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
@@ -349,7 +357,8 @@ ggplot(subset(dat2, !is.na(Sex)), aes(x = SACSECVAL, fill = Education ))+
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 252 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 252 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
@@ -373,7 +382,8 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-    ## Warning: Removed 220 rows containing non-finite values (`stat_bin()`).
+    ## Warning: Removed 220 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
@@ -400,7 +410,8 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
   geom_point()
 ```
 
-    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 555 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
@@ -419,9 +430,11 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 555 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 555 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
 
-    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 555 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
@@ -439,9 +452,11 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 555 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 555 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
 
-    ## Warning: Removed 555 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 555 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
@@ -461,9 +476,11 @@ ggplot(subset(dat2, !is.na(Sex)),
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 547 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 547 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
 
-    ## Warning: Removed 547 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 547 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
@@ -485,9 +502,11 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 516 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 516 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
 
-    ## Warning: Removed 516 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 516 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
@@ -508,9 +527,11 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-    ## Warning: Removed 516 rows containing non-finite values (`stat_smooth()`).
+    ## Warning: Removed 516 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
 
-    ## Warning: Removed 516 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 516 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
@@ -616,7 +637,8 @@ ggplot(dat2,
   geom_boxplot()
 ```
 
-    ## Warning: Removed 130 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 130 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 This example, however, is not very informative.
@@ -633,7 +655,8 @@ ggplot(subset(dat2, !is.na(Sex) ),
   geom_boxplot()
 ```
 
-    ## Warning: Removed 125 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 125 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
 
@@ -646,7 +669,8 @@ ggplot(subset(dat2, !is.na(Education) ),
   geom_boxplot()
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
@@ -666,9 +690,11 @@ ggplot(subset(dat2, !is.na(Education) ),
   stat_summary(fun=mean, geom="point", shape=5, size=2)
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
@@ -685,9 +711,11 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
   facet_wrap(vars(Sex) )
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
 
@@ -706,9 +734,11 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
          title = "This is some cool Plot!")
 ```
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_boxplot()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
-    ## Warning: Removed 110 rows containing non-finite values (`stat_summary()`).
+    ## Warning: Removed 110 rows containing non-finite outside the scale range
+    ## (`stat_summary()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
 
