@@ -247,6 +247,15 @@ We see the way to implement is the same as before, it is important to remember t
 
 It is worth noting that since our predictor is categorical, we see that in the ```summary``` the slope name is ```SexFemale```. This indicates that it is the slope for the category ```Female``` and that the other category is the baseline group of comparison, ```Male``` in this case. 
 
+
+With categorical predictors the slopes represent the mean difference between groups, we can estimate all possible pairwise comparisons with the ```avg_comparisons``` and speicifying for which categorical variable we want pairwise differences. For this example it is exactly the same as the regression table because we only have 2 groups, but will look different when you have more than 2 groups
+
+```{r}
+avg_comparisons(mod2, 
+                variables = list(Sex="pairwise") )
+```
+
+
 ## Standardize solution
 
 There are divided opinions about the worthiness of standardized slopes for categorical predictors. I particularly don't recommend it as it sets up the slope in an uninterpretable metric, and the measures of relative relevance such as $\eta^2$ are better to compare multiple predictors effects. 
@@ -346,6 +355,13 @@ anova(mod1, mod3)
 ```
 
 Here the degrees of freedom (*df*) are the difference in number of estimated parameters. In this case, we reject the null hypothesis of that both models are equally good at predicting *Perception of corruption*. Would lead us to choose the larger model. 
+
+For the categorical predictor we can ask for the conditional pairwise differences with the ```avg_comparisons``` function
+
+```{r}
+avg_comparisons(mod3, 
+                variables = list(Sex="pairwise") )
+```
 
 
 ## Standardize solution

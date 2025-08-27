@@ -2,7 +2,7 @@ Linear Regression
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-27 August, 2025
+28 August, 2025
 
 - [Setup the R session](#setup-the-r-session)
 - [Import the data set](#import-the-data-set)
@@ -594,6 +594,26 @@ in the `summary` the slope name is `SexFemale`. This indicates that it
 is the slope for the category `Female` and that the other category is
 the baseline group of comparison, `Male` in this case.
 
+With categorical predictors the slopes represent the mean difference
+between groups, we can estimate all possible pairwise comparisons with
+the `avg_comparisons` and speicifying for which categorical variable we
+want pairwise differences. For this example it is exactly the same as
+the regression table because we only have 2 groups, but will look
+different when you have more than 2 groups
+
+``` r
+avg_comparisons(mod2, 
+                variables = list(Sex="pairwise") )
+```
+
+    ## 
+    ##  Estimate Std. Error     z Pr(>|z|)    S   2.5 %  97.5 %
+    ##   -0.0263    0.00617 -4.26   <0.001 15.6 -0.0384 -0.0142
+    ## 
+    ## Term: Sex
+    ## Type: response
+    ## Comparison: Female - Male
+
 ## Standardize solution
 
 There are divided opinions about the worthiness of standardized slopes
@@ -634,7 +654,7 @@ standardize_parameters(mod2, method = "basic")
 plot(mod2)
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-25-2.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-25-3.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-25-4.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-26-2.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-26-3.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-26-4.png)<!-- -->
 
 By evaluating the assumptions with the plots, we see that there is no
 sign of violating the assumptions of linearity, homogeneity of
@@ -682,7 +702,7 @@ predictor is set as a `factor` type variable.
 plot_predictions(mod2, condition="Sex")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 The point is the mean for each group and the lines represent the SE.
 
@@ -859,6 +879,22 @@ estimated parameters. In this case, we reject the null hypothesis of
 that both models are equally good at predicting *Perception of
 corruption*. Would lead us to choose the larger model.
 
+For the categorical predictor we can ask for the conditional pairwise
+differences with the `avg_comparisons` function
+
+``` r
+avg_comparisons(mod3, 
+                variables = list(Sex="pairwise") )
+```
+
+    ## 
+    ##  Estimate Std. Error     z Pr(>|z|)    S  2.5 % 97.5 %
+    ##    -0.036    0.00561 -6.42   <0.001 32.8 -0.047 -0.025
+    ## 
+    ## Term: Sex
+    ## Type: response
+    ## Comparison: Female - Male
+
 ## Standardize solution
 
 Once we have decided to continue with `mod3`, we can also look at the
@@ -895,7 +931,7 @@ model assumptions
 plot(mod3)
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-33-2.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-33-3.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-33-4.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-35-2.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-35-3.png)<!-- -->![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-35-4.png)<!-- -->
 
 From the first, and third plots we see that there is a slight deviation
 from the red *loess* line with the *expected* grey dotted line.
@@ -1050,31 +1086,31 @@ predictor to plot with the `condition` argument
 plot_predictions(mod3, condition = "Sex")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-39-1.png)<!-- -->
 
 ``` r
 plot_predictions(mod3, condition = "Q262")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-37-2.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-39-2.png)<!-- -->
 
 ``` r
 plot_predictions(mod3, condition = "Y001")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-37-3.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-39-3.png)<!-- -->
 
 ``` r
 plot_predictions(mod3, condition = "SACSECVAL")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-37-4.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-39-4.png)<!-- -->
 
 ``` r
 plot_predictions(mod3, condition = "LCGov")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-37-5.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-39-5.png)<!-- -->
 
 If we want to export all the plots together we can use the functionality
 from the package `patchwork`. So that when it is loaded
@@ -1089,7 +1125,7 @@ plot_predictions(mod3, condition = "SACSECVAL")+
 plot_predictions(mod3, condition = "LCGov")
 ```
 
-![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-38-1.png)<!-- -->
+![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-40-1.png)<!-- -->
 
 ## Interpretation of the results
 
