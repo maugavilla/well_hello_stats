@@ -2,26 +2,27 @@ Installing R and RStudio on Mac
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+24 January, 2026
 
--   <a href="#lets-install-r" id="toc-lets-install-r">Let’s install R!</a>
--   <a href="#lets-install-rstudio" id="toc-lets-install-rstudio">Let’s
-    install RStudio!</a>
+- [Let’s install R!](#lets-install-r)
+- [Let’s install RStudio!](#lets-install-rstudio)
 
 When learning new programs, we need to start from the beginning. And in
 this case it means to see the steps to install the programs we will be
 using. Here we will go over the steps to install
-[R](https://www.r-project.org/) and [RStudio](https://www.rstudio.com/)
-on Mac [R](https://www.r-project.org/) is the statistical software
-package that we will be using and [RStudio](https://www.rstudio.com/) is
-an interface that makes R easier and more convenient to use.
+[R](https://www.r-project.org/) and
+[RStudio](https://posit.co/download/rstudio-desktop/) on Mac
+[R](https://www.r-project.org/) is the statistical software package that
+we will be using and
+[RStudio](https://posit.co/download/rstudio-desktop/) is an interface
+that makes R easier and more convenient to use.
 
 # Let’s install R!
 
 Firs we need to go R project site <https://www.r-project.org/>. From the
 home page we need to look for the **CRAN** link under **Download** on
 the left. The website format may change slightly, but the **CRAN** link
-will always be on the homepage.
+will always be on the homepage (install the latest version).
 
 ![](images/screen1.png)
 
@@ -92,21 +93,12 @@ as the chassis of the car so it is easier to handle it.
 
 # Let’s install RStudio!
 
-First we need to go RStudio site <https://www.rstudio.com/>. From there
-we will click on to **Download** link on the top right
+First we need to go RStudio site
+<https://posit.co/download/rstudio-desktop/>. From there select the
+version of the **Mac OS** system of your computer, then we will click on
+to **Download** button
 
 ![](images/screen16.png)
-
-In the next window we will scroll down, and select the **Download** link
-for the **RStudio Desktop Free**
-
-![](images/screen17.png)
-
-In the next screen we will see that the site is recommending a version
-to download. For most users this is the best version to install. Now,
-you can download the **.dmg** installer from here.
-
-![](images/screen7_mac.png)
 
 Next we can start the installation with **RStudio-2021.09.2-382.dmg**,
 or a more recent version. Start the installer and follow the setup
