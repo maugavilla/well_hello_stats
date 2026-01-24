@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-01 February, 2024
+24 January, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -18,6 +18,7 @@ Mauricio Garnier-Villarreal
   - [General Linear Models](#general-linear-models)
   - [Mixture models](#mixture-models)
   - [Factor Analysis](#factor-analysis)
+  - [Bayesian SEM with blavaan](#bayesian-sem-with-blavaan)
 - [Progress](#progress)
 
 <div style="padding: 0.2em;">
@@ -136,6 +137,10 @@ following a course.
 - [Install R and RStudio for
   Windows](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_2_Installing_windows.md):
   how to step by step install R and RStudio on Windows operating system
+- [Use RStudio in the
+  cloud](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_4_Using_R_Cloud.md):
+  explanation on how to access RStudio in the cloud instead of a local
+  installation.
 - [Setting up
   RStudio](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/0_3_setting_up_RStudio.md):
   explanation of RStudio and how to set it up.
@@ -278,6 +283,39 @@ following a course.
   test theory, measurement model, data preparation, EFA, estimation,
   rotation, factor enumeration, cross-validation. Packages: psych,
   lavaan, semTools, car, tidyr, ggplot2, patchwork.
+
+## Bayesian SEM with [blavaan](https://ecmerkle.github.io/blavaan/)
+
+- [Getting started with
+  blavaan](https://ecmerkle.github.io/blavaan/articles/start.html)
+- [Specifying Prior
+  Distributions](https://ecmerkle.github.io/blavaan/articles/prior.html)
+- [Model
+  Estimation](https://ecmerkle.github.io/blavaan/articles/estimate.html)
+- [Convergence and Efficiency
+  Evaluation](https://ecmerkle.github.io/blavaan/articles/convergence_efficiency.html)
+- [Model
+  Summaries](https://ecmerkle.github.io/blavaan/articles/summaries.html)
+- [Plot
+  Functionality](https://ecmerkle.github.io/blavaan/articles/plotting.html)
+- [Ordinal Models in
+  blavaan](https://ecmerkle.github.io/blavaan/articles/ordinal.html)
+- [Two-level
+  SEM](https://ecmerkle.github.io/blavaan/articles/multilevel.html)
+- [Measurement
+  Invariance](https://ecmerkle.github.io/blavaan/articles/invariance.html)
+- [Approximate fit
+  indices](https://ecmerkle.github.io/blavaan/articles/approx_fi.html)
+- [Model
+  Comparison](https://ecmerkle.github.io/blavaan/articles/model_comparison.html)
+- [Cross-loadings with strong
+  priors](https://ecmerkle.github.io/blavaan/articles/cross_loadings_strong_priors.html)
+- [Modification
+  indices](https://ecmerkle.github.io/blavaan/articles/mod_indices.html)
+- [Prior Predictive
+  Checks](https://ecmerkle.github.io/blavaan/articles/prior_pred_checks.html)
+- [Convergence
+  loop](https://ecmerkle.github.io/blavaan/articles/convergence_loop.html)
 
 # Progress
 
