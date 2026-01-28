@@ -91,4 +91,14 @@ When you open **RStudio** will look something like this. Congratulations! You ha
 ![](images/screen24.png)
 
 
+# XQuartz
+
+Once you have installed R and RStudio, in Mac OS we also need to install [xquartz](https://www.xquartz.org/). This will be necessary for some packages
+
+- Go to th XQuartz site [https://www.xquartz.org/](https://www.xquartz.org/)
+- Then download and install the respective installer, as shown in the following screenshot
+
+![](images/screen40.png)
+
+Afte this has been installed, close and reopen Rstudio. 
 
