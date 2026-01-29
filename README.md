@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-24 January, 2026
+29 January, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -234,6 +234,13 @@ following a course.
   analysis steps, categorical and continuous moderator, main effects,
   interaction models, effect size, probbing, plotting, interpretation.
   Packages: rio, effectsize, visreg, reghelper.  
+- [Moderation with
+  bruceR](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_3_moderation_bruceR.md):
+  what is moderation, setting up R session, import data set, moderation
+  analysis steps, categorical and continuous moderator, main effects,
+  interaction models, effect size, probbing, plotting, interpretation.
+  Packages: rio, effectsize, marginaleffects, bruceR, ggplot2,
+  parameters, car, tidyr
 - [Moderation with the PROCESS
   macro](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_2_moderation_PROCESS.md):
   what is moderation, installing PROCESS macro, setting up R session,
@@ -251,6 +258,13 @@ following a course.
   import data set, mediation analysis steps, total effect, indirect
   effect, NHST methods, recommendations and interpretation. Packages:
   rio, PROCESS macro
+- [Mediation with
+  bruceR](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/11_3_mediation_bruceR.md):
+  what is mediation, installing PROCESS macro, setting up R session,
+  import data set, mediation analysis steps, total effect, indirect
+  effect, NHST methods, recommendations and interpretation. Packages:
+  rio, effectsize, marginaleffects, bruceR, ggplot2, parameters, car,
+  tidyr, patchwork
 
 ## Mixture models
 
