@@ -1,6 +1,6 @@
 ---
 title: "Linear Regression"
-author: "Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van Matre"
+author: "Mauricio Garnier-Villarreal"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   github_document:
@@ -30,6 +30,7 @@ library(ggplot2)
 library(parameters)
 library(car)
 library(patchwork)
+library(summarytools)
 ```
 
 
@@ -194,8 +195,8 @@ summary(mod1)$r.squared
 In this case we see that $R^2 = 0.1079$, meaning that Lack of confidence in the government explains 10.8% of the variance in Perception of Corruption. 
 
 ```{r}
-eta_squared(mod1, partial=F)
-omega_squared(mod1, partial=F)
+eta_squared(Anova(mod1, type=2), partial=F)
+omega_squared(Anova(mod1, type=2), partial=F)
 ```
 
 We can see that $R^2$, $R^2_{adj}$, $\eta^2$, and $\omega^2$ presents the same estimate up to the third decimal. Later we will show the interpretation of these different metrics when multiple indicators are present.
@@ -248,7 +249,9 @@ We see the way to implement is the same as before, it is important to remember t
 It is worth noting that since our predictor is categorical, we see that in the ```summary``` the slope name is ```SexFemale```. This indicates that it is the slope for the category ```Female``` and that the other category is the baseline group of comparison, ```Male``` in this case. 
 
 
-With categorical predictors the slopes represent the mean difference between groups, we can estimate all possible pairwise comparisons with the ```avg_comparisons``` and speicifying for which categorical variable we want pairwise differences. For this example it is exactly the same as the regression table because we only have 2 groups, but will look different when you have more than 2 groups
+## Post-hoc comparisons
+
+With categorical predictors the slopes represent the mean difference between groups, we can estimate all possible pairwise comparisons with the ```avg_comparisons``` and specifying for which categorical variable we want pairwise differences. For this example it is exactly the same as the regression table because we only have 2 groups, but will look different when you have more than 2 groups
 
 ```{r}
 avg_comparisons(mod2, 
@@ -263,6 +266,8 @@ There are divided opinions about the worthiness of standardized slopes for categ
 ```{r}
 standardize_parameters(mod2)
 ```
+
+This function doesnt standardize the categorical predictor, so the interpretation is ```Female``` group has an standardize mean difference of 0.03 lower than ```Male```, basically a *Cohen d*. 
 
 As you can see, the ```standardize_parameters()``` doesnt standardize the slopes for categorical predictors. But... if you really want to get the standardize estimates, you can add the ```method="basic" ``` argument 
 
@@ -285,8 +290,8 @@ By evaluating the assumptions with the plots, we see that there is no sign of vi
 As we still have only one predictor, the $R^2$, $\eta^2$, and $\omega^2$ will present the same results. We find that ```Sex``` explains 0.025% of the outcome's variance. 
 
 ```{r}
-eta_squared(mod2, partial=F)
-omega_squared(mod2, partial=F)
+eta_squared(Anova(mod2, type=2), partial=F)
+omega_squared(Anova(mod2, type=2), partial=F)
 ```
 
 ## Slope plots
@@ -297,7 +302,7 @@ When we plot the slopes for a categorical predictor ```plot_predictions``` will 
 plot_predictions(mod2, condition="Sex")
 ```
 
-The point is the mean for each group and the lines represent the SE.
+The point is the mean for each group and the lines represent the CI.
 
 
 ## Interpretation of the results
@@ -315,23 +320,170 @@ parameters(mod2)
 * When *Sex* is at its baseline category (*Male*), the expected score in Perception of corruption is 3.50, and we reject the null hypothesis of this intercept being equal to 0, $b_0 = 3.50, SE = 0.004, p < .001$. Or could also say that the mean Perception of corruption for *Male* is 3.50. 
 * As *Sex* changes category to *Female*, the perception in corruption decreases by 0.026 points, and we reject the null hypothesis of this slope (mean change) being equal to 0, $b_1 = -0.026, SE = 0.006, p < .001$. Or we could say that the mean difference between *Male* and *Female* is 0.026. 
 
+# Linear regression with a categorical predictor (more than 2 categories)
+
+A binary predictor is most simple case of a categorical predictor. But in many cases you might have a predictor with more than 2 categories. Many part of the process looks the same, but we will highlight the differences in this example. 
+
+For this example, we first need to categorize a continuous predictor. But in general we dont recommend doing this, we will do it for the example. Here we will categorize ```Age``` into age groups.  
+
+With the ```table()``` function we see that ages range from 16 to 103 in our data set
+
+```{r}
+
+table(dat2$Q262)
+
+```
+Then we will use th ```cut()``` function to create groups in ranges of the age variable. We assign it into a new variable ```age_ran``` , and provide the continuous variable to the ```cut()``` function, lastly yoy add the ```breaks``` for the continuous variable. This will cut the variable into groups at the respective break points. 
+
+With ```class()``` we see that this automatically creates a ```factor``` variable. And with the ```freq()``` function we can see the frequency table for each group and the age range. This we can check that the groups were created as we intended 
+
+```{r}
+dat2$age_ran <- cut(dat2$Q262, 
+                    breaks = c(15, 18, 30, 50, 70, 103))
+
+class(dat2$age_ran)
+
+freq(dat2$age_ran)
+```
+Then we just add this new predictor in the ```lm()``` functions, just like before. We can ask for the regression table either with the ```summary``` or ```parameters``` functions. The regression table parameters show the mean difference between each group with the reference group, in this case the reference group is the ```15 to 18```
+
+```{r}
+
+mod_cat <- lm(Corrup ~ age_ran, data = dat2)
+summary(mod_cat)
+
+parameters(mod_cat)
+
+```
+
+This model is the same as an ANOVA, but presented with the regression parameters. You can also get the ANOVA table from 
+
+```{r}
+Anova(mod_cat, type=2)
+
+```
+And can also put that into the ```parameters``` function for a cleaner table
+
+```{r}
+parameters(Anova(mod_cat, type=2))
+```
+
+
+## Post-hoc comparisons
+
+With categorical predictors the slopes represent the mean difference between groups, we can estimate all possible pairwise comparisons with the ```avg_comparisons``` and specifying for which categorical variable we want pairwise differences. For this example, as we have 5 groups, we get 10 total pair comparisons
+
+```{r}
+pw2 <- avg_comparisons(mod_cat, type= "response",
+                       variables = list(age_ran="pairwise") )
+pw2
+```
+
+We can do different types of post-hoc comparisons, for example if we specify ```variables = list(age_ran="sequential")``` we will get sequential comparisons, so the first group compared with the second, and then the second compare to the third, and so on
+
+```{r}
+pw3 <- avg_comparisons(mod_cat, type= "response",
+                       variables = list(age_ran="sequential") )
+pw3
+```
+One last example I will present here is the case of planned contrasts, this is the case were you want to test hypothesis "combining" some groups, for example I want to compare the 2 youngest age groups against the older ones. 
+
+We will do these comparisons in 2 steps, first we will estimate the predicted means for each group with the ```avg_predictions()``` functions. This will give us aobject with the saved mean predictors for each group.
+
+```{r}
+avpred <- avg_predictions(mod_cat, 
+                          variables = "age_ran")
+avpred
+```
+
+Then we use th ```hypotheses()``` function to build customize hypotheses. We build this hypothesis with contrasts weights, in this example we are combining the first 2 groups, and the last 3 groups. The contrasts weights have some basic rules:
+- You specify which groups go together with the sign of the weights, the ones with a ```-``` weight go together, and positive ones go together
+- The weights should sume up to 1 in each combined group. Thats why we use fractions in this example
+
+```{r}
+hypotheses(avpred, 
+           hypothesis = c(-1/2, -1/2, 1/3, 1/3, 1/3))
+```
+
+Then we can also test multiple customize contrast at the same time. Save all the desired contrasts into a matrix, where each column is a contrast, and each row is a group. Here we use the function ```cbind()``` to create this matrix, this function is column-bind, so each vector will be a column in the new matrix
+
+In this example, the first contrast is the same as before. The second one combines the first 3 groups against the last 2. And the last one ignores the first gorup (with a 0), and combines the second and third group, against the fourth and fifth ones. 
+
+```{r}
+conts <- cbind(c(-1/2, -1/2, 1/3, 1/3, 1/3),
+               c(-1/3, -1/3, -1/3, 1/2, 1/2),
+               c(0, -1/2, -1/2, 1/2, 1/2))
+conts
+
+hypotheses(avpred, hypothesis = conts, multcomp = "fdr")
+```
+
+One last argument that we add here is the ```multcomp = "fdr" ``` which adjusts the ```p-value``` for multiple comparisons. In this case we use the false discovery rate adjustment. 
+
+
+## Standardize solution
+
+There are divided opinions about the worthiness of standardized slopes for categorical predictors. I particularly don't recommend it as it sets up the slope in an uninterpretable metric, and the measures of relative relevance such as $\eta^2$ are better to compare multiple predictors effects. 
+
+```{r}
+standardize_parameters(mod_cat)
+```
+
+This function doesnt standardize the categorical predictor, so the interpretation is ```age ran [>70-103] ``` group has an standardize mean difference of 0.35 lower than the reference group, basically a *Cohen d*. 
+
+As you can see, the ```standardize_parameters()``` doesnt standardize the slopes for categorical predictors. But... if you really want to get the standardize estimates, you can add the ```method="basic" ``` argument 
+
+```{r}
+standardize_parameters(mod_cat, method = "basic")
+```
+
+## Assumptions
+
+```{r}
+plot(mod_cat)
+```
+
+By evaluating the assumptions with the plots, we see that there is no sign of violating the assumptions of linearity, homogeneity of variances, or outliers. But, there are signs of violations of the assumption of normally distributed residuals, at the tails of the distributions.  
+
+
+
+## Effect size
+
+As we still have only one predictor, the $R^2$, $\eta^2$, and $\omega^2$ will present the same results. We find that ```Age ranges``` explains 0.95% of the outcome's variance. 
+
+```{r}
+summary(mod_cat)$r.squared*100
+eta_squared(Anova(mod_cat, type=2), partial=F)
+omega_squared(Anova(mod_cat, type=2), partial=F)
+```
+
+## Slope plots
+
+We can also plot the "slopes" for categorical predictors, in this case the model predictions will be predicted means and confidence intervals fo each group. Here we can see that *Perception of corruption* is very similar between the first age groups, and then it goes down. 
+
+```{r}
+plot_predictions(mod_cat, condition = "age_ran")
+```
+
+
+
 
 # Multiple Linear regression
 
 An advantage of the General Linear Models, is the flexibility that they have to include multiple predictors, and they can be any combination of continuous and/or categorical. 
 
-In this following example we are adding four continuous predictors, and one categorical:
+In this following example we are adding 3 continuous predictors, and 2 categorical:
 
 * Sex: Male, Female
-* Q262: age in years
+* age_ran: age groups
 * Y001: post-materialism index
 * SACSECVAL: secular values
 * LCGov: Lack of Confidence in the government
 
-We see that we can add multiple predictors by adding to the original formula, such as ```Outcome ~ Predictor1 + Predictor2 + Predictor3 + ...``` . This way you can extende it with as many predictors as your data, model, and theory allows it. 
+We see that we can add multiple predictors by adding to the original formula, such as ```Outcome ~ Predictor1 + Predictor2 + Predictor3 + ...``` . This way you can extend it with as many predictors as your data, model, and theory allows it. 
 
 ```{r}
-mod3 <- lm(Corrup ~ Sex + Q262 + Y001 + SACSECVAL + LCGov, data=dat2)
+mod3 <- lm(Corrup ~ Sex + age_ran + Y001 + SACSECVAL + LCGov, data=dat2)
 summary(mod3)
 confint(mod3, level=0.95)
 ```
@@ -341,6 +493,14 @@ Or the simpler table with ```parameters```
 ```{r}
 parameters(mod3, digits=3)
 ```
+
+When having a larger number of predictors, and combination of continuous and categorical ones, it is useful to get the ```Anova()``` table. specially because the NHST for the categorical predictor in the ```parameters``` table is for the mean comparison between group2 against group1. While we are also interested in the overall NHST of adding that predictor. 
+
+```{r}
+parameters(Anova(mod3, type=2))
+```
+The ```Anova``` table provides the NHST test for the null hypothesis of each predictor having no relation to the outcome variable, keeping all other predictors constant. For the continuous predictors this will be exactly the same as the one from the ```parameters``` table. 
+
 
 ## Model comparison
 
@@ -356,23 +516,26 @@ anova(mod1, mod3)
 
 Here the degrees of freedom (*df*) are the difference in number of estimated parameters. In this case, we reject the null hypothesis of that both models are equally good at predicting *Perception of corruption*. Would lead us to choose the larger model. 
 
-For the categorical predictor we can ask for the conditional pairwise differences with the ```avg_comparisons``` function
+## Post-hoc comparisons
+
+For the categorical predictor we can ask for the conditional pairwise differences with the ```avg_comparisons``` function. These would be the post-hoc comparisons, keeping all other predictors constant. For this example we are only doing the pairwise comparison, but you can also do the sequential or planned contrasts as in the previous example
 
 ```{r}
-avg_comparisons(mod3, 
-                variables = list(Sex="pairwise") )
+pw4 <- avg_comparisons(mod3, 
+                variables = list(age_ran="pairwise") )
+pw4
 ```
 
 
 ## Standardize solution
 
-Once we have decided to continue with ```mod3```, we can also look at the standardized slopes. Remember that this function *does not* standardized the slopes for categroical predictors by defafault
+Once we have decided to continue with ```mod3```, we can also look at the standardized slopes. Remember that this function *does not* standardized the slopes for categorical predictors by default
 
 ```{r}
 standardize_parameters(mod3)
 ```
 
-If we use these standardized slopes to rank the predictors effects, we would conclude that *lack of confidence* if the one with the larger effect, and *Sex* is the with with the smallest effect. Remember that with this we can only rank the effects, but cannot test if a predictor has an effect *significantly* larger than another. 
+If we use these standardized slopes to rank the predictors effects, we would conclude that *lack of confidence* if the one with the larger effect, and *Sex* is the with with the smallest effect. Remember that for *age_ran* each of these coefficients are a pairwise cohen d against the reference group. Remember that with this we can only rank the effects, but cannot test if a predictor has an effect *significantly* larger than another. 
 
 ## Assumptions
 
@@ -382,7 +545,7 @@ We will again use the diagnostic plots to evaluate for violations of the model a
 plot(mod3)
 ```
 
-From the first, and third plots we see that there is a slight deviation from the red *loess* line with the *expected* grey dotted line. Indicating there might be small deviation from the linearity assumption at the tails. This could be added into the model by adding the quadratic effect of a predictor for example, ```Q262^2```. But this still looks like small deviation that would not lead me to consider it a meaningful violation. 
+From the first, and third plots we see that there is a slight deviation from the red *loess* line with the *expected* grey dotted line. Indicating there might be small deviation from the linearity assumption at the tails. This could be added into the model by adding the quadratic effect of a predictor for example. But this still looks like small deviation that would not lead me to consider it a meaningful violation. 
 
 The other plots lead to no indication of violations of the homogeneity of variance assumption, or outliers. And as the other models, we see the assumption of normally distributed residuals violated in the tails of the distribution. 
 
@@ -403,9 +566,10 @@ These can be interpreted as the **proportion of variance in the outcome that es 
 
 When we have more than 1 predictor we need to change type of sum of squares used to calculate the ffect sizes, We can do that with ```Anova()``` function from the ```car``` package. this way we change it to ```type=2``` sum of squares. 
 
+Notice that I am putting all this call insie the ```print()``` function so I can define the number of decimals to present (```digits=4```)
 ```{r}
-eta_squared(Anova(mod3,type=2), partial=F)
-omega_squared(Anova(mod3,type=2), partial=F)
+print(eta_squared(Anova(mod3,type=2), partial=F), digits=4)
+print(omega_squared(Anova(mod3,type=2), partial=F), digits=4)
 ```
 
 
@@ -426,7 +590,7 @@ For plotting the regression slopes, when we had a single predictor the regressio
 
 ```{r}
 plot_predictions(mod3, condition = "Sex")
-plot_predictions(mod3, condition = "Q262")
+plot_predictions(mod3, condition = "age_ran")
 plot_predictions(mod3, condition = "Y001")
 plot_predictions(mod3, condition = "SACSECVAL")
 plot_predictions(mod3, condition = "LCGov")
@@ -436,10 +600,10 @@ If we want to export all the plots together we can use the functionality from th
 
 ```{r}
 plot_predictions(mod3, condition = "Sex")+
-plot_predictions(mod3, condition = "Q262")+
-plot_predictions(mod3, condition = "Y001")+
-plot_predictions(mod3, condition = "SACSECVAL")+
-plot_predictions(mod3, condition = "LCGov")
+  plot_predictions(mod3, condition = "age_ran")+
+  plot_predictions(mod3, condition = "Y001")+
+  plot_predictions(mod3, condition = "SACSECVAL")+
+  plot_predictions(mod3, condition = "LCGov")
 ```
 
 
@@ -447,16 +611,16 @@ plot_predictions(mod3, condition = "LCGov")
 
 Now, there are a lot more pieces to add to the interpretation. Lets start with the overall model null hypothesis test, from the ```summary(mod3)``` 
 
-* We reject the null hypothesis that the overall model is equivalent to the mean model at predicting *Perception of corruption*, $F(5, 71627) = 3028, p < .001$. With the overall model explaining 17.5% ($R^2 = 0.1745$) of the variance in the outcome
+* We reject the null hypothesis that the overall model is equivalent to the mean model at predicting *Perception of corruption*, $F(8, 71624) = 1899, p < .001$. With the overall model explaining 17.5% ($R^2 = 0.175$) of the variance in the outcome
 
 Then we can continue to explain the effect of each predictor, by adding information from the ```parameters()```, ```standardize_parameters()```, and ```eta_squared()``` functions
 
-* The expected average score of *Perception of corruption* for *Males*, and with 0 scores in all predictors is 3.07 ($b_0 = 3.06, SE = 0.01, p < .001$), and we reject the null hypothesis of this expected score being equal to 0.
-* We find that *Female* have in average a *Perception of corruption* 0.03 points lower than *Male* ($b_1 = -0.035, SE = 0.005, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this mean difference being equal to 0. We see that *Sex* uniquely explains 0.03% ($\eta^2 = 0.0005$) of the variance of the outcome. 
-* As *Age* increases by 1 year, *Perception of corruption* decreases by 0.005 points in average($b_2 = -0.005, SE = 0.0002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Age* uniquely explains 0.93% ($\eta^2 = 0.008$) of the variance of the outcome. 
-* As *Post-materialism* increases by 1 unit, *Perception of corruption* decreases by 0.066 points in average($b_3 = -0.066, SE = 0.002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Post-materialism* uniquely explains 0.99% ($\eta^2 = 0.008$) of the variance of the outcome. 
-* As *Secular values* increases by 1 unit, *Perception of corruption* decreases by 1.07 points in average($b_4 = -1.07, SE = 0.017, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Secular values* uniquely explains 0.91% ($\eta^2 = 0.04$) of the variance of the outcome. 
-* As *Lack of Confidence in the Government* increases by 1 unit, *Perception of corruption* increases by 0.455 points in average($b_5 = 0.455, SE = 0.004, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Lack of Confidence in the Government* uniquely explains 14.6% ($\eta^2 = 0.14$) of the variance of the outcome. 
+* The expected average score of *Perception of corruption* for *Males*, *Age* between 15 and 18, and with 0 scores in all predictors is 2.91 ($b_0 = 2.91, SE = 0.02, p < .001$), and we reject the null hypothesis of this expected score being equal to 0.
+* We find that *Female* have in average a *Perception of corruption* 0.04 points lower than *Male* ($b_1 = -0.035, SE = 0.005, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this mean difference being equal to 0. We see that *Sex* uniquely explains 0.05% ($\eta^2 = 0.0005$) of the variance of the outcome. 
+* Holding all other predictors constant, we reject the null hypothesis pair means being equal for all pairwise comparisons except for 2. For the ones that we fail to reject are *(18,30] - (15,18]* and *(30,50] - (15,18]*. Indicating that the mean differences are smaller at the first agre groups. And we reject the null hypothesis as age ranges increase. This trend has a slight parabolic shape (as seen in the plot). We see that *Age* uniquely explains 0.86% ($\eta^2 = 0.0086$) of the variance of the outcome. 
+* As *Post-materialism* increases by 1 unit, *Perception of corruption* decreases by 0.065 points in average($b_3 = -0.065, SE = 0.002, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Post-materialism* uniquely explains 0.85% ($\eta^2 = 0.008$) of the variance of the outcome. 
+* As *Secular values* increases by 1 unit, *Perception of corruption* decreases by 1.07 points in average($b_4 = -1.07, SE = 0.017, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Secular values* uniquely explains 4.38% ($\eta^2 = 0.04$) of the variance of the outcome. 
+* As *Lack of Confidence in the Government* increases by 1 unit, *Perception of corruption* increases by 0.455 points in average($b_5 = 0.456, SE = 0.004, p < .001$), while holding all other predictors constant. We reject the null hypothesis of this slope being equal to 0. We see that *Lack of Confidence in the Government* uniquely explains 14.15% ($\eta^2 = 0.14$) of the variance of the outcome. 
 * Based on the relative effect measure of $\eta^2$ we can conclude that *Lack of Confidence in the Government* presents the stronger predictive effect, while *Sex* presents the lowest predictive effect. After controlling for the other predictors.  
 
 
