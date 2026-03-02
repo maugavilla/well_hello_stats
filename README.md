@@ -277,6 +277,13 @@ following a course.
   classification accuracy. Packages: summarytools, marginaleffects,
   effectsize, caret, DescTools, ggplot2, arm, nonnest2, MASS,
   parameters, patchwork, rio, car, tidyr
+- [Multinomial Logistic
+  regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/15_multinomial_logistic_regression.md):
+  setting up R session, import data set, Multinomial Logistic
+  regression, transform parameters for intepretation, predicted
+  probabilities, marginal effects, conditional plots, pseudo R-squared,
+  model comparison, classification accuracy. Packages: rio, nnet,
+  parameters, marginaleffects, ggplot2, DescTools, caret.
 
 ## Mixture models
 
