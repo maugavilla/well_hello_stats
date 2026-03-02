@@ -31,7 +31,7 @@ Mauricio Garnier-Villarreal
     Groups](#differences-in-probabilities-between-groups)
   - [Effect Size Transformations](#effect-size-transformations)
   - [Pseudo R‑Squared Measures](#pseudo-rsquared-measures)
-  - [Model Comparison and Fit](#model-comparison-and-fit)
+  - [Model Comparison](#model-comparison)
     - [Likelihood Ratio Test (LRT)](#likelihood-ratio-test-lrt)
     - [Information Criteria (AIC, BIC)](#information-criteria-aic-bic)
       - [Confidence Intervals for IC
@@ -903,7 +903,7 @@ PseudoR2(regf,
 
 From these measures, we recommend to use Nagelkerke R² and Tjur’s R².
 
-## Model Comparison and Fit
+## Model Comparison
 
 We might also be interested in comparing logistic regression models, for
 this we will present two ways of model comparison.
@@ -1126,5 +1126,3 @@ is key to meaningful interpretation.
 
 Agresti, A. (2019). An introduction to categorical data analysis (Third
 edition). John Wiley & Sons.
-
-\`\`\`

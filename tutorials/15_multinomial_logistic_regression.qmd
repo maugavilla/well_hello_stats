@@ -1,0 +1,438 @@
+---
+title: "Multinomial Logistic Regression"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+
+## Introduction
+
+In this tutorial we extend binary logistic regression to situations where the outcome variable has more than two categories. When the categories are **nominal** (no natural order) or **ordinal** (ordered categories), we need a model that can handle multiple response options. Multinomial logistic regression is the most common approach for nominal outcomes. We will cover:
+
+- The motivation for multinomial models
+- The mathematical formulation
+- Interpretation of coefficients, odds ratios, predicted probabilities, and marginal effects
+- Implementation in R using the `nnet` package
+- Model fit assessment and assumptions
+
+We will use a dataset on high school students' choice of academic program (general, academic, vocational) to illustrate the methods.
+
+## Recap of Binary Logistic Regression
+
+Binary logistic regression models the probability of a binary outcome $Y$ (coded 0/1) as a function of predictors. The model is:
+
+$$
+p = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_k X_k}}{1 + e^{\beta_0 + \beta_1 X_1 + \dots + \beta_k X_k}}
+$$
+
+
+Equivalently, the log-odds (logit) of the probability has a linear relation to the systematic compoenent of the **Generalized linear model**:
+
+
+$$
+\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 X_1 + \dots + \beta_k X_k
+$$
+
+
+- Coefficients $\beta$ represent the change in log-odds for a one-unit increase in the predictor.
+- Exponentiated coefficients $e^\beta$ are **odds ratios**.
+- Predicted probabilities $\hat{p}$ are obtained via the inverse logit transformation.
+- Model fit can be assessed with likelihood ratio tests, pseudo‑$R^2$, and information criteria (AIC, BIC).
+
+## Why Multinomial Models?
+
+When the dependent variable has more than two categories (e.g., choice of program, mode of transport, political party), binary logistic regression is insufficient. The categories may be:
+
+- **Nominal**: no inherent order. Examples: field of study, type of contract.
+- **Ordinal**: ordered categories. Examples: Likert scales, socioeconomic status.
+
+Multinomial logistic regression handles nominal outcomes by estimating a set of binary logistic regressions comparing each category to a baseline category. Ordinal outcomes can be modeled with proportional odds models (not covered here), but multinomial logistic regression is also applicable (though it ignores ordering).
+
+## Example Dataset
+
+We use the `hsbdemo` dataset (from the UCLA IDRE website) containing variables on high school students: their chosen program type (`prog`: general, academic, vocational), socioeconomic status (`ses`: low, middle, high), and writing score (`write`). We will examine whether SES and writing score predict program choice.
+
+```{r load-data}
+# Load required packages
+library(rio)
+library(nnet)
+library(parameters)
+library(marginaleffects)
+library(ggplot2)
+library(DescTools)
+library(caret)
+
+# Import data
+dat <- import("hsbdemo.dta")   # ensure the file is in your working directory
+dat <- dat[complete.cases(dat), ]   # remove missing
+
+# Relevel factors for clarity
+dat$ses_cat <- factor(dat$ses, 
+                      levels = 1:3, 
+                      labels = c("low", "middle", "high"))
+dat$prog <- factor(dat$prog, 
+                   levels = 1:3, 
+                   labels = c("general", "academic", "vocational"))
+
+# View first rows
+head(dat)
+```
+
+Let's examine the distribution of the outcome:
+
+```{r outcome-dist}
+ggplot(dat, aes(x = prog)) +
+  geom_bar(aes(y = after_stat(prop), group = 1), fill = "steelblue") +
+  labs(y = "Proportion", x = "Program Type") +
+  theme_minimal()
+```
+
+## Multinomial Logistic Regression Model
+
+The multinomial logistic regression extends the binary logit model by estimating a separate binary logit for each non‑baseline category versus the baseline. Suppose the outcome $Y$ has $J$ categories, and we choose category $J$ as the baseline. Then for $j = 1, \dots, J-1$:
+
+
+$$
+\log\left(\frac{P(Y = j \mid X)}{P(Y = J \mid X)}\right) = \alpha_j + \beta_{j1} X_1 + \dots + \beta_{jk} X_k
+$$
+
+
+This is a set of $J-1$ equations. The probabilities for each category sum to 1, and we can obtain the predicted probabilities via the softmax function:
+
+
+$$
+P(Y = j \mid X) = \frac{e^{\alpha_j + \beta_{j1} X_1 + \dots + \beta_{jk} X_k}}{\sum_{m=1}^J e^{\alpha_m + \beta_{m1} X_1 + \dots + \beta_{mk} X_k}}
+$$
+
+
+For the baseline category $J$, we set $\alpha_J = 0$ and all $\beta_{J} = 0$.
+
+### Estimation
+
+Parameters are estimated by maximum likelihood. The likelihood for a sample of $n$ independent observations is:
+
+$$
+L = \prod_{i=1}^n \prod_{j=1}^J P(Y_i = j \mid X_i)^{I(Y_i = j)}
+$$
+
+Maximizing the log‑likelihood yields the estimates $\hat{\alpha}_j, \hat{\beta}_j$. Hypothesis testing and model comparison proceed similarly to binary logistic regression using likelihood ratio tests, Wald tests, and information criteria.
+
+## Interpretation
+
+Interpreting multinomial logistic regression coefficients requires care because each coefficient refers to a specific contrast between a non‑baseline category and the baseline. Common ways to present results:
+
+- **Relative log-odds**: The coefficient $\beta_{j}$ is the change in log-odds of being in category $j$ versus the baseline for a one‑unit increase in the predictor, holding other variables constant.
+- **Relative risk ratios (RRR)** : Exponentiating the coefficient, $e^{\beta_{j}}$, gives the multiplicative change in the odds of being in category $j$ versus the baseline. This is analogous to an odds ratio in binary logistic regression.
+- **Predicted probabilities**: For any combination of predictor values, we can compute the probability of each outcome category. These are often more intuitive.
+- **Marginal effects**: The average change in the probability of a particular category for a one‑unit change in a predictor (for continuous predictors) or for a contrast between groups (for categorical predictors).
+
+We will illustrate each of these using R.
+
+## Fitting a Multinomial Model in R
+
+We use the `multinom()` function from the `nnet` package. It requires the outcome to be a factor; the baseline is the first level by default. We can change the baseline using `relevel()`. For this example we will use `general` as the baseline outcome category. 
+
+Then we run the regression with the common R syntax, with `multinom()`. Once we have estimated it, we can arrange the model parameters with the `parameters()` function
+
+```{r fit-model}
+# Set baseline to "general" (first level)
+dat$prog <- relevel(dat$prog, ref = "general")
+
+# Fit model with ses_cat and write as predictors
+mreg <- multinom(prog ~ ses_cat + write, data = dat, trace = FALSE)
+
+# View coefficients (log-odds scale)
+parameters(mreg)
+```
+
+The output shows two sets of coefficients: one for "academic vs. general" and one for "vocational vs. general". Each set includes an intercept and slopes for the predictors.
+
+### Odds Ratios (Relative Risk Ratios)
+
+We exponentiate the coefficients to obtain odds ratios:
+
+```{r odds-ratios}
+parameters(mreg, exponentiate = TRUE)
+```
+
+Interpretation:
+- For students with **high SES** (compared to low SES), the odds of being in the academic program versus the general program are multiplied by **3.20** (i.e., they are 3.20 times higher), holding writing score constant.
+- For a one‑unit increase in **writing score**, the odds of being in the academic program versus the general program increase by a factor of **1.06** (about 6%), holding SES constant.
+- For students with **high SES** (compared to low SES), the odds of being in the vocational program versus the general program are multiplied by **1.20** (i.e., they are 3.20 times higher), holding writing score constant.
+- For a one‑unit increase in **writing score**, the odds of being in the vocational program versus the general program increase by a factor of **0.95** (about 5%), holding SES constant.
+
+### Changing the Baseline
+
+If you want to compare, say, vocational versus academic, you can change the baseline and refit. Choose the baseline that makes the most sense for your research question with the `relevel` function
+
+```{r change-baseline}
+dat$prog <- relevel(dat$prog, ref = "academic")
+mreg_acad <- multinom(prog ~ ses_cat + write, data = dat, trace = FALSE)
+parameters(mreg_acad, exponentiate = TRUE)
+```
+
+Now the coefficients compare "general vs. academic" and "vocational vs. academic".
+
+## Predicted Probabilities
+
+Predicted probabilities are often the most interpretable output. We can obtain them for each observation using `fitted()`:
+
+```{r fitted}
+head(fitted(mreg), 3)
+```
+
+These are the predicted probability for each subject (rows) to belong in each outcome category (columns). They will sum up to 1 by rows
+
+We can also compute average predicted probabilities for each level of a predictor, or for specific values.
+
+### Average Predictions by SES
+
+With the `avg_predictions()` function we can estimate marginal predictions to choose certain outcome category in function of the specified predictor. In this case we can see the predicted probabilities in function of the `ses_cat` predictor with the `variables` argument
+
+```{r avg-pred-ses}
+avg_predictions(mreg, variables = "ses_cat")
+```
+
+These are the predicted probabilities of each program type, averaged over the sample, holding writing score at its observed values. For example, In average people with low SES has a 44% probability of chossing the academic program, 33% probability of chosing the general program, and 22% probability of choosing the vocational program. 
+
+### Predictions Across Writing Score
+
+We can also find the predicted probabilities at a range of values from a continuous predictor, like `write` in this example
+
+```{r avg-pred-write}
+avg_predictions(mreg, variables = "write")
+```
+
+This gives the average predicted probability for each program type at each observed writing score (averaging over SES). For example, someone with $write = 31$ has a 14% probability of chossing the academic program. and 22% probability of choosing the general program.  
+
+### Conditional Plots
+
+Visualizing predicted probabilities helps understand the effects.
+
+We can also visualize the change in predicted probabilities with conditiona plots from the `plot_predictions()` function. As we have more than 2 outcome categories, we need to specified `facet_wrap(~ group)` so that the we plot a grid of conditional plots for each category from the outcome. 
+
+We can get the plot for `SES` as
+
+```{r plot-ses}
+plot_predictions(mreg, condition = "ses_cat") +
+  facet_wrap(~ group) +
+  labs(y = "Predicted Probability", 
+       x = "SES",
+       title = "By SES")
+```
+
+We can get the plot for `Writing Score` as
+
+
+```{r plot-write}
+plot_predictions(mreg, condition = "write") +
+  facet_wrap(~ group) +
+  labs(y = "Predicted Probability", 
+       x = "Writing Score",
+       title = "By Writing Score")
+```
+
+And lastly we can get the plot for `Writing Score` at each `SES` group by including both in the `condition` argument. Not that order matters here, as the first variablw will be the focal predictor and the second one will be the moderator
+
+```{r plot-interaction}
+plot_predictions(mreg, condition = c("write", "ses_cat")) +
+  facet_wrap(~ group) +
+  labs(y = "Predicted Probability", 
+       x = "Writing Score",
+       title = "Writing Score by SES")
+```
+
+These plots show how the probability of chosing each program changes with writing score, separately for each SES group.
+
+
+## Marginal Effects
+
+Marginal effects quantify the average change in predicted probability for a one‑unit change in a predictor.
+
+### Average Slope for Writing Score
+
+```{r marginal-slope}
+avg_slopes(mreg, variables = "write", type = "probs")
+```
+
+Interpretation: On average, a one‑point increase in writing score is associated with a **decrease** of about 0.28 percentage points in the probability of choosing the general program, a **increase** of about 1.7 percentage points for academic, and a **decrease** of about 1.4 percentage points for vocational. (Note: slopes for a given predictor sum to zero across categories because probabilities sum to 1.)
+
+
+### Pairwise Comparisons for SES
+
+For categorical predictors its more interpretable to estimate the group differences in predicted probability between predictor categories. In this case we ask for all pairwise comparisons between `SES` groups
+
+```{r marginal-compare}
+avg_comparisons(mreg, 
+                variables = list(ses_cat = "pairwise"), 
+                type = "probs")
+```
+
+This shows the average difference in predicted probabilities between SES groups. For example, moving from low to high SES increases the probability of academic program by about 23 percentage points, on average, and decreases the probability of general program by about 16 percentage points.
+
+## Confusion Matrix
+
+We can assess classification accuracy by comparing predicted categories (the one with highest predicted probability) to observed categories. For this we first save the predicted class for each subject (`predict(mreg)`), and then provide the predicted category and the observed one to the `confusionMatrix()` function
+
+```{r confusion}
+# Predicted classes
+pred_class <- predict(mreg)
+
+# Confusion matrix
+confusionMatrix(pred_class, dat$prog)
+```
+
+The overall accuracy is about 61%. Sensitivity and specificity are reported for each outcome category.
+
+## Pseudo R‑Squared
+
+Several pseudo R² measures have been developed to provide a sense of model fit in logistic regression, though none directly correspond to the R² from ordinary least squares regression. Each of them try to approximate the idea of overall model effect size 
+
+**McFadden's R²** is based on the log-likelihood of the fitted model relative to a null model (intercept only). It reflects the improvement in model fit. Values tend to be much lower than OLS R², with values between 0.2 and 0.4 often considered excellent fit.
+
+$$
+McFadden = \frac{-2LL_{null} - (-2LL_{k}) }{-2LL_{null}}
+$$
+
+**Cox and Snell R²** adjusts the likelihood ratio to have a maximum value less than 1. Because its upper bound is less than 1, it can be difficult to interpret, especially when the outcome is highly imbalanced.
+
+$$
+CoxSnell = 1-exp(-(-2LL_{null}-(-2LL_{k})))/n
+$$
+
+**Nagelkerke R²** rescales the Cox and Snell R² to have a maximum value of 1, making it more comparable to OLS R². It divides the Cox and Snell value by its theoretical maximum, providing a more intuitive measure of fit. In our model, Nagelkerke R² = 0.07, suggesting a modest improvement over the null model.
+
+$$
+Nagelkerke = \frac{CoxSnell \ R^2}{1-exp(-(-2LL_{null})/n)}
+$$
+
+
+
+All of these can be obtained using the `PseudoR2()` function from the `DescTools` package.
+
+```{r pseudo-r2}
+PseudoR2(mreg, 
+         which = c("McFadden", "CoxSnell", "Nagelkerke"))
+```
+
+From these measures, we recommend to use Nagelkerke R². 
+
+
+
+
+## Model Comparison
+
+We might also be interested in comparing regression models, for this we will present two ways of model comparison.
+
+### Likelihood Ratio Tests
+
+First, we will go over the Likelihood Ratio Test (LRT), this compares the models log-likelihood between models. This follows a $\Delta \chi^2 = \chi^2_1 - \chi^2_2 $ distribution with $\Delta df = df_1 - df_2$. We can do this comparison with `anova()` function
+
+We can test the overall significance of the model against a null model (intercept only):
+
+```{r lrt-null}
+mreg0 <- multinom(prog ~ 1, data = dat, trace = FALSE)
+anova(mreg0, mreg)
+```
+
+The significant result ($p < .001$) indicates that the predictors improve fit.
+
+We can also test the contribution of a specific predictor, e.g., SES:
+
+```{r lrt-ses}
+mreg1 <- multinom(prog ~ write, data = dat, trace = FALSE)
+anova(mreg1, mreg)
+```
+
+The test shows that SES significantly improves model fit beyond writing score alone ($p < .05$).
+
+If we reject the null hypothesis between models, we generally choose the "larger" model (the one with more parameters). If we fail to reject the null hypothesis between models, we generally choose the "smaller" model (the one with less parameters). Both tests show that the full model fits significantly better ($p < .05$).
+
+### Information Criteria
+
+We can also use relative measures of fit based on how much information we loose by using a model.
+
+The most commonly used information criteria are: 
+    -   Akaike Information Criteria (**AIC**): $-2\hat{l}_{m}+2k$. Approximation of the out-of-sample predictive accuracy 
+    -   Bayesian Information Criteria (**BIC**): $-2\hat{l}_{m}+k\ln(n)$. Approximation of the Bayes factor comparison between 2 models
+    
+The lower the AIC and the BIC the better our model is. By themselves they do not say a thing $\to$ We use them to *compare* models!
+
+
+Compare models using AIC and BIC (lower is better). Here we set the ICs in a table to check which model has the lowest
+
+AIC and BIC allow comparison of nested and non‑nested models:
+
+```{r ic}
+ic <- matrix(c(AIC(mreg0), BIC(mreg0),
+               AIC(mreg1), BIC(mreg1),
+               AIC(mreg), BIC(mreg)), ncol = 2, byrow = TRUE)
+colnames(ic) <- c("AIC", "BIC")
+rownames(ic) <- c("Null Model", "Write only", "Full Model")
+ic
+```
+
+Lower values indicate better fit; the full model has the lowest AIC, but BIC is lowest for the write‑only model (due to heavier penalty for complexity).
+
+## Assumptions of Multinomial Logistic Regression
+
+1. **Categorical outcome**: The dependent variable is nominal with $J \ge 3$ categories.
+2. **Independence of errors**: Observations are independent (no clustering). If clustering exists, consider mixed effects models.
+3. **No severe multicollinearity**: Correlated predictors can inflate standard errors. Check VIFs if concerned.
+4. **Linearity between continuous predictors and log-odds**: For each non‑baseline category, the log‑odds of that category versus baseline should be linearly related to continuous predictors. This can be checked by adding nonlinear terms (e.g., squared) and testing their significance.
+5. **Independence of Irrelevant Alternatives (IIA)** : The odds of choosing one category over another should not depend on the presence of other categories. This is a strong assumption; if categories are very similar, IIA may be violated. For example, if "academic" and "vocational" are seen as similar, adding a new category like "arts" might change their relative odds. There are tests (e.g., Hausman‑McFadden), but they are not always reliable; theoretical judgment is often preferable.
+
+## Pros and Cons
+
+**Pros**:
+- Natural extension of binary logistic regression.
+- Handles nominal outcomes flexibly.
+- Readily available in R (`nnet`, `VGAM`).
+- Interpretation via odds ratios and predicted probabilities is straightforward.
+
+**Cons**:
+- Many coefficients can be overwhelming (especially with many categories and predictors).
+- Assumes IIA, which may be unrealistic.
+- Can be overparameterized; model selection may be needed.
+- Ordinal information is ignored if used for ordinal outcomes (ordinal logistic regression is more parsimonious for ordered categories).
+
+## What to Report
+
+When presenting results, include:
+
+- The model selection process (how predictors were chosen).
+- Measures of overall fit: pseudo‑$R^2$, likelihood ratio test, AIC/BIC, classification accuracy.
+- A table of coefficients (log‑odds or odds ratios) with confidence intervals and p‑values.
+- Predicted probabilities or marginal effects for key predictors, often visualized with plots.
+- A discussion of assumptions and any violations.
+
+For example, a coefficient table with odds ratios:
+
+```{r report-table}
+parameters(mreg, exponentiate = TRUE)
+```
+
+And a visualization of predicted probabilities:
+
+```{r report-plot}
+plot_predictions(mreg, condition = c("write", "ses_cat")) +
+  facet_wrap(~ group) +
+    labs(y = "Predicted Probability", 
+       x = "Writing Score",
+       title = "Writing Score by SES")
+```
+
+## Conclusion
+
+Multinomial logistic regression is a powerful tool for modeling nominal outcomes with more than two categories. By thinking of it as a set of binary logistic regressions, the interpretation becomes manageable. Always complement coefficient tables with predicted probabilities and marginal effects to convey substantive meaning. Be mindful of the IIA assumption and consider whether it is plausible for your data.
+
+
+# References
+
+Agresti, A. (2019). An introduction to categorical data analysis (Third edition). John Wiley & Sons.
+
+
