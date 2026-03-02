@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-29 January, 2026
+02 March, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -16,6 +16,7 @@ Mauricio Garnier-Villarreal
   - [Relations between variables](#relations-between-variables)
   - [Scale evaluation](#scale-evaluation)
   - [General Linear Models](#general-linear-models)
+  - [Generalized Linear Models](#generalized-linear-models)
   - [Mixture models](#mixture-models)
   - [Factor Analysis](#factor-analysis)
   - [Bayesian SEM with blavaan](#bayesian-sem-with-blavaan)
@@ -265,6 +266,17 @@ following a course.
   effect, NHST methods, recommendations and interpretation. Packages:
   rio, effectsize, marginaleffects, bruceR, ggplot2, parameters, car,
   tidyr, patchwork
+
+## Generalized Linear Models
+
+- [Logistic
+  regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/14_logistic_regression.md):
+  setting up R session, import data set, Logistic regression, transform
+  parameters for intepretation, predicted probabilities, marginal
+  effects, conditional plots, pseudo R-squared, model comparison,
+  classification accuracy. Packages: summarytools, marginaleffects,
+  effectsize, caret, DescTools, ggplot2, arm, nonnest2, MASS,
+  parameters, patchwork, rio, car, tidyr
 
 ## Mixture models
 
