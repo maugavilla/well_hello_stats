@@ -632,7 +632,9 @@ the probability metric. Just like in this equation
 
 $$
 \hat{p} = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X_1 + \dots + \hat{\beta}_k X_k}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X_1 + \dots + \hat{\beta}_k X_k}}
-$$ This is the same as
+$$
+
+This is the same as
 
 ``` r
 exp(lo)/(1+exp(lo))

@@ -269,9 +269,11 @@ invlogit(lo)   # probability
 ```
 Here we first build the prediction from the model parameters (`cc`) in the log-odds metric (`lo`). This is the same as in linear regression, the difference is that this prediction is in a metric hard to interpret. Then we put the log-odds prediction into the inverse logit function (`invlogit()`), this function transforms the logit link function back to the probability metric. Just like in this equation
 
+
 $$
 \hat{p} = \frac{e^{\hat{\beta}_0 + \hat{\beta}_1 X_1 + \dots + \hat{\beta}_k X_k}}{1 + e^{\hat{\beta}_0 + \hat{\beta}_1 X_1 + \dots + \hat{\beta}_k X_k}}
 $$
+
 This is the same as 
 
 ```{r}
