@@ -1,0 +1,469 @@
+---
+title: "Multilevel Regression: introduction and random effects"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+code-copy: true
+---
+
+## Introduction to Multilevel Modeling
+
+Multilevel modeling (MLM), also known as hierarchical linear modeling or mixed-effects modeling, is a regression-based technique designed for data with a nested or clustered structure. Such data arise when observations are grouped within higher-level units. Common examples:
+
+- Students nested within classrooms or schools
+- Employees nested within organizations
+- Repeated measurements nested within individuals (longitudinal data)
+- Patients nested within therapists
+
+In these situations, observations within the same cluster tend to be more similar than observations from different clusters. This similarity – often measured by the intraclass correlation – violates the assumption of independence required by ordinary least squares (OLS) regression. If we ignore this clustering, standard errors become too small, leading to inflated Type I error rates. MLM explicitly models this dependence by allowing regression coefficients (intercepts and slopes) to vary across clusters, thereby producing correct standard errors and enabling us to study how relationships differ between clusters.
+
+Software for MLM includes R (packages `lme4`, `nlme`, `lmerTest`), SAS (`PROC MIXED`), SPSS (`MIXED`), Stata (`mixed`), and specialized programs like HLM and MLwiN. In this tutorial we use R with the `lme4` package, together with supporting packages for diagnostics and effect sizes.
+
+## Quick Review of Linear Regression and Its Assumptions
+
+The simple linear regression model for a single predictor is:
+
+$$ 
+y_i = \beta_0 + \beta_1 x_i + e_i, \quad e_i \sim N(0, \sigma^2) 
+$$
+
+Key assumptions (Gauss-Markov theorem) include:
+
+1. **Linearity**: The relationship between predictors and outcome is linear.
+2. **Independence**: Observations are independent of each other.
+3. **Homoscedasticity**: The variance of residuals is constant across all levels of predictors.
+4. **Normality**: Residuals are normally distributed (required for inference, especially with small samples).
+
+When data are nested, the independence assumption is violated because observations from the same cluster share common influences, leading to correlated errors. This can result in underestimated standard errors, inflated Type I error rates, and biased parameter estimates if ignored.
+
+## How Can Nested Data Be Handled (instead of MLM)?
+
+Several traditional approaches have been used to analyze nested data, each with significant drawbacks. We illustrate these using the `SB.csv` dataset (Snijders & Bosker, 1999) containing 2287 pupils in 131 schools. The outcome is a language post-test score (`langpost`), and a predictor is verbal IQ (`iq_verb`).
+
+```{r setup, message=FALSE, warning=FALSE}
+# Load required packages
+library(lme4)
+library(lmerTest)
+library(rio)
+library(parameters)
+library(ggplot2)
+library(dplyr)
+library(r2mlm)
+library(tidyr)
+library(car)
+library(performance)
+library(marginaleffects)
+
+# Read data
+SB <- import("SB.csv")
+SB <- drop_na(SB)  # remove missing for simplicity
+head(SB)
+```
+
+### Disaggregation
+
+Analyze all level-1 data as if no clustering exists. This ignores the grouping, leading to underestimated standard errors.
+
+```{r disaggregation}
+m_dis <- lm(langpost ~ iq_verb, data = SB)
+summary(m_dis)
+parameters(m_dis)
+```
+
+The output shows a highly significant effect of iq_verb, but the standard errors are too small because they do not account for school-level similarity. The R² is 0.37, but this is misleading because part of the explained variance may be due to between-school differences.
+
+### Aggregation
+
+Average the outcome and predictors within each cluster and analyze at the cluster level. This loses within-cluster information and reduces sample size dramatically.
+
+```{r aggregation}
+school_means <- SB %>%
+  group_by(schoolnr) %>%
+  summarise(langpost = mean(langpost),
+            iq_verb = mean(iq_verb))
+m_agg <- lm(langpost ~ iq_verb, data = school_means)
+summary(m_agg)
+parameters(m_agg)
+```
+
+Now we have only 131 observations (one per school). The effect of iq_verb is larger (4.05) but we cannot make inferences about individual students (ecological fallacy). The R² is 0.60, but this only describes between-school variation.
+
+### Fixed Effects (ANCOVA) Approach
+
+Include dummy variables for each cluster (minus one) to control for cluster differences. This can lead to many parameters, especially with many clusters, and cannot include cluster-level predictors.
+
+```{r fixedeffects}
+m_fe <- lm(langpost ~ iq_verb + factor(schoolnr), data = SB)
+summary(m_fe)
+#parameters(m_fe)  # commented because output is very long
+Anova(m_fe, type = 2)
+```
+
+The ANOVA table shows that both iq_verb and school are significant. However, this model includes 130 dummy variables (schools minus one), which is cumbersome and assumes schools are fixed effects – we cannot generalize to other schools. Also, we cannot include school-level predictors because they would be perfectly collinear with the dummies.
+
+### Separate Regressions
+
+Run a separate regression in each cluster. This yields unstable estimates, especially for small clusters, and does not provide a single summary of the overall effect.
+
+```{r separate}
+# Using lmList from nlme
+library(nlme)
+mL <- lmList(langpost ~ iq_verb | schoolnr, data = SB)
+summary(mL)
+```
+
+The output shows the intercept and slope for each school. Some schools have very few students, leading to imprecise estimates (e.g., school 10 has slope 5.76 with SE 1.98). There is no single measure of the average relationship, and small schools are not “borrowing strength” from larger ones.
+
+All these methods are suboptimal. Disaggregation ignores clustering, aggregation loses power and can lead to ecological fallacy, fixed effects models are cumbersome and cannot generalize beyond sampled clusters, and separate regressions are inefficient and ignore the multilevel structure.
+
+## Why We Recommend MLM Instead of Other Methods
+
+Multilevel modeling treats clusters as a random sample from a population, estimating both fixed effects (average relationships) and random effects (cluster-specific deviations). Key advantages:
+
+- **Correct standard errors**: Accounts for within-cluster dependence.
+- **Variance decomposition**: Partitions outcome variance into within- and between-cluster components (intraclass correlation).
+- **Can include predictors at all levels**: Level-1 (individual) and level-2 (cluster) predictors can be modeled simultaneously.
+- **Cross-level interactions**: Investigate whether relationships at level-1 vary as a function of level-2 characteristics.
+- **Shrinkage estimates**: Empirical Bayes predictions for clusters borrow strength from the overall data, improving estimates for small clusters.
+- **Handles unbalanced designs naturally**: Different cluster sizes are accommodated.
+
+As Hox et al. (2018, p. 1) put it: "Multilevel analysis is used to examine relations between variables measured at different levels of the multilevel data structure."
+
+## Random Effects (MLM) Regression Models
+
+### The Two-Level Model
+
+For a continuous outcome $y_{ij}$ for individual $i$ in cluster $j$, with a single level-1 predictor $x_{ij}$ and a level-2 predictor $z_j$, the model is:
+
+**Level 1** (within-cluster):
+$$ 
+y_{ij} = \beta_{0j} + \beta_{1j} x_{ij} + e_{ij}, \quad e_{ij} \sim N(0, \sigma^2) 
+$$
+
+**Level 2** (between-cluster):
+$$ 
+\beta_{0j} = \gamma_{00} + \gamma_{01} z_j + u_{0j} 
+$$
+
+$$ 
+\beta_{1j} = \gamma_{10} + \gamma_{11} z_j + u_{1j} 
+$$
+where $\mathbf{u}_j = (u_{0j}, u_{1j})' \sim MVN(\mathbf{0}, \mathbf{T})$, with $\mathbf{T}$ containing variances $\tau_{00}$ and $\tau_{11}$ and covariance $\tau_{01}$.
+
+Substituting gives the combined model:
+$$ 
+y_{ij} = \gamma_{00} + \gamma_{10} x_{ij} + \gamma_{01} z_j + \gamma_{11} x_{ij} z_j + u_{0j} + u_{1j} x_{ij} + e_{ij} 
+$$
+
+The fixed part ($\gamma$'s) represents the average relationships across all clusters; the random part ($u$'s) captures cluster-specific deviations.
+
+### Estimation
+
+Parameters are typically estimated using maximum likelihood (ML) or restricted maximum likelihood (REML). REML is preferred for variance components because it corrects for the loss of degrees of freedom from estimating fixed effects (Hox et al., 2018, Chapter 3). In `lmer()`, we set `REML = FALSE` for ML (allows likelihood ratio tests on fixed effects) and `REML = TRUE` (default) for REML when comparing models with the same fixed structure. Model comparisons can be done using likelihood ratio tests (LRT) or information criteria (AIC, BIC).
+
+### Building Models: A Sequential Approach
+
+We follow the strategy outlined by Peugh (2010): start with a null model, then add level-1 predictors, test for random slopes, add level-2 predictors, and finally cross-level interactions.
+
+#### Null Model (Random Intercept Only)
+
+```{r null}
+m0 <- lmer(langpost ~ 1 + (1 | schoolnr), data = SB, REML = FALSE)
+summary(m0)
+parameters(m0)
+```
+
+**Explanation of arguments:**
+- `langpost ~ 1 + (1 | schoolnr)`: the formula specifies a fixed intercept (`1`) and a random intercept for each school (`(1 | schoolnr)`). The term `(1 | schoolnr)` means “allow the intercept to vary across schools”.
+- `REML = FALSE`: use maximum likelihood (ML) estimation. This is chosen because we will later compare models that differ in fixed effects.
+
+**Output interpretation:**
+- Fixed effects: The intercept is the grand mean of `langpost` across all students and schools, estimated as 40.36.
+- Random effects: 
+  - `schoolnr (Intercept)` variance = 19.43 (SD = 4.41). This is the between-school variance in mean language scores.
+  - `Residual` variance = 64.57 (SD = 8.04). This is the within-school (student-level) variance.
+- The total variance = 19.43 + 64.57 = 84.00.
+- Intraclass correlation (ICC) = 19.43 / 84.00 = 0.23, meaning 23% of the variance in language scores is between schools.
+
+```{r icc}
+# Compute ICC manually
+VarCorr(m0)
+icc0 <- 4.4078^2 / (4.4078^2 + 8.0354^2)
+icc0
+```
+We can easily estimate this from a random intercept model with the `icc()` function from the `performance` package:
+
+```{r}
+icc(m0)
+```
+
+The ICC is a key measure of clustering; values above 0.05–0.10 often warrant multilevel modeling.
+
+#### Adding a Fixed Level-1 Predictor (iq_verb)
+
+```{r fixedL1}
+m1 <- lmer(langpost ~ 1 + iq_verb + (1 | schoolnr), 
+           data = SB, REML = FALSE)
+summary(m1)
+parameters(m1)
+```
+
+**Explanation of arguments:**
+- `iq_verb` is added as a fixed effect. It is a student-level predictor.
+- The random part remains `(1 | schoolnr)`, i.e., only the intercept varies across schools.
+
+**Output interpretation:**
+- Fixed effect of `iq_verb` = 2.49 (p < .001). This means that, on average, a one-point increase in verbal IQ is associated with a 2.49-point increase in language post-test, holding school constant.
+- The intercept now represents the predicted language score when `iq_verb = 0`. With centered predictors, this would be more meaningful, but here it's simply the value at zero IQ.
+- Random effects: The residual variance decreased from 64.57 to 42.22 (a reduction of about 35%). The between-school variance also decreased from 19.43 to 9.50, indicating that part of the between-school differences is explained by differences in average IQ across schools (compositional effect).
+
+#### Allowing the Slope to Vary Across Level 2-units
+
+```{r randomL1}
+m2 <- lmer(langpost ~ 1 + iq_verb + (1 + iq_verb | schoolnr), 
+           data = SB, REML = FALSE,
+           control = lmerControl(optimizer = "Nelder_Mead"))
+summary(m2)
+parameters(m2)
+```
+
+**Explanation of arguments:**
+- `(1 + iq_verb | schoolnr)` means we allow both the intercept and the slope of `iq_verb` to vary randomly across schools. This adds two variance components: variance of the slopes, and covariance between intercepts and slopes.
+- `control = lmerControl(optimizer = "Nelder_Mead")`: we specify a different optimizer because models with random slopes can be more difficult to estimate; Nelder-Mead is a robust alternative.
+
+**Output interpretation:**
+- Fixed effects: The average slope of `iq_verb` is 2.53, similar to before.
+- Random effects: 
+  - Variance of intercepts = 65.88 (SD = 8.12) – this is now the variance of school mean language scores *when iq_verb = 0*. Because we haven't centered `iq_verb`, zero is outside the observed range; this variance is not directly interpretable.
+  - Variance of slopes = 0.21 (SD = 0.46). This indicates that the relationship between IQ and language varies across schools: some schools have a stronger effect, others weaker.
+  - Correlation between intercepts and slopes = -0.98. This strong negative correlation suggests that schools with higher average language scores (higher intercept) tend to have weaker IQ effects (lower slopes). This could be a ceiling effect or a statistical artifact due to scaling; centering predictors would help interpret these variances and covariances.
+- Residual variance = 41.48, slightly lower than in `m1`.
+
+Now the slope of iq_verb varies across schools (variance = 0.21). We can test whether this random slope is necessary using a likelihood ratio test.
+
+```{r lrt}
+anova(m1, m2)
+```
+
+The test compares the deviance (-2 log likelihood) of the two models. The difference is 20.99 on 2 degrees of freedom (because `m2` adds two parameters: slope variance and intercept-slope covariance). The p-value is highly significant, indicating that allowing the slope to vary improves model fit.
+
+#### Adding a Level-2 Predictor (percent minority)
+
+```{r L2}
+m3 <- lmer(langpost ~ 1 + iq_verb + percmino + (1 + iq_verb | schoolnr), 
+           data = SB, REML = FALSE,
+           control = lmerControl(optimizer = "Nelder_Mead"))
+summary(m3)
+parameters(m3)
+```
+
+**Explanation of arguments:**
+- `percmino` is a school-level variable (percentage of minority students). It is added as a fixed effect to explain between-school variation.
+
+**Output interpretation:**
+- Fixed effect of `percmino` = -0.073 (p < .001). For every 1% increase in minority enrollment, the predicted language score decreases by 0.07 points, holding student IQ constant. This is a small but significant contextual effect.
+- The random slope variance remains about 0.21, indicating that even after controlling for school composition, the IQ effect still varies across schools.
+
+`percmino` has a significant negative effect: schools with higher percent minority have lower average language scores.
+
+### Visualizing Random Effects
+
+We can extract and plot the random effects (BLUPs) using `ranef()` and using `ggplot2` we can plot the random slope and intercept.
+
+```{r}
+ranef_m2 <- ranef(m2)
+dd <- as.data.frame(ranef_m2)
+
+ggplot(dd, aes(y=grp,x=condval)) +
+  geom_point() + 
+  facet_wrap(~term,scales="free_x") +
+  geom_errorbar(aes(xmin=condval -2*condsd,
+                    xmax=condval +2*condsd), 
+                width=0, 
+                orientation = "y")
+```
+
+**Explanation:**
+- `ranef(m2)` extracts the conditional modes (best linear unbiased predictions, or BLUPs) of the random effects, along with conditional standard deviations (`condsd`). The result is a list; we convert it to a data frame.
+- The plot shows each school's random intercept deviation (left) and random slope deviation (right). The dots are the point estimates, and the error bars represent ±2 conditional SDs (roughly 95% confidence intervals for the random effects). Schools with error bars that do not overlap zero are significantly different from the average.
+- This caterpillar plot helps identify outliers and assess the variability of random effects.
+
+#### With `marginaleffects`
+
+We can also visualize the **fixed** effects with the `marginaleffects` package, as these are `ggplot2` objects you can modify them. 
+
+```{r}
+plot_predictions(m3, condition = "iq_verb")
+plot_predictions(m3, condition = "percmino")
+```
+
+**Explanation:**
+- `plot_predictions()` from `marginaleffects` computes predicted values of the outcome across the range of a predictor, holding other predictors at their means (or typical values). The default uses only fixed effects (i.e., it averages over random effects), which is appropriate for population-level inference.
+- The first plot shows the average relationship between IQ and language scores, with a confidence band.
+- The second plot shows the average relationship between percent minority and language scores. Both are linear because we have not included interactions.
+
+We can also visualize the variability in the conditional slope, via `predictions` by first generating the model predictions at the level-1. Then plot the slope for each level-1 unit.
+
+```{r}
+# unit level
+preds <- predictions(m3, 
+                     newdata = datagrid(schoolnr=as.factor(SB$schoolnr),
+                                        iq_verb=4:18 ))
+
+ggplot(preds, aes(iq_verb, estimate, level=schoolnr)) +
+  geom_line()+
+  labs(y = "Predicted langpost", 
+       x = "iq_verb", 
+       title = "School level predictions")
+```
+
+**Explanation:**
+- `predictions()` generates predicted values for each combination of predictors specified in `newdata`. Here we create a grid with all schools and IQ values from 4 to 18.
+- Because we include `schoolnr`, the predictions use the random effects for each school, so each line represents the predicted regression line for that school (conditional on its random intercept and slope). This visualizes the heterogeneity in the IQ effect across schools.
+
+### Model Comparison
+
+Use `anova()` for nested models, and `AIC()`, `BIC()` for non-nested comparisons.
+
+```{r compare}
+AIC(m0, m1, m2, m3)
+BIC(m0, m1, m2, m3)
+```
+
+**Interpretation:** Lower AIC/BIC indicates better fit. Here, `m3` has the lowest AIC and BIC, suggesting it is the best among these models. However, these criteria do not test significance; they are used for model selection.
+
+## Effect Size Measures in MLM
+
+Traditional $R^2$ is not directly applicable in MLM because variance is partitioned across levels. Several pseudo-$R^2$ measures have been proposed.
+
+### Level-Specific Pseudo-R² (Raudenbush & Bryk, 2002)
+
+These measure the proportion of variance explained at each level relative to a baseline model (usually the null model).
+
+For level-1:
+$$ 
+R^2_1 = \frac{\sigma^2_{null} - \sigma^2_{full}}{\sigma^2_{null}} 
+$$
+
+For level-2 (intercept):
+$$ 
+R^2_2 = \frac{\tau_{00,null} - \tau_{00,full}}{\tau_{00,null}} 
+$$
+
+For level-2 (slope):
+$$ 
+R^2_{slope} = \frac{\tau_{11,null} - \tau_{11,full}}{\tau_{11,null}} 
+$$
+
+We can compute these manually from our models.
+
+```{r pseudoR2}
+# Level-1 R² from m1 vs m0
+sigma2_null <- as.data.frame(VarCorr(m0)) %>% filter(grp == "Residual") %>% pull(vcov)
+sigma2_m1 <- as.data.frame(VarCorr(m1)) %>% filter(grp == "Residual") %>% pull(vcov)
+R2_1 <- (sigma2_null - sigma2_m1) / sigma2_null
+R2_1
+```
+
+The result 0.346 means that adding `iq_verb` explains about 34.6% of the within-school variance in language scores.
+
+### Snijders & Bosker's (1999) Overall R²
+
+Snijders and Bosker proposed a total $R^2$ based on the proportional reduction in prediction error. It is defined as:
+
+$$ 
+R^2_{SB} = 1 - \frac{\hat{\sigma}^2_{full} + \hat{\tau}_{00,full}}{\hat{\sigma}^2_{null} + \hat{\tau}_{00,null}} 
+$$
+
+This can be computed from the null and full models.
+
+```{r SB}
+var_null <- sigma2_null + as.data.frame(VarCorr(m0)) %>% filter(grp == "schoolnr") %>% pull(vcov)
+var_full <- sigma2_m1 + as.data.frame(VarCorr(m1)) %>% filter(grp == "schoolnr") %>% pull(vcov)
+R2_SB <- 1 - var_full / var_null
+R2_SB
+```
+
+This value of 0.384 indicates that the model explains 38.4% of the total variance (both within and between) compared to the null model.
+
+### Conditional and marginal R²
+
+We can also estimate the **Conditional** and **Marginal** $R^2$, to separate the explained variance related to fixed and fixed+random effects
+
+- **Marginal** $R^2$: variance explained by only fixed predictors
+- **Conditional** $R^2$: variance explained by both fixed and random predictors
+
+We can estimate them with the `r2()` function from the `performance` package. For the third model we see that 36.7% of the variance is due only to the fixed effects, and 48.4% of the variance is due to both fixed and random effects.
+
+```{r}
+r2(m3)
+```
+
+**Interpretation:**
+
+- Marginal R² = 0.367: the fixed effects (IQ and percent minority) account for 36.7% of the total variance.
+- Conditional R² = 0.484: the entire model, including the random intercepts and slopes, explains 48.4% of the variance. The difference (0.117) is the variance attributable to the random effects (i.e., between-school heterogeneity).
+
+### Rights & Sterba (2019) Framework
+
+Rights and Sterba (2019) developed a comprehensive framework that partitions variance into components attributable to level-1 predictors via fixed slopes ($f_1$), level-2 predictors via fixed slopes ($f_2$), random slope variation ($v$), random intercept variation ($m$), and residual. They provide total, within-cluster, and between-cluster $R^2$ measures, and show that many previous measures are special cases.
+
+The R package `r2mlm` implements these measures. We need to fit a model with cluster-mean-centered predictors to obtain proper decomposition. We'll create centered variables.
+
+```{r centering}
+SB <- SB %>%
+  group_by(schoolnr) %>%
+  mutate(iq_verb_c = iq_verb - mean(iq_verb, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+Now fit a model with level-1 predictor centered and random slope for the centered predictor.
+
+```{r r2mlm_model}
+m_final <- lmer(langpost ~ 1 + iq_verb_c + 
+                  (1 + iq_verb_c | schoolnr), data = SB, REML = TRUE)
+```
+
+Compute the R² measures:
+
+```{r r2mlm}
+r2mlm(m_final)
+```
+
+**Explanation of output:**
+
+- The plot shows three bar charts: total variance decomposition, within-cluster variance decomposition, and between-cluster variance decomposition.
+- The printed tables:
+  - `$Decompositions`: the raw proportions of variance attributable to each source (total, within, between). For example, `fixed, within` (0.253) means that 25.3% of total variance is due to the fixed effect of the within-school centered IQ. `slope variation` (0.009) is the variance due to random slopes.
+  - `$R2s`: the actual R² measures. 
+    - `f1` = proportion of total variance explained by level-1 predictors via fixed slopes (0.253).
+    - `f2` = proportion explained by level-2 predictors (here none, so 0).
+    - `v` = proportion explained by random slope variation (0.009).
+    - `m` = proportion explained by random intercept variation (0.256).
+    - `f` = total variance explained by fixed effects (0.253).
+    - `fv` = total explained by fixed + random slopes (0.263).
+    - `fvm` = total explained by fixed + random slopes + random intercepts (0.519), which is the conditional R².
+    - The within columns give the same measures but restricted to within-cluster variance; between columns give between-cluster measures.
+
+For example, `R2_f` is the proportion of total variance explained by fixed effects, `R2_v` by random slope variation, `R2_m` by random intercept variation. The `R2_within` and `R2_between` give level-specific explained variance.
+
+### Recommendations for Reporting
+
+Rights and Cole (2018) advise reporting a set of measures to fully convey effect sizes. At a minimum, report:
+
+- Total R² (marginal and conditional, via `r2` output)
+- Level-1 and level-2 specific R²
+- The decomposition of variance components (e.g., via the `r2mlm` output)
+
+When comparing models, use differences in these R² measures (Rights & Sterba, 2020). The `r2mlm` package also provides functions for model comparison.
+
+## References
+
+- Hox, J. J., Moerbeek, M., & van de Schoot, R. (2018). *Multilevel analysis: Techniques and applications* (3rd ed.). Routledge.
+- Peugh, J. L. (2010). A practical guide to multilevel modeling. *Journal of School Psychology, 48*(1), 85–112.
+- Rights, J. D., & Sterba, S. K. (2019). Quantifying explained variance in multilevel models: An integrative framework for defining R-squared measures. *Psychological Methods, 24*(3), 309–338.
+- Rights, J. D., & Sterba, S. K. (2020). New recommendations on the use of R-squared differences in multilevel model comparisons. *Multivariate Behavioral Research, 55*(4), 568–599.
+- Rights, J. D., & Cole, D. A. (2018). Effect size measures for multilevel models in clinical child and adolescent research: New R-squared methods and recommendations. *Journal of Clinical Child & Adolescent Psychology, 47*(6), 863–873.
+- Snijders, T. A. B., & Bosker, R. J. (2012). *Multilevel analysis: An introduction to basic and advanced multilevel modeling* (2nd ed.). Sage.
