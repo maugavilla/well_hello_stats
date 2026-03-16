@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-02 March, 2026
+16 March, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -17,6 +17,7 @@ Mauricio Garnier-Villarreal
   - [Scale evaluation](#scale-evaluation)
   - [General Linear Models](#general-linear-models)
   - [Generalized Linear Models](#generalized-linear-models)
+  - [Multilevel Models](#multilevel-models)
   - [Mixture models](#mixture-models)
   - [Factor Analysis](#factor-analysis)
   - [Bayesian SEM with blavaan](#bayesian-sem-with-blavaan)
@@ -284,6 +285,15 @@ following a course.
   probabilities, marginal effects, conditional plots, pseudo R-squared,
   model comparison, classification accuracy. Packages: rio, nnet,
   parameters, marginaleffects, ggplot2, DescTools, caret.
+
+## Multilevel Models
+
+- [Multilevel regression: intro and random
+  effects](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_MLM1.md):
+  setting up R session, import data set, how to handle nested data, MLM,
+  random effects, visualization, model comparison, effect sizes.
+  Packages: lme4, lmerTest, rio, parameters, ggplot2, dplyr, r2mlm,
+  tidyr, car, performance, marginaleffects
 
 ## Mixture models
 

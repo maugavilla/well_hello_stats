@@ -104,6 +104,9 @@ Here you will find links for the respective tutorials, and a short description. 
 -   [Logistic regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/14_logistic_regression.md): setting up R session, import data set, Logistic regression, transform parameters for intepretation, predicted probabilities, marginal effects, conditional plots, pseudo R-squared, model comparison, classification accuracy. Packages: summarytools, marginaleffects, effectsize, caret, DescTools, ggplot2, arm, nonnest2, MASS, parameters, patchwork, rio, car, tidyr
 -   [Multinomial Logistic regression](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/15_multinomial_logistic_regression.md): setting up R session, import data set, Multinomial Logistic regression, transform parameters for intepretation, predicted probabilities, marginal effects, conditional plots, pseudo R-squared, model comparison, classification accuracy. Packages: rio, nnet, parameters, marginaleffects, ggplot2, DescTools, caret.
 
+## Multilevel Models
+-   [Multilevel regression: intro and random effects](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_MLM1.md): setting up R session, import data set, how to handle nested data, MLM, random effects, visualization, model comparison, effect sizes. Packages: lme4, lmerTest, rio, parameters, ggplot2, dplyr, r2mlm, tidyr, car, performance, marginaleffects
+
 ## Mixture models
 
 -   [LCA with depmixS4 (categorical indicators)](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/12_LCA_depmixS4_cat.md): latent class analysis. depmixS4 basics, dichotomous indicator example, class enumeration, and interpretation. Packages: rio, depmixS4, sjlabelled, summarytools, ggplot2.
