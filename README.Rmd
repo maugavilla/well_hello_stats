@@ -106,6 +106,7 @@ Here you will find links for the respective tutorials, and a short description. 
 
 ## Multilevel Models
 -   [Multilevel regression: intro and random effects](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_MLM1.md): setting up R session, import data set, how to handle nested data, MLM, random effects, visualization, model comparison, effect sizes. Packages: lme4, lmerTest, rio, parameters, ggplot2, dplyr, r2mlm, tidyr, car, performance, marginaleffects
+-   [Multilevel regression: centering](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_1_MLM_centering.md): setting up R session, import data set, grand mean centering, group mean centering, separating contextual effects, effect sizes. Packages: lme4, lmerTest, rio, parameters, performance, r2mlm, dplyr, ggplot2, tidyr
 
 ## Mixture models
 

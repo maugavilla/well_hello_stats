@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-16 March, 2026
+17 March, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -294,6 +294,12 @@ following a course.
   random effects, visualization, model comparison, effect sizes.
   Packages: lme4, lmerTest, rio, parameters, ggplot2, dplyr, r2mlm,
   tidyr, car, performance, marginaleffects
+- [Multilevel regression:
+  centering](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_1_MLM_centering.md):
+  setting up R session, import data set, grand mean centering, group
+  mean centering, separating contextual effects, effect sizes. Packages:
+  lme4, lmerTest, rio, parameters, performance, r2mlm, dplyr, ggplot2,
+  tidyr
 
 ## Mixture models
 
