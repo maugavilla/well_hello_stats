@@ -403,8 +403,8 @@ r2(m3)
 
 **Interpretation:**
 
-- Marginal R² = 0.367: the fixed effects (IQ and percent minority) account for 36.7% of the total variance.
-- Conditional R² = 0.484: the entire model, including the random intercepts and slopes, explains 48.4% of the variance. The difference (0.117) is the variance attributable to the random effects (i.e., between-school heterogeneity).
+- Marginal $R^2$ = 0.367: the fixed effects (IQ and percent minority) account for 36.7% of the total variance.
+- Conditional $R^2$ = 0.484: the entire model, including the random intercepts and slopes, explains 48.4% of the variance. The difference (0.117) is the variance attributable to the random effects (i.e., between-school heterogeneity).
 
 ### Rights & Sterba (2019) Framework
 
