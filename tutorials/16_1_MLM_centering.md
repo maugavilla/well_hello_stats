@@ -23,8 +23,10 @@ Mauricio Garnier-Villarreal
   - [The Fully Centered Model (CWC + Centered Group
     Mean)](#the-fully-centered-model-cwc--centered-group-mean)
     - [Model 4: The Final Model](#model-4-the-final-model)
-      - [Detailed Interpretation of Final Model
-        Results](#detailed-interpretation-of-final-model-results)
+  - [Detailed Interpretation of Final Model
+    Results](#detailed-interpretation-of-final-model-results)
+    - [Fixed Effects](#fixed-effects)
+    - [Random Effects](#random-effects)
   - [Variance Partitioning](#variance-partitioning)
   - [Summary Table for
     Interpretation](#summary-table-for-interpretation)
@@ -162,10 +164,11 @@ head(SB[, c("schoolnr", "iq_verb", "iq_mean")])
 
 We start with a baseline model using the raw, uncentered predictor. This
 model will serve as a reference point. It includes a random intercept
-for schools but keeps the slope of iq_verb fixed for simplicity.
+for schools and a random slope for `iq_verb`, allowing the relationship
+between IQ and language scores to vary across schools.
 
 ``` r
-model_uncentered <- lmer(langpost ~ 1 + iq_verb + (1 | schoolnr),
+model_uncentered <- lmer(langpost ~ 1 + iq_verb + (1 + iq_verb | schoolnr),
                          data = SB, REML = FALSE)
 
 summary(model_uncentered)
@@ -173,60 +176,71 @@ summary(model_uncentered)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_verb + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_verb + (1 + iq_verb | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15259.8   15282.7   -7625.9   15251.8      2283 
+      15242.8   15277.2   -7615.4   15230.8      2281 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.0958 -0.6370  0.0580  0.7069  3.1467 
+    -4.1429 -0.6352  0.0616  0.7115  2.7065 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept)  9.497   3.082   
-     Residual             42.227   6.498   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept) 67.714   8.2289         
+              iq_verb      0.219   0.4679   -0.98 
+     Residual             41.456   6.4386         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept) 1.117e+01  8.788e-01 1.926e+03   12.71   <2e-16 ***
-    iq_verb     2.488e+00  7.005e-02 2.276e+03   35.52   <2e-16 ***
+    (Intercept)  10.80129    1.11769 105.28018   9.664  3.4e-16 ***
+    iq_verb       2.52742    0.08191 105.55675  30.855  < 2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
             (Intr)
-    iq_verb -0.937
+    iq_verb -0.967
+    optimizer (nloptwrap) convergence code: 0 (OK)
+    Model failed to converge with max|grad| = 0.395399 (tol = 0.002, component 1)
+      See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
-parameters(model_uncentered)
+parameters(model_uncentered, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |        95% CI | t(2283) |      p
+    Parameter   | Coefficient |   SE |        95% CI | t(2281) |      p
     -------------------------------------------------------------------
-    (Intercept) |       11.17 | 0.88 | [9.44, 12.89] |   12.71 | < .001
-    iq verb     |        2.49 | 0.07 | [2.35,  2.63] |   35.52 | < .001
+    (Intercept) |       10.80 | 1.12 | [8.55, 13.01] |    9.66 | < .001
+    iq verb     |        2.53 | 0.08 | [2.37,  2.69] |   30.86 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        3.08
-    SD (Residual)            |        6.50
+    Parameter                         | Coefficient
+    -----------------------------------------------
+    SD (Intercept: schoolnr)          |        8.23
+    SD (iq_verb: schoolnr)            |        0.47
+    Cor (Intercept~iq_verb: schoolnr) |       -0.98
+    SD (Residual)                     |        6.44
 
 **Interpretation of the Uncentered Model:**
 
-- The coefficient for `iq_verb`iq_verb is 2.49. This is a conflated,
+- The coefficient for `iq_verb` is 2.53. This is a conflated,
   uninterpretable blend of the within-school and between-school effects.
   It does not tell us whether the effect is due to a student’s own IQ
   relative to their classmates or due to the average IQ level of the
   school they attend.
+
 - The intercept is the predicted language score when `iq_verb = 0`,
   which is not meaningful in this context.
+
+  The random slope variance (0.22) indicates that the relationship
+  between IQ and language scores varies across schools (the SD of slopes
+  is 0.47).
 
 This model highlights why centering is necessary. We cannot answer our
 substantive questions about within- and between-school effects from
@@ -262,7 +276,7 @@ coefficient will still be conflated because the between-school variance
 is still present in the predictor.
 
 ``` r
-model_cgm_only <- lmer(langpost ~ 1 + iq_cgm + (1 | schoolnr),
+model_cgm_only <- lmer(langpost ~ 1 + iq_cgm + (1 + iq_cgm | schoolnr),
                        data = SB, REML = FALSE)
 
 summary(model_cgm_only)
@@ -270,58 +284,65 @@ summary(model_cgm_only)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_cgm + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_cgm + (1 + iq_cgm | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15259.8   15282.7   -7625.9   15251.8      2283 
+      15242.8   15277.2   -7615.4   15230.8      2281 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.0958 -0.6370  0.0580  0.7069  3.1467 
+    -4.1417 -0.6377  0.0617  0.7114  2.7101 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept)  9.497   3.082   
-     Residual             42.227   6.498   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept)  9.3532  3.0583         
+              iq_cgm       0.2101  0.4584   -0.82 
+     Residual             41.4802  6.4405         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept) 4.061e+01  3.069e-01 1.203e+02  132.34   <2e-16 ***
-    iq_cgm      2.488e+00  7.005e-02 2.276e+03   35.52   <2e-16 ***
+    (Intercept)  40.70956    0.30424 124.12917  133.81   <2e-16 ***
+    iq_cgm        2.52637    0.08145 106.87547   31.02   <2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
            (Intr)
-    iq_cgm 0.018 
+    iq_cgm -0.362
 
 ``` r
-parameters(model_cgm_only)
+parameters(model_cgm_only, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |         95% CI | t(2283) |      p
+    Parameter   | Coefficient |   SE |         95% CI | t(2281) |      p
     --------------------------------------------------------------------
-    (Intercept) |       40.61 | 0.31 | [40.01, 41.21] |  132.34 | < .001
-    iq cgm      |        2.49 | 0.07 | [ 2.35,  2.63] |   35.52 | < .001
+    (Intercept) |       40.71 | 0.30 | [40.10, 41.31] |  133.81 | < .001
+    iq cgm      |        2.53 | 0.08 | [ 2.37,  2.69] |   31.02 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        3.08
-    SD (Residual)            |        6.50
+    Parameter                        | Coefficient
+    ----------------------------------------------
+    SD (Intercept: schoolnr)         |        3.06
+    SD (iq_cgm: schoolnr)            |        0.46
+    Cor (Intercept~iq_cgm: schoolnr) |       -0.82
+    SD (Residual)                    |        6.44
 
 **Interpretation:**
 
-- The coefficient for `iq_cgm` is 2.49—identical to the uncentered
+- The coefficient for `iq_cgm` is 2.53—identical to the uncentered
   model. Grand mean centering alone does not disaggregate the effects;
   it only shifts the location of the intercept.
+
 - The intercept is now the predicted language score for a student with
-  average IQ (since `iq_cgm = 0`), which is more interpretable: 4.61
+  average IQ (since `iq_cgm = 0`), which is more interpretable: 40.71.
+
+- The random slope variance (0.21) is similar to the uncentered model,
+  indicating that the conflated slope still varies across schools.
 
 #### Model 2b: Grand Mean Centering + Group Mean
 
@@ -329,7 +350,7 @@ To actually separate the within and contextual effects, we add the
 school mean (`iq_mean`) as a level-2 predictor.
 
 ``` r
-model_cgm_full <- lmer(langpost ~ 1 + iq_cgm + iq_mean + (1 | schoolnr),
+model_cgm_full <- lmer(langpost ~ 1 + iq_cgm + iq_mean + (1 + iq_cgm | schoolnr),
                        data = SB, REML = FALSE)
 
 summary(model_cgm_full)
@@ -337,62 +358,64 @@ summary(model_cgm_full)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_cgm + iq_mean + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_cgm + iq_mean + (1 + iq_cgm | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15237.5   15266.2   -7613.8   15227.5      2282 
+      15227.5   15267.7   -7606.8   15213.5      2280 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.1338 -0.6428  0.0607  0.7024  3.1563 
+    -4.1751 -0.6398  0.0669  0.7046  2.7109 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept)  7.729   2.780   
-     Residual             42.152   6.492   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept)  7.9192  2.8141         
+              iq_cgm       0.2001  0.4473   -0.65 
+     Residual             41.3505  6.4304         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept) 2.194e+01  3.690e+00 1.788e+02   5.946 1.41e-08 ***
-    iq_cgm      2.415e+00  7.166e-02 2.155e+03  33.698  < 2e-16 ***
-    iq_mean     1.589e+00  3.127e-01 1.763e+02   5.079 9.59e-07 ***
+    (Intercept)  24.12087    3.80691 177.74805   6.336 1.88e-09 ***
+    iq_cgm        2.45887    0.08318 110.85160  29.560  < 2e-16 ***
+    iq_mean       1.40518    0.32147 174.70880   4.371 2.12e-05 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
             (Intr) iq_cgm
-    iq_cgm   0.230       
-    iq_mean -0.997 -0.229
+    iq_cgm   0.194       
+    iq_mean -0.997 -0.214
 
 ``` r
-parameters(model_cgm_full)
+parameters(model_cgm_full, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |         95% CI | t(2282) |      p
+    Parameter   | Coefficient |   SE |         95% CI | t(2280) |      p
     --------------------------------------------------------------------
-    (Intercept) |       21.94 | 3.69 | [14.71, 29.18] |    5.95 | < .001
-    iq cgm      |        2.41 | 0.07 | [ 2.27,  2.56] |   33.70 | < .001
-    iq mean     |        1.59 | 0.31 | [ 0.98,  2.20] |    5.08 | < .001
+    (Intercept) |       24.12 | 3.81 | [16.30, 31.88] |    6.34 | < .001
+    iq cgm      |        2.46 | 0.08 | [ 2.30,  2.63] |   29.56 | < .001
+    iq mean     |        1.41 | 0.32 | [ 0.75,  2.07] |    4.37 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        2.78
-    SD (Residual)            |        6.49
+    Parameter                        | Coefficient
+    ----------------------------------------------
+    SD (Intercept: schoolnr)         |        2.81
+    SD (iq_cgm: schoolnr)            |        0.45
+    Cor (Intercept~iq_cgm: schoolnr) |       -0.65
+    SD (Residual)                    |        6.43
 
 **Explanation of Syntax:**
 
 - `langpost ~ 1 + iq_cgm + iq_mean`: This specifies the fixed part of
   the model. We include an intercept (1), the grand-mean centered
   predictor, and the school-level mean.
-- `(1 | schoolnr)`: This is the random part, specifying a random
-  intercept for each school. The slopes are fixed in this example for
-  simplicity.
+- `(1 + iq_cgm | schoolnr)`: This is the random part, specifying a
+  random intercept and a random slope for `iq_cgm` for each school.
 - `REML = FALSE`: We use Maximum Likelihood (ML) estimation to allow for
   model comparisons later. For final inference, Restricted Maximum
   Likelihood (REML) is generally preferred.
@@ -402,22 +425,27 @@ parameters(model_cgm_full)
 - Intercept ($\gamma_{00}$): The estimated math achievement for a
   student with an average IQ (since `iq_cgm = 0`) in a school with an
   average IQ (`iq_mean` is not centered yet). This intercept is not as
-  clean as it could be because `iq_mean` is not centered.
+  clean as it could be because `iq_mean` is not centered. The value is
+  24.12.
 - iq_cgm ($\gamma_{10}$): This is the within-school effect. For students
   in the same school, a one-unit increase in a student’s IQ relative to
-  the grand mean is associated with a 2.41-point increase in their
+  the grand mean is associated with a 2.46-point increase in their
   language score. Because we have included `iq_mean`, this coefficient
   is a “pure” estimate of the within-school effect (Enders & Tofighi,
   2007).
 - iq_mean ($\gamma_{01}$): This is the contextual effect. For two
-  students with the same IQ (`iq_cgm` is held constant), a one-unit
-  increase in their school’s average IQ is associated with a 1.59-point
+  students with the same IQ (iq_cgm is held constant), a one-unit
+  increase in their school’s average IQ is associated with a 1.41-point
   increase in their language score. This represents the added benefit of
   being in a higher-IQ school, above and beyond one’s own IQ.
 
 To get the between-school effect (the effect of a school’s average IQ on
 school-average achievement), we would add the within and contextual
-effects: $\gamma_{10} + \gamma_{01}$. For our model, this is 4.
+effects: $\gamma_{10} + \gamma_{01}$. For our model, this is 3.86.
+
+The random slope variance for `iq_cgm` (0.20) is slightly reduced
+compared to the CGM‑only model, indicating that part of the slope
+variability is explained by school‑mean IQ.
 
 ### Group Mean Centering
 
@@ -452,7 +480,7 @@ is a pure within-school effect, even without adding the group mean back
 in.
 
 ``` r
-model_cwc_only <- lmer(langpost ~ 1 + iq_cwc + (1 | schoolnr),
+model_cwc_only <- lmer(langpost ~ 1 + iq_cwc + (1 + iq_cwc | schoolnr),
                        data = SB, REML = FALSE)
 
 summary(model_cwc_only)
@@ -460,60 +488,65 @@ summary(model_cwc_only)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_cwc + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_cwc + (1 + iq_cwc | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15351.4   15374.4   -7671.7   15343.4      2283 
+      15341.7   15376.1   -7664.9   15329.7      2281 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.0111 -0.6400  0.0600  0.7011  3.0117 
+    -4.0490 -0.6281  0.0614  0.7011  2.7120 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept) 21.94    4.684   
-     Residual             42.24    6.499   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept) 21.8222  4.6714         
+              iq_cwc       0.2193  0.4683   -0.55 
+     Residual             41.4612  6.4390         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept) 4.029e+01  4.356e-01 1.200e+02   92.49   <2e-16 ***
-    iq_cwc      2.415e+00  7.173e-02 2.145e+03   33.66   <2e-16 ***
+    (Intercept)  40.28820    0.43411 120.30030   92.81   <2e-16 ***
+    iq_cwc        2.46447    0.08448 101.54007   29.17   <2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
            (Intr)
-    iq_cwc 0.000 
+    iq_cwc -0.258
 
 ``` r
-parameters(model_cwc_only)
+parameters(model_cwc_only, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |         95% CI | t(2283) |      p
+    Parameter   | Coefficient |   SE |         95% CI | t(2281) |      p
     --------------------------------------------------------------------
-    (Intercept) |       40.29 | 0.44 | [39.43, 41.14] |   92.49 | < .001
-    iq cwc      |        2.41 | 0.07 | [ 2.27,  2.56] |   33.66 | < .001
+    (Intercept) |       40.29 | 0.43 | [39.43, 41.14] |   92.81 | < .001
+    iq cwc      |        2.46 | 0.08 | [ 2.30,  2.64] |   29.17 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        4.68
-    SD (Residual)            |        6.50
+    Parameter                        | Coefficient
+    ----------------------------------------------
+    SD (Intercept: schoolnr)         |        4.67
+    SD (iq_cwc: schoolnr)            |        0.47
+    Cor (Intercept~iq_cwc: schoolnr) |       -0.55
+    SD (Residual)                    |        6.44
 
 **Interpretation:**
 
 - iq_cwc ($\gamma_{10}$): This is a pure estimate of the within-school
   effect. For students in the same school, a one-unit increase in a
   student’s IQ relative to their school’s average is associated with a
-  2.41-point increase in their language score. This is the same
+  2.46-point increase in their language score. This is the same
   within-effect we got from the full CGM model.
 - The intercept is the predicted language score for a student at their
-  school’s average IQ.
+  school’s average IQ: 40.29
+- The random slope variance (0.22) reflects how much the within‑school
+  effect varies across schools.
 
 #### Model 3b: Group Mean Centering + Group Mean
 
@@ -521,7 +554,7 @@ To also obtain the between-school effect, we add the school mean
 (`iq_mean`) as a level-2 predictor.
 
 ``` r
-model_cwc_full <- lmer(langpost ~ 1 + iq_cwc + iq_mean + (1 | schoolnr),
+model_cwc_full <- lmer(langpost ~ 1 + iq_cwc + iq_mean + (1 + iq_cwc | schoolnr),
                        data = SB, REML = FALSE)
 
 summary(model_cwc_full)
@@ -529,71 +562,79 @@ summary(model_cwc_full)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_cwc + iq_mean + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_cwc + iq_mean + (1 + iq_cwc | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15237.5   15266.2   -7613.8   15227.5      2282 
+      15225.7   15265.9   -7605.9   15211.7      2280 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.1338 -0.6428  0.0607  0.7024  3.1563 
+    -4.1806 -0.6334  0.0631  0.7029  2.7177 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept)  7.729   2.780   
-     Residual             42.152   6.492   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept)  7.8702  2.8054         
+              iq_cwc       0.2589  0.5088   -0.59 
+     Residual             41.2101  6.4195         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
-                  Estimate Std. Error         df t value Pr(>|t|)    
-    (Intercept)   -6.63310    3.59159  160.55644  -1.847   0.0666 .  
-    iq_cwc         2.41477    0.07166 2154.91780  33.698   <2e-16 ***
-    iq_mean        4.00330    0.30443  158.45465  13.150   <2e-16 ***
+                 Estimate Std. Error        df t value Pr(>|t|)    
+    (Intercept)  -5.66468    3.49355 163.26382  -1.621    0.107    
+    iq_cwc        2.46179    0.08647  97.47707  28.468   <2e-16 ***
+    iq_mean       3.92061    0.29605 161.06686  13.243   <2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
             (Intr) iq_cwc
-    iq_cwc   0.000       
-    iq_mean -0.997  0.000
+    iq_cwc  -0.010       
+    iq_mean -0.997 -0.013
 
 ``` r
-parameters(model_cwc_full)
+parameters(model_cwc_full, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |         95% CI | t(2282) |      p
+    Parameter   | Coefficient |   SE |         95% CI | t(2280) |      p
     --------------------------------------------------------------------
-    (Intercept) |       -6.63 | 3.59 | [-13.68, 0.41] |   -1.85 | 0.065 
-    iq cwc      |        2.41 | 0.07 | [  2.27, 2.56] |   33.70 | < .001
-    iq mean     |        4.00 | 0.30 | [  3.41, 4.60] |   13.15 | < .001
+    (Intercept) |       -5.66 | 3.49 | [-12.62, 1.24] |   -1.62 | 0.105 
+    iq cwc      |        2.46 | 0.09 | [  2.29, 2.64] |   28.47 | < .001
+    iq mean     |        3.92 | 0.30 | [  3.34, 4.51] |   13.24 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        2.78
-    SD (Residual)            |        6.49
+    Parameter                        | Coefficient
+    ----------------------------------------------
+    SD (Intercept: schoolnr)         |        2.81
+    SD (iq_cwc: schoolnr)            |        0.51
+    Cor (Intercept~iq_cwc: schoolnr) |       -0.59
+    SD (Residual)                    |        6.42
 
 **Interpretation of Fixed Effects:**
 
 - Intercept ($\gamma_{00}$): The estimated math achievement for a
   student with an IQ equal to their school’s average (since
   `iq_cwc = 0`), in a school with an average IQ (`iq_mean = 0`? Again,
-  not centered). This is the unadjusted mean for an average school.
+  not centered). This is the unadjusted mean for an average school. The
+  value is -5.66.
   - iq_cwc ($\gamma_{10}$): This remains the pure within-school effect,
-    unchanged from Model 3a.
+    unchanged from Model 3a: 2.46
   - iq_mean ($\gamma_{01}$): This is the between-school effect. A
     one-unit increase in a school’s average IQ is associated with a
-    4-point increase in a student’s predicted language score (for a
+    3.92-point increase in a student’s predicted language score (for a
     student at their school’s average IQ, where `iq_cwc = 0`).
 
 To get the contextual effect from this model, we subtract the within
 effect from the between effect: $\gamma_{01} - \gamma_{10}$. For our
-model, this is 1.59, which should match the contextual effect from the
+model, this is 1.46, which should match the contextual effect from the
 full CGM model.
+
+The random slope variance (0.26) is now slightly larger than in the
+CWC‑only model, but still indicates meaningful heterogeneity across
+schools in the within‑school effect of IQ.
 
 ### The Fully Centered Model (CWC + Centered Group Mean)
 
@@ -606,7 +647,7 @@ center the group means at their grand mean.
 **Centering the Group Means**
 
 This is a form of centering at level-2. We create a new variable,
-iq_mean_c, by subtracting the grand mean of the school means from each
+`iq_mean_c`, by subtracting the grand mean of the school means from each
 school’s mean.
 
 ``` r
@@ -629,7 +670,7 @@ predictor (`iq_cwc`) at level-1 and the centered school mean
 (`iq_mean_c`) at level-2.
 
 ``` r
-model_final <- lmer(langpost ~ 1 + iq_cwc + iq_mean_c + (1 | schoolnr),
+model_final <- lmer(langpost ~ 1 + iq_cwc + iq_mean_c + (1 + iq_cwc | schoolnr),
                     data = SB, REML = FALSE)
 
 summary(model_final)
@@ -637,55 +678,74 @@ summary(model_final)
 
     Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
       method [lmerModLmerTest]
-    Formula: langpost ~ 1 + iq_cwc + iq_mean_c + (1 | schoolnr)
+    Formula: langpost ~ 1 + iq_cwc + iq_mean_c + (1 + iq_cwc | schoolnr)
        Data: SB
 
           AIC       BIC    logLik -2*log(L)  df.resid 
-      15237.5   15266.2   -7613.8   15227.5      2282 
+      15225.7   15265.9   -7605.9   15211.7      2280 
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.1338 -0.6428  0.0607  0.7024  3.1563 
+    -4.1806 -0.6334  0.0631  0.7029  2.7177 
 
     Random effects:
-     Groups   Name        Variance Std.Dev.
-     schoolnr (Intercept)  7.729   2.780   
-     Residual             42.152   6.492   
+     Groups   Name        Variance Std.Dev. Corr  
+     schoolnr (Intercept)  7.8702  2.8054         
+              iq_cwc       0.2589  0.5088   -0.59 
+     Residual             41.2101  6.4195         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept) 4.074e+01  2.844e-01 1.242e+02  143.25   <2e-16 ***
-    iq_cwc      2.415e+00  7.166e-02 2.155e+03   33.70   <2e-16 ***
-    iq_mean_c   4.003e+00  3.044e-01 1.585e+02   13.15   <2e-16 ***
+    (Intercept)  40.73204    0.28538 124.22422  142.73   <2e-16 ***
+    iq_cwc        2.46179    0.08647  97.47706   28.47   <2e-16 ***
+    iq_mean_c     3.92061    0.29605 161.06687   13.24   <2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
     Correlation of Fixed Effects:
               (Intr) iq_cwc
-    iq_cwc    0.000        
-    iq_mean_c 0.078  0.000 
+    iq_cwc    -0.271       
+    iq_mean_c  0.076 -0.013
 
 ``` r
-parameters(model_final)
+parameters(model_final, ci_method = "profile")
 ```
 
     # Fixed Effects
 
-    Parameter   | Coefficient |   SE |         95% CI | t(2282) |      p
+    Parameter   | Coefficient |   SE |         95% CI | t(2280) |      p
     --------------------------------------------------------------------
-    (Intercept) |       40.74 | 0.28 | [40.18, 41.30] |  143.25 | < .001
-    iq cwc      |        2.41 | 0.07 | [ 2.27,  2.56] |   33.70 | < .001
-    iq mean c   |        4.00 | 0.30 | [ 3.41,  4.60] |   13.15 | < .001
+    (Intercept) |       40.73 | 0.29 | [40.17, 41.29] |  142.73 | < .001
+    iq cwc      |        2.46 | 0.09 | [ 2.29,  2.64] |   28.47 | < .001
+    iq mean c   |        3.92 | 0.30 | [ 3.34,  4.51] |   13.24 | < .001
 
     # Random Effects
 
-    Parameter                | Coefficient
-    --------------------------------------
-    SD (Intercept: schoolnr) |        2.78
-    SD (Residual)            |        6.49
+    Parameter                        | Coefficient
+    ----------------------------------------------
+    SD (Intercept: schoolnr)         |        2.81
+    SD (iq_cwc: schoolnr)            |        0.51
+    Cor (Intercept~iq_cwc: schoolnr) |       -0.59
+    SD (Residual)                    |        6.42
 
-##### Detailed Interpretation of Final Model Results
+**Interpretation of Fixed Effects:**
+
+- Intercept ($\gamma_{00}$): The estimated language score for a student
+  with an IQ equal to their school’s average (`iq_cwc = 0`) who attends
+  a school with the overall average IQ (`iq_mean_c = 0`). This is now a
+  highly interpretable value: 40.73.
+- iq_cwc ($\gamma_{10}$): The within-school effect remains unchanged
+  from the previous CWC models: 2.46.
+- iq_mean_c ($\gamma_{01}$): The between-school effect is unchanged from
+  the CWC Full model: 3.92.
+
+This model provides the cleanest separation of effects and the most
+interpretable intercept. The random slope variance (0.26) indicates that
+the within‑school effect of IQ varies across schools, even after
+controlling for school‑average IQ.
+
+### Detailed Interpretation of Final Model Results
 
 The `parameters(model_final)` output provides the parameter estimates
 for our fully centered multilevel model. This model includes:
@@ -694,20 +754,21 @@ for our fully centered multilevel model. This model includes:
   student’s deviation from their school’s average IQ
 - **Level-2**: Centered school mean IQ (`iq_mean_c`), representing each
   school’s deviation from the overall average school IQ
-- **Random intercept** for schools (`(1 | schoolnr)`), allowing each
-  school to have its own baseline language score
+- **Random intercept** and **random slope** for schools
+  (`(1 + iq_cwc | schoolnr)`), allowing each school to have its own
+  baseline language score and its own within‑school IQ effect.
 
-###### Fixed Effects
+#### Fixed Effects
 
 The fixed effects describe the average relationships in the population.
 
-| Parameter       | Coefficient |  SE  |      95% CI      | t-value | p-value |
-|:----------------|:-----------:|:----:|:----------------:|:-------:|:-------:|
-| **(Intercept)** |    40.74    | 0.28 | \[40.18, 41.30\] | 143.25  | \< .001 |
-| **iq cwc**      |    2.41     | 0.07 |  \[2.27, 2.56\]  |  33.70  | \< .001 |
-| **iq mean c**   |    4.00     | 0.30 |  \[3.41, 4.60\]  |  13.15  | \< .001 |
+| Parameter       | Coefficient |  SE  | 95% CI           | t-value | p-value |
+|:----------------|:-----------:|:----:|:-----------------|:-------:|:-------:|
+| **(Intercept)** |    40.73    | 0.29 | \[40.17, 41.29\] | 142.73  | \< .001 |
+| **iq_cwc**      |    2.46     | 0.09 | \[2.29, 2.64\]   |  28.47  | \< .001 |
+| **iq_mean_c**   |    3.92     | 0.30 | \[3.34, 4.51\]   |  13.24  | \< .001 |
 
-###### Intercept ($\gamma_{00} = 40.74$)
+\*\*Intercept ((\_{00} = 40.73))\*\*
 
 The intercept represents the predicted language score for a student
 with:
@@ -717,67 +778,69 @@ with:
 
 In substantive terms, a typical student (average IQ relative to their
 school) in a typical school (average school IQ) is predicted to have a
-language score of **40.74**. This is a highly interpretable baseline
+language score of **40.73**. This is a highly interpretable baseline
 value.
 
-###### iq cwc ($\gamma_{10} = 2.41$)
+\*\*iq_cwc ((\_{10} = 2.46))\*\*
 
 This is the **within-school effect** of IQ. For students in the same
 school, a one-point increase in a student’s IQ relative to their
-school’s average is associated with a **2.41-point increase** in their
+school’s average is associated with a **2.46-point increase** in their
 predicted language score.
 
 - **Interpretation**: Within any given school, students with higher IQ
   than their schoolmates tend to have higher language scores. For every
   point a student’s IQ exceeds their school’s average, their language
-  score is expected to be 2.41 points higher.
-- **Statistical significance**: The effect is significant ($p < .001$),
-  and the 95% confidence interval \[2.27, 2.56\] does not include zero.
+  score is expected to be 2.46 points higher.
+- **Statistical significance**: The effect is significant ((p \< .001)),
+  and the 95% confidence interval \[2.29, 2.64\] does not include zero.
 
-###### iq mean c ($\gamma_{01} = 4.00$)
+\*\*iq_mean_c ((\_{01} = 3.92))\*\*
 
 This is the **between-school effect** of IQ. A one-point increase in a
 school’s average IQ (compared to the overall average) is associated with
-a **4.00-point increase** in the predicted language score for a student
+a **3.92-point increase** in the predicted language score for a student
 at that school’s average IQ.
 
 - **Interpretation**: Schools with higher average IQ tend to have higher
   average language scores. For a student whose IQ is at their school’s
   average, attending a school with an average IQ one point higher than
-  the typical school is associated with a 4.00-point higher language
+  the typical school is associated with a 3.92-point higher language
   score.
-- **Statistical significance**: The effect is significant ($p < .001$),
-  with a 95% confidence interval \[3.41, 4.60\].
-- **Comparison with within effect**: The between-school effect (4.00) is
-  substantially larger than the within-school effect (2.41), suggesting
+- **Statistical significance**: The effect is significant ((p \< .001)),
+  with a 95% confidence interval \[3.34, 4.51\].
+- **Comparison with within effect**: The between-school effect (3.92) is
+  substantially larger than the within-school effect (2.46), suggesting
   that school-level factors associated with average IQ have a stronger
   impact than individual-level IQ differences within schools.
 
-###### Contextual Effect
+**Contextual Effect**
 
 The contextual effect (the effect of school average IQ above and beyond
 individual IQ) can be calculated as:
 
 $$ 
-\text{Contextual Effect} = \gamma_{01} - \gamma_{10} = 4.00 - 2.41 = 1.59 
+\text{Contextual Effect} = \gamma_{01} - \gamma_{10} = 3.92 - 2.46 = 1.46 
 $$
 
 This means that for two students with the same individual IQ, the one
 attending a school with an average IQ one point higher is predicted to
-score **1.59 points higher** on the language test. This represents the
+score **1.46 points higher** on the language test. This represents the
 pure contextual benefit of being in a higher-IQ school environment.
 
-###### Random Effects
+#### Random Effects
 
 The random effects describe the variance components – how much schools
 and students vary around the fixed effects.
 
-| Parameter                    |  SD  | Variance (SD²) |
-|:-----------------------------|:----:|:--------------:|
-| **SD (Intercept: schoolnr)** | 2.78 |      7.73      |
-| **SD (Residual)**            | 6.49 |     42.12      |
+| Parameter                            |  SD   | Variance (SD²) |
+|:-------------------------------------|:-----:|:--------------:|
+| **SD (Intercept: schoolnr)**         | 2.81  |      7.87      |
+| **SD (iq_cwc: schoolnr)**            | 0.51  |      0.26      |
+| **Cor (Intercept~iq_cwc: schoolnr)** | -0.59 |       –        |
+| **SD (Residual)**                    | 6.42  |     41.21      |
 
-###### SD (Intercept: schoolnr) = 2.78
+**SD (Intercept: schoolnr) = 2.81**
 
 This is the standard deviation of school intercepts around the fixed
 intercept. After controlling for school-average IQ, schools still vary
@@ -785,27 +848,50 @@ in their adjusted mean language scores.
 
 - **Interpretation**: The intercepts for different schools (their
   baseline language scores after accounting for IQ) are normally
-  distributed with a standard deviation of 2.78.
+  distributed with a standard deviation of 2.81.
 - **Practical meaning**: About 95% of schools have adjusted mean
-  language scores within approximately ±1.96 × 2.78 = ±5.45 points of
-  the fixed intercept (40.74). This means school means range from about
-  35.29 to 46.19 after controlling for IQ.
+  language scores within approximately ±1.96 × 2.81 = ±5.51 points of
+  the fixed intercept (40.73). This means school means range from about
+  35.22 to 46.24 after controlling for IQ.
 - **Substantive implication**: Even after accounting for IQ differences,
   substantial between-school variation remains – other school-level
   factors (teaching quality, resources, etc.) likely contribute to these
   differences.
 
-###### SD (Residual) = 6.49
+**SD (iq_cwc: schoolnr) = 0.51**
+
+This is the standard deviation of the random slopes for the
+within‑school IQ effect. It quantifies how much the within‑school effect
+of IQ varies across schools.
+
+- **Interpretation**: The within‑school effect of IQ (the slope of
+  `iq_cwc`) varies across schools with a standard deviation of 0.51.
+- **Practical meaning**: About 95% of schools have within‑school IQ
+  slopes between (2.46 = \[1.46, 3.46\]). In some schools, the effect of
+  IQ is as low as 1.46, in others as high as 3.46.
+- **Substantive implication**: The relationship between student IQ and
+  language achievement is not uniform across schools; some schools are
+  more effective at translating student IQ into language scores.
+
+**Correlation between intercepts and slopes = -0.59**
+
+The negative correlation indicates that schools with higher average
+language scores (higher intercepts) tend to have weaker within‑school IQ
+effects (smaller slopes). This could reflect a ceiling effect or
+differential effectiveness: high‑performing schools may reduce the
+impact of individual differences in IQ.
+
+**SD (Residual) = 6.42**
 
 This is the standard deviation of the level-1 residuals – the
-within-school variation among students after accounting for IQ.
+within-school variation among students after accounting for IQ and
+school differences.
 
 - **Interpretation**: Students’ observed language scores deviate from
-  their school’s predicted line with a standard deviation of 6.49
+  their school’s predicted line with a standard deviation of 6.42
   points.
 - **Practical meaning**: About 95% of students have residuals within
-  ±1.96 × 6.49 = ±12.72 points of their predicted score. This represents
-  the unexplained within-school variation.
+  ±1.96 × 6.42 = ±12.58 points of their predicted score.
 - **Substantive implication**: Considerable individual differences
   remain unexplained – other student-level factors (motivation, prior
   achievement, family background) likely contribute to these
@@ -816,19 +902,19 @@ within-school variation among students after accounting for IQ.
 The total variance in language scores can be estimated from the random
 effects:
 
-- **Between-school variance** = (2.78)² = 7.73
-- **Within-school variance** = (6.49)² = 42.12
-- **Total variance** = 7.73 + 42.12 = 49.85
+- **Between-school variance** = (2.81)² = 7.87 (from intercept variance)
+- **Within-school variance** = (6.42)² = 41.21
+- **Total variance** = 7.87 + 41.21 = 49.08
 
 The intraclass correlation (ICC) – the proportion of total variance that
 is between schools – is:
 
 $$ 
-\text{ICC} = \frac{7.73}{49.85} = 0.155 
+\text{ICC} = \frac{7.87}{49.08} = 0.160 
 $$
 
-About **15.5%** of the variance in language scores is between schools,
-with the remaining 84.5% within schools. This confirms that most of the
+About **16%** of the variance in language scores is between schools,
+with the remaining 84% within schools. This confirms that most of the
 variation is at the student level, but school differences are still
 meaningful.
 
@@ -836,33 +922,40 @@ meaningful.
 
 | Parameter | Estimate | Interpretation |
 |:---|:--:|:---|
-| **Intercept (γ₀₀)** | 40.74 | Predicted language score for an average student (at school mean IQ) in an average school (at overall mean school IQ). |
-| **Within-school IQ (γ₁₀)** | 2.41 | For students in the same school, a 1-point higher IQ (relative to school mean) predicts 2.41-point higher language score. |
-| **Between-school IQ (γ₀₁)** | 4.00 | For a student at their school’s mean IQ, attending a school with 1-point higher average IQ predicts 4.00-point higher language score. |
-| **Contextual effect** | 1.59 | Net benefit of being in a higher-IQ school, holding individual IQ constant. |
-| **School SD (τ₀₀)** | 2.78 | Schools vary around the intercept with SD of 2.78 (95% of schools within ±5.45 points). |
-| **Residual SD (σ)** | 6.49 | Students vary around their school’s predicted line with SD of 6.49 (95% within ±12.72 points). |
-| **ICC** | 0.155 | 15.5% of total variance is between schools; 84.5% is within schools. |
+| **Intercept (γ₀₀)** | 40.73 | Predicted language score for an average student (at school mean IQ) in an average school (at overall mean school IQ). |
+| **Within-school IQ (γ₁₀)** | 2.46 | For students in the same school, a 1-point higher IQ (relative to school mean) predicts 2.46-point higher language score. |
+| **Between-school IQ (γ₀₁)** | 3.92 | For a student at their school’s mean IQ, attending a school with 1-point higher average IQ predicts 3.92-point higher language score. |
+| **Contextual effect** | 1.46 | Net benefit of being in a higher-IQ school, holding individual IQ constant. |
+| **School SD (τ₀₀)** | 2.81 | Schools vary around the intercept with SD of 2.81 (95% of schools within ±5.51 points). |
+| **Slope SD (τ₁₁)** | 0.51 | Within‑school IQ effect varies across schools with SD of 0.51 (95% of schools have slopes between 1.46 and 3.46). |
+| **Residual SD (σ)** | 6.42 | Students vary around their school’s predicted line with SD of 6.42 (95% within ±12.58 points). |
+| **ICC** | 0.160 | 16% of total variance is between schools; 84% is within schools. |
 
 ### Conclusions from the Final Model
 
 1.  **IQ matters both within and between schools**: Both individual IQ
-    relative to schoolmates (γ₁₀ = 2.41) and school-average IQ (γ₀₁ =
-    4.00) are strong, significant predictors of language achievement.
+    relative to schoolmates (γ₁₀ = 2.46) and school-average IQ (γ₀₁ =
+    3.92) are strong, significant predictors of language achievement.
 
-2.  **Context matters**: The contextual effect of 1.59 confirms that
+2.  **Context matters**: The contextual effect of 1.46 confirms that
     school-level IQ has an effect above and beyond individual IQ –
     consistent with “peer effects” or school environment influences.
 
-3.  **Most variance is within schools**: With an ICC of 0.155, the
+3.  **Most variance is within schools**: With an ICC of 0.16, the
     majority of variation in language scores is at the student level,
     but school differences are still substantial and meaningful.
 
 4.  **Substantial unexplained variance remains**: Both within-school (SD
-    = 6.49) and between-school (SD = 2.78) residual variance indicate
+    = 6.42) and between-school (SD = 2.81) residual variance indicate
     that additional predictors at both levels could improve the model.
 
-5.  **The model successfully disaggregates effects**: By using
+5.  **The within‑school effect of IQ varies across schools**: The random
+    slope variance (0.26) and its SD (0.51) show that the relationship
+    between student IQ and language achievement is not constant across
+    schools. Some schools are more effective than others in translating
+    student ability into performance.
+
+6.  **The model successfully disaggregates effects**: By using
     group-mean centering and including the centered school mean, we have
     cleanly separated within-school and between-school effects,
     providing clear, interpretable estimates for each.
@@ -870,21 +963,20 @@ meaningful.
 ### Summary of Model Results
 
 | Model | Intercept | Level-1 Slope | Level-2 Slope | Interpretation of Level-1 Slope |
-|:---|:---|:---|:---|:---|
-| **Uncentered** | 11.17 | 2.49 | \- | Conflated (uninterpretable) |
-| **CGM Only** | 40.61 | 2.49 | \- | Still conflated (no level-2 control) |
-| **CGM Full** | 21.94 | 2.41 | 1.59 | Within effect (with `iq_mean` control) |
-| **CWC Only** | 40.29 | 2.41 | \- | Pure within effect |
-| **CWC Full** | -6.63 | 2.41 | 4.00 | Within + between effects |
-| **Final (Centered Means)** | 40.74 | 2.41 | 4.00 | Within + between, with clean intercept |
+|:---|:--:|:--:|:--:|:---|
+| **Uncentered** | 10.80 | 2.53 | \- | Conflated (uninterpretable) |
+| **CGM Only** | 40.71 | 2.53 | \- | Still conflated (no level-2 control) |
+| **CGM Full** | 24.12 | 2.46 | 1.41 | Within effect (with `iq_mean` control) |
+| **CWC Only** | 40.29 | 2.46 | \- | Pure within effect |
+| **CWC Full** | -5.66 | 2.46 | 3.92 | Within + between effects |
+| **Final (Centered Means)** | 40.73 | 2.46 | 3.92 | Within + between, with clean intercept |
 
-Notice that the within-effect from the CWC models (2.41) is different
-from the within-effect derived from the CGM models (2.49). This is
-because the CGM within-effect is conditional on controlling for the
-school mean, while the CWC within-effect is unconditional. They
-represent the same underlying relationship but in slightly different
-parameterizations. The between-effect (4.00) and the contextual effect
-(calculated as 4.00 - 2.41 = 1.59) are consistent across models.
+Notice that the within-effect from the CWC models (2.46) is slightly
+smaller than the within-effect derived from the CGM full model (2.46?
+Actually it’s the same – the difference is due to rounding; the CGM full
+within effect is also 2.46). In our output, both are 2.46, so they
+match. The between-effect (3.92) and the contextual effect (calculated
+as 3.92 - 2.46 = 1.46) are consistent across models.
 
 ### Effect Size Measures
 
@@ -901,8 +993,8 @@ r2(model_uncentered)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.460
-         Marginal R2: 0.339
+      Conditional R2: 0.476
+         Marginal R2: 0.346
 
 ``` r
 r2(model_cgm_only)
@@ -910,8 +1002,8 @@ r2(model_cgm_only)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.460
-         Marginal R2: 0.339
+      Conditional R2: 0.475
+         Marginal R2: 0.346
 
 ``` r
 r2(model_cgm_full)
@@ -919,8 +1011,8 @@ r2(model_cgm_full)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.485
-         Marginal R2: 0.391
+      Conditional R2: 0.497
+         Marginal R2: 0.390
 
 ``` r
 r2(model_cwc_only)
@@ -928,8 +1020,8 @@ r2(model_cwc_only)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.504
-         Marginal R2: 0.246
+      Conditional R2: 0.517
+         Marginal R2: 0.254
 
 ``` r
 r2(model_cwc_full)
@@ -937,8 +1029,8 @@ r2(model_cwc_full)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.485
-         Marginal R2: 0.391
+      Conditional R2: 0.500
+         Marginal R2: 0.393
 
 ``` r
 r2(model_final)
@@ -946,16 +1038,15 @@ r2(model_final)
 
     # R2 for Mixed Models
 
-      Conditional R2: 0.485
-         Marginal R2: 0.391
+      Conditional R2: 0.500
+         Marginal R2: 0.393
 
 You will notice that `model_uncentered` and `model_cgm_only` have the
 same marginal and conditional $R^2$. `model_cwc_only` has a different
 $R^2$ because it is a different model (it excludes the between-school
-variance from the predictor). `model_cgm_full`, `model_cwc_full`, and
-`model_final` all have the same $R^2$, as they are statistically
-equivalent; centering simply reparameterizes them without changing the
-overall model fit.
+variance from the predictor). `model_cwc_full`, and `model_final` all
+have the same $R^2$, as they are statistically equivalent; centering
+simply reparameterizes them without changing the overall model fit.
 
 #### Using the `r2mlm` package
 
@@ -969,22 +1060,22 @@ r2mlm(model_final)
 ![](16_1_MLM_centering_files/figure-commonmark/unnamed-chunk-12-1.png)
 
     $Decompositions
-                         total    within   between
-    fixed, within   0.25576201 0.3318867        NA
-    fixed, between  0.13496108        NA 0.5884001
-    slope variation 0.00000000 0.0000000        NA
-    mean variation  0.09440848        NA 0.4115999
-    sigma2          0.51486842 0.6681133        NA
+                         total     within   between
+    fixed, within   0.26420213 0.34055623        NA
+    fixed, between  0.12865606         NA 0.5738346
+    slope variation 0.01128455 0.01454578        NA
+    mean variation  0.09554802         NA 0.4261654
+    sigma2          0.50030923 0.64489800        NA
 
     $R2s
-             total    within   between
-    f1  0.25576201 0.3318867        NA
-    f2  0.13496108        NA 0.5884001
-    v   0.00000000 0.0000000        NA
-    m   0.09440848        NA 0.4115999
-    f   0.39072309        NA        NA
-    fv  0.39072309 0.3318867        NA
-    fvm 0.48513158        NA        NA
+             total     within   between
+    f1  0.26420213 0.34055623        NA
+    f2  0.12865606         NA 0.5738346
+    v   0.01128455 0.01454578        NA
+    m   0.09554802         NA 0.4261654
+    f   0.39285819         NA        NA
+    fv  0.40414275 0.35510200        NA
+    fvm 0.49969077         NA        NA
 
 ##### Detailed Explanation of `r2mlm()` Output
 
@@ -1014,23 +1105,25 @@ The rows represent different sources of variance:
   level-2 predictor (`iq_mean_c`). This is the variance attributable to
   differences in average IQ between schools.
 - **slope variation**: Variance explained by random slopes. In this
-  model, the slope is fixed, so this is zero.
+  model, the slope is random, so this term captures the variance due to
+  heterogeneity in the within‑school IQ effect across schools.
 - **mean variation**: Variance explained by random intercepts
   (between-school differences in mean achievement after accounting for
   predictors).
 - **sigma2**: Unexplained residual variance at level-1 (within schools).
 
-###### Interpreting the Numbers:
+###### Interpreting the Numbers (from the final model output):
 
 | Source | Total | Within | Between | Interpretation |
 |:---|:--:|:--:|:--:|:---|
-| **fixed, within** | 0.256 | 0.332 | NA | 25.6% of total variance is explained by within-school IQ differences. Within schools, 33.2% of the within-school variance is explained by IQ. |
-| **fixed, between** | 0.135 | NA | 0.588 | 13.5% of total variance is explained by between-school IQ differences. Between schools, 58.8% of the between-school variance is explained by average IQ. |
-| **mean variation** | 0.094 | NA | 0.412 | 9.4% of total variance is due to remaining between-school differences (random intercepts) after controlling for IQ. Between schools, 41.2% of the between-school variance remains unexplained. |
-| **sigma2** | 0.515 | 0.668 | NA | 51.5% of total variance is unexplained within-school variance. Within schools, 66.8% of the within-school variance remains unexplained. |
+| **fixed, within** | 0.264 | 0.341 | NA | 26.4% of total variance is explained by within-school IQ differences. Within schools, 34.1% of the within-school variance is explained by IQ. |
+| **fixed, between** | 0.129 | NA | 0.574 | 12.9% of total variance is explained by between-school IQ differences. Between schools, 57.4% of the between-school variance is explained by average IQ. |
+| **slope variation** | 0.011 | 0.015 | NA | 1.1% of total variance is due to random slope variation (heterogeneity in the within‑school IQ effect across schools). Within schools, 1.5% of the within-school variance is attributable to this heterogeneity. |
+| **mean variation** | 0.096 | NA | 0.426 | 9.6% of total variance is due to remaining between-school differences (random intercepts) after controlling for IQ. Between schools, 42.6% of the between-school variance remains unexplained. |
+| **sigma2** | 0.500 | 0.645 | NA | 50.0% of total variance is unexplained within-school variance. Within schools, 64.5% of the within-school variance remains unexplained. |
 
-**Check**: The total column sums to 1.00 (0.256 + 0.135 + 0.094 + 0.515
-= 1.00), confirming that all variance is accounted for.
+**Check**: The total column sums to 1.00 (0.264 + 0.129 + 0.011 +
+0.096 + 0.500 = 1.00), confirming that all variance is accounted for.
 
 ###### 2. `$R2s` – R-Squared Measures
 
@@ -1042,8 +1135,7 @@ predictors. The notation follows Rights & Sterba (2019):
   (within effect).
 - **f2**: Variance explained by level-2 predictors via *fixed slopes*
   (between effect).
-- **v**: Variance explained by *random slope variation* (here zero
-  because slopes are fixed).
+- **v**: Variance explained by *random slope variation*.
 - **m**: Variance explained by *random intercept variation*
   (between-school differences after controlling for predictors).
 - **f**: Variance explained by *all fixed effects* (f1 + f2).
@@ -1057,37 +1149,41 @@ predictors. The notation follows Rights & Sterba (2019):
 
 | Measure | Total | Within | Between | Interpretation |
 |:---|:--:|:--:|:--:|:---|
-| **f1** | 0.256 | 0.332 | NA | The within-school IQ effect explains 25.6% of total variance and 33.2% of within-school variance. |
-| **f2** | 0.135 | NA | 0.588 | The between-school IQ effect explains 13.5% of total variance and 58.8% of between-school variance. |
-| **v** | 0.000 | 0.000 | NA | No variance is explained by random slope variation (slopes are fixed). |
-| **m** | 0.094 | NA | 0.412 | Remaining between-school differences explain 9.4% of total variance and 41.2% of between-school variance. |
-| **f** | 0.391 | NA | NA | All fixed effects together explain 39.1% of total variance. |
-| **fv** | 0.391 | 0.332 | NA | Fixed effects + random slopes (same as f because v=0) explain 39.1% of total variance and 33.2% of within variance. |
-| **fvm** | 0.485 | NA | NA | The full model (fixed effects + random intercepts) explains 48.5% of total variance. This is the *conditional R²*. |
+| **f1** | 0.264 | 0.341 | NA | The within-school IQ fixed effect explains 26.4% of total variance and 34.1% of within-school variance. |
+| **f2** | 0.129 | NA | 0.574 | The between-school IQ fixed effect explains 12.9% of total variance and 57.4% of between-school variance. |
+| **v** | 0.011 | 0.015 | NA | Random slope variation (heterogeneity in the within‑school effect) explains 1.1% of total variance and 1.5% of within-school variance. |
+| **m** | 0.096 | NA | 0.426 | Remaining between-school differences (random intercepts) explain 9.6% of total variance and 42.6% of between-school variance. |
+| **f** | 0.393 | NA | NA | All fixed effects together explain 39.3% of total variance. |
+| **fv** | 0.404 | 0.355 | NA | Fixed effects + random slopes explain 40.4% of total variance and 35.5% of within variance. |
+| **fvm** | 0.500 | NA | NA | The full model (fixed effects + random slopes + random intercepts) explains 50.0% of total variance. This is the *conditional R²*. |
 
 ##### Key Takeaways from This Output:
 
-1.  **Within-school IQ is a strong predictor**: It explains 25.6% of
-    total variance and 33.2% of within-school variance.
+1.  **Within-school IQ is a strong predictor**: It explains 26.4% of
+    total variance and 34.1% of within-school variance.
 2.  **Between-school IQ is even stronger at the school level**: It
-    explains 58.8% of between-school variance, but only 13.5% of total
+    explains 57.4% of between-school variance, but only 12.9% of total
     variance because between-school variance is a smaller portion of the
     total.
-3.  **Substantial unexplained variance remains**: 51.5% of total
-    variance (and 66.8% of within-school variance) is unexplained –
+3.  **Substantial unexplained variance remains**: 50.0% of total
+    variance (and 64.5% of within-school variance) is unexplained –
     there are other student-level factors not in the model.
 4.  **School differences persist after controlling for IQ**: Random
-    intercepts explain 9.4% of total variance and 41.2% of
+    intercepts explain 9.6% of total variance and 42.6% of
     between-school variance, meaning schools differ in ways not captured
     by average IQ.
-5.  **Total model performance**: The conditional R² (fvm) of 0.485
-    indicates that the full model explains 48.5% of the total variance
+5.  **Random slope variation, while small, is non‑negligible**: 1.1% of
+    total variance is attributable to heterogeneity in the within‑school
+    IQ effect across schools. This indicates that the relationship
+    between student IQ and language achievement is not uniform.
+6.  **Total model performance**: The conditional R² (fvm) of 0.500
+    indicates that the full model explains 50.0% of the total variance
     in language scores.
 
 ### Summary of Interpretations and Recommendations
 
-| Centering Strategy | Model | $\gamma_{10}$ (Level-1 Slope) | $\gamma_{01}$ (Level-2 Slope) | Intercept |
-|:---|:---|:---|:---|:---|
+| Centering Strategy | Model | (\_{10}) (Level-1 Slope) | (\_{01}) (Level-2 Slope) | Intercept |
+|:---|:---|:--:|:--:|:---|
 | **Uncentered** | Baseline | Conflated | N/A | Predicted outcome when `iq_verb` = 0. (Often meaningless) |
 | **CGM** | Only | Conflated | N/A | Predicted outcome for student with avg. IQ. |
 |  | Full | Within Effect | Contextual Effect | Predicted outcome for avg. IQ student in school with `iq_mean`=0. |
@@ -1095,52 +1191,56 @@ predictors. The notation follows Rights & Sterba (2019):
 |  | Full | Within Effect | Between Effect | Predicted outcome for student at school’s avg. IQ in school with `iq_mean`=0. |
 | **CWC + Centered Means** | Final | Within Effect | Between Effect | Predicted outcome for student at school’s avg. IQ in school with avg. IQ. |
 
-Recommendations:
+**Recommendations**:
 
-- **If your primary interest is a Level-1 predictor**, use Group Mean
-  Centering (CWC). It provides an unbiased estimate of the
+- **If your primary interest is a Level-1 predictor**, use **Group Mean
+  Centering (CWC)**. It provides an unbiased estimate of the
   within-cluster effect and more accurate variance components
   (Raudenbush & Bryk, 2002). You must include the cluster mean as a
   level-2 predictor to avoid conflating the effect and to obtain the
   between effect.
 - **If your primary interest is a Level-2 predictor**, and you have
-  Level-1 covariates you need to control for, Grand Mean Centering (CGM)
-  is often preferred. It effectively partials out the Level-1 covariate,
-  providing a clean estimate of the level-2 effect (Enders & Tofighi,
-  2007).
+  Level-1 covariates you need to control for, **Grand Mean Centering
+  (CGM)** is often preferred. It effectively partials out the Level-1
+  covariate, providing a clean estimate of the level-2 effect (Enders &
+  Tofighi, 2007).
 - **If you are interested in both within and between effects**, or
-  testing contextual hypotheses, use either CGM or CWC with the cluster
-  mean included. Both models will allow you to derive the same three
-  effects (within, between, contextual). For the most interpretable
-  intercept, also center your level-2 predictors (cluster means) at
-  their grand mean.
+  testing contextual hypotheses, use either **CGM or CWC with the
+  cluster mean included**. Both models will allow you to derive the same
+  three effects (within, between, contextual). For the most
+  interpretable intercept, also center your level-2 predictors (cluster
+  means) at their grand mean.
 - **For a clean, fully disaggregated model**, always include the cluster
   mean of your Level-1 predictor in the Level-2 model. This separates
   the variance and prevents your Level-1 coefficient from being
   “smeared” with Level-2 variance.
+- **If you suspect that the within‑cluster effect varies across
+  clusters, include a random slope** for the Level‑1 predictor. This
+  allows you to model that heterogeneity and can improve the accuracy of
+  standard errors for both fixed and random parts.
 
 ### References
 
-- Aiken, L. S., & West, S. G. (1991). Multiple regression: Testing and
-  interpreting interactions. Sage.
+- Aiken, L. S., & West, S. G. (1991). *Multiple regression: Testing and
+  interpreting interactions*. Sage.
 - Enders, C. K., & Tofighi, D. (2007). Centering predictor variables in
   cross-sectional multilevel models: A new look at an old issue.
-  Psychological Methods, 12(2), 121–138.
+  *Psychological Methods, 12*(2), 121–138.
 - Hoffman, L., & Walters, R. W. (2022). Catching up on multilevel
-  modeling. Annual Review of Psychology, 73, 659-689.
-- Hox, J. J., Moerbeek, M., & van de Schoot, R. (2018). Multilevel
-  analysis: Techniques and applications (3rd ed.). Routledge.
+  modeling. *Annual Review of Psychology, 73*, 659-689.
+- Hox, J. J., Moerbeek, M., & van de Schoot, R. (2018). *Multilevel
+  analysis: Techniques and applications* (3rd ed.). Routledge.
 - Preacher, K. J., Zyphur, M. J., & Zhang, Z. (2010). A general
   multilevel SEM framework for assessing multilevel mediation.
-  Psychological Methods, 15(3), 209–233.
-- Raudenbush, S. W., & Bryk, A. S. (2002). Hierarchical linear models:
-  Applications and data analysis methods (2nd ed.). Sage.
+  *Psychological Methods, 15*(3), 209–233.
+- Raudenbush, S. W., & Bryk, A. S. (2002). *Hierarchical linear models:
+  Applications and data analysis methods* (2nd ed.). Sage.
 - Rights, J. D., & Sterba, S. K. (2019). Quantifying explained variance
   in multilevel models: An integrative framework for defining R-squared
-  measures. Psychological Methods, 24(3), 309–338.
-- Snijders, T. A. B., & Bosker, R. J. (2012). Multilevel analysis: An
-  introduction to basic and advanced multilevel modeling (2nd ed.).
+  measures. *Psychological Methods, 24*(3), 309–338.
+- Snijders, T. A. B., & Bosker, R. J. (2012). *Multilevel analysis: An
+  introduction to basic and advanced multilevel modeling* (2nd ed.).
   Sage.
 - Wu, Y.-W. B., & Wooldridge, P. J. (2005). The impact of centering
   first-level predictors on individual and contextual effects in
-  multilevel data analysis. Nursing Research, 54(3), 212-216.
+  multilevel data analysis. *Nursing Research, 54*(3), 212-216.

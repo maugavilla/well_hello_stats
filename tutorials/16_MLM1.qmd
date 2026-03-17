@@ -172,7 +172,7 @@ We follow the strategy outlined by Peugh (2010): start with a null model, then a
 ```{r null}
 m0 <- lmer(langpost ~ 1 + (1 | schoolnr), data = SB, REML = FALSE)
 summary(m0)
-parameters(m0)
+parameters(m0, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
@@ -207,7 +207,7 @@ The ICC is a key measure of clustering; values above 0.05–0.10 often warrant m
 m1 <- lmer(langpost ~ 1 + iq_verb + (1 | schoolnr), 
            data = SB, REML = FALSE)
 summary(m1)
-parameters(m1)
+parameters(m1, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
@@ -226,7 +226,7 @@ m2 <- lmer(langpost ~ 1 + iq_verb + (1 + iq_verb | schoolnr),
            data = SB, REML = FALSE,
            control = lmerControl(optimizer = "Nelder_Mead"))
 summary(m2)
-parameters(m2)
+parameters(m2, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
@@ -256,7 +256,7 @@ m3 <- lmer(langpost ~ 1 + iq_verb + percmino + (1 + iq_verb | schoolnr),
            data = SB, REML = FALSE,
            control = lmerControl(optimizer = "Nelder_Mead"))
 summary(m3)
-parameters(m3)
+parameters(m3, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
