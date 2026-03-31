@@ -1,0 +1,722 @@
+---
+title: "Multilevel Regression: interactions"
+author: "Mauricio Garnier-Villarreal"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+format: gfm
+toc: true
+toc-depth: 5
+number-sections: true
+code-copy: true
+execute:
+  echo: true
+  warning: false
+  eval: true
+---
+
+
+## What is Moderation Analysis?
+
+Moderation occurs when the relationship between two variables depends on a third variable. In traditional single-level regression, a moderation (interaction) hypothesis is tested by including a product term in the model:
+
+$$ Y = b_0 + b_1X + b_2Z + b_3XZ + e $$
+
+In this model, the effect of $X$ on $Y$ is no longer constant; it becomes a function of $Z$:
+
+$$ \text{Effect of } X = b_1 + b_3Z $$
+
+If $b_3$ is statistically significant, we conclude that $Z$ moderates the $X \rightarrow Y$ relationship (or that $X$ moderates the $Z \rightarrow Y$).
+
+In multilevel modeling (MLM), moderation can occur at different levels of analysis:
+- **Level-1 interactions**: Both predictors are at level-1 (e.g., student-level variables interacting to predict a student outcome)
+- **Level-2 interactions**: Both predictors are at level-2 (e.g., school-level variables interacting to predict school outcomes)
+- **Cross-level interactions**: A level-2 variable moderates a level-1 relationship (e.g., school characteristics changing how student SES affects achievement)
+
+This tutorial will guide you through estimating, probing, and interpreting each type of interaction using R.
+
+
+### Packages and Data
+
+We will use the `SB.csv` dataset (Snijders & Bosker, 1999) containing 2,287 pupils in 131 schools. Our outcome is a language post-test score (`langpost`). We will use several predictors: verbal IQ (`iq_verb`, level-1), group size (`groupsiz`, level-2), and percent minority (`percmino`, level-2). We'll also use the `popular.csv` dataset (Hox, 2010) for a binary moderator example.
+
+```{r setup, message=FALSE, warning=FALSE}
+# Load required packages
+library(lme4)
+library(lmerTest)
+library(rio)
+library(parameters)
+library(performance)
+library(r2mlm)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(marginaleffects)
+library(sjPlot)
+
+
+# Read data
+SB <- import("SB.csv")
+SB <- drop_na(SB)  # remove missing for simplicity
+head(SB)
+
+# For binary moderator example
+pop <- import("popular2.sav")
+pop <- drop_na(pop)
+pop$girl <- factor(pop$sex, labels = c("boy", "girl"))
+head(pop)
+```
+
+## Theoretical and Analytical Models
+
+In MLM, interactions are specified by including product terms in the fixed part of the model. However, the model also includes random effects that account for clustering. The general form of a two-level model with interactions can be written as:
+
+**Level 1 (within clusters):**
+$$ Y_{ij} = \beta_{0j} + \beta_{1j}X_{1ij} + \beta_{2j}X_{2ij} + \beta_{3j}X_{1ij}X_{2ij} + e_{ij} $$
+
+**Level 2 (between clusters):**
+$$ \beta_{0j} = \gamma_{00} + \gamma_{01}W_{1j} + u_{0j} $$
+$$ \beta_{1j} = \gamma_{10} + \gamma_{11}W_{1j} + u_{1j} $$
+$$ \beta_{2j} = \gamma_{20} + u_{2j} $$
+$$ \beta_{3j} = \gamma_{30} + u_{3j} $$
+
+Where:
+- $\gamma_{00}$ is the overall intercept
+- $\gamma_{10}$, $\gamma_{20}$, $\gamma_{30}$ are average slopes
+- $u$ terms are random effects (variances $\tau_{00}$, $\tau_{11}$, $\tau_{22}$, $\tau_{33}$ and covariances)
+- $e_{ij}$ is the level-1 residual (variance $\sigma^2$)
+
+The specific form depends on which effects are allowed to vary randomly. For testing interactions, the fixed effects ($\gamma$ coefficients) are our primary interest, but correctly specifying the random part is crucial for accurate standard errors.
+
+## Level-1 Interactions
+
+Level-1 interactions involve two predictors measured at the individual (lowest) level. For example, we might hypothesize that the effect of IQ on language scores depends on homework time. Both variables are at the student level.
+
+### Model Specification
+
+For a level-1 interaction, we include the product term in the level-1 model. We also need to decide whether to allow the slopes to vary randomly. A basic model with a level-1 interaction (between `iq_verb` and `groupsiz` – though note `groupsiz` is actually a level-2 variable in our data; for a pure level-1 example we would need two level-1 predictors). For demonstration, let's create a level-1 predictor `homework` (simulated) to interact with IQ.
+
+```{r create-homework}
+# Create a simulated homework variable (level-1)
+set.seed(123)
+SB$homework <- rnorm(nrow(SB), mean = 5, sd = 2)
+SB$homework <- ifelse(SB$homework < 0, 0, SB$homework)  # no negative hours
+```
+
+We should always start with **main effects** model, in which we estimate the multilevel regression **without** the interaction between predictors, so a multiple regression with random intercepts. For the CI in MLM we ask for `profile` likelihood intervals, these are more accurate in MLM models 
+
+```{r}
+m0_l1 <- lmer(langpost ~ 1 + iq_verb + homework + (1 | schoolnr),
+              data = SB, REML = FALSE)
+
+summary(m0_l1)
+parameters(m0_l1, ci_method = "profile")
+```
+
+**Explanation of syntax:**
+
+  - `iq_verb + homework` specifies the fixed effects main effects
+  - `(1 | schoolnr)` includes a random intercept but keeps slopes fixed
+
+**Interpretation:**
+  - 
+
+
+Now we fit a model with an interaction between `iq_verb` and `homework`:
+
+```{r}
+m1_l1 <- lmer(langpost ~ 1 + iq_verb * homework + (1 | schoolnr),
+              data = SB, REML = FALSE)
+
+summary(m1_l1)
+parameters(m1_l1, ci_method = "profile")
+```
+
+**Explanation of syntax:**
+
+  - `iq_verb * homework` is shorthand for `iq_verb + homework + iq_verb:homework`
+  - `(1 | schoolnr)` includes a random intercept but keeps slopes fixed
+
+**Interpretation:**
+
+  - The interaction term `iq_verb:homework coefficient` is `r round(fixef(m1_l1)["iq_verb:homework"], 3)`. This is the change in the slope of IQ for a one-unit increase in homework (or vice versa).
+  - The effect of IQ (`iq_verb`) is now the effect of IQ when `homework = 0` (simple slope). Similarly, the effect of homework is its effect when `iq_verb = 0` (simple slope). Centering these predictors would make these main effects more interpretable (as effects at the mean).
+
+We can also tests the significance of the interaction with the LRT model comparison, by comparing the main effects and interaction models. In this example the $p$-value will be the same as the $p$-value of the regression table as both predictors are continuous. If you have categorical predictors with more than 2 categories the results would not be equivalent and we recommend you to use the LRT comparison in those cases
+
+```{r}
+anova(m0_l1, m1_l1)
+```
+
+In this example, we fail to reject the null hypothesis of `iq_verb` slopes being equal across `homework` levels as $p = 0.377$. 
+
+
+### Allowing Random Slopes
+
+If we believe the IQ effect (or the interaction itself) varies across schools, we can add random slopes:
+
+```{r l1-interaction-random}
+m1_l1_random <- lmer(langpost ~ 1 + iq_verb * homework + 
+                       (1 + iq_verb | schoolnr),
+                     data = SB, REML = FALSE)
+
+summary(m1_l1_random)
+parameters(m1_l1_random, ci_method = "profile")
+```
+
+
+This model allows both the intercept and the IQ slope to vary across schools. The interaction term is still a fixed effect (its slope does not vary across schools unless we add a random slope for the product term, which is rarely done).
+
+
+### Effect size difference
+
+We can also evaluate the overall model fit improvement when we add the interaction, by evaluating the change in $R^2$. We can first check this by the change in conditional and marginal $R^2$ from the `performance` package
+
+```{r}
+r2(m0_l1)
+r2(m1_l1)
+```
+In this case we see that the conditional and marginal $R2$^are basically equal between the main effects and interaction models. Indicating that the model fit doesn't improve by adding the interaction
+
+
+```{r}
+r2mlm(m0_l1, bargraph = F)
+r2mlm(m1_l1, bargraph = F)
+```
+When comparing the detail particioning of $R^2$ by the `r2mlm()` function, we see that the imporveent when adding the interaction is neglible. 
+
+
+
+
+### Probing and Plotting Level-1 Interactions
+
+As in single-level regression, we probe interactions by examining simple slopes of the focal predictor at different values of the moderator. We can use the marginaleffects package for this.
+
+First, choose representative values of the moderator. Common choices are the mean and ±1 standard deviation.
+
+```{r}
+# Get mean and SD of homework
+mean_hw <- mean(SB$homework, na.rm = TRUE)
+sd_hw <- sd(SB$homework, na.rm = TRUE)
+
+# Values for probing
+hw_vals <- c(mean_hw - sd_hw, mean_hw, mean_hw + sd_hw)
+names(hw_vals) <- c("-1 SD", "Mean", "+1 SD")
+hw_vals <- round(hw_vals, 3)
+hw_vals
+```
+
+Now compute simple slopes of IQ at these homework values:
+
+```{r}
+avg_slopes(m1_l1, 
+           variables = "iq_verb",
+           by = "homework",
+           newdata = datagrid(homework = hw_vals))
+```
+
+
+**Interpretation:** The effect of IQ on language scores is `r round(avg_slopes(m1_l1, variables = "iq_verb", by = "homework", newdata = datagrid(homework = hw_vals))$estimate[1], 3)` when homework is low, `r round(avg_slopes(m1_l1, variables = "iq_verb", by = "homework", newdata = datagrid(homework = hw_vals))$estimate[2], 3)` at average homework, and `r round(avg_slopes(m1_l1, variables = "iq_verb", by = "homework", newdata = datagrid(homework = hw_vals))$estimate[3], 3)` when homework is high. The interaction term tells us how much this slope changes per unit increase in homework.
+
+We can also plot the interaction:
+
+```{r}
+plot_predictions(m1_l1, 
+                 by = c("iq_verb", "homework"),
+                 newdata = datagrid(iq_verb = unique(SB$iq_verb),
+                                    homework = hw_vals ))
+```
+
+This plot shows the predicted language score across IQ values for different levels of homework, allowing visual assessment of whether the slopes differ.
+
+### Model tables
+
+We can use the `tab_model()` function to present the results from both models next to each other
+
+```{r}
+tab_model(m0_l1, m1_l1)
+```
+
+
+## Level-2 Interactions
+
+Level-2 interactions involve two predictors measured at the cluster level. For example, we might hypothesize that the effect of school size on average achievement depends on school type (public vs. private). In our data, `groupsiz` (group size) and `percmino` (percent minority) are level-2 variables.
+
+### Model Specification
+
+For a level-2 interaction, we include the product term in the level-2 equation for the intercept. First, we need to create school-mean aggregated variables.
+
+```{r l2-prep}
+# Aggregate to school level
+school_data <- SB %>%
+  group_by(schoolnr) %>%
+  summarise(langpost_mean = mean(langpost),
+            groupsiz = first(groupsiz),
+            percmino = first(percmino))
+```
+
+
+
+**Note:** This could be a single-level model at the school level, aggregated regressions. In a true multilevel context, we would fit this as a level-2 model with random intercepts, but with only 131 schools, we might treat schools as fixed or use MLM with random intercepts but level-2 predictors only. Here's how to specify it in MLM form, but including the random intercept:
+
+As always we should start with the main effects model
+
+```{r}
+m0_l2 <- lmer(langpost ~ 1 + groupsiz + percmino + (1 | schoolnr),
+                  data = SB, REML = FALSE)
+
+summary(m0_l2)
+parameters(m0_l2, ci_method = "profile")
+```
+
+Then we can add the interaction
+
+```{r}
+m1_l2 <- lmer(langpost ~ 1 + groupsiz * percmino + (1 | schoolnr),
+                  data = SB, REML = FALSE)
+
+summary(m1_l2)
+parameters(m1_l2, ci_method = "profile")
+```
+
+**Interpretation:**
+
+  - The interaction term `groupsiz:percmino` tells us whether the effect of group size on language scores depends on the percent minority (or vice versa).
+  - Because we haven't centered the predictors, the effects are conditional on the other predictor being zero (simple slopes, which may not be meaningful).
+
+
+### Centering Level-2 Predictors
+
+For better interpretation, we should center level-2 predictors, especially when including interactions.
+
+```{r}
+# Center level-2 predictors
+SB <- SB %>%
+  mutate(groupsiz_c = groupsiz - mean(groupsiz, na.rm = T),
+         percmino_c = percmino - mean(percmino, na.rm = T))
+
+m1_l2_centered <- lmer(langpost ~ 1 + groupsiz_c * percmino_c + (1 | schoolnr),
+                       data = SB, REML = FALSE)
+
+summary(m1_l2_centered)
+parameters(m1_l2_centered, ci_method = "profile")
+
+```
+
+Now the effect of `groupsiz_c` is the effect of group size on language scores at the mean of `percmino_c` (i.e., at average percent minority). The interaction term remains unchanged.
+
+As before, we can test the significance of the interaction with a model comparison between the main effects and interaction model. 
+
+```{r}
+anova(m0_l2, m1_l2)
+```
+In this case we fail to reject the null hypothesis of a level-2 interaction, as $p = 0.242$. 
+
+
+### Effect size difference
+
+We can evaluate the improvement in model fit by the change in $R^2$. In tis case we see that the main effect model even present higher conditional and marginal $R^2$ 
+
+```{r}
+r2(m0_l2)
+r2(m1_l2)
+```
+
+Similarly, with the $R^2$ decmpisition, we see that the interaction present neglible improvent in model fit. 
+
+```{r}
+r2mlm(m0_l2, bargraph = F)
+r2mlm(m1_l2, bargraph = F)
+```
+
+
+
+### Probing and Plotting Level-2 Interactions
+
+Probing a level-2 interaction follows the same logic as level-1: examine simple slopes of one predictor at conditional values of the other.
+
+```{r}
+# Values for percent minority
+perc_vals <- c(mean(SB$percmino) - sd(SB$percmino),
+               mean(SB$percmino),
+               mean(SB$percmino) + sd(SB$percmino))
+perc_vals <- round(perc_vals, 1)
+names(perc_vals) <- c("-1 SD", "Mean", "+1 SD")
+perc_vals <- perc_vals - mean(SB$percmino)
+perc_vals <- round(perc_vals, 3)
+perc_vals
+
+# Simple slopes of groupsiz at these values
+avg_slopes(m1_l2_centered,
+           variables = "groupsiz_c",
+           by = "percmino_c",
+           newdata = datagrid(percmino_c = perc_vals))
+```
+
+We need to adjust the values because the predictor is centered. Alternatively, we can use the original metric with appropriate centering.
+
+Plotting:
+
+```{r}
+plot_predictions(m1_l2_centered, 
+                 by = c("groupsiz_c", "percmino_c"),
+                 newdata = datagrid(groupsiz_c = unique(SB$groupsiz_c),
+                                    percmino_c = perc_vals))
+```
+
+This shows how the relationship between group size and language scores changes across levels of percent minority.
+
+### Model tables
+
+We can present the model parameters in a table next to each other
+
+```{r}
+tab_model(m0_l2, m1_l2)
+```
+
+## Cross-Level Interactions
+
+Cross-level interactions are the most distinctive type of moderation in multilevel models. They occur when a level-2 variable moderates a level-1 relationship. For example, we might hypothesize that the effect of student IQ on language scores depends on school-level characteristics like group size or percent minority.
+
+### Model Specification
+
+A cross-level interaction is specified by including the level-2 predictor in the level-2 equation for the slope of the level-1 predictor. In the combined model, this creates a product term between the level-1 and level-2 variables.
+
+As always we start with the main effects model (without interactions), in this case we have random intercept and slope
+
+```{r}
+m0_cross <- lmer(langpost ~ 1 + iq_verb + groupsiz_c + (1 + iq_verb | schoolnr),
+                data = SB, REML = FALSE)
+
+summary(m0_cross)
+parameters(m0_cross, ci_method = "profile")
+```
+
+Now, we can estimate the interaction between level-2 and level-1 predictors
+
+```{r}
+m_cross <- lmer(langpost ~ 1 + iq_verb * groupsiz_c + (1 + iq_verb | schoolnr),
+                data = SB, REML = FALSE)
+
+summary(m_cross)
+parameters(m_cross, ci_method = "profile")
+```
+
+**Explanation:**
+
+  - `iq_verb * groupsiz_c` includes the main effects and the cross-level interaction.
+  - `(1 + iq_verb | schoolnr)` allows both the intercept and the IQ slope to vary across schools. This is important because if we believe a level-2 variable moderates the IQ slope, there must be slope variation to explain (Aguinis, Gottfredson, & Culpepper, 2013).
+
+
+**Interpretation:**
+
+  - The interaction term `iq_verb:groupsiz_c coefficient` is `r round(fixef(m_cross)["iq_verb:groupsiz_c"], 3)`. This means that for a one-unit increase in group size (centered), the slope of IQ changes by this amount.
+  - The main effect of IQ (`iq_verb`) is now the effect of IQ at the mean of group size (since `groupsiz_c` is centered).
+  - The random slope variance (`sd(iq_verb)`) indicates how much the IQ effect varies across schools after accounting for group size.
+
+
+We can alsways test the signifficance of the interaction with a model comparison, in this case we reject the null hypothesis of no cross-level interaction as $p = 0.008$ 
+
+```{r}
+anova(m0_cross, m_cross)
+```
+
+  
+  
+### Testing the Need for Random Slopes
+
+Before testing a cross-level interaction, we should verify that the slope of the level-1 predictor actually varies across clusters. We can compare models with and without the random slope.
+
+```{r}
+# Model with fixed slope
+m_fixed <- lmer(langpost ~ 1 + iq_verb * groupsiz_c + (1 | schoolnr),
+                data = SB, REML = FALSE)
+
+# Model with random slope (already fit)
+anova(m_fixed, m_cross)
+```
+
+A significant chi-square test indicates that allowing the slope to vary improves model fit, justifying the search for cross-level moderators.
+
+### Effect size difference
+
+In this case we see that the model with the interaction increases the marginal $R^2$ by 0.5%  
+
+```{r}
+r2(m0_cross)
+r2(m_cross)
+```
+
+Similarly, we can see small model fit improvements in the $R^2$ decomposition
+
+```{r}
+r2mlm(m0_cross, bargraph = F)
+r2mlm(m_cross, bargraph = F)
+```
+
+
+### Probing and Plotting Cross-Level Interactions
+
+Probing a cross-level interaction involves examining the simple slope of the level-1 predictor (IQ) at different values of the level-2 moderator (group size).
+
+```{r}
+# Values of group size (centered) at which to probe
+gs_vals <- c(mean(SB$groupsiz) - sd(SB$groupsiz),
+             mean(SB$groupsiz),
+             mean(SB$groupsiz) + sd(SB$groupsiz))
+gs_vals_centered <- gs_vals - mean(SB$groupsiz)
+names(gs_vals_centered) <- c("-1 SD", "Mean", "+1 SD")
+gs_vals_centered <- round(gs_vals_centered, 3)
+gs_vals_centered
+
+# Simple slopes of IQ at these group size values
+avg_slopes(m_cross,
+           variables = "iq_verb",
+           by = "groupsiz_c",
+           newdata = datagrid(groupsiz_c = gs_vals_centered))
+
+```
+
+
+**Interpretation:** The effect of IQ on language scores is `r round(avg_slopes(m_cross, variables = "iq_verb", by = "groupsiz_c", newdata = datagrid(groupsiz_c = gs_vals_centered))$estimate[1], 3)` in smaller schools, `r round(avg_slopes(m_cross, variables = "iq_verb", by = "groupsiz_c", newdata = datagrid(groupsiz_c = gs_vals_centered))$estimate[2], 3)` in average-sized schools, and `r round(avg_slopes(m_cross, variables = "iq_verb", by = "groupsiz_c", newdata = datagrid(groupsiz_c = gs_vals_centered))$estimate[3], 3)` in larger schools. The interaction term tells us the change per unit increase in group size.
+
+Plotting:
+
+```{r}
+plot_predictions(m_cross,
+                 by = c("iq_verb", "groupsiz_c"),
+                 newdata = datagrid(iq_verb = unique(SB$iq_verb),
+                                    groupsiz_c = gs_vals_centered))
+```
+
+This plot shows three regression lines (IQ on language scores) for different levels of group size, allowing visual comparison of slopes.
+
+### Model tables
+
+We can present the model parameters in a table next to each other
+
+```{r}
+tab_model(m0_cross, m_cross)
+```
+
+
+## Example with a Binary Moderator
+
+Cross-level interactions are particularly common with binary level-2 moderators, such as experimental condition or school type. Using the `popular` dataset (Hox, 2010), we can test whether the effect of extraversion on popularity depends on teacher experience (continuous) or sex (binary).
+
+As always we start with the main effects model
+
+```{r}
+# Model with sex as a binary moderator of extraversion effect
+m0_binary <- lmer(popular ~ 1 + extrav + girl + texp  + (1 + extrav | class),
+                 data = pop, REML = FALSE)
+
+summary(m0_binary)
+parameters(m0_binary, ci_method = "profile")
+```
+
+And then we can add the interaction term
+
+```{r binary-moderator}
+# Model with sex as a binary moderator of extraversion effect
+m_binary <- lmer(popular ~ 1 + extrav * girl + texp  + (1 + extrav | class),
+                 data = pop, REML = FALSE)
+
+summary(m_binary)
+parameters(m_binary, ci_method = "profile")
+```
+
+**Interpretation**:
+- `extrav` is the effect of extraversion for boys (`girl = 0`).
+- `extrav:girl` is the difference in the extraversion slope for girls compared to boys. If significant, sex moderates the extraversion effect.
+
+```{r}
+anova(m0_binary, m_binary)
+```
+
+
+Probing a binary moderator is simpler: we only have two simple slopes (for each group).
+
+```{r binary-probe}
+avg_slopes(m_binary,
+           variables = "extrav",
+           by = "girl")
+```
+
+**Interpretation**: For boys, the effect of extraversion on popularity is `r round(avg_slopes(m_binary, variables = "extrav", by = "girl")$estimate[1], 3)`; for girls, it's `r round(avg_slopes(m_binary, variables = "extrav", by = "girl")$estimate[2], 3)`. The difference is the interaction term.
+
+Plot:
+
+```{r binary-plot}
+plot_predictions(m_binary, 
+                 condition = c("extrav", "girl"))
+```
+
+Model tables
+
+We can present the model parameters in a table next to each other
+
+```{r}
+tab_model(m0_binary, m_binary)
+```
+
+
+## Three-Way Interactions
+
+MLM can also accommodate higher-order interactions, such as a level-1 × level-1 × level-2 interaction. For example, the interaction between IQ and homework might itself be moderated by group size.
+
+As always we should start with the main effects model
+
+```{r}
+m0_3way <- lmer(langpost ~ 1 + iq_verb + homework + groupsiz_c + 
+                 (1 + iq_verb | schoolnr),
+               data = SB, REML = FALSE)
+
+summary(m0_3way)
+parameters(m0_3way, ci_method = "profile")
+```
+Then we can add the 3-way interaction terms
+
+```{r three-way}
+m_3way <- lmer(langpost ~ 1 + iq_verb * homework * groupsiz_c + 
+                 (1 + iq_verb | schoolnr),
+               data = SB, REML = FALSE)
+
+summary(m_3way)
+parameters(m_3way, ci_method = "profile")
+```
+
+**Interpretation**: The three-way term `iq_verb:homework:groupsiz_c` tests whether the IQ × homework interaction (level-1 × level-1) varies across levels of group size (level-2).
+
+Now, the regression terms test specific 2-way or 3-way interaction terms. While for an overall test is better to do the model comparison LRT test
+
+```{r}
+anova(m0_3way, m_3way)
+```
+
+
+### Probing Three-Way Interactions
+
+Probing a three-way interaction is more complex: we examine the two-way interaction at different levels of the third variable. For example, we could probe the IQ × homework interaction at low, medium, and high group size.
+
+First, get values for homework:
+
+```{r three-way-values}
+# Values for homework
+mean_hw <- mean(SB$homework, na.rm = TRUE)
+sd_hw <- sd(SB$homework, na.rm = TRUE)
+hw_vals <- c(mean_hw - sd_hw, mean_hw, mean_hw + sd_hw)
+names(hw_vals) <- c("-1 SD", "Mean", "+1 SD")
+hw_vals <- round(hw_vals, 3)
+hw_vals
+```
+
+Now compute simple slopes of IQ at different homework and group size combinations:
+
+```{r three-way-probe}
+avg_slopes(m_3way,
+           variables = "iq_verb",
+           by = c("homework", "groupsiz_c"),
+           newdata = datagrid(homework = hw_vals,
+                              groupsiz_c = gs_vals_centered))
+```
+
+This gives the simple slope of IQ at each combination of homework (three levels) and group size (three levels) – nine slopes in total. We can then see if the pattern of IQ slopes across homework levels differs between group size conditions.
+
+### Plotting Three-Way Interactions
+
+Plotting a three-way interaction can be done with separate panels:
+
+```{r three-way-plot}
+plot_predictions(m_3way,
+                 by = c("iq_verb", "homework", "groupsiz_c"),
+                 newdata = datagrid(groupsiz_c = gs_vals_centered,
+                                    homework = hw_vals,
+                                    iq_verb = unique(SB$iq_verb)))
+```
+
+This produces three plots (one per group size level) showing the IQ × homework interaction.
+
+### Model tables
+
+We can present the model parameters in a table next to each other
+
+```{r}
+tab_model(m0_3way, m_3way)
+```
+
+
+## Effect Sizes for Interactions
+
+Several approaches exist for quantifying the importance of interaction effects in MLM (Rights & Sterba, 2019).
+
+### Pseudo-$R^2$ Change
+
+We can compute the reduction in variance components when adding the interaction:
+
+```{r pseudo-r2}
+# Model without interaction
+m_main <- lmer(langpost ~ 1 + iq_verb + groupsiz_c + (1 + iq_verb | schoolnr),
+               data = SB, REML = FALSE)
+
+# Model with interaction (already fit)
+# Compare variance components
+VarCorr(m_main)
+VarCorr(m_cross)
+
+# Proportion reduction in slope variance
+tau11_main <- as.data.frame(VarCorr(m_main)) %>% 
+  filter(grp == "schoolnr" & var1 == "iq_verb") %>% 
+  pull(vcov)
+tau11_cross <- as.data.frame(VarCorr(m_cross)) %>% 
+  filter(grp == "schoolnr" & var1 == "iq_verb") %>% 
+  pull(vcov)
+
+(tau11_main - tau11_cross) / tau11_main
+```
+
+This tells us how much of the slope variance across schools is explained by group size.
+
+### Using the `performance` Package
+
+```{r}
+r2(m_main)
+r2(m_cross)
+```
+
+
+### Using the `r2mlm` Package
+
+The `r2mlm` package provides comprehensive $R^2$ measures for MLM, partitioning variance into fixed and random components at each level.
+
+```{r r2mlm}
+r2mlm(m_main)
+r2mlm(m_cross)
+```
+
+The output shows total, within-cluster, and between-cluster variance explained, as well as decomposition into fixed (`f1`, `f2`), random slope (`v`), and random intercept (`m`) components.
+
+## Summary and Recommendations
+
+| Interaction Type | Specification | Probing | Key Considerations |
+|:---|:---|:---|:---|
+| **Level-1 × Level-1** | Include product term in level-1 model | Simple slopes of one predictor at levels of the other | Center predictors for interpretability; consider random slopes for either predictor |
+| **Level-2 × Level-2** | Include product term in level-2 intercept equation | Simple slopes at levels of the moderator | Center level-2 predictors; ensure sufficient level-2 sample size |
+| **Cross-level (L1 × L2)** | Include L2 predictor in L2 slope equation | Simple slopes of L1 predictor at levels of L2 moderator | Must have random slope of L1 predictor to test; L2 sample size critical for power |
+
+**General Recommendations** (Aguinis et al., 2013; Enders & Tofighi, 2007):
+
+1. **Center predictors** appropriately – group-mean centering for level-1 predictors when testing cross-level interactions, grand-mean centering for level-2 predictors.
+2. **Include random slopes** for level-1 predictors involved in cross-level interactions to avoid biased standard errors.
+3. **Check statistical power** – cross-level interactions require adequate level-2 sample size (often >50). Use tools like the power calculator from Mathieu et al. (2012).
+4. **Graph interactions** to aid interpretation, but don't rely on graphs alone for conclusions about effect importance.
+5. **Report complete results** including fixed effects, random effects (variances and covariances), and effect size measures.
+
+## References
+
+- Aguinis, H., Gottfredson, R. K., & Culpepper, S. A. (2013). Best-practice recommendations for estimating cross-level interaction effects using multilevel modeling. *Journal of Management, 39*(6), 1490-1528.
+- Enders, C. K., & Tofighi, D. (2007). Centering predictor variables in cross-sectional multilevel models: A new look at an old issue. *Psychological Methods, 12*(2), 121-138.
+- Hox, J. J., Moerbeek, M., & van de Schoot, R. (2018). *Multilevel analysis: Techniques and applications* (3rd ed.). Routledge.
+- Mathieu, J. E., Aguinis, H., Culpepper, S. A., & Chen, G. (2012). Understanding and estimating the power to detect cross-level interaction effects in multilevel modeling. *Journal of Applied Psychology, 97*(5), 951-966.
+- Preacher, K. J., Curran, P. J., & Bauer, D. J. (2006). Computational tools for probing interaction effects in multiple linear regression, multilevel modeling, and latent curve analysis. *Journal of Educational and Behavioral Statistics, 31*(4), 437-448.
+- Rights, J. D., & Sterba, S. K. (2019). Quantifying explained variance in multilevel models: An integrative framework for defining R-squared measures. *Psychological Methods, 24*(3), 309-338.
+- Snijders, T. A. B., & Bosker, R. J. (2012). *Multilevel analysis: An introduction to basic and advanced multilevel modeling* (2nd ed.). Sage.
+

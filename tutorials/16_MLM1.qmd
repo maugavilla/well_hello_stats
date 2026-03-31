@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 ---
 
@@ -176,10 +177,12 @@ parameters(m0, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
+
 - `langpost ~ 1 + (1 | schoolnr)`: the formula specifies a fixed intercept (`1`) and a random intercept for each school (`(1 | schoolnr)`). The term `(1 | schoolnr)` means “allow the intercept to vary across schools”.
 - `REML = FALSE`: use maximum likelihood (ML) estimation. This is chosen because we will later compare models that differ in fixed effects.
 
 **Output interpretation:**
+
 - Fixed effects: The intercept is the grand mean of `langpost` across all students and schools, estimated as 40.36.
 - Random effects: 
   - `schoolnr (Intercept)` variance = 19.43 (SD = 4.41). This is the between-school variance in mean language scores.
@@ -211,10 +214,12 @@ parameters(m1, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
+
 - `iq_verb` is added as a fixed effect. It is a student-level predictor.
 - The random part remains `(1 | schoolnr)`, i.e., only the intercept varies across schools.
 
 **Output interpretation:**
+
 - Fixed effect of `iq_verb` = 2.49 (p < .001). This means that, on average, a one-point increase in verbal IQ is associated with a 2.49-point increase in language post-test, holding school constant.
 - The intercept now represents the predicted language score when `iq_verb = 0`. With centered predictors, this would be more meaningful, but here it's simply the value at zero IQ.
 - Random effects: The residual variance decreased from 64.57 to 42.22 (a reduction of about 35%). The between-school variance also decreased from 19.43 to 9.50, indicating that part of the between-school differences is explained by differences in average IQ across schools (compositional effect).
@@ -230,10 +235,12 @@ parameters(m2, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
+
 - `(1 + iq_verb | schoolnr)` means we allow both the intercept and the slope of `iq_verb` to vary randomly across schools. This adds two variance components: variance of the slopes, and covariance between intercepts and slopes.
 - `control = lmerControl(optimizer = "Nelder_Mead")`: we specify a different optimizer because models with random slopes can be more difficult to estimate; Nelder-Mead is a robust alternative.
 
 **Output interpretation:**
+
 - Fixed effects: The average slope of `iq_verb` is 2.53, similar to before.
 - Random effects: 
   - Variance of intercepts = 65.88 (SD = 8.12) – this is now the variance of school mean language scores *when iq_verb = 0*. Because we haven't centered `iq_verb`, zero is outside the observed range; this variance is not directly interpretable.
@@ -260,9 +267,11 @@ parameters(m3, ci_method = "profile")
 ```
 
 **Explanation of arguments:**
+
 - `percmino` is a school-level variable (percentage of minority students). It is added as a fixed effect to explain between-school variation.
 
 **Output interpretation:**
+
 - Fixed effect of `percmino` = -0.073 (p < .001). For every 1% increase in minority enrollment, the predicted language score decreases by 0.07 points, holding student IQ constant. This is a small but significant contextual effect.
 - The random slope variance remains about 0.21, indicating that even after controlling for school composition, the IQ effect still varies across schools.
 
@@ -286,6 +295,7 @@ ggplot(dd, aes(y=grp,x=condval)) +
 ```
 
 **Explanation:**
+
 - `ranef(m2)` extracts the conditional modes (best linear unbiased predictions, or BLUPs) of the random effects, along with conditional standard deviations (`condsd`). The result is a list; we convert it to a data frame.
 - The plot shows each school's random intercept deviation (left) and random slope deviation (right). The dots are the point estimates, and the error bars represent ±2 conditional SDs (roughly 95% confidence intervals for the random effects). Schools with error bars that do not overlap zero are significantly different from the average.
 - This caterpillar plot helps identify outliers and assess the variability of random effects.
@@ -300,6 +310,7 @@ plot_predictions(m3, condition = "percmino")
 ```
 
 **Explanation:**
+
 - `plot_predictions()` from `marginaleffects` computes predicted values of the outcome across the range of a predictor, holding other predictors at their means (or typical values). The default uses only fixed effects (i.e., it averages over random effects), which is appropriate for population-level inference.
 - The first plot shows the average relationship between IQ and language scores, with a confidence band.
 - The second plot shows the average relationship between percent minority and language scores. Both are linear because we have not included interactions.
@@ -320,6 +331,7 @@ ggplot(preds, aes(iq_verb, estimate, level=schoolnr)) +
 ```
 
 **Explanation:**
+
 - `predictions()` generates predicted values for each combination of predictors specified in `newdata`. Here we create a grid with all schools and IQ values from 4 to 18.
 - Because we include `schoolnr`, the predictions use the random effects for each school, so each line represents the predicted regression line for that school (conditional on its random intercept and slope). This visualizes the heterogeneity in the IQ effect across schools.
 

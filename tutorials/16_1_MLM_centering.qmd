@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 execute:
   echo: true
@@ -19,7 +20,7 @@ Centering is the process of subtracting a constant from a variable to create a n
 
 In multilevel models (MLMs), centering takes on additional importance because it helps us separate the effects of a predictor into its **within-cluster** and **between-cluster** components (Enders & Tofighi, 2007; Raudenbush & Bryk, 2002). Failing to separate these effects results in a "conflated" or "smushed" coefficient that is an uninterpretable blend of the two (Hoffman & Walters, 2022; Preacher et al., 2010).
 
-### Why Do We Need to Separate These Effects?
+## Why Do We Need to Separate These Effects?
 
 Consider a study of students nested within schools. We want to examine the relationship between student Socio-Economic Status (SES) and math achievement. The relationship can be broken down into two distinct questions:
 
@@ -30,7 +31,7 @@ These two effects can be, and often are, different in magnitude. The difference 
 
 This tutorial will guide you through the three main centering strategies for level-1 predictors, showing how to estimate and interpret these distinct effects using R.
 
-### Packages and Data
+## Packages and Data
 
 We will use the `SB.csv` dataset (Snijders & Bosker, 1999) containing 2,287 pupils in 131 schools. Our outcome is a language post-test score (`langpost`), and our predictor is verbal IQ (`iq_verb`). We will also use several R packages for data manipulation, model fitting, and effect size calculation.
 
@@ -53,7 +54,7 @@ head(SB)
 ```
 
 
-### Preliminary Step: Creating the Cluster Mean
+## Preliminary Step: Creating the Cluster Mean
 
 To separate within- and between-cluster effects, we first need the cluster mean of our predictor. This will be used both for centering and as a level-2 predictor.
 
@@ -71,7 +72,7 @@ head(SB[, c("schoolnr", "iq_verb", "iq_mean")])
 ```
 
 
-### The Uncentered Model (Baseline)
+## The Uncentered Model (Baseline)
 
 We start with a baseline model using the raw, uncentered predictor. This model will serve as a reference point. It includes a random intercept for schools and a random slope for `iq_verb`, allowing the relationship between IQ and language scores to vary across schools.
 
@@ -93,7 +94,7 @@ parameters(model_uncentered, ci_method = "profile")
 
 This model highlights why centering is necessary. We cannot answer our substantive questions about within- and between-school effects from these results.
 
-### Grand Mean Centering
+## Grand Mean Centering
 
 Grand Mean Centering (CGM) involves subtracting the overall grand mean of the predictor from every observation. The centered variable is created as:
 
@@ -113,7 +114,7 @@ SB$iq_cgm <- SB$iq_verb - grand_mean_iq
 mean(SB$iq_cgm)
 ```
 
-#### Model 2a: Grand Mean Centering Only
+### Model 2a: Grand Mean Centering Only
 
 This model includes only the grand-mean centered predictor. The coefficient will still be conflated because the between-school variance is still present in the predictor.
 
@@ -133,7 +134,7 @@ parameters(model_cgm_only, ci_method = "profile")
 
   - The random slope variance (0.21) is similar to the uncentered model, indicating that the conflated slope still varies across schools.
   
-#### Model 2b: Grand Mean Centering + Group Mean
+### Model 2b: Grand Mean Centering + Group Mean
 
 To actually separate the within and contextual effects, we add the school mean (`iq_mean`) as a level-2 predictor.
 
@@ -162,7 +163,7 @@ To get the between-school effect (the effect of a school's average IQ on school-
 
 The random slope variance for `iq_cgm` (0.20) is slightly reduced compared to the CGM‑only model, indicating that part of the slope variability is explained by school‑mean IQ.
 
-### Group Mean Centering
+## Group Mean Centering
 
 Group Mean Centering (CWC) – also known as Centering Within Cluster – involves subtracting the cluster mean from each observation. The centered variable is created as:
 
@@ -183,7 +184,7 @@ SB %>%
   summary()
 ```
 
-#### Model 3a: Group Mean Centering Only
+### Model 3a: Group Mean Centering Only
 
 This model includes only the group-mean centered predictor. Because all between-school variance has been removed from `iq_cwc`, its coefficient is a pure within-school effect, even without adding the group mean back in.
 
@@ -203,7 +204,7 @@ parameters(model_cwc_only, ci_method = "profile")
   - The random slope variance (0.22) reflects how much the within‑school effect varies across schools.
   
 
-#### Model 3b: Group Mean Centering + Group Mean
+### Model 3b: Group Mean Centering + Group Mean
 
 To also obtain the between-school effect, we add the school mean (`iq_mean`) as a level-2 predictor.
 
@@ -226,7 +227,7 @@ To get the contextual effect from this model, we subtract the within effect from
 
 The random slope variance (0.26) is now slightly larger than in the CWC‑only model, but still indicates meaningful heterogeneity across schools in the within‑school effect of IQ.
 
-### The Fully Centered Model (CWC + Centered Group Mean)
+## The Fully Centered Model (CWC + Centered Group Mean)
 
 In the previous models, the intercept's interpretation is still slightly awkward because the level-2 predictor (`iq_mean`) is not centered. To make the intercept maximally interpretable (i.e., the expected outcome for a student with average IQ in a school of average IQ), we can also center the group means at their grand mean.
 
@@ -245,7 +246,7 @@ SB$iq_mean_c <- SB$iq_mean - grand_mean_schools
 mean(SB$iq_mean_c)
 ```
 
-#### Model 4: The Final Model
+### Model 4: The Final Model
 
 We now fit the "fully centered" model with the group-mean centered predictor (`iq_cwc`) at level-1 and the centered school mean (`iq_mean_c`) at level-2.
 
@@ -265,7 +266,7 @@ parameters(model_final, ci_method = "profile")
 This model provides the cleanest separation of effects and the most interpretable intercept. The random slope variance (0.26) indicates that the within‑school effect of IQ varies across schools, even after controlling for school‑average IQ.
 
 
-### Detailed Interpretation of Final Model Results
+## Detailed Interpretation of Final Model Results
 
 The `parameters(model_final)` output provides the parameter estimates for our fully centered multilevel model. This model includes:
 
@@ -273,7 +274,7 @@ The `parameters(model_final)` output provides the parameter estimates for our fu
 - **Level-2**: Centered school mean IQ (`iq_mean_c`), representing each school's deviation from the overall average school IQ
 - **Random intercept** and **random slope** for schools (`(1 + iq_cwc | schoolnr)`), allowing each school to have its own baseline language score and its own within‑school IQ effect.
 
-#### Fixed Effects
+### Fixed Effects
 
 The fixed effects describe the average relationships in the population.
 
@@ -283,7 +284,7 @@ The fixed effects describe the average relationships in the population.
 | **iq_cwc**      | 2.46        | 0.09 | [2.29, 2.64]    | 28.47   | < .001  |
 | **iq_mean_c**   | 3.92        | 0.30 | [3.34, 4.51]    | 13.24   | < .001  |
 
-**Intercept (\(\gamma_{00} = 40.73\))**
+**Intercept ($\gamma_{00} = 40.73$)**
 
 The intercept represents the predicted language score for a student with:
 
@@ -292,14 +293,14 @@ The intercept represents the predicted language score for a student with:
 
 In substantive terms, a typical student (average IQ relative to their school) in a typical school (average school IQ) is predicted to have a language score of **40.73**. This is a highly interpretable baseline value.
 
-**iq_cwc (\(\gamma_{10} = 2.46\))**
+**iq_cwc ($\gamma_{10} = 2.46$)**
 
 This is the **within-school effect** of IQ. For students in the same school, a one-point increase in a student's IQ relative to their school's average is associated with a **2.46-point increase** in their predicted language score.
 
 - **Interpretation**: Within any given school, students with higher IQ than their schoolmates tend to have higher language scores. For every point a student's IQ exceeds their school's average, their language score is expected to be 2.46 points higher.
 - **Statistical significance**: The effect is significant (\(p < .001\)), and the 95% confidence interval [2.29, 2.64] does not include zero.
 
-**iq_mean_c (\(\gamma_{01} = 3.92\))**
+**iq_mean_c ($\gamma_{01} = 3.92$)**
 
 This is the **between-school effect** of IQ. A one-point increase in a school's average IQ (compared to the overall average) is associated with a **3.92-point increase** in the predicted language score for a student at that school's average IQ.
 
@@ -317,7 +318,7 @@ $$
 
 This means that for two students with the same individual IQ, the one attending a school with an average IQ one point higher is predicted to score **1.46 points higher** on the language test. This represents the pure contextual benefit of being in a higher-IQ school environment.
 
-#### Random Effects
+### Random Effects
 
 The random effects describe the variance components – how much schools and students vary around the fixed effects.
 
@@ -399,7 +400,7 @@ About **16%** of the variance in language scores is between schools, with the re
 
 6. **The model successfully disaggregates effects**: By using group-mean centering and including the centered school mean, we have cleanly separated within-school and between-school effects, providing clear, interpretable estimates for each.
 
-### Summary of Model Results
+## Summary of Model Results
 
 | Model               | Intercept | Level-1 Slope | Level-2 Slope | Interpretation of Level-1 Slope |
 |:--------------------|:---------:|:-------------:|:-------------:|:--------------------------------|
@@ -412,11 +413,11 @@ About **16%** of the variance in language scores is between schools, with the re
 
 Notice that the within-effect from the CWC models (2.46) is slightly smaller than the within-effect derived from the CGM full model (2.46? Actually it's the same – the difference is due to rounding; the CGM full within effect is also 2.46). In our output, both are 2.46, so they match. The between-effect (3.92) and the contextual effect (calculated as 3.92 - 2.46 = 1.46) are consistent across models.
 
-### Effect Size Measures
+## Effect Size Measures
 
 We can now compare the effect sizes across these different models.
 
-#### Using the `performance` package
+### Using the `performance` package
 
 The `r2()` function provides marginal (fixed effects only) and conditional (fixed + random effects) $R^2$.
 
@@ -431,7 +432,7 @@ r2(model_final)
 
 You will notice that `model_uncentered` and `model_cgm_only` have the same marginal and conditional $R^2$. `model_cwc_only` has a different $R^2$ because it is a different model (it excludes the between-school variance from the predictor). `model_cwc_full`, and `model_final` all have the same $R^2$, as they are statistically equivalent; centering simply reparameterizes them without changing the overall model fit.
 
-#### Using the `r2mlm` package
+### Using the `r2mlm` package
 
 The `r2mlm()` function provides a much more detailed decomposition. We'll run it on the final model.
 
@@ -439,11 +440,11 @@ The `r2mlm()` function provides a much more detailed decomposition. We'll run it
 r2mlm(model_final)
 ```
 
-##### Detailed Explanation of `r2mlm()` Output
+#### Detailed Explanation of `r2mlm()` Output
 
 The `r2mlm()` function from the `r2mlm` package provides a comprehensive decomposition of variance explained in multilevel models, following the framework developed by Rights & Sterba (2019). The output is divided into two main sections: `$Decompositions` and `$R2s`.
 
-###### 1. `$Decompositions` – Variance Components
+##### `$Decompositions` – Variance Components
 
 This table shows the proportion of variance in the outcome variable (`langpost`) attributable to different sources. The columns represent:
 
@@ -459,7 +460,7 @@ The rows represent different sources of variance:
 - **mean variation**: Variance explained by random intercepts (between-school differences in mean achievement after accounting for predictors).
 - **sigma2**: Unexplained residual variance at level-1 (within schools).
 
-###### Interpreting the Numbers (from the final model output):
+##### Interpreting the Numbers (from the final model output):
 
 | Source           | Total  | Within | Between | Interpretation |
 |:-----------------|:------:|:------:|:-------:|:---------------|
@@ -471,7 +472,7 @@ The rows represent different sources of variance:
 
 **Check**: The total column sums to 1.00 (0.264 + 0.129 + 0.011 + 0.096 + 0.500 = 1.00), confirming that all variance is accounted for.
 
-###### 2. `$R2s` – R-Squared Measures
+##### `$R2s` – R-Squared Measures
 
 This table provides various R² measures, each representing the proportion of variance explained by different combinations of predictors. The notation follows Rights & Sterba (2019):
 
@@ -483,7 +484,7 @@ This table provides various R² measures, each representing the proportion of va
 - **fv**: Variance explained by *fixed effects + random slope variation* (f + v).
 - **fvm**: Variance explained by *fixed effects + random slope variation + random intercept variation* (f + v + m) – this is the *conditional* R².
 
-###### Interpreting the Numbers:
+##### Interpreting the Numbers:
 
 | Measure | Total  | Within | Between | Interpretation |
 |:--------|:------:|:------:|:-------:|:---------------|
@@ -495,7 +496,7 @@ This table provides various R² measures, each representing the proportion of va
 | **fv**  | 0.404  | 0.355  | NA      | Fixed effects + random slopes explain 40.4% of total variance and 35.5% of within variance. |
 | **fvm** | 0.500  | NA     | NA      | The full model (fixed effects + random slopes + random intercepts) explains 50.0% of total variance. This is the *conditional R²*. |
 
-##### Key Takeaways from This Output:
+#### Key Takeaways from This Output:
 
 1. **Within-school IQ is a strong predictor**: It explains 26.4% of total variance and 34.1% of within-school variance.
 2. **Between-school IQ is even stronger at the school level**: It explains 57.4% of between-school variance, but only 12.9% of total variance because between-school variance is a smaller portion of the total.
@@ -504,7 +505,7 @@ This table provides various R² measures, each representing the proportion of va
 5. **Random slope variation, while small, is non‑negligible**: 1.1% of total variance is attributable to heterogeneity in the within‑school IQ effect across schools. This indicates that the relationship between student IQ and language achievement is not uniform.
 6. **Total model performance**: The conditional R² (fvm) of 0.500 indicates that the full model explains 50.0% of the total variance in language scores.
 
-### Summary of Interpretations and Recommendations
+## Summary of Interpretations and Recommendations
 
 | Centering Strategy           | Model  | \(\gamma_{10}\) (Level-1 Slope) | \(\gamma_{01}\) (Level-2 Slope) | Intercept |
 |:-----------------------------|:-------|:-------------------------------:|:-------------------------------:|:----------|
@@ -523,7 +524,7 @@ This table provides various R² measures, each representing the proportion of va
   - **For a clean, fully disaggregated model**, always include the cluster mean of your Level-1 predictor in the Level-2 model. This separates the variance and prevents your Level-1 coefficient from being "smeared" with Level-2 variance.
   - **If you suspect that the within‑cluster effect varies across clusters, include a random slope** for the Level‑1 predictor. This allows you to model that heterogeneity and can improve the accuracy of standard errors for both fixed and random parts.
 
-### References
+## References
 
   - Aiken, L. S., & West, S. G. (1991). *Multiple regression: Testing and interpreting interactions*. Sage.
   - Enders, C. K., & Tofighi, D. (2007). Centering predictor variables in cross-sectional multilevel models: A new look at an old issue. *Psychological Methods, 12*(2), 121–138.

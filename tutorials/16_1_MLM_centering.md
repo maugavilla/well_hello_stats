@@ -1,48 +1,72 @@
 # Multilevel Regression: centering
 Mauricio Garnier-Villarreal
-2026-03-17
+2026-03-25
 
-- [Introduction to Centering in Multilevel
-  Models](#introduction-to-centering-in-multilevel-models)
-  - [Why Do We Need to Separate These
-    Effects?](#why-do-we-need-to-separate-these-effects)
-  - [Packages and Data](#packages-and-data)
-  - [Preliminary Step: Creating the Cluster
-    Mean](#preliminary-step-creating-the-cluster-mean)
-  - [The Uncentered Model (Baseline)](#the-uncentered-model-baseline)
-  - [Grand Mean Centering](#grand-mean-centering)
-    - [Model 2a: Grand Mean Centering
-      Only](#model-2a-grand-mean-centering-only)
-    - [Model 2b: Grand Mean Centering + Group
-      Mean](#model-2b-grand-mean-centering--group-mean)
-  - [Group Mean Centering](#group-mean-centering)
-    - [Model 3a: Group Mean Centering
-      Only](#model-3a-group-mean-centering-only)
-    - [Model 3b: Group Mean Centering + Group
-      Mean](#model-3b-group-mean-centering--group-mean)
-  - [The Fully Centered Model (CWC + Centered Group
-    Mean)](#the-fully-centered-model-cwc--centered-group-mean)
-    - [Model 4: The Final Model](#model-4-the-final-model)
-  - [Detailed Interpretation of Final Model
-    Results](#detailed-interpretation-of-final-model-results)
-    - [Fixed Effects](#fixed-effects)
-    - [Random Effects](#random-effects)
-  - [Variance Partitioning](#variance-partitioning)
-  - [Summary Table for
+- [<span class="toc-section-number">1</span> Introduction to Centering
+  in Multilevel Models](#introduction-to-centering-in-multilevel-models)
+- [<span class="toc-section-number">2</span> Why Do We Need to Separate
+  These Effects?](#why-do-we-need-to-separate-these-effects)
+- [<span class="toc-section-number">3</span> Packages and
+  Data](#packages-and-data)
+- [<span class="toc-section-number">4</span> Preliminary Step: Creating
+  the Cluster Mean](#preliminary-step-creating-the-cluster-mean)
+- [<span class="toc-section-number">5</span> The Uncentered Model
+  (Baseline)](#the-uncentered-model-baseline)
+- [<span class="toc-section-number">6</span> Grand Mean
+  Centering](#grand-mean-centering)
+  - [<span class="toc-section-number">6.1</span> Model 2a: Grand Mean
+    Centering Only](#model-2a-grand-mean-centering-only)
+  - [<span class="toc-section-number">6.2</span> Model 2b: Grand Mean
+    Centering + Group Mean](#model-2b-grand-mean-centering--group-mean)
+- [<span class="toc-section-number">7</span> Group Mean
+  Centering](#group-mean-centering)
+  - [<span class="toc-section-number">7.1</span> Model 3a: Group Mean
+    Centering Only](#model-3a-group-mean-centering-only)
+  - [<span class="toc-section-number">7.2</span> Model 3b: Group Mean
+    Centering + Group Mean](#model-3b-group-mean-centering--group-mean)
+- [<span class="toc-section-number">8</span> The Fully Centered Model
+  (CWC + Centered Group
+  Mean)](#the-fully-centered-model-cwc--centered-group-mean)
+  - [<span class="toc-section-number">8.1</span> Model 4: The Final
+    Model](#model-4-the-final-model)
+- [<span class="toc-section-number">9</span> Detailed Interpretation of
+  Final Model Results](#detailed-interpretation-of-final-model-results)
+  - [<span class="toc-section-number">9.1</span> Fixed
+    Effects](#fixed-effects)
+  - [<span class="toc-section-number">9.2</span> Random
+    Effects](#random-effects)
+  - [<span class="toc-section-number">9.3</span> Variance
+    Partitioning](#variance-partitioning)
+  - [<span class="toc-section-number">9.4</span> Summary Table for
     Interpretation](#summary-table-for-interpretation)
-  - [Conclusions from the Final
-    Model](#conclusions-from-the-final-model)
-  - [Summary of Model Results](#summary-of-model-results)
-  - [Effect Size Measures](#effect-size-measures)
-    - [Using the `performance` package](#using-the-performance-package)
-    - [Using the `r2mlm` package](#using-the-r2mlm-package)
-      - [Detailed Explanation of `r2mlm()`
-        Output](#detailed-explanation-of-r2mlm-output)
-      - [Key Takeaways from This
-        Output:](#key-takeaways-from-this-output)
-  - [Summary of Interpretations and
-    Recommendations](#summary-of-interpretations-and-recommendations)
-  - [References](#references)
+  - [<span class="toc-section-number">9.5</span> Conclusions from the
+    Final Model](#conclusions-from-the-final-model)
+- [<span class="toc-section-number">10</span> Summary of Model
+  Results](#summary-of-model-results)
+- [<span class="toc-section-number">11</span> Effect Size
+  Measures](#effect-size-measures)
+  - [<span class="toc-section-number">11.1</span> Using the
+    `performance` package](#using-the-performance-package)
+  - [<span class="toc-section-number">11.2</span> Using the `r2mlm`
+    package](#using-the-r2mlm-package)
+    - [<span class="toc-section-number">11.2.1</span> Detailed
+      Explanation of `r2mlm()`
+      Output](#detailed-explanation-of-r2mlm-output)
+      - [<span class="toc-section-number">11.2.1.1</span>
+        `$Decompositions` – Variance
+        Components](#decompositions--variance-components)
+      - [<span class="toc-section-number">11.2.1.2</span> Interpreting
+        the Numbers (from the final model
+        output):](#interpreting-the-numbers-from-the-final-model-output)
+      - [<span class="toc-section-number">11.2.1.3</span> `$R2s` –
+        R-Squared Measures](#r2s--r-squared-measures)
+      - [<span class="toc-section-number">11.2.1.4</span> Interpreting
+        the Numbers:](#interpreting-the-numbers)
+    - [<span class="toc-section-number">11.2.2</span> Key Takeaways from
+      This Output:](#key-takeaways-from-this-output)
+- [<span class="toc-section-number">12</span> Summary of Interpretations
+  and Recommendations](#summary-of-interpretations-and-recommendations)
+- [<span class="toc-section-number">13</span> References](#references)
 
 ## Introduction to Centering in Multilevel Models
 
@@ -63,7 +87,7 @@ results in a “conflated” or “smushed” coefficient that is an
 uninterpretable blend of the two (Hoffman & Walters, 2022; Preacher et
 al., 2010).
 
-### Why Do We Need to Separate These Effects?
+## Why Do We Need to Separate These Effects?
 
 Consider a study of students nested within schools. We want to examine
 the relationship between student Socio-Economic Status (SES) and math
@@ -86,7 +110,7 @@ This tutorial will guide you through the three main centering strategies
 for level-1 predictors, showing how to estimate and interpret these
 distinct effects using R.
 
-### Packages and Data
+## Packages and Data
 
 We will use the `SB.csv` dataset (Snijders & Bosker, 1999) containing
 2,287 pupils in 131 schools. Our outcome is a language post-test score
@@ -134,7 +158,7 @@ head(SB)
     5  1.83333        0       60       12  2.33333       29       29
     6  1.83333        0       60       12  2.33333       29       29
 
-### Preliminary Step: Creating the Cluster Mean
+## Preliminary Step: Creating the Cluster Mean
 
 To separate within- and between-cluster effects, we first need the
 cluster mean of our predictor. This will be used both for centering and
@@ -160,7 +184,7 @@ head(SB[, c("schoolnr", "iq_verb", "iq_mean")])
     5        1     8.0   10.32
     6        1     9.5   10.32
 
-### The Uncentered Model (Baseline)
+## The Uncentered Model (Baseline)
 
 We start with a baseline model using the raw, uncentered predictor. This
 model will serve as a reference point. It includes a random intercept
@@ -246,7 +270,7 @@ This model highlights why centering is necessary. We cannot answer our
 substantive questions about within- and between-school effects from
 these results.
 
-### Grand Mean Centering
+## Grand Mean Centering
 
 Grand Mean Centering (CGM) involves subtracting the overall grand mean
 of the predictor from every observation. The centered variable is
@@ -269,7 +293,7 @@ mean(SB$iq_cgm)
 
     [1] 3.904947e-18
 
-#### Model 2a: Grand Mean Centering Only
+### Model 2a: Grand Mean Centering Only
 
 This model includes only the grand-mean centered predictor. The
 coefficient will still be conflated because the between-school variance
@@ -344,7 +368,7 @@ parameters(model_cgm_only, ci_method = "profile")
 - The random slope variance (0.21) is similar to the uncentered model,
   indicating that the conflated slope still varies across schools.
 
-#### Model 2b: Grand Mean Centering + Group Mean
+### Model 2b: Grand Mean Centering + Group Mean
 
 To actually separate the within and contextual effects, we add the
 school mean (`iq_mean`) as a level-2 predictor.
@@ -377,9 +401,9 @@ summary(model_cgm_full)
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept)  24.12087    3.80691 177.74805   6.336 1.88e-09 ***
+    (Intercept)  24.12087    3.80691 177.74802   6.336 1.88e-09 ***
     iq_cgm        2.45887    0.08318 110.85160  29.560  < 2e-16 ***
-    iq_mean       1.40518    0.32147 174.70880   4.371 2.12e-05 ***
+    iq_mean       1.40518    0.32147 174.70877   4.371 2.12e-05 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -447,7 +471,7 @@ The random slope variance for `iq_cgm` (0.20) is slightly reduced
 compared to the CGM‑only model, indicating that part of the slope
 variability is explained by school‑mean IQ.
 
-### Group Mean Centering
+## Group Mean Centering
 
 Group Mean Centering (CWC) – also known as Centering Within Cluster –
 involves subtracting the cluster mean from each observation. The
@@ -472,7 +496,7 @@ SB %>%
           Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
     -8.359e-16 -3.751e-16  0.000e+00  2.251e-17  4.100e-16  8.595e-16 
 
-#### Model 3a: Group Mean Centering Only
+### Model 3a: Group Mean Centering Only
 
 This model includes only the group-mean centered predictor. Because all
 between-school variance has been removed from `iq_cwc`, its coefficient
@@ -548,7 +572,7 @@ parameters(model_cwc_only, ci_method = "profile")
 - The random slope variance (0.22) reflects how much the within‑school
   effect varies across schools.
 
-#### Model 3b: Group Mean Centering + Group Mean
+### Model 3b: Group Mean Centering + Group Mean
 
 To also obtain the between-school effect, we add the school mean
 (`iq_mean`) as a level-2 predictor.
@@ -581,9 +605,9 @@ summary(model_cwc_full)
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept)  -5.66468    3.49355 163.26382  -1.621    0.107    
-    iq_cwc        2.46179    0.08647  97.47707  28.468   <2e-16 ***
-    iq_mean       3.92061    0.29605 161.06686  13.243   <2e-16 ***
+    (Intercept)  -5.66468    3.49355 163.26383  -1.621    0.107    
+    iq_cwc        2.46179    0.08647  97.47706  28.468   <2e-16 ***
+    iq_mean       3.92061    0.29605 161.06687  13.243   <2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -636,7 +660,7 @@ The random slope variance (0.26) is now slightly larger than in the
 CWC‑only model, but still indicates meaningful heterogeneity across
 schools in the within‑school effect of IQ.
 
-### The Fully Centered Model (CWC + Centered Group Mean)
+## The Fully Centered Model (CWC + Centered Group Mean)
 
 In the previous models, the intercept’s interpretation is still slightly
 awkward because the level-2 predictor (`iq_mean`) is not centered. To
@@ -663,7 +687,7 @@ mean(SB$iq_mean_c)
 
     [1] 2.294887e-18
 
-#### Model 4: The Final Model
+### Model 4: The Final Model
 
 We now fit the “fully centered” model with the group-mean centered
 predictor (`iq_cwc`) at level-1 and the centered school mean
@@ -745,7 +769,7 @@ interpretable intercept. The random slope variance (0.26) indicates that
 the within‑school effect of IQ varies across schools, even after
 controlling for school‑average IQ.
 
-### Detailed Interpretation of Final Model Results
+## Detailed Interpretation of Final Model Results
 
 The `parameters(model_final)` output provides the parameter estimates
 for our fully centered multilevel model. This model includes:
@@ -758,7 +782,7 @@ for our fully centered multilevel model. This model includes:
   (`(1 + iq_cwc | schoolnr)`), allowing each school to have its own
   baseline language score and its own within‑school IQ effect.
 
-#### Fixed Effects
+### Fixed Effects
 
 The fixed effects describe the average relationships in the population.
 
@@ -768,7 +792,7 @@ The fixed effects describe the average relationships in the population.
 | **iq_cwc**      |    2.46     | 0.09 | \[2.29, 2.64\]   |  28.47  | \< .001 |
 | **iq_mean_c**   |    3.92     | 0.30 | \[3.34, 4.51\]   |  13.24  | \< .001 |
 
-\*\*Intercept ((\_{00} = 40.73))\*\*
+**Intercept ($\gamma_{00} = 40.73$)**
 
 The intercept represents the predicted language score for a student
 with:
@@ -781,7 +805,7 @@ school) in a typical school (average school IQ) is predicted to have a
 language score of **40.73**. This is a highly interpretable baseline
 value.
 
-\*\*iq_cwc ((\_{10} = 2.46))\*\*
+**iq_cwc ($\gamma_{10} = 2.46$)**
 
 This is the **within-school effect** of IQ. For students in the same
 school, a one-point increase in a student’s IQ relative to their
@@ -795,7 +819,7 @@ predicted language score.
 - **Statistical significance**: The effect is significant ((p \< .001)),
   and the 95% confidence interval \[2.29, 2.64\] does not include zero.
 
-\*\*iq_mean_c ((\_{01} = 3.92))\*\*
+**iq_mean_c ($\gamma_{01} = 3.92$)**
 
 This is the **between-school effect** of IQ. A one-point increase in a
 school’s average IQ (compared to the overall average) is associated with
@@ -828,7 +852,7 @@ attending a school with an average IQ one point higher is predicted to
 score **1.46 points higher** on the language test. This represents the
 pure contextual benefit of being in a higher-IQ school environment.
 
-#### Random Effects
+### Random Effects
 
 The random effects describe the variance components – how much schools
 and students vary around the fixed effects.
@@ -960,7 +984,7 @@ meaningful.
     cleanly separated within-school and between-school effects,
     providing clear, interpretable estimates for each.
 
-### Summary of Model Results
+## Summary of Model Results
 
 | Model | Intercept | Level-1 Slope | Level-2 Slope | Interpretation of Level-1 Slope |
 |:---|:--:|:--:|:--:|:---|
@@ -978,11 +1002,11 @@ within effect is also 2.46). In our output, both are 2.46, so they
 match. The between-effect (3.92) and the contextual effect (calculated
 as 3.92 - 2.46 = 1.46) are consistent across models.
 
-### Effect Size Measures
+## Effect Size Measures
 
 We can now compare the effect sizes across these different models.
 
-#### Using the `performance` package
+### Using the `performance` package
 
 The `r2()` function provides marginal (fixed effects only) and
 conditional (fixed + random effects) $R^2$.
@@ -1048,7 +1072,7 @@ variance from the predictor). `model_cwc_full`, and `model_final` all
 have the same $R^2$, as they are statistically equivalent; centering
 simply reparameterizes them without changing the overall model fit.
 
-#### Using the `r2mlm` package
+### Using the `r2mlm` package
 
 The `r2mlm()` function provides a much more detailed decomposition.
 We’ll run it on the final model.
@@ -1077,14 +1101,14 @@ r2mlm(model_final)
     fv  0.40414275 0.35510200        NA
     fvm 0.49969077         NA        NA
 
-##### Detailed Explanation of `r2mlm()` Output
+#### Detailed Explanation of `r2mlm()` Output
 
 The `r2mlm()` function from the `r2mlm` package provides a comprehensive
 decomposition of variance explained in multilevel models, following the
 framework developed by Rights & Sterba (2019). The output is divided
 into two main sections: `$Decompositions` and `$R2s`.
 
-###### 1. `$Decompositions` – Variance Components
+##### `$Decompositions` – Variance Components
 
 This table shows the proportion of variance in the outcome variable
 (`langpost`) attributable to different sources. The columns represent:
@@ -1112,7 +1136,7 @@ The rows represent different sources of variance:
   predictors).
 - **sigma2**: Unexplained residual variance at level-1 (within schools).
 
-###### Interpreting the Numbers (from the final model output):
+##### Interpreting the Numbers (from the final model output):
 
 | Source | Total | Within | Between | Interpretation |
 |:---|:--:|:--:|:--:|:---|
@@ -1125,7 +1149,7 @@ The rows represent different sources of variance:
 **Check**: The total column sums to 1.00 (0.264 + 0.129 + 0.011 +
 0.096 + 0.500 = 1.00), confirming that all variance is accounted for.
 
-###### 2. `$R2s` – R-Squared Measures
+##### `$R2s` – R-Squared Measures
 
 This table provides various R² measures, each representing the
 proportion of variance explained by different combinations of
@@ -1145,7 +1169,7 @@ predictors. The notation follows Rights & Sterba (2019):
   variation + random intercept variation* (f + v + m) – this is the
   *conditional* R².
 
-###### Interpreting the Numbers:
+##### Interpreting the Numbers:
 
 | Measure | Total | Within | Between | Interpretation |
 |:---|:--:|:--:|:--:|:---|
@@ -1157,7 +1181,7 @@ predictors. The notation follows Rights & Sterba (2019):
 | **fv** | 0.404 | 0.355 | NA | Fixed effects + random slopes explain 40.4% of total variance and 35.5% of within variance. |
 | **fvm** | 0.500 | NA | NA | The full model (fixed effects + random slopes + random intercepts) explains 50.0% of total variance. This is the *conditional R²*. |
 
-##### Key Takeaways from This Output:
+#### Key Takeaways from This Output:
 
 1.  **Within-school IQ is a strong predictor**: It explains 26.4% of
     total variance and 34.1% of within-school variance.
@@ -1180,7 +1204,7 @@ predictors. The notation follows Rights & Sterba (2019):
     indicates that the full model explains 50.0% of the total variance
     in language scores.
 
-### Summary of Interpretations and Recommendations
+## Summary of Interpretations and Recommendations
 
 | Centering Strategy | Model | (\_{10}) (Level-1 Slope) | (\_{01}) (Level-2 Slope) | Intercept |
 |:---|:---|:--:|:--:|:---|
@@ -1219,7 +1243,7 @@ predictors. The notation follows Rights & Sterba (2019):
   allows you to model that heterogeneity and can improve the accuracy of
   standard errors for both fixed and random parts.
 
-### References
+## References
 
 - Aiken, L. S., & West, S. G. (1991). *Multiple regression: Testing and
   interpreting interactions*. Sage.
