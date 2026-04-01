@@ -1,6 +1,6 @@
 # Multilevel Regression: interactions
 Mauricio Garnier-Villarreal
-2026-03-31
+2026-04-01
 
 - [<span class="toc-section-number">1</span> What is Moderation
   Analysis?](#what-is-moderation-analysis)
@@ -67,7 +67,7 @@ Mauricio Garnier-Villarreal
   Recommendations](#summary-and-recommendations)
 - [<span class="toc-section-number">10</span> References](#references)
 
-## What is Moderation Analysis?
+# What is Moderation Analysis?
 
 Moderation occurs when the relationship between two variables depends on
 a third variable. In traditional single-level regression, a moderation
@@ -97,7 +97,7 @@ affects achievement)
 This tutorial will guide you through estimating, probing, and
 interpreting each type of interaction using R.
 
-### Packages and Data
+## Packages and Data
 
 We will use the `SB.csv` dataset (Snijders & Bosker, 1999) containing
 2,287 pupils in 131 schools. Our outcome is a language post-test score
@@ -172,7 +172,7 @@ head(pop)
     5  0.6680185  0.66905609  -0.215 9.737  0.5 girl
     6 -0.2722923 -0.04308451  -1.215 9.737 -0.5  boy
 
-## Theoretical and Analytical Models
+# Theoretical and Analytical Models
 
 In MLM, interactions are specified by including product terms in the
 fixed part of the model. However, the model also includes random effects
@@ -199,14 +199,14 @@ For testing interactions, the fixed effects ($\gamma$ coefficients) are
 our primary interest, but correctly specifying the random part is
 crucial for accurate standard errors.
 
-## Level-1 Interactions
+# Level-1 Interactions
 
 Level-1 interactions involve two predictors measured at the individual
 (lowest) level. For example, we might hypothesize that the effect of IQ
 on language scores depends on homework time. Both variables are at the
 student level.
 
-### Model Specification
+## Model Specification
 
 For a level-1 interaction, we include the product term in the level-1
 model. We also need to decide whether to allow the slopes to vary
@@ -288,10 +288,24 @@ parameters(m0_l1, ci_method = "profile")
 
 **Explanation of syntax:**
 
-- `iq_verb + homework` specifies the fixed effects main effects
-- `(1 | schoolnr)` includes a random intercept but keeps slopes fixed
+- `langpost ~ 1 + iq_verb + homework` specifies the fixed part:
+  intercept (1) and main effects of IQ and homework.
+- `(1 | schoolnr)` adds a random intercept for schools, allowing the
+  mean language score to vary across schools.
+- `REML = FALSE` uses maximum likelihood (ML) instead of restricted
+  maximum likelihood (REML), which is necessary for likelihood‑ratio
+  tests.
+- The `parameters()` function with `ci_method = "profile"` computes
+  confidence intervals based on profile likelihood, which are more
+  accurate for mixed models than Wald intervals.
 
-**Interpretation:** -
+**Interpretation:** The fixed effects show that IQ is a strong positive
+predictor of language scores ($b = 2.49$, $p < .001$), while homework
+has a negligible and non‑significant effect ($b = -0.02$, $p = 0.727$).
+The random intercept variance ($\tau_{00} = 9.50$) indicates moderate
+variation between schools after accounting for the predictors. The
+residual variance ($\sigma^2 = 42.22$) represents within‑school
+variation.
 
 Now we fit a model with an interaction between `iq_verb` and `homework`:
 
@@ -358,19 +372,22 @@ parameters(m1_l1, ci_method = "profile")
 **Explanation of syntax:**
 
 - `iq_verb * homework` is shorthand for
-  `iq_verb + homework + iq_verb:homework`
-- `(1 | schoolnr)` includes a random intercept but keeps slopes fixed
+  `iq_verb + homework + iq_verb:homework`. The colon `:` denotes the
+  interaction term.
+- The rest of the formula is the same as the main‑effects model.
 
 **Interpretation:**
 
-- The interaction term `iq_verb:homework coefficient` is 0.029. This is
-  the change in the slope of IQ for a one-unit increase in homework (or
-  vice versa).
-- The effect of IQ (`iq_verb`) is now the effect of IQ when
-  `homework = 0` (simple slope). Similarly, the effect of homework is
-  its effect when `iq_verb = 0` (simple slope). Centering these
-  predictors would make these main effects more interpretable (as
-  effects at the mean).
+- The interaction term `iq_verb:homework` has a coefficient of 0.029
+  ($p = 0.377$), which is not statistically significant. This means that
+  the effect of IQ does not change significantly with different levels
+  of homework.
+- The main effect of IQ (2.34) now represents the effect of IQ when
+  homework = 0. Because homework was not centered, this may not be a
+  meaningful value. Similarly, the homework main effect (-0.37) is the
+  effect when IQ = 0.
+- The random intercept variance (9.49) and residual variance (42.21)
+  remain similar to the main‑effects model.
 
 We can also tests the significance of the interaction with the LRT model
 comparison, by comparing the main effects and interaction models. In
@@ -395,7 +412,7 @@ anova(m0_l1, m1_l1)
 In this example, we fail to reject the null hypothesis of `iq_verb`
 slopes being equal across `homework` levels as $p = 0.377$.
 
-### Allowing Random Slopes
+## Allowing Random Slopes
 
 If we believe the IQ effect (or the interaction itself) varies across
 schools, we can add random slopes:
@@ -467,12 +484,22 @@ parameters(m1_l1_random, ci_method = "profile")
     Cor (Intercept~iq_verb: schoolnr) |       -0.97
     SD (Residual)                     |        6.47
 
-This model allows both the intercept and the IQ slope to vary across
-schools. The interaction term is still a fixed effect (its slope does
-not vary across schools unless we add a random slope for the product
-term, which is rarely done).
+**Explanation:** The random part `(1 + iq_verb | schoolnr)` allows both
+the intercept and the slope of IQ to vary across schools. The `|`
+separates the random effects from the grouping variable. This means we
+estimate a random intercept variance, a random slope variance for IQ,
+and their covariance.
 
-### Effect size difference
+**Interpretation:** The random slope variance for IQ is 0.105,
+indicating that the effect of IQ on language scores varies across
+schools. The correlation between the random intercept and slope is
+-0.97, suggesting that schools with higher average language scores tend
+to have weaker IQ effects. The interaction term remains non‑significant
+($p = 0.421$). Adding random slopes improved the model fit (AIC
+decreased from 15263 to 15248), but the interaction still does not reach
+significance.
+
+## Effect size difference
 
 We can also evaluate the overall model fit improvement when we add the
 interaction, by evaluating the change in $R^2$. We can first check this
@@ -497,9 +524,9 @@ r2(m1_l1)
       Conditional R2: 0.460
          Marginal R2: 0.339
 
-In this case we see that the conditional and marginal $R2$^are basically
-equal between the main effects and interaction models. Indicating that
-the model fit doesn’t improve by adding the interaction
+In this case we see that the conditional and marginal $R^2$ are
+basically equal between the main effects and interaction models.
+Indicating that the model fit doesn’t improve by adding the interaction
 
 ``` r
 r2mlm(m0_l1, bargraph = F)
@@ -540,10 +567,10 @@ r2mlm(m1_l1, bargraph = F)
     fvm 0.4601892
 
 When comparing the detail particioning of $R^2$ by the `r2mlm()`
-function, we see that the imporveent when adding the interaction is
-neglible.
+function, we see that the improvement when adding the interaction is
+negligible.
 
-### Probing and Plotting Level-1 Interactions
+## Probing and Plotting Level-1 Interactions
 
 As in single-level regression, we probe interactions by examining simple
 slopes of the focal predictor at different values of the moderator. We
@@ -586,10 +613,20 @@ avg_slopes(m1_l1,
     Type: response
     Comparison: dY/dX
 
-**Interpretation:** The effect of IQ on language scores is 2.427 when
-homework is low, 2.485 at average homework, and 2.542 when homework is
-high. The interaction term tells us how much this slope changes per unit
-increase in homework.
+**Explanation of syntax:**  
+- `avg_slopes()` computes average marginal effects (or simple slopes)
+from a fitted model.  
+- `variables = "iq_verb"` specifies the predictor whose slope we want.  
+- `by = "homework"` indicates that we want separate slopes for different
+values of homework.  
+- `newdata = datagrid(homework = hw_vals)` tells the function to
+evaluate the slopes at the three chosen homework levels.
+
+**Interpretation:** The effect of IQ on language scores is 2.43 when
+homework is low (3.05 hours), 2.48 at average homework (5.02 hours), and
+2.54 when homework is high (6.99 hours). Although the slopes increase
+slightly with homework, the interaction term was not significant, so
+these differences are not reliable.
 
 We can also plot the interaction:
 
@@ -602,11 +639,19 @@ plot_predictions(m1_l1,
 
 ![](16_2_MLM_interactions_files/figure-commonmark/unnamed-chunk-8-1.png)
 
+**Explanation:**  
+- `plot_predictions()` generates a plot of predicted values.  
+- `by = c("iq_verb", "homework")` places `iq_verb` on the x‑axis and
+creates separate lines for each value of `homework`.  
+- The `newdata` argument defines the grid of predictor values for which
+predictions are made.
+
 This plot shows the predicted language score across IQ values for
 different levels of homework, allowing visual assessment of whether the
-slopes differ.
+slopes differ. The lines appear nearly parallel, consistent with the
+non‑significant interaction.
 
-### Model tables
+## Model tables
 
 We can use the `tab_model()` function to present the results from both
 models next to each other
@@ -698,7 +743,7 @@ tab_model(m0_l1, m1_l1)
 </tr>
 &#10;</table>
 
-## Level-2 Interactions
+# Level-2 Interactions
 
 Level-2 interactions involve two predictors measured at the cluster
 level. For example, we might hypothesize that the effect of school size
@@ -706,7 +751,7 @@ on average achievement depends on school type (public vs. private). In
 our data, `groupsiz` (group size) and `percmino` (percent minority) are
 level-2 variables.
 
-### Model Specification
+## Model Specification
 
 For a level-2 interaction, we include the product term in the level-2
 equation for the intercept. First, we need to create school-mean
@@ -787,6 +832,12 @@ parameters(m0_l2, ci_method = "profile")
     SD (Intercept: schoolnr) |        3.77
     SD (Residual)            |        8.04
 
+**Interpretation:** Both group size (0.12, $p = 0.009$) and percent
+minority (-0.14, $p < .001$) are significant predictors of language
+scores. The random intercept variance (14.21) is larger than in the
+level‑1 models, because we are not yet including the strong level‑1
+predictor IQ.
+
 Then we can add the interaction
 
 ``` r
@@ -851,14 +902,16 @@ parameters(m1_l2, ci_method = "profile")
 
 **Interpretation:**
 
-- The interaction term `groupsiz:percmino` tells us whether the effect
-  of group size on language scores depends on the percent minority (or
-  vice versa).
-- Because we haven’t centered the predictors, the effects are
-  conditional on the other predictor being zero (simple slopes, which
-  may not be meaningful).
+- The interaction term `groupsiz:percmino` has a coefficient of 0.0033
+  ($p = 0.242$), which is not significant. This indicates that the
+  effect of group size does not depend on percent minority (or vice
+  versa).
+- Because we have not centered the predictors, the main effects are
+  conditional on the other predictor being zero, which may not be
+  meaningful (e.g., `percmino = 0` is possible but may be outside the
+  typical range).
 
-### Centering Level-2 Predictors
+## Centering Level-2 Predictors
 
 For better interpretation, we should center level-2 predictors,
 especially when including interactions.
@@ -928,9 +981,16 @@ parameters(m1_l2_centered, ci_method = "profile")
     SD (Intercept: schoolnr) |        3.76
     SD (Residual)            |        8.03
 
-Now the effect of `groupsiz_c` is the effect of group size on language
-scores at the mean of `percmino_c` (i.e., at average percent minority).
-The interaction term remains unchanged.
+**Explanation:** Centering subtracts the mean, so the new variables have
+a mean of zero. This makes the main effects interpretable as the effect
+at the mean of the other predictor.
+
+**Interpretation:**  
+- Now the main effect of `groupsiz_c` (0.117, $p = 0.017$) is the effect
+of group size on language scores at the average percent minority.  
+- The main effect of `percmino_c` (-0.128, $p < .001$) is the effect of
+percent minority at the average group size.  
+- The interaction term remains unchanged (0.0033, $p = 0.242$).
 
 As before, we can test the significance of the interaction with a model
 comparison between the main effects and interaction model.
@@ -950,7 +1010,7 @@ anova(m0_l2, m1_l2)
 In this case we fail to reject the null hypothesis of a level-2
 interaction, as $p = 0.242$.
 
-### Effect size difference
+## Effect size difference
 
 We can evaluate the improvement in model fit by the change in $R^2$. In
 tis case we see that the main effect model even present higher
@@ -1015,7 +1075,7 @@ r2mlm(m1_l2, bargraph = F)
     fv  0.04668194
     fvm 0.21828257
 
-### Probing and Plotting Level-2 Interactions
+## Probing and Plotting Level-2 Interactions
 
 Probing a level-2 interaction follows the same logic as level-1: examine
 simple slopes of one predictor at conditional values of the other.
@@ -1053,6 +1113,12 @@ avg_slopes(m1_l2_centered,
     Type: response
     Comparison: dY/dX
 
+**Interpretation:** The effect of group size on language scores is 0.074
+when percent minority is low (-12.98% from mean), 0.117 at the mean, and
+0.161 when percent minority is high (+13.02% from mean). Although the
+slope increases with percent minority, the interaction is not
+significant, so these differences are not reliable.
+
 We need to adjust the values because the predictor is centered.
 Alternatively, we can use the original metric with appropriate
 centering.
@@ -1069,9 +1135,10 @@ plot_predictions(m1_l2_centered,
 ![](16_2_MLM_interactions_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 This shows how the relationship between group size and language scores
-changes across levels of percent minority.
+changes across levels of percent minority. The lines are slightly
+diverging, but the interaction is not significant.
 
-### Model tables
+## Model tables
 
 We can present the model parameters in a table next to each other
 
@@ -1162,7 +1229,7 @@ tab_model(m0_l2, m1_l2)
 </tr>
 &#10;</table>
 
-## Cross-Level Interactions
+# Cross-Level Interactions
 
 Cross-level interactions are the most distinctive type of moderation in
 multilevel models. They occur when a level-2 variable moderates a
@@ -1170,7 +1237,7 @@ level-1 relationship. For example, we might hypothesize that the effect
 of student IQ on language scores depends on school-level characteristics
 like group size or percent minority.
 
-### Model Specification
+## Model Specification
 
 A cross-level interaction is specified by including the level-2
 predictor in the level-2 equation for the slope of the level-1
@@ -1239,6 +1306,16 @@ parameters(m0_cross, ci_method = "profile")
     SD (iq_verb: schoolnr)            |        0.45
     Cor (Intercept~iq_verb: schoolnr) |       -0.97
     SD (Residual)                     |        6.44
+
+**Interpretation:**  
+- IQ has a strong positive effect (2.51, $p < .001$).  
+- Group size has a small positive effect that is not significant (0.05,
+$p = 0.149$).  
+- The random intercept variance is 61.89 and the random slope variance
+for IQ is 0.203, indicating substantial variation in the IQ effect
+across schools.  
+- The correlation between intercept and slope is -0.97, meaning schools
+with higher average language scores tend to have weaker IQ effects.
 
 Now, we can estimate the interaction between level-2 and level-1
 predictors
@@ -1320,13 +1397,17 @@ parameters(m_cross, ci_method = "profile")
 
 **Interpretation:**
 
-- The interaction term `iq_verb:groupsiz_c coefficient` is -0.028. This
-  means that for a one-unit increase in group size (centered), the slope
-  of IQ changes by this amount.
-- The main effect of IQ (`iq_verb`) is now the effect of IQ at the mean
-  of group size (since `groupsiz_c` is centered).
-- The random slope variance (`sd(iq_verb)`) indicates how much the IQ
-  effect varies across schools after accounting for group size.
+- The interaction term `iq_verb:groupsiz_c` has a coefficient of -0.028
+  ($p = 0.008$). This means that for a one‑unit increase in group size
+  (centered), the slope of IQ decreases by 0.028. In other words, the
+  effect of IQ on language scores is weaker in larger schools.
+- The main effect of IQ (2.50) is the effect of IQ at the mean of group
+  size (since `groupsiz_c` is centered).
+- The random slope variance for IQ (0.166) is smaller than in the
+  main‑effects model (0.203), indicating that group size explains part
+  of the between‑school variation in the IQ slope.
+- The correlation between intercept and slope is still very strong
+  (-0.97).
 
 We can alsways test the signifficance of the interaction with a model
 comparison, in this case we reject the null hypothesis of no cross-level
@@ -1346,7 +1427,7 @@ anova(m0_cross, m_cross)
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-### Testing the Need for Random Slopes
+## Testing the Need for Random Slopes
 
 Before testing a cross-level interaction, we should verify that the
 slope of the level-1 predictor actually varies across clusters. We can
@@ -1373,8 +1454,10 @@ anova(m_fixed, m_cross)
 
 A significant chi-square test indicates that allowing the slope to vary
 improves model fit, justifying the search for cross-level moderators.
+Here, the test is significant ($p < .001$), confirming that the IQ slope
+varies across schools.
 
-### Effect size difference
+## Effect size difference
 
 In this case we see that the model with the interaction increases the
 marginal $R^2$ by 0.5%
@@ -1438,7 +1521,7 @@ r2mlm(m_cross, bargraph = F)
     fv  0.361894336
     fvm 0.472325683
 
-### Probing and Plotting Cross-Level Interactions
+## Probing and Plotting Cross-Level Interactions
 
 Probing a cross-level interaction involves examining the simple slope of
 the level-1 predictor (IQ) at different values of the level-2 moderator
@@ -1476,10 +1559,11 @@ avg_slopes(m_cross,
     Type: response
     Comparison: dY/dX
 
-**Interpretation:** The effect of IQ on language scores is 2.953 in
-smaller schools, 2.746 in average-sized schools, and 2.539 in larger
-schools. The interaction term tells us the change per unit increase in
-group size.
+**Interpretation:** The effect of IQ on language scores is 2.95 in
+smaller schools (group size = -7.3, i.e., one SD below the mean), 2.75
+in average‑sized schools, and 2.54 in larger schools (group size =
++7.3). The decreasing pattern is consistent with the negative
+interaction term.
 
 Plotting:
 
@@ -1494,8 +1578,10 @@ plot_predictions(m_cross,
 
 This plot shows three regression lines (IQ on language scores) for
 different levels of group size, allowing visual comparison of slopes.
+The lines clearly diverge, with the slope decreasing as group size
+increases.
 
-### Model tables
+## Model tables
 
 We can present the model parameters in a table next to each other
 
@@ -1594,7 +1680,7 @@ tab_model(m0_cross, m_cross)
 </tr>
 &#10;</table>
 
-## Example with a Binary Moderator
+# Example with a Binary Moderator
 
 Cross-level interactions are particularly common with binary level-2
 moderators, such as experimental condition or school type. Using the
@@ -1668,6 +1754,12 @@ parameters(m0_binary, ci_method = "profile")
     Cor (Intercept~extrav: class) |       -0.89
     SD (Residual)                 |        0.74
 
+**Interpretation:** Extraversion (0.453, $p < .001$), being a girl
+(1.252, $p < .001$), and teacher experience (0.091, $p < .001$) all
+positively predict popularity. The random intercept variance (1.281) and
+random slope variance for extraversion (0.034) indicate that both the
+intercept and the effect of extraversion vary across classes.
+
 And then we can add the interaction term
 
 ``` r
@@ -1738,9 +1830,10 @@ parameters(m_binary, ci_method = "profile")
     SD (Residual)                 |        0.74
 
 **Interpretation**: - `extrav` is the effect of extraversion for boys
-(`girl = 0`). - `extrav:girl` is the difference in the extraversion
-slope for girls compared to boys. If significant, sex moderates the
-extraversion effect.
+(`girl = 0`): 0.427, $p < .001$. - `extrav:girl` is the difference in
+the extraversion slope for girls compared to boys: 0.050, $p = 0.103$,
+which is not significant. Therefore, sex does not significantly moderate
+the effect of extraversion on popularity.
 
 ``` r
 anova(m0_binary, m_binary)
@@ -1773,7 +1866,10 @@ avg_slopes(m_binary,
     Comparison: dY/dX
 
 **Interpretation**: For boys, the effect of extraversion on popularity
-is 0.443; for girls, it’s 0.462. The difference is the interaction term.
+is 0.443; for girls, it’s 0.462. The difference (0.019) is the
+interaction term (0.050 in the model output; the slight discrepancy is
+due to rounding). The p‑value of the interaction was 0.103, so this
+difference is not statistically significant.
 
 Plot:
 
@@ -1783,6 +1879,9 @@ plot_predictions(m_binary,
 ```
 
 ![](16_2_MLM_interactions_files/figure-commonmark/binary-plot-1.png)
+
+The plot shows nearly parallel lines for boys and girls, consistent with
+the non‑significant interaction.
 
 Model tables
 
@@ -1892,7 +1991,7 @@ tab_model(m0_binary, m_binary)
 </tr>
 &#10;</table>
 
-## Three-Way Interactions
+# Three-Way Interactions
 
 MLM can also accommodate higher-order interactions, such as a level-1 ×
 level-1 × level-2 interaction. For example, the interaction between IQ
@@ -2070,9 +2169,10 @@ parameters(m_3way, ci_method = "profile")
     Cor (Intercept~iq_verb: schoolnr) |       -0.97
     SD (Residual)                     |        6.44
 
-**Interpretation**: The three-way term `iq_verb:homework:groupsiz_c`
-tests whether the IQ × homework interaction (level-1 × level-1) varies
-across levels of group size (level-2).
+**Interpretation**: The three-way term `iq_verb:homework:groupsiz_c` has
+a coefficient of 0.002 ($p = 0.660$), which is not significant. This
+means that the IQ × homework interaction does not vary significantly
+across levels of group size.
 
 Now, the regression terms test specific 2-way or 3-way interaction
 terms. While for an overall test is better to do the model comparison
@@ -2092,7 +2192,12 @@ anova(m0_3way, m_3way)
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-### Probing Three-Way Interactions
+The likelihood‑ratio test comparing the main‑effects model to the full
+three‑way model yields a p‑value of 0.0605, which is marginally
+non‑significant, suggesting that adding the three‑way interaction and
+its lower‑order terms does not significantly improve the model fit.
+
+## Probing Three-Way Interactions
 
 Probing a three-way interaction is more complex: we examine the two-way
 interaction at different levels of the third variable. For example, we
@@ -2144,9 +2249,14 @@ avg_slopes(m_3way,
 This gives the simple slope of IQ at each combination of homework (three
 levels) and group size (three levels) – nine slopes in total. We can
 then see if the pattern of IQ slopes across homework levels differs
-between group size conditions.
+between group size conditions. For example, at low group size (-7.3),
+the IQ slopes are 2.93, 2.94, and 2.96 across low, mean, and high
+homework, showing a slight increase. At high group size (7.3), the
+slopes are 2.45, 2.53, and 2.61, also increasing but with a smaller
+range. However, the three‑way interaction was not significant, so these
+differences are not reliable.
 
-### Plotting Three-Way Interactions
+## Plotting Three-Way Interactions
 
 Plotting a three-way interaction can be done with separate panels:
 
@@ -2161,9 +2271,12 @@ plot_predictions(m_3way,
 ![](16_2_MLM_interactions_files/figure-commonmark/three-way-plot-1.png)
 
 This produces three plots (one per group size level) showing the IQ ×
-homework interaction.
+homework interaction. The plots allow visual inspection of whether the
+pattern of lines changes across group size levels. In this case, the
+lines appear similar across panels, consistent with the non‑significant
+three‑way term.
 
-### Model tables
+## Model tables
 
 We can present the model parameters in a table next to each other
 
@@ -2298,12 +2411,12 @@ tab_model(m0_3way, m_3way)
 </tr>
 &#10;</table>
 
-## Effect Sizes for Interactions
+# Effect Sizes for Interactions
 
 Several approaches exist for quantifying the importance of interaction
 effects in MLM (Rights & Sterba, 2019).
 
-### Pseudo-$R^2$ Change
+## Pseudo-$R^2$ Change
 
 We can compute the reduction in variance components when adding the
 interaction:
@@ -2347,9 +2460,10 @@ tau11_cross <- as.data.frame(VarCorr(m_cross)) %>%
     [1] 0.1796002
 
 This tells us how much of the slope variance across schools is explained
-by group size.
+by group size. Here, about 18% of the variance in the IQ slope is
+accounted for by group size.
 
-### Using the `performance` Package
+## Using the `performance` Package
 
 ``` r
 r2(m_main)
@@ -2369,7 +2483,7 @@ r2(m_cross)
       Conditional R2: 0.472
          Marginal R2: 0.353
 
-### Using the `r2mlm` Package
+## Using the `r2mlm` Package
 
 The `r2mlm` package provides comprehensive $R^2$ measures for MLM,
 partitioning variance into fixed and random components at each level.
@@ -2418,9 +2532,12 @@ r2mlm(m_cross)
 
 The output shows total, within-cluster, and between-cluster variance
 explained, as well as decomposition into fixed (`f1`, `f2`), random
-slope (`v`), and random intercept (`m`) components.
+slope (`v`), and random intercept (`m`) components. In the interaction
+model, the fixed‑effect variance explained (`f`) increases slightly,
+while the random slope variance (`v`) decreases, indicating that group
+size helps explain why the IQ slope varies across schools.
 
-## Summary and Recommendations
+# Summary and Recommendations
 
 | Interaction Type | Specification | Probing | Key Considerations |
 |:---|:---|:---|:---|
@@ -2444,7 +2561,7 @@ slope (`v`), and random intercept (`m`) components.
 5.  **Report complete results** including fixed effects, random effects
     (variances and covariances), and effect size measures.
 
-## References
+# References
 
 - Aguinis, H., Gottfredson, R. K., & Culpepper, S. A. (2013).
   Best-practice recommendations for estimating cross-level interaction

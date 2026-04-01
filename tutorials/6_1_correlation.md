@@ -2,25 +2,25 @@ Correlation
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-11 February, 2024
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Select variables of interest](#select-variables-of-interest)
-  - [Create composite scores](#create-composite-scores)
-- [Scatter-plot](#scatter-plot)
-- [Pearson correlation](#pearson-correlation)
-  - [Adjusting p-values](#adjusting-p-values)
-  - [Subset of variables](#subset-of-variables)
-  - [Confidence Intervals](#confidence-intervals)
-- [Spearman correlation](#spearman-correlation)
-- [Kendall-tau correlation](#kendall-tau-correlation)
-- [Extracting the different
-  matrices](#extracting-the-different-matrices)
-- [Correlogram](#correlogram)
-- [Pairs plot](#pairs-plot)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Select variables of interest](#21-select-variables-of-interest)
+  - [2.2 Create composite scores](#22-create-composite-scores)
+- [3 Scatter-plot](#3-scatter-plot)
+- [4 Pearson correlation](#4-pearson-correlation)
+  - [4.1 Adjusting p-values](#41-adjusting-p-values)
+  - [4.2 Subset of variables](#42-subset-of-variables)
+  - [4.3 Confidence Intervals](#43-confidence-intervals)
+- [5 Spearman correlation](#5-spearman-correlation)
+- [6 Kendall-tau correlation](#6-kendall-tau-correlation)
+- [7 Extracting the different
+  matrices](#7-extracting-the-different-matrices)
+- [8 Correlogram](#8-correlogram)
+- [9 Pairs plot](#9-pairs-plot)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -40,7 +40,7 @@ library(psych)
 library(corrplot)
 ```
 
-    ## corrplot 0.92 loaded
+    ## corrplot 0.95 loaded
 
 ``` r
 library(ggplot2)
@@ -57,11 +57,7 @@ library(ggplot2)
 library(GGally)
 ```
 
-    ## Registered S3 method overwritten by 'GGally':
-    ##   method from   
-    ##   +.gg   ggplot2
-
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -75,7 +71,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Select variables of interest
+## 2.1 Select variables of interest
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -131,7 +127,7 @@ The variables we will use here are:
 - Q112-Q120: Corruption Perception Index
 - Q65-Q73: Lack of Confidence in the government
 
-## Create composite scores
+## 2.2 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -182,7 +178,7 @@ head(dat2)
 The new `dat2` data set only include the 5 continuous variables of
 interest
 
-# Scatter-plot
+# 3 Scatter-plot
 
 When looking at correlations, is recommended to first look at the
 bivariate scatter-plot between the two variables of interest. We can do
@@ -204,7 +200,7 @@ with the `aes()` argument we specify which variable goes in the *x* and
 across both variables. Lastly, we add the predicted regression line
 between these variables with `geom_smooth(method = "lm", se=T)`
 
-# Pearson correlation
+# 4 Pearson correlation
 
 For estimating the correlations for multiple pairs of variables we are
 using the `corr.test()` function from the `psych` package. To estimate
@@ -255,7 +251,7 @@ subjects were included for each correlation. The last table include the
 *p-values* for each correlation, the the lower diagonal presents the
 un-adjusted ones, and the ones on the upper diagonal are the *p-values*.
 
-## Adjusting p-values
+## 4.1 Adjusting p-values
 
 ``` r
 cor_pear1 <- corr.test(dat2[,-1], method = "pearson", adjust = "holm")
@@ -296,7 +292,7 @@ them adjusted for multiple tests. In this case, we see no practical
 difference when adjusting the *p-values*, as all of them are lower than
 *0.001*.
 
-## Subset of variables
+## 4.2 Subset of variables
 
 In most cases, you will not want to estimate all possible correlations,
 you will want to only estimate this for a subset of variables. You can
@@ -330,7 +326,7 @@ cor_pear2
 This way we can see only the three correlations we want (in this
 example).
 
-## Confidence Intervals
+## 4.3 Confidence Intervals
 
 The default `print` does not include the the respective confidence
 intervals. To see them we need to ask for it, like this
@@ -399,7 +395,7 @@ print(cor_pear3, short=F)
     ## SACSE-LCGov      0.32  0.33      0.34     0      0.32      0.34
     ## Corrp-LCGov      0.31  0.32      0.33     0      0.31      0.33
 
-# Spearman correlation
+# 5 Spearman correlation
 
 We can ask for other correlations coefficients, like the
 *non-parametric* Spearman correlation, which is estimated based on the
@@ -436,7 +432,7 @@ print(cor_spear1, short=F)
     ## SACSE-LCGov      0.30  0.31      0.31     0      0.30      0.31
     ## Corrp-LCGov      0.33  0.34      0.34     0      0.33      0.34
 
-# Kendall-tau correlation
+# 6 Kendall-tau correlation
 
 Another *non-parametric* correlation method we can use if Kendall-tau.
 Which is also based on variable ranks, but deals with ties in adifferent
@@ -473,7 +469,7 @@ print(cor_kend1, short=F)
     ## SACSE-LCGov      0.21  0.22      0.22     0      0.21      0.22
     ## Corrp-LCGov      0.23  0.24      0.25     0      0.23      0.25
 
-# Extracting the different matrices
+# 7 Extracting the different matrices
 
 We see that from this function we get multiple matrices with the needed
 information. All of these matrices are saved in the object that the
@@ -522,7 +518,7 @@ names(cor_pear2)
     ##  [1] "r"      "n"      "t"      "p"      "p.adj"  "se"     "sef"    "adjust"
     ##  [9] "sym"    "ci"     "ci2"    "ci.adj" "stars"  "Call"
 
-# Correlogram
+# 8 Correlogram
 
 There are different ways to plot multiple correlations at the same time.
 One of this is the **correlogram**, we will use the `corrplot` package
@@ -538,7 +534,7 @@ corrplot(cor_pear1$r)
 
 ![](6_1_correlation_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-# Pairs plot
+# 9 Pairs plot
 
 Another way to present the multiple correlations is with the *pairs*
 plots. For this we can use the `GGally` package and its `ggpairs()`

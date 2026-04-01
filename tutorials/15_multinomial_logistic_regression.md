@@ -1,41 +1,63 @@
 # Multinomial Logistic Regression
 Mauricio Garnier-Villarreal
-2026-03-02
+2026-03-31
 
-- [Introduction](#introduction)
-- [Recap of Binary Logistic
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> Recap of Binary Logistic
   Regression](#recap-of-binary-logistic-regression)
-- [Why Multinomial Models?](#why-multinomial-models)
-- [Example Dataset](#example-dataset)
-- [Multinomial Logistic Regression
-  Model](#multinomial-logistic-regression-model)
-  - [Estimation](#estimation)
-- [Interpretation](#interpretation)
-- [Fitting a Multinomial Model in R](#fitting-a-multinomial-model-in-r)
-  - [Odds Ratios (Relative Risk
-    Ratios)](#odds-ratios-relative-risk-ratios)
-  - [Changing the Baseline](#changing-the-baseline)
-- [Predicted Probabilities](#predicted-probabilities)
-  - [Average Predictions by SES](#average-predictions-by-ses)
-  - [Predictions Across Writing
-    Score](#predictions-across-writing-score)
-  - [Conditional Plots](#conditional-plots)
-- [Marginal Effects](#marginal-effects)
-  - [Average Slope for Writing Score](#average-slope-for-writing-score)
-  - [Pairwise Comparisons for SES](#pairwise-comparisons-for-ses)
-- [Confusion Matrix](#confusion-matrix)
-- [Pseudo R‑Squared](#pseudo-rsquared)
-- [Model Comparison](#model-comparison)
-  - [Likelihood Ratio Tests](#likelihood-ratio-tests)
-  - [Information Criteria](#information-criteria)
-- [Assumptions of Multinomial Logistic
-  Regression](#assumptions-of-multinomial-logistic-regression)
-- [Pros and Cons](#pros-and-cons)
-- [What to Report](#what-to-report)
-- [Conclusion](#conclusion)
-- [References](#references)
+- [<span class="toc-section-number">3</span> Why Multinomial
+  Models?](#why-multinomial-models)
+- [<span class="toc-section-number">4</span> Example
+  Dataset](#example-dataset)
+- [<span class="toc-section-number">5</span> Multinomial Logistic
+  Regression Model](#multinomial-logistic-regression-model)
+  - [<span class="toc-section-number">5.1</span>
+    Estimation](#estimation)
+  - [<span class="toc-section-number">5.2</span>
+    Interpretation](#interpretation)
+  - [<span class="toc-section-number">5.3</span> Fitting a Multinomial
+    Model in R](#fitting-a-multinomial-model-in-r)
+    - [<span class="toc-section-number">5.3.1</span> Odds Ratios
+      (Relative Risk Ratios)](#odds-ratios-relative-risk-ratios)
+    - [<span class="toc-section-number">5.3.2</span> Changing the
+      Baseline](#changing-the-baseline)
+  - [<span class="toc-section-number">5.4</span> Predicted
+    Probabilities](#predicted-probabilities)
+    - [<span class="toc-section-number">5.4.1</span> Average Predictions
+      by SES](#average-predictions-by-ses)
+    - [<span class="toc-section-number">5.4.2</span> Predictions Across
+      Writing Score](#predictions-across-writing-score)
+    - [<span class="toc-section-number">5.4.3</span> Conditional
+      Plots](#conditional-plots)
+  - [<span class="toc-section-number">5.5</span> Marginal
+    Effects](#marginal-effects)
+    - [<span class="toc-section-number">5.5.1</span> Average Slope for
+      Writing Score](#average-slope-for-writing-score)
+    - [<span class="toc-section-number">5.5.2</span> Pairwise
+      Comparisons for SES](#pairwise-comparisons-for-ses)
+  - [<span class="toc-section-number">5.6</span> Confusion
+    Matrix](#confusion-matrix)
+  - [<span class="toc-section-number">5.7</span> Pseudo
+    R‑Squared](#pseudo-rsquared)
+  - [<span class="toc-section-number">5.8</span> Model
+    Comparison](#model-comparison)
+    - [<span class="toc-section-number">5.8.1</span> Likelihood Ratio
+      Tests](#likelihood-ratio-tests)
+    - [<span class="toc-section-number">5.8.2</span> Information
+      Criteria](#information-criteria)
+  - [<span class="toc-section-number">5.9</span> Assumptions of
+    Multinomial Logistic
+    Regression](#assumptions-of-multinomial-logistic-regression)
+  - [<span class="toc-section-number">5.10</span> Pros and
+    Cons](#pros-and-cons)
+  - [<span class="toc-section-number">5.11</span> What to
+    Report](#what-to-report)
+  - [<span class="toc-section-number">5.12</span>
+    Conclusion](#conclusion)
+- [<span class="toc-section-number">6</span> References](#references)
 
-## Introduction
+# Introduction
 
 In this tutorial we extend binary logistic regression to situations
 where the outcome variable has more than two categories. When the
@@ -54,7 +76,7 @@ outcomes. We will cover:
 We will use a dataset on high school students’ choice of academic
 program (general, academic, vocational) to illustrate the methods.
 
-## Recap of Binary Logistic Regression
+# Recap of Binary Logistic Regression
 
 Binary logistic regression models the probability of a binary outcome
 $Y$ (coded 0/1) as a function of predictors. The model is:
@@ -64,7 +86,7 @@ p = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_k X_k}}{1 + e^{\beta_0 + \bet
 $$
 
 Equivalently, the log-odds (logit) of the probability has a linear
-relation to the systematic compoenent of the **Generalized linear
+relation to the systematic component of the **Generalized linear
 model**:
 
 $$
@@ -79,7 +101,7 @@ $$
 - Model fit can be assessed with likelihood ratio tests, pseudo‑$R^2$,
   and information criteria (AIC, BIC).
 
-## Why Multinomial Models?
+# Why Multinomial Models?
 
 When the dependent variable has more than two categories (e.g., choice
 of program, mode of transport, political party), binary logistic
@@ -96,7 +118,7 @@ category. Ordinal outcomes can be modeled with proportional odds models
 (not covered here), but multinomial logistic regression is also
 applicable (though it ignores ordering).
 
-## Example Dataset
+# Example Dataset
 
 We use the `hsbdemo` dataset (from the UCLA IDRE website) containing
 variables on high school students: their chosen program type (`prog`:
@@ -171,7 +193,7 @@ ggplot(dat, aes(x = prog)) +
 
 ![](15_multinomial_logistic_regression_files/figure-commonmark/outcome-dist-1.png)
 
-## Multinomial Logistic Regression Model
+# Multinomial Logistic Regression Model
 
 The multinomial logistic regression extends the binary logit model by
 estimating a separate binary logit for each non‑baseline category versus
@@ -193,7 +215,7 @@ $$
 For the baseline category $J$, we set $\alpha_J = 0$ and all
 $\beta_{J} = 0$.
 
-### Estimation
+## Estimation
 
 Parameters are estimated by maximum likelihood. The likelihood for a
 sample of $n$ independent observations is:

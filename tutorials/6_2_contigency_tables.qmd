@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 execute:
   cache: true

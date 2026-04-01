@@ -1,46 +1,50 @@
 Linear Regression
 ================
 Mauricio Garnier-Villarreal
-05 February, 2026
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Prepare the data set](#prepare-the-data-set)
-    - [Create composite scores](#create-composite-scores)
-    - [Transform categorical variables to
-      `factor()`](#transform-categorical-variables-to-factor)
-    - [Set variables for analysis](#set-variables-for-analysis)
-- [Simple Linear regression](#simple-linear-regression)
-  - [Standardize solution](#standardize-solution)
-  - [Assumptions](#assumptions)
-  - [Effect size](#effect-size)
-  - [Slope plots](#slope-plots)
-  - [Interpretation of the results](#interpretation-of-the-results)
-- [Linear regression with a binary
-  predictor](#linear-regression-with-a-binary-predictor)
-  - [Post-hoc comparisons](#post-hoc-comparisons)
-  - [Standardize solution](#standardize-solution-1)
-  - [Assumptions](#assumptions-1)
-  - [Effect size](#effect-size-1)
-  - [Slope plots](#slope-plots-1)
-  - [Interpretation of the results](#interpretation-of-the-results-1)
-- [Linear regression with a categorical predictor (more than 2
-  categories)](#linear-regression-with-a-categorical-predictor-more-than-2-categories)
-  - [Post-hoc comparisons](#post-hoc-comparisons-1)
-  - [Standardize solution](#standardize-solution-2)
-  - [Assumptions](#assumptions-2)
-  - [Effect size](#effect-size-2)
-  - [Slope plots](#slope-plots-2)
-- [Multiple Linear regression](#multiple-linear-regression)
-  - [Model comparison](#model-comparison)
-  - [Post-hoc comparisons](#post-hoc-comparisons-2)
-  - [Standardize solution](#standardize-solution-3)
-  - [Assumptions](#assumptions-3)
-  - [Effect size](#effect-size-3)
-  - [Conditional Slope plots](#conditional-slope-plots)
-  - [Interpretation of the results](#interpretation-of-the-results-2)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Prepare the data set](#21-prepare-the-data-set)
+    - [2.1.1 Create composite scores](#211-create-composite-scores)
+    - [2.1.2 Transform categorical variables to
+      `factor()`](#212-transform-categorical-variables-to-factor)
+    - [2.1.3 Set variables for
+      analysis](#213-set-variables-for-analysis)
+- [3 Simple Linear regression](#3-simple-linear-regression)
+  - [3.1 Standardize solution](#31-standardize-solution)
+  - [3.2 Assumptions](#32-assumptions)
+  - [3.3 Effect size](#33-effect-size)
+  - [3.4 Slope plots](#34-slope-plots)
+  - [3.5 Interpretation of the
+    results](#35-interpretation-of-the-results)
+- [4 Linear regression with a binary
+  predictor](#4-linear-regression-with-a-binary-predictor)
+  - [4.1 Post-hoc comparisons](#41-post-hoc-comparisons)
+  - [4.2 Standardize solution](#42-standardize-solution)
+  - [4.3 Assumptions](#43-assumptions)
+  - [4.4 Effect size](#44-effect-size)
+  - [4.5 Slope plots](#45-slope-plots)
+  - [4.6 Interpretation of the
+    results](#46-interpretation-of-the-results)
+- [5 Linear regression with a categorical predictor (more than 2
+  categories)](#5-linear-regression-with-a-categorical-predictor-more-than-2-categories)
+  - [5.1 Post-hoc comparisons](#51-post-hoc-comparisons)
+  - [5.2 Standardize solution](#52-standardize-solution)
+  - [5.3 Assumptions](#53-assumptions)
+  - [5.4 Effect size](#54-effect-size)
+  - [5.5 Slope plots](#55-slope-plots)
+- [6 Multiple Linear regression](#6-multiple-linear-regression)
+  - [6.1 Model comparison](#61-model-comparison)
+  - [6.2 Post-hoc comparisons](#62-post-hoc-comparisons)
+  - [6.3 Standardize solution](#63-standardize-solution)
+  - [6.4 Assumptions](#64-assumptions)
+  - [6.5 Effect size](#65-effect-size)
+  - [6.6 Conditional Slope plots](#66-conditional-slope-plots)
+  - [6.7 Interpretation of the
+    results](#67-interpretation-of-the-results)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -66,7 +70,7 @@ library(patchwork)
 library(summarytools)
 ```
 
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -80,7 +84,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 2.1 Prepare the data set
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -136,7 +140,7 @@ The variables we will use here are:
 - Q112-Q120: Corruption Perception Index
 - Q65-Q73: Lack of Confidence in the government
 
-### Create composite scores
+### 2.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -168,7 +172,7 @@ With the `rowmeans()` we compute the mean across the specified
 variables, for each subject. Remember to include the `na.rm=T` argument,
 so the missing values are properly ignored.
 
-### Transform categorical variables to `factor()`
+### 2.1.2 Transform categorical variables to `factor()`
 
 when we want to use categorical variables as predictors, it is
 recommended to transformed them as `factor` type in `R`. In this case we
@@ -183,7 +187,7 @@ dat2$Sex <- factor(dat2$Q260,
                        labels = c("Male","Female") )
 ```
 
-### Set variables for analysis
+### 2.1.3 Set variables for analysis
 
 Now, we will select only the variables of interest in a separate data
 set.
@@ -211,7 +215,7 @@ The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `na.omit()` function we are
 excluding all cases with some missing values.
 
-# Simple Linear regression
+# 3 Simple Linear regression
 
 With linear regression we need to define an outcome (dependent) and
 predictor(s) (independent) variables. This way specifying directional
@@ -287,7 +291,7 @@ parameters(mod1, digits=3)
     ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
     ##   using a Wald t-distribution approximation.
 
-## Standardize solution
+## 3.1 Standardize solution
 
 It is common to look at the standardize regression slopes, we can
 estimate this with the `standardize_parameters()` function from the
@@ -328,7 +332,7 @@ corr.test(dat2[,c("Corrup","LCGov")], method="pearson")
     ## 
     ##  To see confidence intervals of the correlations, print with the short=FALSE option
 
-## Assumptions
+## 3.2 Assumptions
 
 The linear model assumptions can not be evaluated on the data, but only
 once the model has been estimated. In `R` the most practical way to do
@@ -380,7 +384,7 @@ It is worth to remember that the linear models are robust to violations
 of the normality, homogeneity of variance, and outliers. But it is not
 robust to violations of linearity.
 
-## Effect size
+## 3.3 Effect size
 
 From the overall model we will use the $R^2$, and $R^2_{adj}$ as
 measures of model predictive accuracy. And $\eta^2$, $\omega^2$ as
@@ -455,7 +459,7 @@ the same estimate up to the third decimal. Later we will show the
 interpretation of these different metrics when multiple indicators are
 present.
 
-## Slope plots
+## 3.4 Slope plots
 
 We also want to plot the regression line, as the predicted scores next
 to the observed data. We can do this with the \``marginaleffects`
@@ -477,7 +481,7 @@ with a single predictor, this is equivalent to the observed
 scatter-plot. when we add multiple predictors this change to conditional
 regression lines.
 
-## Interpretation of the results
+## 3.5 Interpretation of the results
 
 Here we will present how to interpret the model results. With a single
 indicator we get all the information we need from the `summary()` or
@@ -548,7 +552,7 @@ standardize_parameters(mod1)
     ## (Intercept) |   1.28e-15 | [-0.01, 0.01]
     ## LCGov       |       0.33 | [ 0.32, 0.34]
 
-# Linear regression with a binary predictor
+# 4 Linear regression with a binary predictor
 
 We can run a regression where the predictor is a binary/categorical
 variable. With a categorical variable with only 2 categories (binary),
@@ -603,7 +607,7 @@ in the `summary` the slope name is `SexFemale`. This indicates that it
 is the slope for the category `Female` and that the other category is
 the baseline group of comparison, `Male` in this case.
 
-## Post-hoc comparisons
+## 4.1 Post-hoc comparisons
 
 With categorical predictors the slopes represent the mean difference
 between groups, we can estimate all possible pairwise comparisons with
@@ -625,7 +629,7 @@ avg_comparisons(mod2,
     ## Type: response
     ## Comparison: Female - Male
 
-## Standardize solution
+## 4.2 Standardize solution
 
 There are divided opinions about the worthiness of standardized slopes
 for categorical predictors. I particularly don’t recommend it as it sets
@@ -663,7 +667,7 @@ standardize_parameters(mod2, method = "basic")
     ## (Intercept)  |       0.00 | [ 0.00,  0.00]
     ## Sex [Female] |      -0.02 | [-0.02, -0.01]
 
-## Assumptions
+## 4.3 Assumptions
 
 ``` r
 plot(mod2)
@@ -677,7 +681,7 @@ variances, or outliers. But, there are signs of violations of the
 assumption of normally distributed residuals, at the tails of the
 distributions.
 
-## Effect size
+## 4.4 Effect size
 
 As we still have only one predictor, the $R^2$, $\eta^2$, and $\omega^2$
 will present the same results. We find that `Sex` explains 0.025% of the
@@ -707,7 +711,7 @@ omega_squared(Anova(mod2, type=2), partial=F)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
-## Slope plots
+## 4.5 Slope plots
 
 When we plot the slopes for a categorical predictor `plot_predictions`
 will present it like a box plot for each group. It will do this if the
@@ -721,7 +725,7 @@ plot_predictions(mod2, condition="Sex")
 
 The point is the mean for each group and the lines represent the CI.
 
-## Interpretation of the results
+## 4.6 Interpretation of the results
 
 We will get the interpretation from the `summary()` output
 
@@ -778,7 +782,7 @@ parameters(mod2)
   $b_1 = -0.026, SE = 0.006, p < .001$. Or we could say that the mean
   difference between *Male* and *Female* is 0.026.
 
-# Linear regression with a categorical predictor (more than 2 categories)
+# 5 Linear regression with a categorical predictor (more than 2 categories)
 
 A binary predictor is most simple case of a categorical predictor. But
 in many cases you might have a predictor with more than 2 categories.
@@ -926,7 +930,7 @@ parameters(Anova(mod_cat, type=2))
     ## 
     ## Anova Table (Type 2 tests)
 
-## Post-hoc comparisons
+## 5.1 Post-hoc comparisons
 
 With categorical predictors the slopes represent the mean difference
 between groups, we can estimate all possible pairwise comparisons with
@@ -1062,7 +1066,7 @@ One last argument that we add here is the `multcomp = "fdr"` which
 adjusts the `p-value` for multiple comparisons. In this case we use the
 false discovery rate adjustment.
 
-## Standardize solution
+## 5.2 Standardize solution
 
 There are divided opinions about the worthiness of standardized slopes
 for categorical predictors. I particularly don’t recommend it as it sets
@@ -1107,7 +1111,7 @@ standardize_parameters(mod_cat, method = "basic")
     ## age ran [>50-70]  |      -0.07 | [-0.09, -0.05]
     ## age ran [>70-103] |      -0.08 | [-0.09, -0.07]
 
-## Assumptions
+## 5.3 Assumptions
 
 ``` r
 plot(mod_cat)
@@ -1121,7 +1125,7 @@ variances, or outliers. But, there are signs of violations of the
 assumption of normally distributed residuals, at the tails of the
 distributions.
 
-## Effect size
+## 5.4 Effect size
 
 As we still have only one predictor, the $R^2$, $\eta^2$, and $\omega^2$
 will present the same results. We find that `Age ranges` explains 0.95%
@@ -1157,7 +1161,7 @@ omega_squared(Anova(mod_cat, type=2), partial=F)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
-## Slope plots
+## 5.5 Slope plots
 
 We can also plot the “slopes” for categorical predictors, in this case
 the model predictions will be predicted means and confidence intervals
@@ -1170,7 +1174,7 @@ plot_predictions(mod_cat, condition = "age_ran")
 
 ![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-44-1.png)<!-- -->
 
-# Multiple Linear regression
+# 6 Multiple Linear regression
 
 An advantage of the General Linear Models, is the flexibility that they
 have to include multiple predictors, and they can be any combination of
@@ -1285,7 +1289,7 @@ predictor having no relation to the outcome variable, keeping all other
 predictors constant. For the continuous predictors this will be exactly
 the same as the one from the `parameters` table.
 
-## Model comparison
+## 6.1 Model comparison
 
 Before we had done two models, the first one with Just *Lack of
 confidence* as predictor, and the second with just *Sex* as predictor.
@@ -1321,7 +1325,7 @@ estimated parameters. In this case, we reject the null hypothesis of
 that both models are equally good at predicting *Perception of
 corruption*. Would lead us to choose the larger model.
 
-## Post-hoc comparisons
+## 6.2 Post-hoc comparisons
 
 For the categorical predictor we can ask for the conditional pairwise
 differences with the `avg_comparisons` function. These would be the
@@ -1351,7 +1355,7 @@ pw4
     ## Term: age_ran
     ## Type: response
 
-## Standardize solution
+## 6.3 Standardize solution
 
 Once we have decided to continue with `mod3`, we can also look at the
 standardized slopes. Remember that this function *does not* standardized
@@ -1383,7 +1387,7 @@ the reference group. Remember that with this we can only rank the
 effects, but cannot test if a predictor has an effect *significantly*
 larger than another.
 
-## Assumptions
+## 6.4 Assumptions
 
 We will again use the diagnostic plots to evaluate for violations of the
 model assumptions
@@ -1406,7 +1410,7 @@ of variance assumption, or outliers. And as the other models, we see the
 assumption of normally distributed residuals violated in the tails of
 the distribution.
 
-## Effect size
+## 6.5 Effect size
 
 For the overall model effect size we can look at the $R^2$, and
 $R^2_{adj}$ in the summary output
@@ -1539,7 +1543,7 @@ $\eta^2$ can bee seen as the equivalent to the $R^2$, and $\omega^2$ as
 the equivalent to $R^2_{adj}$. But for the individual predictor’s
 effects
 
-## Conditional Slope plots
+## 6.6 Conditional Slope plots
 
 For plotting the regression slopes, when we had a single predictor the
 regression slope was equivalent to the scatter-plot. Now that we have
@@ -1593,7 +1597,7 @@ plot_predictions(mod3, condition = "Sex")+
 
 ![](9_1_linear_regression_files/figure-gfm/unnamed-chunk-56-1.png)<!-- -->
 
-## Interpretation of the results
+## 6.7 Interpretation of the results
 
 Now, there are a lot more pieces to add to the interpretation. Lets
 start with the overall model null hypothesis test, from the

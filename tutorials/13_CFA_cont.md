@@ -1,38 +1,44 @@
-Confirmatory Factor Analysis
-================
+# Confirmatory Factor Analysis
 Mauricio Garnier-Villarreal
-1/3/23
+2026-03-31
 
-- <a href="#introduction" id="toc-introduction">Introduction</a>
-  - <a href="#test-theory" id="toc-test-theory">Test theory</a>
-- <a href="#measurement-model" id="toc-measurement-model">Measurement
-  model</a>
-  - <a href="#illustrations" id="toc-illustrations">Illustrations</a>
-- <a href="#preparation" id="toc-preparation">Preparation</a>
-  - <a href="#getting-some-data" id="toc-getting-some-data">Getting some
-    data</a>
-  - <a href="#descriptive-statistics"
-    id="toc-descriptive-statistics">Descriptive statistics</a>
-- <a href="#confirmatory-factor-analysis"
-  id="toc-confirmatory-factor-analysis">Confirmatory Factor Analysis</a>
-  - <a href="#lavaan" id="toc-lavaan"><code>lavaan</code></a>
-  - <a href="#lavaan-syntax" id="toc-lavaan-syntax"><code>lavaan</code>
-    syntax</a>
-  - <a href="#estimating-the-model" id="toc-estimating-the-model">Estimating
-    the model</a>
-  - <a href="#model-parameters" id="toc-model-parameters">Model
-    parameters</a>
-  - <a href="#overall-model-fit" id="toc-overall-model-fit">Overall model
-    fit</a>
-    - <a href="#exact-fit" id="toc-exact-fit">Exact fit</a>
-    - <a href="#approximate-fit" id="toc-approximate-fit">Approximate fit</a>
-  - <a href="#local-model-fit" id="toc-local-model-fit">Local model fit</a>
-  - <a href="#model-modifications" id="toc-model-modifications">Model
-    modifications</a>
-  - <a href="#reliability" id="toc-reliability">Reliability</a>
-  - <a href="#presenting-the-results"
-    id="toc-presenting-the-results">Presenting the results</a>
-- <a href="#references" id="toc-references">References</a>
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+  - [<span class="toc-section-number">1.1</span> Test
+    theory](#test-theory)
+- [<span class="toc-section-number">2</span> Measurement
+  model](#measurement-model)
+  - [<span class="toc-section-number">2.1</span>
+    Illustrations](#illustrations)
+- [<span class="toc-section-number">3</span> Preparation](#preparation)
+  - [<span class="toc-section-number">3.1</span> Getting some
+    data](#getting-some-data)
+  - [<span class="toc-section-number">3.2</span> Descriptive
+    statistics](#descriptive-statistics)
+- [<span class="toc-section-number">4</span> Confirmatory Factor
+  Analysis](#confirmatory-factor-analysis)
+  - [<span class="toc-section-number">4.1</span> `lavaan`](#lavaan)
+  - [<span class="toc-section-number">4.2</span> `lavaan`
+    syntax](#lavaan-syntax)
+  - [<span class="toc-section-number">4.3</span> Estimating the
+    model](#estimating-the-model)
+  - [<span class="toc-section-number">4.4</span> Model
+    parameters](#model-parameters)
+  - [<span class="toc-section-number">4.5</span> Overall model
+    fit](#overall-model-fit)
+    - [<span class="toc-section-number">4.5.1</span> Exact
+      fit](#exact-fit)
+    - [<span class="toc-section-number">4.5.2</span> Approximate
+      fit](#approximate-fit)
+  - [<span class="toc-section-number">4.6</span> Local model
+    fit](#local-model-fit)
+  - [<span class="toc-section-number">4.7</span> Model
+    modifications](#model-modifications)
+  - [<span class="toc-section-number">4.8</span>
+    Reliability](#reliability)
+  - [<span class="toc-section-number">4.9</span> Presenting the
+    results](#presenting-the-results)
+- [<span class="toc-section-number">5</span> References](#references)
 
 # Introduction
 
@@ -69,12 +75,12 @@ need to differentiate the following concepts:
 
 *Table 1: Important concepts in test theory*
 
-| Name                | Definition                                                                                                                                                                 |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Latent variables    | Not directly observable concepts - later also called ‘factors’ - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns…)        |
-| Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
-| True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
-| Measurement error   | Share of the measurement variance that is not linked to the latent variable (includes item-specific variance, systematic errors, and random errors)                        |
+| Name | Definition |
+|----|----|
+| Latent variables | Not directly observable concepts - later also called ‘factors’ - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns…) |
+| Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators) |
+| True score | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
+| Measurement error | Share of the measurement variance that is not linked to the latent variable (includes item-specific variance, systematic errors, and random errors) |
 
 <br>
 
@@ -404,7 +410,7 @@ estimation, sample size, number of parameters.
 summary(fit.cfa, standardized=T, rsquare=T)
 ```
 
-    lavaan 0.6-13.1787 ended normally after 59 iterations
+    lavaan 0.6-21 ended normally after 59 iterations
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -502,11 +508,6 @@ summary(fit.cfa, standardized=T, rsquare=T)
        .O3                2.564    0.023  110.749    0.000    2.564    2.101
        .O4                2.108    0.023   91.118    0.000    2.108    1.726
        .O5                2.490    0.025   98.933    0.000    2.490    1.876
-        Agreeableness     0.000                               0.000    0.000
-        Conscientisnss    0.000                               0.000    0.000
-        Extraversion      0.000                               0.000    0.000
-        Neuroticism       0.000                               0.000    0.000
-        Openness          0.000                               0.000    0.000
 
     Variances:
                        Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
@@ -797,7 +798,7 @@ fit.cfa2 <- cfa(cfa_model_mod,
 summary(fit.cfa2, standardized=T)
 ```
 
-    lavaan 0.6-13.1787 ended normally after 60 iterations
+    lavaan 0.6-21 ended normally after 60 iterations
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -897,11 +898,6 @@ summary(fit.cfa2, standardized=T)
        .O3                2.564    0.023  110.749    0.000    2.564    2.101
        .O4                2.108    0.023   91.118    0.000    2.108    1.726
        .O5                2.490    0.025   98.932    0.000    2.490    1.876
-        Agreeableness     0.000                               0.000    0.000
-        Conscientisnss    0.000                               0.000    0.000
-        Extraversion      0.000                               0.000    0.000
-        Neuroticism       0.000                               0.000    0.000
-        Openness          0.000                               0.000    0.000
 
     Variances:
                        Estimate  Std.Err  z-value  P(>|z|)   Std.lv  Std.all
@@ -952,9 +948,9 @@ lavTestLRT(fit.cfa, fit.cfa2)
 
     Chi-Squared Difference Test
 
-              Df    AIC    BIC  Chisq Chisq diff   RMSEA Df diff Pr(>Chisq)    
-    fit.cfa2 264 228355 228865 4300.3                                          
-    fit.cfa  265 228727 229231 4674.3     373.97 0.36497       1  < 2.2e-16 ***
+              Df    AIC    BIC  Chisq Chisq diff Df diff Pr(>Chisq)    
+    fit.cfa2 264 228355 228865 4300.3                                  
+    fit.cfa  265 228727 229231 4674.3     373.97       1  < 2.2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1039,9 +1035,9 @@ lavTestLRT(fit.cfa, fit.cfa3)
 
     Chi-Squared Difference Test
 
-              Df    AIC    BIC  Chisq Chisq diff   RMSEA Df diff Pr(>Chisq)    
-    fit.cfa3 256 227011 227569 2940.3                                          
-    fit.cfa  265 228727 229231 4674.3     1733.9 0.26163       9  < 2.2e-16 ***
+              Df    AIC    BIC  Chisq Chisq diff Df diff Pr(>Chisq)    
+    fit.cfa3 256 227011 227569 2940.3                                  
+    fit.cfa  265 228727 229231 4674.3     1733.9       9  < 2.2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1086,10 +1082,60 @@ in the model.
 compRelSEM(fit.cfa3)
 ```
 
-        Agreeableness Conscientiousness      Extraversion       Neuroticism 
-                0.639             0.652             0.653             0.559 
-             Openness 
-                0.437 
+    $Agreeableness
+
+    Composite `Agreeableness` is composed of observed variables:
+        A1, A2, A3, A4, A5
+    True-score variance is represented by common factor(s):
+        Agreeableness, Extraversion
+    Total variance of composite `Agreeableness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.711
+
+    $Conscientiousness
+
+    Composite `Conscientiousness` is composed of observed variables:
+        C1, C2, C3, C4, C5, E5
+    True-score variance is represented by common factor(s):
+        Conscientiousness, Extraversion, Neuroticism
+    Total variance of composite `Conscientiousness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.756
+
+    $Extraversion
+
+    Composite `Extraversion` is composed of observed variables:
+        A5, E1, E2, E3, E4, E5, N4, O4
+    True-score variance is represented by common factor(s):
+        Agreeableness, Conscientiousness, Extraversion, Neuroticism, Openness
+    Total variance of composite `Extraversion` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.732
+
+    $Neuroticism
+
+    Composite `Neuroticism` is composed of observed variables:
+        C4, C5, N1, N2, N3, N4, N5
+    True-score variance is represented by common factor(s):
+        Conscientiousness, Extraversion, Neuroticism
+    Total variance of composite `Neuroticism` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.648
+
+    $Openness
+
+    Composite `Openness` is composed of observed variables:
+        E3, O1, O2, O3, O4, O5
+    True-score variance is represented by common factor(s):
+        Extraversion, Openness
+    Total variance of composite `Openness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.367
 
 This measure does not assume tau-equivalence, which is a strong
 assumption of equivalence between indicators, and ignores the
@@ -1100,10 +1146,50 @@ get the Cronbach $\alpha$ measure
 compRelSEM(fit.cfa3, tau.eq = T)
 ```
 
-        Agreeableness Conscientiousness      Extraversion       Neuroticism 
-                0.702             0.729             0.585             0.538 
-             Openness 
-                0.374 
+    $Agreeableness
+
+    Composite `Agreeableness` is composed of observed variables:
+        A1, A2, A3, A4, A5
+    Total variance of composite `Agreeableness` determined from the unrestricted model.
+    Coefficient alpha would be:
+
+    [1] 0.702
+
+    $Conscientiousness
+
+    Composite `Conscientiousness` is composed of observed variables:
+        C1, C2, C3, C4, C5, E5
+    Total variance of composite `Conscientiousness` determined from the unrestricted model.
+    Coefficient alpha would be:
+
+    [1] 0.729
+
+    $Extraversion
+
+    Composite `Extraversion` is composed of observed variables:
+        A5, E1, E2, E3, E4, E5, N4, O4
+    Total variance of composite `Extraversion` determined from the unrestricted model.
+    Coefficient alpha would be:
+
+    [1] 0.585
+
+    $Neuroticism
+
+    Composite `Neuroticism` is composed of observed variables:
+        C4, C5, N1, N2, N3, N4, N5
+    Total variance of composite `Neuroticism` determined from the unrestricted model.
+    Coefficient alpha would be:
+
+    [1] 0.538
+
+    $Openness
+
+    Composite `Openness` is composed of observed variables:
+        E3, O1, O2, O3, O4, O5
+    Total variance of composite `Openness` determined from the unrestricted model.
+    Coefficient alpha would be:
+
+    [1] 0.374
 
 We recommend to use the $\omega$ measure, as it is more representative
 of reliability, and respects the factor loadings.
@@ -1146,10 +1232,60 @@ Lastly, you would need to report the factor reliability $\omega$
 compRelSEM(fit.cfa3)
 ```
 
-        Agreeableness Conscientiousness      Extraversion       Neuroticism 
-                0.639             0.652             0.653             0.559 
-             Openness 
-                0.437 
+    $Agreeableness
+
+    Composite `Agreeableness` is composed of observed variables:
+        A1, A2, A3, A4, A5
+    True-score variance is represented by common factor(s):
+        Agreeableness, Extraversion
+    Total variance of composite `Agreeableness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.711
+
+    $Conscientiousness
+
+    Composite `Conscientiousness` is composed of observed variables:
+        C1, C2, C3, C4, C5, E5
+    True-score variance is represented by common factor(s):
+        Conscientiousness, Extraversion, Neuroticism
+    Total variance of composite `Conscientiousness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.756
+
+    $Extraversion
+
+    Composite `Extraversion` is composed of observed variables:
+        A5, E1, E2, E3, E4, E5, N4, O4
+    True-score variance is represented by common factor(s):
+        Agreeableness, Conscientiousness, Extraversion, Neuroticism, Openness
+    Total variance of composite `Extraversion` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.732
+
+    $Neuroticism
+
+    Composite `Neuroticism` is composed of observed variables:
+        C4, C5, N1, N2, N3, N4, N5
+    True-score variance is represented by common factor(s):
+        Conscientiousness, Extraversion, Neuroticism
+    Total variance of composite `Neuroticism` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.648
+
+    $Openness
+
+    Composite `Openness` is composed of observed variables:
+        E3, O1, O2, O3, O4, O5
+    True-score variance is represented by common factor(s):
+        Extraversion, Openness
+    Total variance of composite `Openness` determined from the unrestricted model.
+    The proportion attributable to "true" scores is its model-based estimate of reliability ("omega"):
+
+    [1] 0.367
 
 # References
 

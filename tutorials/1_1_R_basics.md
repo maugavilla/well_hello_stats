@@ -2,42 +2,44 @@ R basics: Getting started
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-08 February, 2024
+01 April, 2026
 
-- [Introduction](#introduction)
-  - [Using RStudio](#using-rstudio)
-  - [Running code from the R script](#running-code-from-the-r-script)
-  - [Assigning values to names](#assigning-values-to-names)
-- [Data types](#data-types)
-  - [Numeric](#numeric)
-  - [Character](#character)
-- [Data structures](#data-structures)
-  - [Vector](#vector)
-    - [Selecting elements](#selecting-elements)
-  - [Data.frame](#dataframe)
-    - [Selecting rows, columns and
-      elements](#selecting-rows-columns-and-elements)
-      - [selecting columns](#selecting-columns)
-      - [selecting rows](#selecting-rows)
-      - [selecting rows and columns](#selecting-rows-and-columns)
-    - [Subsetting, adding and modifying
-      data](#subsetting-adding-and-modifying-data)
-  - [Other common data structures](#other-common-data-structures)
-- [Importing and saving data](#importing-and-saving-data)
-- [Functions](#functions)
-  - [What is a function?](#what-is-a-function)
-  - [Using functions](#using-functions)
-    - [Viewing and interpreting function
-      documentation](#viewing-and-interpreting-function-documentation)
-- [Packages](#packages)
-  - [Install and load packages](#install-and-load-packages)
-  - [Some error messages](#some-error-messages)
-- [Working directory](#working-directory)
-- [Save syntax and workspace](#save-syntax-and-workspace)
+- [1 Introduction](#1-introduction)
+  - [1.1 Using RStudio](#11-using-rstudio)
+  - [1.2 Running code from the R
+    script](#12-running-code-from-the-r-script)
+  - [1.3 Assigning values to names](#13-assigning-values-to-names)
+- [2 Data types](#2-data-types)
+  - [2.1 Numeric](#21-numeric)
+  - [2.2 Character](#22-character)
+- [3 Data structures](#3-data-structures)
+  - [3.1 Vector](#31-vector)
+    - [3.1.1 Selecting elements](#311-selecting-elements)
+  - [3.2 Data.frame](#32-dataframe)
+    - [3.2.1 Selecting rows, columns and
+      elements](#321-selecting-rows-columns-and-elements)
+      - [3.2.1.1 selecting columns](#3211-selecting-columns)
+      - [3.2.1.2 selecting rows](#3212-selecting-rows)
+      - [3.2.1.3 selecting rows and
+        columns](#3213-selecting-rows-and-columns)
+    - [3.2.2 Subsetting, adding and modifying
+      data](#322-subsetting-adding-and-modifying-data)
+  - [3.3 Other common data structures](#33-other-common-data-structures)
+- [4 Importing and saving data](#4-importing-and-saving-data)
+- [5 Functions](#5-functions)
+  - [5.1 What is a function?](#51-what-is-a-function)
+  - [5.2 Using functions](#52-using-functions)
+    - [5.2.1 Viewing and interpreting function
+      documentation](#521-viewing-and-interpreting-function-documentation)
+- [6 Packages](#6-packages)
+  - [6.1 Install and load packages](#61-install-and-load-packages)
+  - [6.2 Some error messages](#62-some-error-messages)
+- [7 Working directory](#7-working-directory)
+- [8 Save syntax and workspace](#8-save-syntax-and-workspace)
 
-# Introduction
+# 1 Introduction
 
-## Using RStudio
+## 1.1 Using RStudio
 
 Once you have installed R and RStudio, you can start by launching
 RStudio. If everything was installed correctly, RStudio will
@@ -64,7 +66,7 @@ work with R scripts. This allows you to keep track of what you are doing
 and save every step. Furthermore, this allows transparency and
 reproducibility of your work.
 
-## Running code from the R script
+## 1.2 Running code from the R script
 
 Type the example code in the gray boxes into your R Script. Run the code
 and you should get the output shown in the **output** boxes that start
@@ -106,7 +108,7 @@ sum(1,2,3,4,5)   ## using a function
 
     ## [1] 15
 
-Some kinds of functions return multiple outputs. The **\[1\]** next to
+Some kinds of functions return multiple outputs. The **$$1$$** next to
 your output indicates that that is the first (and in this case, only)
 output.
 
@@ -141,7 +143,7 @@ sum(1,4,6,7,8)
 
     ## [1] 26
 
-## Assigning values to names
+## 1.3 Assigning values to names
 
 Now we can start working in R! When running the example code, you saw
 that R automatically **evaluates** expressions. The calculation 3+3
@@ -203,7 +205,7 @@ h
 So, here the object **h** is not the same as the object **H**. Also,
 when we assign a new value to **h** it overwrites the old value.
 
-# Data types
+# 2 Data types
 
 Data types concern the different types that single values in data can
 have. The most basic data types in R are:
@@ -219,7 +221,7 @@ In addition, there are special types for data such as date/time values.
   not go over these more advanced data types here, but you should know
   that they exist within R.
 
-## Numeric
+## 2.1 Numeric
 
 Numbers. As simple as is gets. You can use them to do the math you know
 and love.
@@ -255,7 +257,7 @@ sqrt(x)    ## square root
 
     ## [1] 2.236068
 
-## Character
+## 2.2 Character
 
 Textual data (recognizable by the quotes), either as single characters,
 entire words, or even full texts.
@@ -331,7 +333,7 @@ z
 
     ## [1] NA
 
-# Data structures
+# 3 Data structures
 
 In SPSS, Excel or Google Sheets, data is always organized in a
 rectangular data frame, with cells arranged in rows and columns.
@@ -350,7 +352,7 @@ Here we will first briefly discuss *vectors*, and then quickly move on
 to *data.frames*. In addition, we will mention *matrices* and *lists* on
 a good-to-know-about basis.
 
-## Vector
+## 3.1 Vector
 
 The concept of a vector might be confusing from a social science
 background, because we rarely use the term in the context of statistics
@@ -407,7 +409,7 @@ x + 10    ## for a vector and single value, the value is repeated (1 + 10, 2 + 1
 
     ## [1] 11 12 13 14 15
 
-### Selecting elements
+### 3.1.1 Selecting elements
 
 There are two common ways to select a specific element or a range of
 elements from a vector. One is to give the indices (positions) of the
@@ -464,7 +466,7 @@ x[-c(1,3)]       ## select every element other than the first and third
 
     ## [1] "b" "d" "e" "f" "g"
 
-## Data.frame
+## 3.2 Data.frame
 
 A *data.frame* is essentially a collection of vectors with the same
 length (rows), tied together as columns. That is, it creates something
@@ -507,7 +509,7 @@ the columns represent:
 - test scores before and after the experimental condition: **score_t1**
   and **score_t2**
 
-### Selecting rows, columns and elements
+### 3.2.1 Selecting rows, columns and elements
 
 Since data.frames have both rows and columns, we need to use both a row
 number and a column number to select data. Similar to selection in
@@ -516,10 +518,10 @@ data.frames the square brackets have two parts, separated by a comma.
 Assuming our data.frame is called `d`, we can select with:
 
 | syntax   | meaning                                  |
-|----------|------------------------------------------|
-| d\[i,j\] | select rows (i) and columns (j)          |
-| d\[i, \] | select only rows (i) and use all columns |
-| d\[ ,j\] | select only columns (j) and use all rows |
+|:---------|:-----------------------------------------|
+| d$$i,j$$ | select rows (i) and columns (j)          |
+| d$$i, $$ | select only rows (i) and use all columns |
+| d$$ ,j$$ | select only columns (j) and use all rows |
 
 Selection for rows (i) and columns (j) works identical to selection in
 vectors. You can use either a numeric vector with indices, or a logical
@@ -530,11 +532,11 @@ can be a character vector with column names. The other uses the dollar
 sign (\$).
 
 | syntax               | meaning                                         |
-|----------------------|-------------------------------------------------|
-| d\[ ,c(“c1”, “c2”)\] | select the columns with the names “c1” and “c2” |
+|:---------------------|:------------------------------------------------|
+| d$$ ,c("c1", "c2")$$ | select the columns with the names “c1” and “c2” |
 | d\$id                | select the column named id, all rows            |
 
-#### selecting columns
+#### 3.2.1.1 selecting columns
 
 Let’s put this to practice, starting with columns:
 
@@ -606,7 +608,7 @@ d[,-1]            ## select every column except for the first
     ## 9          C      M  26      7.3      7.0
     ## 10         C      F  18      6.8      6.5
 
-#### selecting rows
+#### 3.2.1.2 selecting rows
 
 Selecting rows is practically identical to selecting elements from
 vectors, and it conveniently returns a data.frame with all columns and
@@ -663,7 +665,7 @@ d[d$score_t1 < d$score_t2,]           ## selects participants that have a higher
     ## 7  7         E      F  18      6.0      6.2
     ## 8  8         E      M  17      3.2      3.6
 
-#### selecting rows and columns
+#### 3.2.1.3 selecting rows and columns
 
 We can combine row and column selection. This works just like you’d
 expect it to, so there’s little to add here. Do note, however, that you
@@ -687,7 +689,7 @@ d$score_t1[d$gender == "F"]       ## identical, but first select column vector, 
 
     ## [1] 7.5 8.0 6.4 6.0 6.8
 
-### Subsetting, adding and modifying data
+### 3.2.2 Subsetting, adding and modifying data
 
 *Exercise 1:* With the selection techniques you already learned how to
 create a subset of the data. Try to subset the data so that only
@@ -728,7 +730,7 @@ d_sociodem
     ## 9   9      M  26
     ## 10 10      F  18
 
-## Other common data structures
+## 3.3 Other common data structures
 
 A data frame is a special case of the data structures **arrays**, which
 are dimensional structures for vectors. So, a data frame is a 2
@@ -739,7 +741,7 @@ structures, such as the `matrix` and `list`. Packages can also provide
 new classes for organizing and manipulating data. These are more
 advanced topics.
 
-# Importing and saving data
+# 4 Importing and saving data
 
 Of course, we can also save a data.frame in our computer. We therefore
 can use a variety of formats (e.g., .RData, .csv…). When saving, it is
@@ -766,7 +768,7 @@ download the data, store it in some readable format (most preferably a
 csv-file) and than load it manually. Other tutorials will cover how to
 import data sets from different formats.
 
-# Functions
+# 5 Functions
 
 Where data types and structures concern how data is represented in R,
 functions are the tools that you use to read, create, manage,
@@ -774,7 +776,7 @@ manipulate, analyze and visualize data. We have already seen some
 examples such as `sum()`, the sum function and `c()`, the concatenate
 function.
 
-## What is a function?
+## 5.1 What is a function?
 
 There are many correct and formal ways to define what functions are, but
 for the sake of simplicity we will focus on an informal description of
@@ -830,7 +832,7 @@ can assign the output to a name to use it in the next steps, or the
 output is a table with results or a visualization that you want to
 interpret.
 
-## Using functions
+## 5.2 Using functions
 
 Above you saw the simple function `sqrt()`, that given a single number
 as input returned a single number as output. As you have also seen in
@@ -867,7 +869,7 @@ The many R packages that you can install are mostly just collections of
 functions. We will now show how you can learn how to use each function
 by knowing how to view and interpret it’s documentation page.
 
-### Viewing and interpreting function documentation
+### 5.2.1 Viewing and interpreting function documentation
 
 You can access the documentation of a function by typing a question mark
 in front of the function name, and running the line of code. Let’s do
@@ -914,7 +916,7 @@ Notable parts to look into for yourself are **Details**, that provides
 more information, and the **Examples** section at the very bottom, which
 is a great starting point to see a function in action.
 
-# Packages
+# 6 Packages
 
 As we mentioned before, **packages** are collections of functions that
 are designed for some specific purpose. These are developed by people
@@ -923,7 +925,7 @@ of packages, when you first install R it only includes the *basic*
 packages. When you want to, you can install the packages, this has to be
 done only once per computer.
 
-## Install and load packages
+## 6.1 Install and load packages
 
 There are several ways you can install packages, in RStudio you can to
 th lower-left pane, and the *Packages* tab. Click the **Install**
@@ -990,7 +992,7 @@ for update at least once a month. You can do this in two ways
 update.packages(ask=FALSE, checkBuilt=T)
 ```
 
-## Some error messages
+## 6.2 Some error messages
 
 A common error when working with packages is is to try to load a
 packages that has not been installed yet, this give us a useful error
@@ -1000,8 +1002,23 @@ message
 library(tidyLPA)
 ```
 
+    ## Warning: package 'tidyLPA' was built under R version 4.5.3
+
+    ## Loading required package: tidySEM
+
+    ## Registered S3 method overwritten by 'tidyLPA':
+    ##   method    from   
+    ##   print.LRT tidySEM
+
     ## You can use the function citation('tidyLPA') to create a citation for the use of {tidyLPA}.
     ## Mplus is not installed. Use only package = 'mclust' when calling estimate_profiles().
+
+    ## 
+    ## Attaching package: 'tidyLPA'
+
+    ## The following objects are masked from 'package:tidySEM':
+    ## 
+    ##     get_data, get_estimates, get_fit, poms
 
 Here we see a clear error, R saying that it cannot load the package
 `tidyLPA` because there is no such package installed. O, if you see this
@@ -1014,13 +1031,14 @@ that has not been loaded with `library()` ahead of time
 qplot(rnorm(1000))
 ```
 
-    ## Error in qplot(rnorm(1000)): could not find function "qplot"
+    ## Error in `qplot()`:
+    ## ! could not find function "qplot"
 
 Here we get a clear message that R does not recognize the function
 qplot, as we have not loaded the respective package `ggplot2` in this
 example.
 
-# Working directory
+# 7 Working directory
 
 The working directory is the folder in your computer from which R will
 look for and write files into directly. You can set the working
@@ -1048,7 +1066,7 @@ Make sure this is between quotes, and the slash is in this direction /
 setwd("C:/Users/Admin/Downloads")
 ```
 
-# Save syntax and workspace
+# 8 Save syntax and workspace
 
 As we have shown there are two pieces of information we would want to
 save, the syntax and workspace. From the RStudio interface we can save

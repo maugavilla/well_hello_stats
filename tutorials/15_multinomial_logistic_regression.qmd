@@ -5,11 +5,11 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 ---
 
-
-## Introduction
+# Introduction
 
 In this tutorial we extend binary logistic regression to situations where the outcome variable has more than two categories. When the categories are **nominal** (no natural order) or **ordinal** (ordered categories), we need a model that can handle multiple response options. Multinomial logistic regression is the most common approach for nominal outcomes. We will cover:
 
@@ -21,7 +21,7 @@ In this tutorial we extend binary logistic regression to situations where the ou
 
 We will use a dataset on high school students' choice of academic program (general, academic, vocational) to illustrate the methods.
 
-## Recap of Binary Logistic Regression
+# Recap of Binary Logistic Regression
 
 Binary logistic regression models the probability of a binary outcome $Y$ (coded 0/1) as a function of predictors. The model is:
 
@@ -30,7 +30,7 @@ p = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_k X_k}}{1 + e^{\beta_0 + \bet
 $$
 
 
-Equivalently, the log-odds (logit) of the probability has a linear relation to the systematic compoenent of the **Generalized linear model**:
+Equivalently, the log-odds (logit) of the probability has a linear relation to the systematic component of the **Generalized linear model**:
 
 
 $$
@@ -43,7 +43,7 @@ $$
 - Predicted probabilities $\hat{p}$ are obtained via the inverse logit transformation.
 - Model fit can be assessed with likelihood ratio tests, pseudo‑$R^2$, and information criteria (AIC, BIC).
 
-## Why Multinomial Models?
+# Why Multinomial Models?
 
 When the dependent variable has more than two categories (e.g., choice of program, mode of transport, political party), binary logistic regression is insufficient. The categories may be:
 
@@ -52,7 +52,7 @@ When the dependent variable has more than two categories (e.g., choice of progra
 
 Multinomial logistic regression handles nominal outcomes by estimating a set of binary logistic regressions comparing each category to a baseline category. Ordinal outcomes can be modeled with proportional odds models (not covered here), but multinomial logistic regression is also applicable (though it ignores ordering).
 
-## Example Dataset
+# Example Dataset
 
 We use the `hsbdemo` dataset (from the UCLA IDRE website) containing variables on high school students: their chosen program type (`prog`: general, academic, vocational), socioeconomic status (`ses`: low, middle, high), and writing score (`write`). We will examine whether SES and writing score predict program choice.
 
@@ -91,7 +91,7 @@ ggplot(dat, aes(x = prog)) +
   theme_minimal()
 ```
 
-## Multinomial Logistic Regression Model
+# Multinomial Logistic Regression Model
 
 The multinomial logistic regression extends the binary logit model by estimating a separate binary logit for each non‑baseline category versus the baseline. Suppose the outcome $Y$ has $J$ categories, and we choose category $J$ as the baseline. Then for $j = 1, \dots, J-1$:
 
@@ -111,7 +111,7 @@ $$
 
 For the baseline category $J$, we set $\alpha_J = 0$ and all $\beta_{J} = 0$.
 
-### Estimation
+## Estimation
 
 Parameters are estimated by maximum likelihood. The likelihood for a sample of $n$ independent observations is:
 

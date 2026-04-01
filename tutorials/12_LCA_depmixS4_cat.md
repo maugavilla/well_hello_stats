@@ -1,20 +1,27 @@
 # LCA with depmixS4 (categorical indicators)
 Mauricio Garnier-Villarreal
-2025-05-15
+2026-03-31
 
-- [Latent Class Analysis (LCA)](#latent-class-analysis-lca)
-  - [Person-centered vs
+- [<span class="toc-section-number">1</span> Latent Class Analysis
+  (LCA)](#latent-class-analysis-lca)
+  - [<span class="toc-section-number">1.1</span> Person-centered vs
     Variable-centered](#person-centered-vs-variable-centered)
-  - [Terminology](#terminology)
-- [`depmixS4`](#depmixs4)
-- [Dichotomous indicator example](#dichotomous-indicator-example)
-  - [`depmixS4` syntax](#depmixs4-syntax)
-  - [Class enumeration](#class-enumeration)
-    - [Model Fit Indices](#model-fit-indices)
-    - [Classification Diagnostics](#classification-diagnostics)
-    - [Interpreting the Final Class
-      Solution](#interpreting-the-final-class-solution)
-- [References](#references)
+  - [<span class="toc-section-number">1.2</span>
+    Terminology](#terminology)
+- [<span class="toc-section-number">2</span> `depmixS4`](#depmixs4)
+- [<span class="toc-section-number">3</span> Dichotomous indicator
+  example](#dichotomous-indicator-example)
+  - [<span class="toc-section-number">3.1</span> `depmixS4`
+    syntax](#depmixs4-syntax)
+  - [<span class="toc-section-number">3.2</span> Class
+    enumeration](#class-enumeration)
+    - [<span class="toc-section-number">3.2.1</span> Model Fit
+      Indices](#model-fit-indices)
+    - [<span class="toc-section-number">3.2.2</span> Classification
+      Diagnostics](#classification-diagnostics)
+    - [<span class="toc-section-number">3.2.3</span> Interpreting the
+      Final Class Solution](#interpreting-the-final-class-solution)
+- [<span class="toc-section-number">4</span> References](#references)
 
 # Latent Class Analysis (LCA)
 
@@ -111,6 +118,7 @@ library(rio)
 library(sjlabelled)
 library(summarytools)
 library(ggplot2)
+library(tidySEM)
 ```
 
 If you want to load the helper functions directly from this GitHub
@@ -310,7 +318,7 @@ lca1_fit <- fit(lca1_mod,
                 emcontrol=em.control(maxit=50000,random.start = TRUE))
 ```
 
-    converged at iteration 140 with logLik: -3666.872 
+    converged at iteration 145 with logLik: -3666.872 
 
 ``` r
 summary(lca1_fit)
@@ -318,7 +326,7 @@ summary(lca1_fit)
 
     Mixture probabilities model 
           pr1       pr2 
-    0.5987236 0.4012764 
+    0.4012617 0.5987383 
 
     Response parameters 
     Resp 1 : multinomial 
@@ -326,12 +334,12 @@ summary(lca1_fit)
     Resp 3 : multinomial 
     Resp 4 : multinomial 
     Resp 5 : multinomial 
-            Re1.1     Re1.2     Re2.1      Re2.2     Re3.1     Re3.2     Re4.1
-    St1 0.3148046 0.6851954 0.5809705 0.41902950 0.5813181 0.4186819 0.2922750
-    St2 0.6771559 0.3228441 0.9784869 0.02151314 0.7343683 0.2656317 0.6094509
+            Re1.1     Re1.2     Re2.1     Re2.2     Re3.1     Re3.2     Re4.1
+    St1 0.6771631 0.3228369 0.9784927 0.0215073 0.7343712 0.2656288 0.6094562
+    St2 0.3148086 0.6851914 0.5809763 0.4190237 0.5813200 0.4186800 0.2922792
             Re4.2     Re5.1     Re5.2
-    St1 0.7077250 0.1708082 0.8291918
-    St2 0.3905491 0.6936764 0.3063236
+    St1 0.3905438 0.6936856 0.3063144
+    St2 0.7077208 0.1708148 0.8291852
 
 Congratulation! you have run your first LCA. Here we see that 40% and
 59% of the sample falls into each of the 2 classes. And for the first

@@ -1,25 +1,40 @@
 # Repeated Measures ANOVA
 Mauricio Garnier-Villarreal & Denise J. Roth, FSW VU Amsterdam
-2024-05-07
+2026-03-31
 
-- [Introduction](#introduction)
-- [Set up the R Session](#set-up-the-r-session)
-- [Import the Dataset](#import-the-dataset)
-  - [Prepare the Dataset](#prepare-the-dataset)
-  - [Convert the Dataframe from Wide to Long
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> Set up the R
+  Session](#set-up-the-r-session)
+- [<span class="toc-section-number">3</span> Import the
+  Dataset](#import-the-dataset)
+  - [<span class="toc-section-number">3.1</span> Prepare the
+    Dataset](#prepare-the-dataset)
+  - [<span class="toc-section-number">3.2</span> Convert the Dataframe
+    from Wide to Long
     Format](#convert-the-dataframe-from-wide-to-long-format)
-- [Perform Repeated Measure
+- [<span class="toc-section-number">4</span> Perform Repeated Measure
   Analysis](#perform-repeated-measure-analysis)
-  - [Effect size](#effect-size)
-  - [Post-hoc pairwise comparisons](#post-hoc-pairwise-comparisons)
-  - [Plot group means](#plot-group-means)
-  - [Post-hoc planned comparisons](#post-hoc-planned-comparisons)
-- [Mixed design RM-ANOVA](#mixed-design-rm-anova)
-  - [Effect size](#effect-size-1)
-  - [Post-hoc comparisons](#post-hoc-comparisons)
-  - [Plot post-hoc](#plot-post-hoc)
-  - [Post-hoc planned comparisons](#post-hoc-planned-comparisons-1)
-  - [Interpretation](#interpretation)
+  - [<span class="toc-section-number">4.1</span> Effect
+    size](#effect-size)
+  - [<span class="toc-section-number">4.2</span> Post-hoc pairwise
+    comparisons](#post-hoc-pairwise-comparisons)
+  - [<span class="toc-section-number">4.3</span> Plot group
+    means](#plot-group-means)
+  - [<span class="toc-section-number">4.4</span> Post-hoc planned
+    comparisons](#post-hoc-planned-comparisons)
+- [<span class="toc-section-number">5</span> Mixed design
+  RM-ANOVA](#mixed-design-rm-anova)
+  - [<span class="toc-section-number">5.1</span> Effect
+    size](#effect-size-1)
+  - [<span class="toc-section-number">5.2</span> Post-hoc
+    comparisons](#post-hoc-comparisons)
+  - [<span class="toc-section-number">5.3</span> Plot
+    post-hoc](#plot-post-hoc)
+  - [<span class="toc-section-number">5.4</span> Post-hoc planned
+    comparisons](#post-hoc-planned-comparisons-1)
+  - [<span class="toc-section-number">5.5</span>
+    Interpretation](#interpretation)
 
 # Introduction
 
@@ -138,8 +153,8 @@ that with `recode()` function as follows
 
 ``` r
 d$Condition_Couple <- car::recode(d$Condition_Couple, 
-                                  "0='Beyonce & Jay-Z';
-                                  1= 'Shakira & Piqué' ")
+                                  "0 = 'Beyonce & Jay-Z';
+                                  1 = 'Shakira & Pique' ")
 ```
 
 In these next steps, we first create a variable that contains a
@@ -230,7 +245,7 @@ head(d_id)
     3      2    2    2  2              6  Beyonce & Jay-Z  3
     4      6    5    6  2              2  Beyonce & Jay-Z  4
     5      5    3    6  2              2  Beyonce & Jay-Z  5
-    6      2    4    6  3              3  Shakira & Piqué  6
+    6      2    4    6  3              3  Shakira & Pique  6
 
 ``` r
 d_long <- melt(d_id,id.vars=c("id", "Condition_Couple"),
@@ -247,7 +262,7 @@ head(d_long)
     3  3  Beyonce & Jay-Z          Adidas     2
     4  4  Beyonce & Jay-Z          Adidas     6
     5  5  Beyonce & Jay-Z          Adidas     5
-    6  6  Shakira & Piqué          Adidas     2
+    6  6  Shakira & Pique          Adidas     2
 
 # Perform Repeated Measure Analysis
 
@@ -393,8 +408,7 @@ avg_predictions(model, by = c("Cleb_Congruence"))
       HM                 3.06      0.317  9.65   <0.001  70.8  2.44   3.68
       Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
-    Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
+    Type: response
 
 Once we have established an overall model effect, we would be interested
 in testing specific comparisons, such as **Where do we see specific mean
@@ -405,49 +419,68 @@ outcome predicted by the model change when we manipulate the predictors
 
 For this function, we provide the RM-ANOVA object (`model`), the group
 variable we want to estimate (`list(Cleb_Congruence = "pairwise")`) as
-well as specifying that we are requesting the pairwise comparisons.
-Additionally, we are equating the `fdr` false discovery rate $p$-value
-correction, asking for the tests and CI to be presented for the 95%
-confidence level. We are specifying the degrees of freedom so the
-function uses the $t-test$ instead of the $z-test$, we get these from
-the handy function `insight::get_df()` which requires the RN-ANOVA
-object
+well as specifying that we are requesting the pairwise comparisons. . We
+are specifying the degrees of freedom so the function uses the $t-test$
+instead of the $z-test$, we get these from the handy function
+`insight::get_df()` which requires the RN-ANOVA object. Additionally, we
+are requesting the `fdr` false discovery rate $p$-value correction in th
+`hypotheses` function with the `multcomp` argument, asking for the tests
+and CI to be presented for the 95% confidence level
 
 ``` r
 acmp <- avg_comparisons(model,
                        variables = list(Cleb_Congruence = "pairwise"), 
-                       p_adjust = "fdr", conf_level = 0.95,
+                       conf_level = 0.95,
                        df = insight::get_df(model))
 
 acmp
 ```
 
 
-                Term                Contrast Estimate Std. Error      t Pr(>|t|)
-     Cleb_Congruence HM - Adidas               -1.625      0.401 -4.053   <0.001
-     Cleb_Congruence HM - Nike                 -1.500      0.339 -4.425   <0.001
-     Cleb_Congruence HM - Puma                 -0.875      0.320 -2.735   0.0232
-     Cleb_Congruence Nike - Adidas             -0.125      0.361 -0.346   0.7298
-     Cleb_Congruence Nike - Puma                0.625      0.268  2.328   0.0386
-     Cleb_Congruence Puma - Adidas             -0.750      0.336 -2.232   0.0386
-     Cleb_Congruence Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0386
-     Cleb_Congruence Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1163
-     Cleb_Congruence Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0373
-     Cleb_Congruence Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4461
-        S  Df
-     11.3 154
-     12.4 154
-      5.4 154
-      0.5 154
-      4.7 154
-      4.7 154
-      4.7 154
-      3.1 154
-      4.7 154
-      1.2 154
+                    Contrast Estimate Std. Error      t Pr(>|t|)    S   2.5 %
+     HM - Adidas               -1.625      0.401 -4.053   <0.001 11.6 -2.4428
+     HM - Nike                 -1.500      0.339 -4.425   <0.001 13.1 -2.1914
+     HM - Puma                 -0.875      0.320 -2.735   0.0102  6.6 -1.5274
+     Nike - Adidas             -0.125      0.361 -0.346   0.7317  0.5 -0.8619
+     Nike - Puma                0.625      0.268  2.328   0.0266  5.2  0.0775
+     Puma - Adidas             -0.750      0.336 -2.232   0.0330  4.9 -1.4353
+     Tommy_Hilfiger - Adidas   -1.063      0.466 -2.278   0.0298  5.1 -2.0139
+     Tommy_Hilfiger - HM        0.563      0.333  1.690   0.1010  3.3 -0.1163
+     Tommy_Hilfiger - Nike     -0.938      0.381 -2.462   0.0196  5.7 -1.7142
+     Tommy_Hilfiger - Puma     -0.313      0.371 -0.841   0.4066  1.3 -1.0701
+      97.5 % Df
+     -0.8072 31
+     -0.8086 31
+     -0.2226 31
+      0.6119 31
+      1.1725 31
+     -0.0647 31
+     -0.1111 31
+      1.2413 31
+     -0.1608 31
+      0.4451 31
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
-    Type:  response 
+    Term: Cleb_Congruence
+    Type: response
+
+``` r
+hypotheses(acmp, multcomp = "fdr")
+```
+
+
+     Estimate Std. Error      z Pr(>|z|)    S  2.5 %   97.5 %
+       -1.625      0.401 -4.053   <0.001 11.9 -2.712 -0.53824
+       -1.500      0.339 -4.425   <0.001 13.3 -2.419 -0.58123
+       -0.875      0.320 -2.735   0.0208  5.6 -1.742 -0.00807
+       -0.125      0.361 -0.346   0.7294  0.5 -1.104  0.85423
+        0.625      0.268  2.328   0.0366  4.8 -0.103  1.35262
+       -0.750      0.336 -2.232   0.0366  4.8 -1.661  0.16067
+       -1.063      0.466 -2.278   0.0366  4.8 -2.327  0.20181
+        0.563      0.333  1.690   0.1137  3.1 -0.339  1.46449
+       -0.938      0.381 -2.462   0.0346  4.9 -1.970  0.09465
+       -0.313      0.371 -0.841   0.4447  1.2 -1.319  0.69423
+
+    Term: Cleb_Congruence
 
 From these post-host, we can interpret that we reject the null
 hypothesis of equal means over conditions for the comparisons with an
@@ -482,8 +515,7 @@ p
       HM                 3.06      0.317  9.65   <0.001  70.8  2.44   3.68
       Tommy_Hilfiger     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
 
-    Columns: Cleb_Congruence, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
+    Type: response
 
 Then we can plot it with the function `plot_predictions`, based on the
 model, and the error bars representing the variability
@@ -512,14 +544,18 @@ hypotheses(model)
 ```
 
 
-            Term Estimate Std. Error     z Pr(>|z|)     S 2.5 % 97.5 %
-     (Intercept)     4.69      0.306 15.32   <0.001 173.6  4.09   5.29
-     (Intercept)     3.94      0.277 14.24   <0.001 150.4  3.40   4.48
-     (Intercept)     4.56      0.287 15.88   <0.001 186.3  4.00   5.13
-     (Intercept)     3.06      0.317  9.65   <0.001  70.8  2.44   3.68
-     (Intercept)     3.62      0.329 11.01   <0.001  91.3  2.98   4.27
-
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+                           Term Estimate Std. Error     z Pr(>|z|)     S 2.5 %
+     Adidas_(Intercept)             4.69      0.306 15.32   <0.001 173.6  4.09
+     Puma_(Intercept)               3.94      0.277 14.24   <0.001 150.4  3.40
+     Nike_(Intercept)               4.56      0.287 15.88   <0.001 186.3  4.00
+     HM_(Intercept)                 3.06      0.317  9.65   <0.001  70.8  2.44
+     Tommy_Hilfiger_(Intercept)     3.62      0.329 11.01   <0.001  91.3  2.98
+     97.5 %
+       5.29
+       4.48
+       5.13
+       3.68
+       4.27
 
 Here we see that the model extracts the mean for each of the five
 groups, and we see that this match the factor variable
@@ -543,11 +579,28 @@ the group mean for sporty and casual brands
 hypotheses(model, "(b1+b2+b3)/3 = (b4+b5)/2")
 ```
 
+    Warning: 
+    It is essential to check the order of estimates when specifying hypothesis tests using positional indices like b1, b2, etc. The indices of estimates can change depending on the order of rows in the original dataset, user-supplied arguments, model-fitting package, and version of `marginaleffects`.
 
-                         Term Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
-     (b1+b2+b3)/3 = (b4+b5)/2     1.05      0.289 3.64   <0.001 11.8 0.485   1.62
+    It is also good practice to use assertions that ensure the order of estimates is consistent across different runs of the same code. Example:
 
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    ```r
+    mod <- lm(mpg ~ am * carb, data = mtcars)
+
+    # assertion for safety
+    p <- avg_predictions(mod, by = 'carb')
+    stopifnot(p$carb[1] == 1, p$carb[2] == 2)
+
+    # hypothesis test
+    avg_predictions(mod, by = 'carb', hypothesis = 'b1 - b2 = 0')
+    ```
+
+    Disable this warning with: `options(marginaleffects_safe = FALSE)`
+     This warning appears once per session.
+
+
+                 Hypothesis Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
+     (b1+b2+b3)/3=(b4+b5)/2     1.05      0.289 3.64   <0.001 11.8 0.485   1.62
 
 In the second method, we will write the hypothesis with the commonly use
 **weights**, where we set group parameters based on the sign of the
@@ -560,10 +613,10 @@ hypotheses(model, hypothesis = c(1/3,1/3,1/3,-1/2,-1/2))
 ```
 
 
-       Term Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
-     custom     1.05      0.289 3.64   <0.001 11.8 0.485   1.62
+     Estimate Std. Error    z Pr(>|z|)    S 2.5 % 97.5 %
+         1.05      0.289 3.64   <0.001 11.8 0.485   1.62
 
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
+    Term: custom
 
 Here we reject the null hypothesis of sporty and casual brands to have
 the same level of congruence.
@@ -600,8 +653,6 @@ hypotheses(model, hypothesis = cont_mat)
      Sport=0          4.40      0.222 19.83   <0.001 288.2 3.961   4.83
      Casual=0         3.34      0.277 12.06   <0.001 108.9 2.800   3.89
      Sport=Casual     1.05      0.289  3.64   <0.001  11.8 0.485   1.62
-
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
 
 Note that for contrast weights, if you want the means in the metric of
 the observed variable, you need to make sure the weights sum up to 1.
@@ -797,7 +848,7 @@ interactions)by including both the between and within variables in the
 ``` r
 acmp_1 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise", Condition_Couple = "pairwise"),
-                          p_adjust = "fdr", conf_level = 0.95,
+                          conf_level = 0.95,
                           df = insight::get_df(model2))
 
 acmp_1
@@ -815,22 +866,39 @@ acmp_1
      Cleb_Congruence  Tommy_Hilfiger - HM                  0.563      0.338  1.664
      Cleb_Congruence  Tommy_Hilfiger - Nike               -0.938      0.383 -2.448
      Cleb_Congruence  Tommy_Hilfiger - Puma               -0.313      0.377 -0.829
-     Condition_Couple Shakira & Piqué - Beyonce & Jay-Z    0.125      0.407  0.307
-     Pr(>|t|)    S  Df
-       <0.001 11.0 149
-       <0.001 12.1 149
-       0.0279  5.2 149
-       0.7590  0.4 149
-       0.0393  4.7 149
-       0.0393  4.7 149
-       0.0393  4.7 149
-       0.1351  2.9 149
-       0.0393  4.7 149
-       0.4991  1.0 149
-       0.7590  0.4 149
+     Condition_Couple Shakira & Pique - Beyonce & Jay-Z    0.125      0.407  0.307
+     Pr(>|t|)    S   2.5 %  97.5 % Df
+       <0.001 11.5 -2.4493 -0.8007 30
+       <0.001 12.9 -2.1976 -0.8024 30
+       0.0111  6.5 -1.5354 -0.2146 30
+       0.7359  0.4 -0.8747  0.6247 30
+       0.0231  5.4  0.0921  1.1579 30
+       0.0300  5.1 -1.4222 -0.0778 30
+       0.0309  5.0 -2.0208 -0.1042 30
+       0.1066  3.2 -0.1280  1.2530 30
+       0.0204  5.6 -1.7195 -0.1555 30
+       0.4136  1.3 -1.0822  0.4572 30
+       0.7607  0.4 -0.7056  0.9556 30
 
-    Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, df 
-    Type:  response 
+    Type: response
+
+``` r
+hypotheses(acmp_1, multcomp = "fdr")
+```
+
+
+                 Term Estimate Std. Error      z Pr(>|z|)    S   2.5 %  97.5 %
+     Cleb_Congruence    -1.625      0.404 -4.026   <0.001 11.6 -2.7356 -0.5144
+     Cleb_Congruence    -1.500      0.342 -4.392   <0.001 13.0 -2.4399 -0.5601
+     Cleb_Congruence    -0.875      0.323 -2.706   0.0250  5.3 -1.7648  0.0148
+     Cleb_Congruence    -0.125      0.367 -0.341   0.7586  0.4 -1.1352  0.8852
+     Cleb_Congruence     0.625      0.261  2.395   0.0366  4.8 -0.0931  1.3431
+     Cleb_Congruence    -0.750      0.329 -2.279   0.0370  4.8 -1.6557  0.1557
+     Cleb_Congruence    -1.063      0.469 -2.264   0.0370  4.8 -2.3537  0.2287
+     Cleb_Congruence     0.563      0.338  1.664   0.1323  2.9 -0.3679  1.4929
+     Cleb_Congruence    -0.938      0.383 -2.448   0.0366  4.8 -1.9912  0.1162
+     Cleb_Congruence    -0.313      0.377 -0.829   0.4975  1.0 -1.3497  0.7247
+     Condition_Couple    0.125      0.407  0.307   0.7586  0.4 -0.9941  1.2441
 
 From `summary(acmp_1)` we will have the estimated mean difference for
 each pair comparison, and we can reject the null hypothesis for
@@ -845,7 +913,7 @@ between condition
 ``` r
 acmp_2 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise"), 
-                          p_adjust = "fdr", conf_level = 0.95, 
+                          conf_level = 0.95, 
                           by = "Condition_Couple",
                           df = insight::get_df(model2))
 
@@ -853,51 +921,80 @@ acmp_2
 ```
 
 
-                Term                            Contrast Condition_Couple Estimate
-     Cleb_Congruence mean(HM) - mean(Adidas)              Beyonce & Jay-Z  -1.9375
-     Cleb_Congruence mean(HM) - mean(Adidas)              Shakira & Piqué  -1.3125
-     Cleb_Congruence mean(HM) - mean(Nike)                Beyonce & Jay-Z  -1.7500
-     Cleb_Congruence mean(HM) - mean(Nike)                Shakira & Piqué  -1.2500
-     Cleb_Congruence mean(HM) - mean(Puma)                Beyonce & Jay-Z  -0.6875
-     Cleb_Congruence mean(HM) - mean(Puma)                Shakira & Piqué  -1.0625
-     Cleb_Congruence mean(Nike) - mean(Adidas)            Beyonce & Jay-Z  -0.1875
-     Cleb_Congruence mean(Nike) - mean(Adidas)            Shakira & Piqué  -0.0625
-     Cleb_Congruence mean(Nike) - mean(Puma)              Beyonce & Jay-Z   1.0625
-     Cleb_Congruence mean(Nike) - mean(Puma)              Shakira & Piqué   0.1875
-     Cleb_Congruence mean(Puma) - mean(Adidas)            Beyonce & Jay-Z  -1.2500
-     Cleb_Congruence mean(Puma) - mean(Adidas)            Shakira & Piqué  -0.2500
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Beyonce & Jay-Z  -1.4375
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Adidas)  Shakira & Piqué  -0.6875
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Beyonce & Jay-Z   0.5000
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(HM)      Shakira & Piqué   0.6250
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Beyonce & Jay-Z  -1.2500
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Nike)    Shakira & Piqué  -0.6250
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Beyonce & Jay-Z  -0.1875
-     Cleb_Congruence mean(Tommy_Hilfiger) - mean(Puma)    Shakira & Piqué  -0.4375
-     Std. Error      t Pr(>|t|)   S  Df
-          0.571 -3.395  0.00881 6.8 149
-          0.571 -2.300  0.05716 4.1 149
-          0.483 -3.623  0.00798 7.0 149
-          0.483 -2.588  0.04246 4.6 149
-          0.457 -1.503  0.26969 1.9 149
-          0.457 -2.323  0.05716 4.1 149
-          0.519 -0.361  0.76370 0.4 149
-          0.519 -0.120  0.90434 0.1 149
-          0.369  2.879  0.03051 5.0 149
-          0.369  0.508  0.72019 0.5 149
-          0.465 -2.685  0.04033 4.6 149
-          0.465 -0.537  0.72019 0.5 149
-          0.664 -2.166  0.07086 3.8 149
-          0.664 -1.036  0.43125 1.2 149
-          0.478  1.046  0.43125 1.2 149
-          0.478  1.307  0.35128 1.5 149
-          0.542 -2.308  0.05716 4.1 149
-          0.542 -1.154  0.41712 1.3 149
-          0.533 -0.352  0.76370 0.4 149
-          0.533 -0.821  0.55077 0.9 149
+                    Contrast Condition_Couple Estimate Std. Error      t Pr(>|t|)
+     HM - Adidas              Beyonce & Jay-Z  -1.9375      0.571 -3.395  0.00195
+     HM - Nike                Beyonce & Jay-Z  -1.7500      0.483 -3.623  0.00106
+     HM - Puma                Beyonce & Jay-Z  -0.6875      0.457 -1.503  0.14319
+     Nike - Adidas            Beyonce & Jay-Z  -0.1875      0.519 -0.361  0.72051
+     Nike - Puma              Beyonce & Jay-Z   1.0625      0.369  2.879  0.00729
+     Puma - Adidas            Beyonce & Jay-Z  -1.2500      0.465 -2.685  0.01169
+     Tommy_Hilfiger - Adidas  Beyonce & Jay-Z  -1.4375      0.664 -2.166  0.03837
+     Tommy_Hilfiger - HM      Beyonce & Jay-Z   0.5000      0.478  1.046  0.30407
+     Tommy_Hilfiger - Nike    Beyonce & Jay-Z  -1.2500      0.542 -2.308  0.02805
+     Tommy_Hilfiger - Puma    Beyonce & Jay-Z  -0.1875      0.533 -0.352  0.72747
+     HM - Adidas              Shakira & Pique  -1.3125      0.571 -2.300  0.02861
+     HM - Nike                Shakira & Pique  -1.2500      0.483 -2.588  0.01475
+     HM - Puma                Shakira & Pique  -1.0625      0.457 -2.323  0.02712
+     Nike - Adidas            Shakira & Pique  -0.0625      0.519 -0.120  0.90498
+     Nike - Puma              Shakira & Pique   0.1875      0.369  0.508  0.61513
+     Puma - Adidas            Shakira & Pique  -0.2500      0.465 -0.537  0.59517
+     Tommy_Hilfiger - Adidas  Shakira & Pique  -0.6875      0.664 -1.036  0.30847
+     Tommy_Hilfiger - HM      Shakira & Pique   0.6250      0.478  1.307  0.20112
+     Tommy_Hilfiger - Nike    Shakira & Pique  -0.6250      0.542 -1.154  0.25754
+     Tommy_Hilfiger - Puma    Shakira & Pique  -0.4375      0.533 -0.821  0.41824
+       S  2.5 %  97.5 % Df
+     9.0 -3.103 -0.7718 30
+     9.9 -2.737 -0.7635 30
+     2.8 -1.621  0.2464 30
+     0.5 -1.248  0.8728 30
+     7.1  0.309  1.8162 30
+     6.4 -2.201 -0.2994 30
+     4.7 -2.793 -0.0822 30
+     1.7 -0.477  1.4766 30
+     5.2 -2.356 -0.1441 30
+     0.5 -1.276  0.9011 30
+     5.1 -2.478 -0.1468 30
+     6.1 -2.237 -0.2635 30
+     5.2 -1.996 -0.1286 30
+     0.1 -1.123  0.9978 30
+     0.7 -0.566  0.9412 30
+     0.7 -1.201  0.7006 30
+     1.7 -2.043  0.6678 30
+     2.3 -0.352  1.6016 30
+     2.0 -1.731  0.4809 30
+     1.3 -1.526  0.6511 30
 
-    Columns: term, contrast, Condition_Couple, estimate, std.error, statistic, p.value, s.value, predicted_lo, predicted_hi, predicted, df 
-    Type:  response 
+    Term: Cleb_Congruence
+    Type: response
+
+``` r
+hypotheses(acmp_2, multcomp = "fdr")
+```
+
+
+     Estimate Std. Error      z Pr(>|z|)   S   2.5 % 97.5 %
+      -1.9375      0.571 -3.395  0.00687 7.2 -3.6190 -0.256
+      -1.7500      0.483 -3.623  0.00583 7.4 -3.1731 -0.327
+      -0.6875      0.457 -1.503  0.26546 1.9 -2.0347  0.660
+      -0.1875      0.519 -0.361  0.76317 0.4 -1.7170  1.342
+       1.0625      0.369  2.879  0.02659 5.2 -0.0247  2.150
+      -1.2500      0.465 -2.685  0.03622 4.8 -2.6213  0.121
+      -1.4375      0.664 -2.166  0.06732 3.9 -3.3925  0.518
+       0.5000      0.478  1.046  0.42885 1.2 -0.9087  1.909
+      -1.2500      0.542 -2.308  0.05369 4.2 -2.8453  0.345
+      -0.1875      0.533 -0.352  0.76317 0.4 -1.7578  1.383
+      -1.3125      0.571 -2.300  0.05369 4.2 -2.9940  0.369
+      -1.2500      0.483 -2.588  0.03864 4.7 -2.6731  0.173
+      -1.0625      0.457 -2.323  0.05369 4.2 -2.4097  0.285
+      -0.0625      0.519 -0.120  0.90418 0.1 -1.5920  1.467
+       0.1875      0.369  0.508  0.71931 0.5 -0.8997  1.275
+      -0.2500      0.465 -0.537  0.71931 0.5 -1.6213  1.121
+      -0.6875      0.664 -1.036  0.42885 1.2 -2.6425  1.268
+       0.6250      0.478  1.307  0.34762 1.5 -0.7837  2.034
+      -0.6250      0.542 -1.154  0.41404 1.3 -2.2203  0.970
+      -0.4375      0.533 -0.821  0.54902 0.9 -2.0078  1.133
+
+    Term: Cleb_Congruence
 
 This turns into larger post-hoc results, so be careful in its reading
 and interpretation
@@ -925,29 +1022,28 @@ p2
 
      Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
       Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
+      Adidas          Shakira & Pique     4.50      0.437 10.29   <0.001 80.1  3.64
       Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
+      Puma            Shakira & Pique     4.25      0.389 10.92   <0.001 89.8  3.49
       Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
+      Nike            Shakira & Pique     4.44      0.412 10.78   <0.001 87.6  3.63
       HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
+      HM              Shakira & Pique     3.19      0.455  7.01   <0.001 38.6  2.30
       Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
-      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
-      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
-      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
-      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
-      Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
+      Tommy_Hilfiger  Shakira & Pique     3.81      0.471  8.10   <0.001 50.7  2.89
      97.5 %
        5.73
-       4.39
-       5.49
-       3.83
-       4.36
        5.36
+       4.39
        5.01
+       5.49
        5.24
+       3.83
        4.08
+       4.36
        4.74
 
-    Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
+    Type: response
 
 Then, we can plot the estimated means, accounting for the interactions.
 With the same function as before, but by including both predictors in
@@ -983,29 +1079,28 @@ mm
 
      Cleb_Congruence Condition_Couple Estimate Std. Error     z Pr(>|z|)    S 2.5 %
       Adidas          Beyonce & Jay-Z     4.88      0.437 11.15   <0.001 93.5  4.02
+      Adidas          Shakira & Pique     4.50      0.437 10.29   <0.001 80.1  3.64
       Puma            Beyonce & Jay-Z     3.63      0.389  9.31   <0.001 66.1  2.86
+      Puma            Shakira & Pique     4.25      0.389 10.92   <0.001 89.8  3.49
       Nike            Beyonce & Jay-Z     4.69      0.412 11.38   <0.001 97.3  3.88
+      Nike            Shakira & Pique     4.44      0.412 10.78   <0.001 87.6  3.63
       HM              Beyonce & Jay-Z     2.94      0.455  6.46   <0.001 33.1  2.05
+      HM              Shakira & Pique     3.19      0.455  7.01   <0.001 38.6  2.30
       Tommy_Hilfiger  Beyonce & Jay-Z     3.44      0.471  7.30   <0.001 41.7  2.51
-      Adidas          Shakira & Piqué     4.50      0.437 10.29   <0.001 80.1  3.64
-      Puma            Shakira & Piqué     4.25      0.389 10.92   <0.001 89.8  3.49
-      Nike            Shakira & Piqué     4.44      0.412 10.78   <0.001 87.6  3.63
-      HM              Shakira & Piqué     3.19      0.455  7.01   <0.001 38.6  2.30
-      Tommy_Hilfiger  Shakira & Piqué     3.81      0.471  8.10   <0.001 50.7  2.89
+      Tommy_Hilfiger  Shakira & Pique     3.81      0.471  8.10   <0.001 50.7  2.89
      97.5 %
        5.73
-       4.39
-       5.49
-       3.83
-       4.36
        5.36
+       4.39
        5.01
+       5.49
        5.24
+       3.83
        4.08
+       4.36
        4.74
 
-    Columns: Cleb_Congruence, Condition_Couple, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
+    Type: response
 
 Once we have seen the cross means, we can build comparisons with weights
 vectors. For example if we want to compare **Casual-Beyonce & Jay-Z** vs
@@ -1041,12 +1136,12 @@ mm3
 ```
 
 
-       Term  Estimate Std. Error         z Pr(>|z|)   S  2.5 % 97.5 %
-     custom -3.13e-01      0.561 -5.57e-01    0.577 0.8 -1.411  0.786
-     custom -2.22e-16      0.451 -4.93e-16    1.000 0.0 -0.883  0.883
+     Estimate Std. Error    z Pr(>|z|)   S  2.5 % 97.5 %
+        0.844      0.380 2.22   0.0264 5.2 0.0991   1.59
+        0.813      0.334 2.44   0.0149 6.1 0.1588   1.47
 
-    Columns: term, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high 
-    Type:  response 
+    Term: custom
+    Type: response
 
 For both of these example, we fail to reject the null hypothesis.
 

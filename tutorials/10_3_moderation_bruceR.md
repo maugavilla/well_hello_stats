@@ -1,32 +1,33 @@
 Moderation with bruceR
 ================
 Mauricio Garnier-Villarreal
-28 January, 2026
+01 April, 2026
 
-- [What is moderation analysis?](#what-is-moderation-analysis)
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Prepare the data set](#prepare-the-data-set)
-    - [Create composite scores](#create-composite-scores)
-    - [Transform categorical variables to
-      `factor()`](#transform-categorical-variables-to-factor)
-    - [Set variables for analysis](#set-variables-for-analysis)
-- [Moderation analysis steps](#moderation-analysis-steps)
-- [Categorical moderator](#categorical-moderator)
-  - [PROCESS function](#process-function)
-    - [Probing](#probing)
-    - [Plotting](#plotting)
-    - [Effect size](#effect-size)
-    - [Interpretation](#interpretation)
-- [Continuous moderator](#continuous-moderator)
-  - [PROCESS function](#process-function-1)
-    - [Probing](#probing-1)
-    - [Plotting](#plotting-1)
-    - [Effect size](#effect-size-1)
-    - [Interpretation](#interpretation-1)
-- [References](#references)
+- [1 What is moderation analysis?](#1-what-is-moderation-analysis)
+- [2 Setup the R session](#2-setup-the-r-session)
+- [3 Import the data set](#3-import-the-data-set)
+  - [3.1 Prepare the data set](#31-prepare-the-data-set)
+    - [3.1.1 Create composite scores](#311-create-composite-scores)
+    - [3.1.2 Transform categorical variables to
+      `factor()`](#312-transform-categorical-variables-to-factor)
+    - [3.1.3 Set variables for
+      analysis](#313-set-variables-for-analysis)
+- [4 Moderation analysis steps](#4-moderation-analysis-steps)
+- [5 Categorical moderator](#5-categorical-moderator)
+  - [5.1 PROCESS function](#51-process-function)
+    - [5.1.1 Probing](#511-probing)
+    - [5.1.2 Plotting](#512-plotting)
+    - [5.1.3 Effect size](#513-effect-size)
+    - [5.1.4 Interpretation](#514-interpretation)
+- [6 Continuous moderator](#6-continuous-moderator)
+  - [6.1 PROCESS function](#61-process-function)
+    - [6.1.1 Probing](#611-probing)
+    - [6.1.2 Plotting](#612-plotting)
+    - [6.1.3 Effect size](#613-effect-size)
+    - [6.1.4 Interpretation](#614-interpretation)
+- [7 References](#7-references)
 
-# What is moderation analysis?
+# 1 What is moderation analysis?
 
 With moderation analysis, we are trying to find out whether the effect
 or association between two variables depends on another variable. Let’s
@@ -37,7 +38,7 @@ or the *Secular Values* of individuals. The latter two variables are
 called *moderators* of the association between *Lack of confidence in
 the government* and *Perception of corruption*.
 
-# Setup the R session
+# 2 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -62,7 +63,7 @@ library(bruceR)
 library(tidyr)
 ```
 
-# Import the data set
+# 3 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -76,7 +77,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 3.1 Prepare the data set
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -132,7 +133,7 @@ The variables we will use here are:
 - Q112-Q120: Corruption Perception Index
 - Q65-Q73: Lack of Confidence in the government
 
-### Create composite scores
+### 3.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -164,7 +165,7 @@ With the `rowmeans()` we compute the mean across the specified
 variables, for each subject. Remember to include the `na.rm=T` argument,
 so the missing values are properly ignored.
 
-### Transform categorical variables to `factor()`
+### 3.1.2 Transform categorical variables to `factor()`
 
 when we want to use categorical variables as predictors, it is
 recommended to transformed them as `factor` type in `R`. In this case we
@@ -179,7 +180,7 @@ dat2$Sex <- factor(dat2$Q260,
                        labels = c("Male","Female") )
 ```
 
-### Set variables for analysis
+### 3.1.3 Set variables for analysis
 
 Now, we will select only the variables of interest in a separate data
 set.
@@ -208,7 +209,7 @@ The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `drop_na()` function we are
 excluding all cases with some missing values.
 
-# Moderation analysis steps
+# 4 Moderation analysis steps
 
 Moderation is split into multiple steps, (a)
 
@@ -231,13 +232,13 @@ these conditional relations.
 We will see how to implement these steps for two common interaction
 scenarios, with categorical and continuous moderators
 
-# Categorical moderator
+# 5 Categorical moderator
 
 For the categorical predictor model, we will have *Lack of confidence in
 the government* as the focal predictor, and *Sex* as the categorical
 moderator. Having them predict the *Perception of corruption*
 
-## PROCESS function
+## 5.1 PROCESS function
 
 Here we will show the use of the function `PROCESS()` from the `bruceR`
 package. This function follows the
@@ -330,7 +331,7 @@ interaction model. This is the Null Hypothesis Significance test (NHST)
 of the moderation. Here we fail to reject the null hypothesis of no
 interaction $F(1, 71629) = 1.02, p = .313$
 
-### Probing
+### 5.1.1 Probing
 
 Probing the interaction means to estimate the dependent focal
 regressions at specific levels of the moderator. To see and test the
@@ -365,7 +366,7 @@ the slope for the interaction term `LCGov:SexFemale` is -0.008, which is
 the slope difference between mean and women (0.3733 - 0.3653), this is
 an ease of interpretation when the moderator is categorical.
 
-### Plotting
+### 5.1.2 Plotting
 
 A last part is to plot the interactions, here we will show how to plot
 the interactions with the `marginaleffects` package
@@ -389,7 +390,7 @@ Notice that when the moderator is a `factor()` type variable,
 `plot_predictions` will automatically plot the focal regression for all
 categories, and set the respective labels.
 
-### Effect size
+### 5.1.3 Effect size
 
 The next way to compare the models relates to the effect size of the
 interaction, we can look at this as the change in $R^2$ when the
@@ -417,7 +418,7 @@ print(eta_squared(Anova(mp1$model.y, type=2), partial = F), digits=6)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.000000].
 
-### Interpretation
+### 5.1.4 Interpretation
 
 - We fail fail to reject the null hypothesis of the interaction and main
   effects model being equally good at predicting the outcome. Or, fail
@@ -436,13 +437,13 @@ print(eta_squared(Anova(mp1$model.y, type=2), partial = F), digits=6)
   accuracy by 0.0013% ($\eta^2 = 0.000013$).
 - In the plots, we see that both groups slopes are close to each other.
 
-# Continuous moderator
+# 6 Continuous moderator
 
 For the continuous predictor model, we will have *Lack of confidence in
 the government* as the focal predictor, and *Secular Values* as the
 continuous moderator. Having them predict the *Perception of corruption*
 
-## PROCESS function
+## 6.1 PROCESS function
 
 When the moderator is continuous the `PROCESS()` function works the same
 way, you just provide the continuous predictor in the `mods`argument.
@@ -534,7 +535,7 @@ interaction model. This is the Null Hypothesis Significance test (NHST)
 of the moderation. Here we reject the null hypothesis of no interaction
 $F(1, 71629) = 129.58, p < .001$
 
-### Probing
+### 6.1.1 Probing
 
 Probing the interaction means to estimate the dependent focal
 regressions at specific levels of the moderator. To see and test the
@@ -684,7 +685,7 @@ Here we see that the slope of interest changes from 0.54 to 0.32 from
 the lowest and highest values. And for every one of them we reject the
 null hypothesis of each simple slope being equal to 0.
 
-### Plotting
+### 6.1.2 Plotting
 
 A last part is to plot the interactions, here we will show how to plot
 the interactions with the `marginaleffects` package
@@ -725,7 +726,7 @@ plot_predictions(mp3$model.y,
 
 ![](10_3_moderation_bruceR_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
-### Effect size
+### 6.1.3 Effect size
 
 The next way to compare the models relates to the effect size of the
 interaction, we can look at this as the change in $R^2$ when the
@@ -753,7 +754,7 @@ print(eta_squared(Anova(mp3$model.y, type=2), partial = F), digits=4)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.0000].
 
-### Interpretation
+### 6.1.4 Interpretation
 
 - We reject the null hypothesis of the interaction and main effects
   model being equally good at predicting the outcome. Or, reject the
@@ -777,7 +778,7 @@ print(eta_squared(Anova(mp3$model.y, type=2), partial = F), digits=4)
 - In the plots, we see the decrease of the slopes across a range of
   possible moderator values.
 
-# References
+# 7 References
 
 Hayes, A.F. (2022). Introduction to mediation, moderation, and
 conditional process analysis: A regression-based approach (Third

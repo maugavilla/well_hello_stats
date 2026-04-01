@@ -2,32 +2,32 @@ Basic plots
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-27 August, 2025
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Select variables of interest](#select-variables-of-interest)
-- [`ggplot2` basics](#ggplot2-basics)
-- [Histograms](#histograms)
-  - [Divide by color](#divide-by-color)
-  - [Grid of plots](#grid-of-plots)
-  - [Final plot](#final-plot)
-- [Scatter plot](#scatter-plot)
-  - [Prediction line](#prediction-line)
-  - [Divide by color](#divide-by-color-1)
-  - [Grid of plots](#grid-of-plots-1)
-  - [Final plot](#final-plot-1)
-- [Bar plot](#bar-plot)
-  - [Adding color](#adding-color)
-  - [Grid of plots](#grid-of-plots-2)
-- [Box plot](#box-plot)
-  - [By category](#by-category)
-  - [Add statistic](#add-statistic)
-  - [Grid of plots](#grid-of-plots-3)
-  - [Final plot](#final-plot-2)
-- [Reference](#reference)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Select variables of interest](#21-select-variables-of-interest)
+- [3 `ggplot2` basics](#3-ggplot2-basics)
+- [4 Histograms](#4-histograms)
+  - [4.1 Divide by color](#41-divide-by-color)
+  - [4.2 Grid of plots](#42-grid-of-plots)
+  - [4.3 Final plot](#43-final-plot)
+- [5 Scatter plot](#5-scatter-plot)
+  - [5.1 Prediction line](#51-prediction-line)
+  - [5.2 Divide by color](#52-divide-by-color)
+  - [5.3 Grid of plots](#53-grid-of-plots)
+  - [5.4 Final plot](#54-final-plot)
+- [6 Bar plot](#6-bar-plot)
+  - [6.1 Adding color](#61-adding-color)
+  - [6.2 Grid of plots](#62-grid-of-plots)
+- [7 Box plot](#7-box-plot)
+  - [7.1 By category](#71-by-category)
+  - [7.2 Add statistic](#72-add-statistic)
+  - [7.3 Grid of plots](#73-grid-of-plots)
+  - [7.4 Final plot](#74-final-plot)
+- [8 Reference](#8-reference)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start an R session we always need to set our working directory.
 In this case I am doing that for the folder that holds the downloaded
@@ -46,7 +46,7 @@ library(rio)
 library(ggplot2)
 ```
 
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -60,7 +60,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Select variables of interest
+## 2.1 Select variables of interest
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -109,7 +109,7 @@ correctly by looking at the the dimension of the data **dim(dat2)** and
 looking at the first 6 rows of it **head(dat2)**. These are quick checks
 that we have done this correctly.
 
-# `ggplot2` basics
+# 3 `ggplot2` basics
 
 We will use the package `ggplot2` for most plots. Lets first go over
 some of the basics. `ggplot2` creates plots in layers. Think about
@@ -121,7 +121,7 @@ This makes `ggplot2` able to to manipulate the plot’s features with
 great flexibility. We will start simple, but `ggplot2` can do much more
 than what we will see here.
 
-# Histograms
+# 4 Histograms
 
 Lets start with a basic histogram for the *Secular values* variable in
 the data
@@ -151,7 +151,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram()
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -197,7 +197,7 @@ ggplot(dat2, aes(x=SACSECVAL))+
   geom_histogram(fill = "steelblue")
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -214,18 +214,18 @@ ggplot(dat2, aes(x=SACSECVAL))+
 
     ## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
     ## ℹ Please use `after_stat(density)` instead.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-## Divide by color
+## 4.1 Divide by color
 
 We could be interested in seeing the histogram for different groups; in
 this case we will use the variable `Sex` (`Q260`). This can be be done
@@ -237,7 +237,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = as.factor(Q260) ))+
   geom_histogram()
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -266,7 +266,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Sex ))+
   geom_histogram()
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -313,14 +313,14 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
   geom_histogram(aes(y=..density..))
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
-## Grid of plots
+## 4.2 Grid of plots
 
 And now we can separate the plots, creating one for male and one for
 female subjects, in a grid. The `facet_grid()` sets columns and rows of
@@ -336,7 +336,7 @@ ggplot(dat2, aes(x = SACSECVAL, fill = Education ))+
   facet_grid(~Sex)
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 262 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -355,14 +355,14 @@ ggplot(subset(dat2, !is.na(Sex)), aes(x = SACSECVAL, fill = Education ))+
   facet_grid(~Sex)
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 252 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
-## Final plot
+## 4.3 Final plot
 
 We are first getting rid of `NA` for each variable, by sub-setting the
 data, excluding rows where either Sex or Education are missing
@@ -380,7 +380,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
        title = "Histogram across education and sex")
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
     ## Warning: Removed 220 rows containing non-finite outside the scale range
     ## (`stat_bin()`).
@@ -389,7 +389,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
 That is a histogram ready for a paper!!
 
-# Scatter plot
+# 5 Scatter plot
 
 When we have 2 continuous variables, the most common plot is a scatter
 plot with one variable on the *x* axis and another variable on the *y*
@@ -415,7 +415,7 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
-## Prediction line
+## 5.1 Prediction line
 
 A common next step would be to include the *regression* line between
 these 2 variables, we can do this with `geom_smooth(method="lm")` which
@@ -460,7 +460,7 @@ ggplot(dat2, aes(x = Corrup, y = GovConf ))+
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
-## Divide by color
+## 5.2 Divide by color
 
 We can also add color or grid plots like we did with histograms. For
 example, let’s add the same color differences by *Sex*. Like before, we
@@ -484,7 +484,7 @@ ggplot(subset(dat2, !is.na(Sex)),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
-## Grid of plots
+## 5.3 Grid of plots
 
 Now, lets see how it looks when we add *Education* as a grid of plots.
 Here we are using the `facet_wrap()` which takes all the education
@@ -510,7 +510,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
-## Final plot
+## 5.4 Final plot
 
 Finaly, lets add some labels and a title:
 
@@ -535,7 +535,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
-# Bar plot
+# 6 Bar plot
 
 A basic plot you might want to do for categorical data, the visual
 equivalent to a frequency table, is a *bar* plot. With this one we seek
@@ -590,7 +590,7 @@ Now we can see how to add some more complexity to our bar plots. First,
 we want to get rid of the missing values in our plots, we can do this
 with the `subset()` function when we call the data set.
 
-## Adding color
+## 6.1 Adding color
 
 Next, we want to see the bar plot for multiple groups, for example for
 male and female participants. We can do this be adding `fill = Sex` to
@@ -607,7 +607,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
 
-## Grid of plots
+## 6.2 Grid of plots
 
 Another way to see the bar plots for different groups is by setting a
 grid of plots, with multiple separate bar plots for each group. We can
@@ -623,7 +623,7 @@ ggplot(subset(dat2, !is.na(Sex) & !is.na(Education)),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
 
-# Box plot
+# 7 Box plot
 
 Another type of plot you may be interested in is box plots. This one
 represents the range, median, and outlines for a continuous variable.
@@ -643,7 +643,7 @@ ggplot(dat2,
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 This example, however, is not very informative.
 
-## By category
+## 7.1 By category
 
 Next, we can get box plots across a categorical condition, for example
 Sex. We can remove the missing values, and set `x=Sex`, this way we will
@@ -674,7 +674,7 @@ ggplot(subset(dat2, !is.na(Education) ),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
-## Add statistic
+## 7.2 Add statistic
 
 We can add other characteristics, for example add the *mean* in the
 boxes. We can do this by adding
@@ -698,7 +698,7 @@ ggplot(subset(dat2, !is.na(Education) ),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
-## Grid of plots
+## 7.3 Grid of plots
 
 As we have being doing, let’s add a facet grid to this plot, in this
 case by Sex
@@ -719,7 +719,7 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
 
-## Final plot
+## 7.4 Final plot
 
 For the final model, we want to change the labels.
 
@@ -742,7 +742,7 @@ ggplot(subset(dat2, !is.na(Education) & !is.na(Sex) ),
 
 ![](5_2_basic_plots_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
 
-# Reference
+# 8 Reference
 
 As we have seen there are a lot of plots you can do with `ggplot2` as
 well as many ways to edit them to look how you want. But this usually

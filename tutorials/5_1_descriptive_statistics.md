@@ -2,19 +2,20 @@ Descriptive Statistics
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-11 February, 2024
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Select variables of interest](#select-variables-of-interest)
-- [Continuous items](#continuous-items)
-  - [Descritive for multiple groups](#descritive-for-multiple-groups)
-- [Categorical items](#categorical-items)
-  - [Frequency tables](#frequency-tables)
-  - [Cross-tables](#cross-tables)
-- [Data frame Summary](#data-frame-summary)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Select variables of interest](#21-select-variables-of-interest)
+- [3 Continuous items](#3-continuous-items)
+  - [3.1 Descritive for multiple
+    groups](#31-descritive-for-multiple-groups)
+- [4 Categorical items](#4-categorical-items)
+  - [4.1 Frequency tables](#41-frequency-tables)
+  - [4.2 Cross-tables](#42-cross-tables)
+- [5 Data frame Summary](#5-data-frame-summary)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -33,7 +34,7 @@ library(rio)
 library(summarytools)
 ```
 
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -49,7 +50,7 @@ of it. We see that the data set has 76897 subjects, and 548 columns (if
 you downloaded another version of the WVS you will have different
 numbers).
 
-## Select variables of interest
+## 2.1 Select variables of interest
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -89,7 +90,7 @@ correctly by looking at the the dimension of the data **dim(dat2)**. We
 also look at the first 6 rows: **head(dat2)**. These are quick checks
 that we have created the new data correctly.
 
-# Continuous items
+# 3 Continuous items
 
 When talking about descriptive statistics, we first need to know what
 type of variable each item is. For continuous items, the type of
@@ -166,6 +167,7 @@ descr(dat2[,c("SACSECVAL","Q262")])
     ##       SE.Skewness       0.01        0.01
     ##          Kurtosis      -0.69       -0.43
     ##           N.Valid   76579.00    76635.00
+    ##                 N   76897.00    76897.00
     ##         Pct.Valid      99.59       99.66
 
 This function provides a lot of useful information. The *N.valid* is the
@@ -191,10 +193,10 @@ descr(dat2[,c("SACSECVAL","Q262")], transpose = T)
     ## 
     ##  
     ## 
-    ##                   Skewness   SE.Skewness   Kurtosis    N.Valid   Pct.Valid
-    ## --------------- ---------- ------------- ---------- ---------- -----------
-    ##            Q262       0.40          0.01      -0.69   76579.00       99.59
-    ##       SACSECVAL       0.26          0.01      -0.43   76635.00       99.66
+    ##                   Skewness   SE.Skewness   Kurtosis    N.Valid          N   Pct.Valid
+    ## --------------- ---------- ------------- ---------- ---------- ---------- -----------
+    ##            Q262       0.40          0.01      -0.69   76579.00   76897.00       99.59
+    ##       SACSECVAL       0.26          0.01      -0.43   76635.00   76897.00       99.66
 
 You can save this information into a table object by putting it inside
 the `tb()` function
@@ -205,15 +207,15 @@ desc1 <- tb(descr(dat2[,c("SACSECVAL","Q262")],
 desc1
 ```
 
-    ## # A tibble: 2 × 16
+    ## # A tibble: 2 × 17
     ##   variable    mean     sd   min     q1    med     q3   max    mad    iqr    cv
     ##   <chr>      <dbl>  <dbl> <dbl>  <dbl>  <dbl>  <dbl> <dbl>  <dbl>  <dbl> <dbl>
     ## 1 Q262      43.0   16.4      16 29     41     55       103 19.3   26     0.381
     ## 2 SACSECVAL  0.361  0.175     0  0.234  0.359  0.484     1  0.185  0.250 0.484
-    ## # ℹ 5 more variables: skewness <dbl>, se.skewness <dbl>, kurtosis <dbl>,
-    ## #   n.valid <dbl>, pct.valid <dbl>
+    ## # ℹ 6 more variables: skewness <dbl>, se.skewness <dbl>, kurtosis <dbl>,
+    ## #   n.valid <dbl>, n <dbl>, pct.valid <dbl>
 
-## Descritive for multiple groups
+## 3.1 Descritive for multiple groups
 
 We have already presented the basic descriptive information for
 continuous variables. But a common next step is to evaluate these
@@ -273,23 +275,25 @@ stby(data = dat2[,c("SACSECVAL","Q262")],
      transpose = TRUE)
 ```
 
+    ## NA detected in grouping variable(s); consider using useNA = TRUE
+
     ## Descriptive Statistics  
     ## dat2  
     ## Group: Q260 = 1  
     ## N: 36556  
     ## 
-    ##                    Mean   Std.Dev     Min   Median      Max    N.Valid   Pct.Valid
-    ## --------------- ------- --------- ------- -------- -------- ---------- -----------
-    ##            Q262   43.27     16.54   16.00    42.00   100.00   36460.00       99.74
-    ##       SACSECVAL    0.37      0.18    0.00     0.36     1.00   36470.00       99.76
+    ##                    Mean   Std.Dev     Min   Median      Max    N.Valid          N   Pct.Valid
+    ## --------------- ------- --------- ------- -------- -------- ---------- ---------- -----------
+    ##            Q262   43.27     16.54   16.00    42.00   100.00   36460.00   36556.00       99.74
+    ##       SACSECVAL    0.37      0.18    0.00     0.36     1.00   36470.00   36556.00       99.76
     ## 
     ## Group: Q260 = 2  
     ## N: 40290  
     ## 
-    ##                    Mean   Std.Dev     Min   Median      Max    N.Valid   Pct.Valid
-    ## --------------- ------- --------- ------- -------- -------- ---------- -----------
-    ##            Q262   42.78     16.20   16.00    41.00   103.00   40100.00       99.53
-    ##       SACSECVAL    0.36      0.17    0.00     0.35     0.97   40124.00       99.59
+    ##                    Mean   Std.Dev     Min   Median      Max    N.Valid          N   Pct.Valid
+    ## --------------- ------- --------- ------- -------- -------- ---------- ---------- -----------
+    ##            Q262   42.78     16.20   16.00    41.00   103.00   40100.00   40290.00       99.53
+    ##       SACSECVAL    0.36      0.17    0.00     0.35     0.97   40124.00   40290.00       99.59
 
 If you want to save this information as a matrix, to be able to
 manipulate it or something else, it is best to export as a table with
@@ -301,16 +305,21 @@ desc2 <- tb(stby(data = dat2[,c("SACSECVAL","Q262")],
      FUN = descr, 
      stats = "common", 
      transpose = TRUE))
+```
+
+    ## NA detected in grouping variable(s); consider using useNA = TRUE
+
+``` r
 desc2
 ```
 
-    ## # A tibble: 4 × 9
-    ##   Q260  variable    mean     sd   min    med     max n.valid pct.valid
-    ##   <fct> <chr>      <dbl>  <dbl> <dbl>  <dbl>   <dbl>   <dbl>     <dbl>
-    ## 1 1     Q262      43.3   16.5      16 42     100       36460      99.7
-    ## 2 1     SACSECVAL  0.366  0.180     0  0.36    1       36470      99.8
-    ## 3 2     Q262      42.8   16.2      16 41     103       40100      99.5
-    ## 4 2     SACSECVAL  0.357  0.170     0  0.346   0.972   40124      99.6
+    ## # A tibble: 4 × 10
+    ##    Q260 variable    mean     sd   min    med     max n.valid     n pct.valid
+    ##   <dbl> <chr>      <dbl>  <dbl> <dbl>  <dbl>   <dbl>   <dbl> <dbl>     <dbl>
+    ## 1     1 Q262      43.3   16.5      16 42     100       36460 36556      99.7
+    ## 2     1 SACSECVAL  0.366  0.180     0  0.36    1       36470 36556      99.8
+    ## 3     2 Q262      42.8   16.2      16 41     103       40100 40290      99.5
+    ## 4     2 SACSECVAL  0.357  0.170     0  0.346   0.972   40124 40290      99.6
 
 This was a simple example with descriptive across 2 groups, but you can
 also estimate this for a large number of groups. For example, for across
@@ -338,7 +347,7 @@ desc_SC <- tb(stby(data = dat2[,c("SACSECVAL","Q262")],
 desc_SC
 ```
 
-# Categorical items
+# 4 Categorical items
 
 For categorical variables the *mean* and previously presented statistics
 are not meaningful. We need to describe them in a different way. For
@@ -428,7 +437,7 @@ attributes(dat2$Q260)
     ##                                     Female 
     ##                                          2
 
-## Frequency tables
+## 4.1 Frequency tables
 
 The `freq()` function generates **frequency tables** with counts,
 proportions, as well as missing data information.
@@ -615,7 +624,7 @@ freq(dat2[,c("edu_fac","Y001","sex_fac")], plain.ascii = FALSE, style = "rmarkdo
     ## | **\<NA\>** |    51 |         |              |   0.066 |      100.000 |
     ## |  **Total** | 76897 | 100.000 |      100.000 | 100.000 |      100.000 |
 
-## Cross-tables
+## 4.2 Cross-tables
 
 For categorical variables, if we want to estimate frequency tables
 across multiple other groups, we estimate cross-tables. These present
@@ -710,7 +719,7 @@ Or you can include *total* proportions:
 ctable(dat2$edu_fac, dat2$sex_fac, prop="t", style = "simple")
 ```
 
-# Data frame Summary
+# 5 Data frame Summary
 
 We can use use the `dfSummary()` function to get a full report of the
 data. Be careful as this will take the default settings of your

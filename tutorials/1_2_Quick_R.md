@@ -1,7 +1,7 @@
 Intro_to_R
 ================
 Laura Eberlein, Santiago Gómez-Echeverry & Dimitris Pavlopoulos
-21 noviembre, 2022
+01 April, 2026
 
 *\## Session 1: Introduction to R*
 
@@ -405,7 +405,7 @@ dat[3,2] # returns the third row and the second column of the data frame.
     ## [1] 23
 
 If we leave the column coordinate empty this means we would like all
-columns. So, data\[3,\] returns the third row of the dataset.
+columns. So, data$$3,$$ returns the third row of the dataset.
 
 ``` r
 dat[3,]
@@ -421,7 +421,7 @@ dat[,2]
     ## [1] 27 21 23 24
 
 If we leave the row coordinate empty, R returns the entire column.
-data\[,2\] returns the second column of the dataset.
+data$$,2$$ returns the second column of the dataset.
 
 ``` r
 dat[,2]
@@ -540,8 +540,6 @@ Each R sessions is connected to a particular folder on your computer,
 your working directory. We can check where we are by using the function
 getwd() which stands for “get the current working directory”. This
 resulting path is where the data will be stored.
-
-    ## [1] "C:/Users/Startklar/OneDrive - Vrije Universiteit Amsterdam/Measurement Models in Quantitative Research/3 - Practicals/Meas_Models/well_hello_stats/tutorials"
 
 *2.2 Saving data*
 
@@ -1289,7 +1287,7 @@ Let’s have a first look at our data:
     ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   :1.000  
     ##  1st Qu.: 3.000   1st Qu.: 3.000   1st Qu.: 5.000   1st Qu.:1.000  
     ##  Median : 5.000   Median : 5.000   Median : 7.000   Median :1.000  
-    ##  Mean   : 4.636   Mean   : 5.046   Mean   : 6.793   Mean   :1.391  
+    ##  Mean   : 4.635   Mean   : 5.046   Mean   : 6.793   Mean   :1.391  
     ##  3rd Qu.: 7.000   3rd Qu.: 7.000   3rd Qu.: 9.000   3rd Qu.:2.000  
     ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :3.000  
     ##  NA's   :859      NA's   :1456     NA's   :6215     NA's   :184    
@@ -1313,7 +1311,7 @@ Let’s have a first look at our data:
     ##  Min.   : 1.000   Min.   : 5.000   Min.   : 1.000   Min.   :1.000  
     ##  1st Qu.: 5.000   1st Qu.: 6.000   1st Qu.: 3.000   1st Qu.:1.000  
     ##  Median :11.000   Median : 9.000   Median : 6.000   Median :2.000  
-    ##  Mean   : 9.889   Mean   : 9.545   Mean   : 5.594   Mean   :3.338  
+    ##  Mean   : 9.889   Mean   : 9.546   Mean   : 5.594   Mean   :3.338  
     ##  3rd Qu.:15.250   3rd Qu.:12.500   3rd Qu.: 8.000   3rd Qu.:6.000  
     ##  Max.   :18.000   Max.   :17.000   Max.   :12.000   Max.   :8.000  
     ##  NA's   :18042    NA's   :18049    NA's   :17457    NA's   :17154  
@@ -1345,7 +1343,7 @@ Let’s have a first look at our data:
     ##  Min.   : 1.000   Min.   : 1.000   Min.   : 1.000   Min.   : 1.000  
     ##  1st Qu.: 3.000   1st Qu.: 5.000   1st Qu.: 3.000   1st Qu.: 2.000  
     ##  Median : 5.000   Median : 7.000   Median : 3.000   Median : 3.000  
-    ##  Mean   : 9.102   Mean   : 6.982   Mean   : 4.105   Mean   : 4.479  
+    ##  Mean   : 9.101   Mean   : 6.982   Mean   : 4.104   Mean   : 4.479  
     ##  3rd Qu.:17.000   3rd Qu.: 9.000   3rd Qu.: 4.000   3rd Qu.: 5.000  
     ##  Max.   :24.000   Max.   :12.000   Max.   :55.000   Max.   :65.000  
     ##  NA's   :17134    NA's   :17289    NA's   :17400    NA's   :17563   
@@ -1357,14 +1355,14 @@ Let’s have a first look at our data:
     ##  3rd Qu.: 8.000   3rd Qu.:6.000   3rd Qu.:2.000   3rd Qu.: 7.000  
     ##  Max.   :12.000   Max.   :8.000   Max.   :4.000   Max.   :10.000  
     ##  NA's   :17711    NA's   :17617   NA's   :11360   NA's   :2308    
-    ##     stflife           stfeco           stfgov          stfdem      
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.00   Min.   : 0.000  
-    ##  1st Qu.: 6.000   1st Qu.: 3.000   1st Qu.: 2.00   1st Qu.: 3.000  
-    ##  Median : 7.000   Median : 5.000   Median : 4.00   Median : 5.000  
-    ##  Mean   : 6.961   Mean   : 4.655   Mean   : 4.29   Mean   : 4.907  
-    ##  3rd Qu.: 8.000   3rd Qu.: 7.000   3rd Qu.: 6.00   3rd Qu.: 7.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.00   Max.   :10.000  
-    ##  NA's   :157      NA's   :419      NA's   :420     NA's   :462     
+    ##     stflife           stfeco           stfgov           stfdem      
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 6.000   1st Qu.: 3.000   1st Qu.: 2.000   1st Qu.: 3.000  
+    ##  Median : 7.000   Median : 5.000   Median : 4.000   Median : 5.000  
+    ##  Mean   : 6.961   Mean   : 4.655   Mean   : 4.289   Mean   : 4.907  
+    ##  3rd Qu.: 8.000   3rd Qu.: 7.000   3rd Qu.: 6.000   3rd Qu.: 7.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :157      NA's   :419      NA's   :420      NA's   :462     
     ##      stfedu          stfhlth          gincdif         freehms     
     ##  Min.   : 0.000   Min.   : 0.000   Min.   :1.000   Min.   :1.000  
     ##  1st Qu.: 4.000   1st Qu.: 3.000   1st Qu.:1.000   1st Qu.:1.000  
@@ -1381,403 +1379,403 @@ Let’s have a first look at our data:
     ##  3rd Qu.:5.000   3rd Qu.:4.000   3rd Qu.: 7.000   3rd Qu.:3.000  
     ##  Max.   :5.000   Max.   :5.000   Max.   :10.000   Max.   :5.000  
     ##  NA's   :881     NA's   :687     NA's   :1188     NA's   :194    
-    ##     loylead         imsmetn         imdfetn         impcntr       imbgeco      
-    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.0   Min.   : 0.000  
-    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.0   1st Qu.: 3.000  
-    ##  Median :3.000   Median :2.000   Median :3.000   Median :3.0   Median : 5.000  
-    ##  Mean   :3.027   Mean   :2.206   Mean   :2.616   Mean   :2.7   Mean   : 4.886  
-    ##  3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.0   3rd Qu.: 7.000  
-    ##  Max.   :5.000   Max.   :4.000   Max.   :4.000   Max.   :4.0   Max.   :10.000  
-    ##  NA's   :599     NA's   :438     NA's   :429     NA's   :462   NA's   :593     
-    ##     imueclt          imwbcnt           happy           sclmeet     
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   :1.000  
-    ##  1st Qu.: 3.000   1st Qu.: 3.000   1st Qu.: 6.000   1st Qu.:3.000  
-    ##  Median : 5.000   Median : 5.000   Median : 8.000   Median :5.000  
-    ##  Mean   : 5.027   Mean   : 4.701   Mean   : 7.139   Mean   :4.559  
-    ##  3rd Qu.: 7.000   3rd Qu.: 6.000   3rd Qu.: 9.000   3rd Qu.:6.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :7.000  
-    ##  NA's   :545      NA's   :636      NA's   :46       NA's   :97     
-    ##     inprdsc          sclact          crmvct         aesfdrk     
-    ##  Min.   :0.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:1.000  
-    ##  Median :2.000   Median :3.000   Median :2.000   Median :2.000  
-    ##  Mean   :2.328   Mean   :2.694   Mean   :1.898   Mean   :1.938  
-    ##  3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000  
-    ##  Max.   :6.000   Max.   :5.000   Max.   :2.000   Max.   :4.000  
-    ##  NA's   :392     NA's   :328     NA's   :82      NA's   :187    
-    ##      health         hlthhmp         atchctr          atcherp      
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.: 7.000   1st Qu.: 5.000  
-    ##  Median :2.000   Median :3.000   Median : 9.000   Median : 6.000  
-    ##  Mean   :2.246   Mean   :2.644   Mean   : 8.127   Mean   : 6.128  
-    ##  3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:10.000   3rd Qu.: 8.000  
-    ##  Max.   :5.000   Max.   :3.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :24      NA's   :71      NA's   :109      NA's   :249     
-    ##      rlgblg          rlgdnm         rlgdnafi         rlgdnhu     
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 1.000   Min.   :110.0  
-    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 1.000   1st Qu.:110.0  
-    ##  Median :1.000   Median :1.000   Median : 1.000   Median :110.0  
-    ##  Mean   :1.429   Mean   :1.926   Mean   : 1.311   Mean   :152.1  
-    ##  3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.: 1.000   3rd Qu.:120.0  
-    ##  Max.   :2.000   Max.   :8.000   Max.   :14.000   Max.   :998.0  
-    ##  NA's   :164     NA's   :7911    NA's   :17281    NA's   :16941  
-    ##     rlgdnlt         rlgdnbsk         rlgblge         rlgdnme     
-    ##  Min.   :1.000   Min.   : 1.000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.: 4.000   1st Qu.:2.000   1st Qu.:1.000  
-    ##  Median :1.000   Median : 9.000   Median :2.000   Median :1.000  
-    ##  Mean   :1.118   Mean   : 6.828   Mean   :1.876   Mean   :1.611  
-    ##  3rd Qu.:1.000   3rd Qu.: 9.000   3rd Qu.:2.000   3rd Qu.:2.000  
-    ##  Max.   :8.000   Max.   :14.000   Max.   :2.000   Max.   :8.000  
-    ##  NA's   :16798   NA's   :17007    NA's   :10342   NA's   :17111  
-    ##     rlgdeafi         rlgdehu         rlgdelt         rlgdebsk    
-    ##  Min.   : 1.000   Min.   :110.0   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.: 1.000   1st Qu.:110.0   1st Qu.:1.000   1st Qu.:2.000  
-    ##  Median : 1.000   Median :110.0   Median :1.000   Median :9.000  
-    ##  Mean   : 1.354   Mean   :175.5   Mean   :1.193   Mean   :6.543  
-    ##  3rd Qu.: 1.000   3rd Qu.:257.5   3rd Qu.:1.000   3rd Qu.:9.000  
-    ##  Max.   :13.000   Max.   :998.0   Max.   :7.000   Max.   :9.000  
-    ##  NA's   :17814    NA's   :18004   NA's   :17977   NA's   :18014  
-    ##      rlgdgr          rlgatnd           pray          dscrgrp     
-    ##  Min.   : 0.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.: 1.000   1st Qu.:5.000   1st Qu.:3.000   1st Qu.:2.000  
-    ##  Median : 5.000   Median :6.000   Median :6.000   Median :2.000  
-    ##  Mean   : 4.368   Mean   :5.606   Mean   :5.061   Mean   :1.926  
-    ##  3rd Qu.: 7.000   3rd Qu.:7.000   3rd Qu.:7.000   3rd Qu.:2.000  
-    ##  Max.   :10.000   Max.   :7.000   Max.   :7.000   Max.   :2.000  
-    ##  NA's   :247      NA's   :155     NA's   :416     NA's   :269    
-    ##     dscrrce           dscrntn            dscrrlg            dscrlng        
-    ##  Min.   :0.00000   Min.   :0.000000   Min.   :0.000000   Min.   :0.000000  
-    ##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.000000  
-    ##  Median :0.00000   Median :0.000000   Median :0.000000   Median :0.000000  
-    ##  Mean   :0.01301   Mean   :0.006589   Mean   :0.007309   Mean   :0.006589  
-    ##  3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.000000  
-    ##  Max.   :1.00000   Max.   :1.000000   Max.   :1.000000   Max.   :1.000000  
-    ##                                                                            
-    ##     dscretn            dscrage          dscrgnd            dscrsex        
-    ##  Min.   :0.000000   Min.   :0.0000   Min.   :0.000000   Min.   :0.000000  
-    ##  1st Qu.:0.000000   1st Qu.:0.0000   1st Qu.:0.000000   1st Qu.:0.000000  
-    ##  Median :0.000000   Median :0.0000   Median :0.000000   Median :0.000000  
-    ##  Mean   :0.008693   Mean   :0.0129   Mean   :0.009967   Mean   :0.004983  
-    ##  3rd Qu.:0.000000   3rd Qu.:0.0000   3rd Qu.:0.000000   3rd Qu.:0.000000  
-    ##  Max.   :1.000000   Max.   :1.0000   Max.   :1.000000   Max.   :1.000000  
-    ##                                                                           
-    ##     dscrdsb           dscroth          dscrdk            dscrref         
-    ##  Min.   :0.00000   Min.   :0.000   Min.   :0.000000   Min.   :0.0000000  
-    ##  1st Qu.:0.00000   1st Qu.:0.000   1st Qu.:0.000000   1st Qu.:0.0000000  
-    ##  Median :0.00000   Median :0.000   Median :0.000000   Median :0.0000000  
-    ##  Mean   :0.00825   Mean   :0.017   Mean   :0.001107   Mean   :0.0006645  
-    ##  3rd Qu.:0.00000   3rd Qu.:0.000   3rd Qu.:0.000000   3rd Qu.:0.0000000  
-    ##  Max.   :1.00000   Max.   :1.000   Max.   :1.000000   Max.   :1.0000000  
-    ##                                                                          
-    ##     dscrnap          dscrna            ctzcntr         brncntr     
-    ##  Min.   :0.000   Min.   :0.000000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:0.000000   1st Qu.:1.000   1st Qu.:1.000  
-    ##  Median :1.000   Median :0.000000   Median :1.000   Median :1.000  
-    ##  Mean   :0.924   Mean   :0.003211   Mean   :1.034   Mean   :1.055  
-    ##  3rd Qu.:1.000   3rd Qu.:0.000000   3rd Qu.:1.000   3rd Qu.:1.000  
-    ##  Max.   :1.000   Max.   :1.000000   Max.   :2.000   Max.   :2.000  
-    ##                                     NA's   :30      NA's   :15     
-    ##    cntbrthd            livecnta       lnghom1            lnghom2         
-    ##  Length:18060       Min.   :1937    Length:18060       Length:18060      
-    ##  Class :character   1st Qu.:1971    Class :character   Class :character  
-    ##  Mode  :character   Median :1985    Mode  :character   Mode  :character  
-    ##                     Mean   :1985                                         
-    ##                     3rd Qu.:2001                                         
-    ##                     Max.   :2021                                         
-    ##                     NA's   :17084                                        
-    ##     feethngr        facntr        fbrncntc             mocntr     
-    ##  Min.   :1.00   Min.   :1.000   Length:18060       Min.   :1.000  
-    ##  1st Qu.:1.00   1st Qu.:1.000   Class :character   1st Qu.:1.000  
-    ##  Median :1.00   Median :1.000   Mode  :character   Median :1.000  
-    ##  Mean   :1.08   Mean   :1.097                      Mean   :1.086  
-    ##  3rd Qu.:1.00   3rd Qu.:1.000                      3rd Qu.:1.000  
-    ##  Max.   :2.00   Max.   :2.000                      Max.   :2.000  
-    ##  NA's   :141    NA's   :114                        NA's   :55     
-    ##    mbrncntc            ccnthum         ccrdprs          wrclmch   
-    ##  Length:18060       Min.   : 1.00   Min.   : 0.000   Min.   :1.0  
-    ##  Class :character   1st Qu.: 3.00   1st Qu.: 4.000   1st Qu.:3.0  
-    ##  Mode  :character   Median : 3.00   Median : 6.000   Median :3.0  
-    ##                     Mean   : 4.02   Mean   : 5.715   Mean   :3.2  
-    ##                     3rd Qu.: 4.00   3rd Qu.: 8.000   3rd Qu.:4.0  
-    ##                     Max.   :55.00   Max.   :10.000   Max.   :5.0  
-    ##                     NA's   :355     NA's   :594      NA's   :337  
-    ##     admrclc         testic34         testic35         testic36     
-    ##  Min.   :1.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.:1.000   1st Qu.: 4.000   1st Qu.: 2.000   1st Qu.: 3.000  
-    ##  Median :2.000   Median : 6.000   Median : 4.000   Median : 5.000  
-    ##  Mean   :1.998   Mean   : 5.719   Mean   : 4.035   Mean   : 4.798  
-    ##  3rd Qu.:3.000   3rd Qu.: 7.000   3rd Qu.: 6.000   3rd Qu.: 6.000  
-    ##  Max.   :3.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :197     NA's   :12294    NA's   :12268    NA's   :12315   
-    ##     testic37        testic38        testic39        testic40    
-    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :0.000  
-    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:3.000  
-    ##  Median :3.000   Median :2.000   Median :2.000   Median :4.000  
-    ##  Mean   :2.668   Mean   :2.176   Mean   :2.445   Mean   :3.506  
-    ##  3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:5.000  
-    ##  Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :6.000  
-    ##  NA's   :12354   NA's   :12331   NA's   :12404   NA's   :12346  
-    ##     testic41        testic42        vteurmmb         vteubcmb    
-    ##  Min.   :0.000   Min.   :0.000   Min.   : 1.000   Min.   : NA    
-    ##  1st Qu.:1.000   1st Qu.:2.000   1st Qu.: 1.000   1st Qu.: NA    
-    ##  Median :2.000   Median :3.000   Median : 1.000   Median : NA    
-    ##  Mean   :2.426   Mean   :2.954   Mean   : 5.514   Mean   :NaN    
-    ##  3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.: 1.000   3rd Qu.: NA    
-    ##  Max.   :6.000   Max.   :6.000   Max.   :65.000   Max.   : NA    
-    ##  NA's   :12324   NA's   :12377   NA's   :2326     NA's   :18060  
-    ##     fairelc          dfprtal          medcrgv         rghmgpr      
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.00   Min.   : 0.000  
-    ##  1st Qu.: 8.000   1st Qu.: 7.000   1st Qu.: 7.00   1st Qu.: 6.000  
-    ##  Median :10.000   Median : 8.000   Median : 9.00   Median : 8.000  
-    ##  Mean   : 8.916   Mean   : 8.039   Mean   : 8.39   Mean   : 7.784  
-    ##  3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.00   3rd Qu.:10.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.00   Max.   :10.000  
-    ##  NA's   :258      NA's   :608      NA's   :323     NA's   :391     
-    ##     votedir          cttresa          gptpelc          gvctzpv      
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 7.000   1st Qu.: 9.000   1st Qu.: 8.000   1st Qu.: 8.000  
-    ##  Median : 8.000   Median :10.000   Median : 9.000   Median : 9.000  
-    ##  Mean   : 8.065   Mean   : 9.057   Mean   : 8.407   Mean   : 8.456  
-    ##  3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :489      NA's   :218      NA's   :490      NA's   :254     
-    ##     grdfinc           viepol          wpestop           keydec      
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 7.000   1st Qu.: 6.000   1st Qu.: 7.000   1st Qu.: 7.000  
-    ##  Median : 9.000   Median : 8.000   Median : 8.000   Median : 8.000  
-    ##  Mean   : 8.061   Mean   : 7.744   Mean   : 8.031   Mean   : 7.881  
-    ##  3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :345      NA's   :624      NA's   :460      NA's   :626     
-    ##     fairelcc         dfprtalc         medcrgvc         rghmgprc     
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 4.000   1st Qu.: 3.000   1st Qu.: 4.000   1st Qu.: 5.000  
-    ##  Median : 7.000   Median : 5.000   Median : 7.000   Median : 7.000  
-    ##  Mean   : 6.381   Mean   : 5.247   Mean   : 6.158   Mean   : 6.551  
-    ##  3rd Qu.: 9.000   3rd Qu.: 7.000   3rd Qu.: 9.000   3rd Qu.: 8.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :613      NA's   :867      NA's   :428      NA's   :677     
-    ##     votedirc         cttresac         gptpelcc         gvctzpvc     
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 2.000  
-    ##  Median : 5.000   Median : 5.000   Median : 5.000   Median : 4.000  
-    ##  Mean   : 4.578   Mean   : 4.614   Mean   : 4.802   Mean   : 4.005  
-    ##  3rd Qu.: 7.000   3rd Qu.: 7.000   3rd Qu.: 7.000   3rd Qu.: 6.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :715      NA's   :579      NA's   :898      NA's   :323     
-    ##     grdfincc         viepolc          wpestopc         keydecc      
-    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 2.000   1st Qu.: 1.000   1st Qu.: 2.000   1st Qu.: 4.000  
-    ##  Median : 4.000   Median : 3.000   Median : 4.000   Median : 5.000  
-    ##  Mean   : 4.082   Mean   : 3.633   Mean   : 4.247   Mean   : 5.406  
-    ##  3rd Qu.: 6.000   3rd Qu.: 5.000   3rd Qu.: 6.000   3rd Qu.: 8.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :582      NA's   :671      NA's   :691      NA's   :1093    
-    ##      chpldm         chpldmi          chpldmc          stpldmi      
-    ##  Min.   :1.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.:1.000   1st Qu.: 7.000   1st Qu.: 2.000   1st Qu.: 6.000  
-    ##  Median :1.000   Median : 8.000   Median : 4.000   Median : 7.000  
-    ##  Mean   :1.924   Mean   : 7.981   Mean   : 4.014   Mean   : 6.968  
-    ##  3rd Qu.:2.000   3rd Qu.:10.000   3rd Qu.: 6.000   3rd Qu.: 8.000  
-    ##  Max.   :5.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :616     NA's   :6923     NA's   :3717     NA's   :15218   
-    ##     stpldmc           admit           showcv     impdema         impdemb     
-    ##  Min.   : 0.000   Min.   :1.000   Min.   :1   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.: 5.000   1st Qu.:2.000   1st Qu.:1   1st Qu.:1.000   1st Qu.:2.000  
-    ##  Median : 7.000   Median :3.000   Median :1   Median :3.000   Median :3.000  
-    ##  Mean   : 6.194   Mean   :2.995   Mean   :1   Mean   :2.619   Mean   :2.987  
-    ##  3rd Qu.: 8.000   3rd Qu.:4.000   3rd Qu.:1   3rd Qu.:4.000   3rd Qu.:4.000  
-    ##  Max.   :10.000   Max.   :5.000   Max.   :1   Max.   :5.000   Max.   :5.000  
-    ##  NA's   :15239                                NA's   :14509   NA's   :14517  
-    ##     impdemc         impdemd         impdeme         implvdm      
-    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 0.000  
-    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.:2.000   1st Qu.: 7.000  
-    ##  Median :3.000   Median :3.000   Median :3.000   Median : 9.000  
-    ##  Mean   :2.992   Mean   :2.862   Mean   :3.044   Mean   : 8.385  
-    ##  3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:5.000   3rd Qu.:10.000  
-    ##  Max.   :5.000   Max.   :5.000   Max.   :5.000   Max.   :10.000  
-    ##  NA's   :14625   NA's   :14536   NA's   :14535   NA's   :277     
-    ##     accalaw           hhmmb             gndr           gndr2      
-    ##  Min.   : 0.000   Min.   : 1.000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.: 0.000   1st Qu.: 2.000   1st Qu.:1.000   1st Qu.:1.000  
-    ##  Median : 3.000   Median : 2.000   Median :2.000   Median :1.000  
-    ##  Mean   : 3.549   Mean   : 2.494   Mean   :1.551   Mean   :1.463  
-    ##  3rd Qu.: 6.000   3rd Qu.: 3.000   3rd Qu.:2.000   3rd Qu.:2.000  
-    ##  Max.   :10.000   Max.   :13.000   Max.   :2.000   Max.   :2.000  
-    ##  NA's   :755      NA's   :53                       NA's   :4538   
-    ##      gndr3           gndr4           gndr5           gndr6      
-    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000  
-    ##  Median :2.000   Median :2.000   Median :2.000   Median :1.000  
-    ##  Mean   :1.534   Mean   :1.507   Mean   :1.514   Mean   :1.472  
-    ##  3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000  
-    ##  Max.   :2.000   Max.   :2.000   Max.   :2.000   Max.   :2.000  
-    ##  NA's   :10720   NA's   :14105   NA's   :16720   NA's   :17615  
-    ##      gndr7           gndr8           gndr9           gndr10     
-    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.00   
-    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.00   
-    ##  Median :2.000   Median :2.000   Median :1.000   Median :2.00   
-    ##  Mean   :1.543   Mean   :1.509   Mean   :1.414   Mean   :1.65   
-    ##  3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.00   
-    ##  Max.   :2.000   Max.   :2.000   Max.   :2.000   Max.   :2.00   
-    ##  NA's   :17920   NA's   :18003   NA's   :18031   NA's   :18040  
-    ##      gndr11          gndr12          gndr13          yrbrn           agea      
-    ##  Min.   :1.0     Min.   :1       Min.   : NA     Min.   :1931   Min.   :15.00  
-    ##  1st Qu.:2.0     1st Qu.:1       1st Qu.: NA     1st Qu.:1955   1st Qu.:36.00  
-    ##  Median :2.0     Median :1       Median : NA     Median :1969   Median :51.00  
-    ##  Mean   :1.8     Mean   :1       Mean   :NaN     Mean   :1970   Mean   :50.89  
-    ##  3rd Qu.:2.0     3rd Qu.:1       3rd Qu.: NA     3rd Qu.:1985   3rd Qu.:66.00  
-    ##  Max.   :2.0     Max.   :1       Max.   : NA     Max.   :2006   Max.   :90.00  
-    ##  NA's   :18055   NA's   :18059   NA's   :18060   NA's   :120    NA's   :120    
-    ##      yrbrn2         yrbrn3          yrbrn4          yrbrn5          yrbrn6     
-    ##  Min.   :1931   Min.   :1931    Min.   :1931    Min.   :1933    Min.   :1931   
-    ##  1st Qu.:1957   1st Qu.:1977    1st Qu.:1998    1st Qu.:2001    1st Qu.:2003   
-    ##  Median :1970   Median :2000    Median :2006    Median :2009    Median :2010   
-    ##  Mean   :1969   Mean   :1994    Mean   :2003    Mean   :2005    Mean   :2007   
-    ##  3rd Qu.:1981   3rd Qu.:2009    3rd Qu.:2013    3rd Qu.:2015    3rd Qu.:2016   
-    ##  Max.   :2021   Max.   :2021    Max.   :2021    Max.   :2021    Max.   :2021   
-    ##  NA's   :4822   NA's   :10924   NA's   :14218   NA's   :16773   NA's   :17635  
-    ##      yrbrn7          yrbrn8          yrbrn9         yrbrn10     
-    ##  Min.   :1935    Min.   :1954    Min.   :1951    Min.   :1986   
-    ##  1st Qu.:2003    1st Qu.:2002    1st Qu.:2002    1st Qu.:2002   
-    ##  Median :2011    Median :2010    Median :2012    Median :2012   
-    ##  Mean   :2005    Mean   :2007    Mean   :2008    Mean   :2009   
-    ##  3rd Qu.:2016    3rd Qu.:2015    3rd Qu.:2017    3rd Qu.:2018   
-    ##  Max.   :2021    Max.   :2020    Max.   :2020    Max.   :2020   
-    ##  NA's   :17927   NA's   :18007   NA's   :18034   NA's   :18041  
-    ##     yrbrn11         yrbrn12         yrbrn13         rshipa2     
-    ##  Min.   :1990    Min.   :2018    Min.   : NA     Min.   :1.000  
-    ##  1st Qu.:2004    1st Qu.:2018    1st Qu.: NA     1st Qu.:1.000  
-    ##  Median :2015    Median :2018    Median : NA     Median :1.000  
-    ##  Mean   :2010    Mean   :2018    Mean   :NaN     Mean   :1.568  
-    ##  3rd Qu.:2019    3rd Qu.:2018    3rd Qu.: NA     3rd Qu.:2.000  
-    ##  Max.   :2021    Max.   :2018    Max.   : NA     Max.   :6.000  
-    ##  NA's   :18055   NA's   :18059   NA's   :18060   NA's   :4602   
-    ##     rshipa3         rshipa4         rshipa5         rshipa6     
+    ##     loylead         imsmetn         imdfetn         impcntr     
     ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
     ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
-    ##  Median :2.000   Median :2.000   Median :2.000   Median :3.000  
-    ##  Mean   :2.391   Mean   :2.636   Mean   :2.992   Mean   :3.304  
-    ##  3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:5.000  
-    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
-    ##  NA's   :10776   NA's   :14135   NA's   :16741   NA's   :17623  
-    ##     rshipa7         rshipa8         rshipa9         rshipa10    
-    ##  Min.   :2.000   Min.   :1.000   Min.   :2.000   Min.   :1.00   
-    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:4.000   1st Qu.:4.00   
-    ##  Median :4.000   Median :4.000   Median :4.500   Median :5.00   
-    ##  Mean   :3.743   Mean   :3.907   Mean   :4.107   Mean   :4.25   
-    ##  3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:5.00   
-    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :5.00   
-    ##  NA's   :17924   NA's   :18006   NA's   :18032   NA's   :18040  
-    ##     rshipa11        rshipa12        rshipa13        acchome      
-    ##  Min.   :2.0     Min.   :5       Min.   : NA     Min.   :0.0000  
-    ##  1st Qu.:2.0     1st Qu.:5       1st Qu.: NA     1st Qu.:1.0000  
-    ##  Median :4.0     Median :5       Median : NA     Median :1.0000  
-    ##  Mean   :3.4     Mean   :5       Mean   :NaN     Mean   :0.8405  
-    ##  3rd Qu.:4.0     3rd Qu.:5       3rd Qu.: NA     3rd Qu.:1.0000  
-    ##  Max.   :5.0     Max.   :5       Max.   : NA     Max.   :1.0000  
-    ##  NA's   :18055   NA's   :18059   NA's   :18060                   
-    ##      accwrk          accmove           accoth          accnone     
-    ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
-    ##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
-    ##  Median :0.0000   Median :1.0000   Median :0.0000   Median :0.000  
-    ##  Mean   :0.4396   Mean   :0.5055   Mean   :0.4404   Mean   :0.123  
-    ##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.000  
-    ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000  
-    ##                                                                    
-    ##      accref             accdk              accna             fampref     
-    ##  Min.   :0.000000   Min.   :0.000000   Min.   :0.000000   Min.   :1.000  
-    ##  1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:1.000  
-    ##  Median :0.000000   Median :0.000000   Median :0.000000   Median :3.000  
-    ##  Mean   :0.002049   Mean   :0.003655   Mean   :0.001495   Mean   :2.965  
-    ##  3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:4.000  
-    ##  Max.   :1.000000   Max.   :1.000000   Max.   :1.000000   Max.   :5.000  
-    ##                                                           NA's   :239    
-    ##     famadvs          fampdf         mcclose          mcinter      
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.: 5.000   1st Qu.: 4.000  
-    ##  Median :3.000   Median :3.000   Median : 7.000   Median : 6.000  
-    ##  Mean   :3.024   Mean   :3.051   Mean   : 6.588   Mean   : 5.795  
-    ##  3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.: 9.000   3rd Qu.: 8.000  
-    ##  Max.   :5.000   Max.   :5.000   Max.   :10.000   Max.   :10.000  
-    ##  NA's   :173     NA's   :183     NA's   :730      NA's   :1063    
-    ##     mccoord           mcpriv          mcmsinf          chldo12      
+    ##  Median :3.000   Median :2.000   Median :3.000   Median :3.000  
+    ##  Mean   :3.027   Mean   :2.206   Mean   :2.616   Mean   :2.699  
+    ##  3rd Qu.:4.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
+    ##  NA's   :599     NA's   :438     NA's   :429     NA's   :462    
+    ##     imbgeco          imueclt          imwbcnt           happy       
     ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
-    ##  1st Qu.: 7.000   1st Qu.: 5.000   1st Qu.: 5.000   1st Qu.: 0.000  
-    ##  Median : 8.000   Median : 6.000   Median : 7.000   Median : 1.000  
-    ##  Mean   : 7.671   Mean   : 6.018   Mean   : 6.777   Mean   : 1.129  
-    ##  3rd Qu.: 9.000   3rd Qu.: 8.000   3rd Qu.: 9.000   3rd Qu.: 2.000  
-    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :35.000  
-    ##  NA's   :802      NA's   :846      NA's   :951      NA's   :303     
-    ##     gndro12a        gndro12b         ageo12         hhlio12     
-    ##  Min.   :1.00    Min.   :1.000   Min.   :12.00   Min.   :1.000  
-    ##  1st Qu.:1.00    1st Qu.:1.000   1st Qu.:22.00   1st Qu.:1.000  
-    ##  Median :1.00    Median :1.000   Median :33.00   Median :2.000  
-    ##  Mean   :1.46    Mean   :1.473   Mean   :33.53   Mean   :1.679  
-    ##  3rd Qu.:2.00    3rd Qu.:2.000   3rd Qu.:44.00   3rd Qu.:2.000  
-    ##  Max.   :2.00    Max.   :2.000   Max.   :90.00   Max.   :2.000  
-    ##  NA's   :11260   NA's   :14745   NA's   :8152    NA's   :7912   
-    ##     closeo12        ttmino12         speako12        scrno12     
-    ##  Min.   :1.000   Min.   :   0.0   Min.   :1.000   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:  15.0   1st Qu.:1.000   1st Qu.:5.000  
-    ##  Median :2.000   Median :  40.0   Median :3.000   Median :7.000  
-    ##  Mean   :1.853   Mean   : 150.8   Mean   :3.066   Mean   :5.848  
-    ##  3rd Qu.:2.000   3rd Qu.: 120.0   3rd Qu.:4.000   3rd Qu.:7.000  
-    ##  Max.   :5.000   Max.   :4800.0   Max.   :7.000   Max.   :7.000  
-    ##  NA's   :9143    NA's   :11463    NA's   :7926    NA's   :7945   
-    ##     phoneo12         como12         c19spo12         c19mco12    
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 1.000   Min.   :1.000  
-    ##  1st Qu.:2.000   1st Qu.:3.000   1st Qu.: 3.000   1st Qu.:3.000  
-    ##  Median :3.000   Median :5.000   Median : 3.000   Median :3.000  
-    ##  Mean   :3.309   Mean   :4.745   Mean   : 3.593   Mean   :2.906  
-    ##  3rd Qu.:4.000   3rd Qu.:7.000   3rd Qu.: 3.000   3rd Qu.:3.000  
-    ##  Max.   :7.000   Max.   :7.000   Max.   :55.000   Max.   :5.000  
-    ##  NA's   :7940    NA's   :7939    NA's   :7994     NA's   :8161   
-    ##      livpnt         pntmofa          agepnt          hhlipnt     
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 32.00   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 56.00   1st Qu.:2.000  
-    ##  Median :2.000   Median :1.000   Median : 66.00   Median :2.000  
-    ##  Mean   :2.558   Mean   :1.416   Mean   : 65.69   Mean   :1.762  
-    ##  3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.: 75.00   3rd Qu.:2.000  
-    ##  Max.   :4.000   Max.   :2.000   Max.   :101.00   Max.   :2.000  
-    ##  NA's   :208     NA's   :11774   NA's   :8436     NA's   :8195   
-    ##     closepnt        ttminpnt          speakpnt       scrnpnt     
-    ##  Min.   :1.000   Min.   :   0.00   Min.   :1.00   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:  15.00   1st Qu.:2.00   1st Qu.:6.000  
-    ##  Median :2.000   Median :  30.00   Median :3.00   Median :7.000  
-    ##  Mean   :2.099   Mean   :  95.51   Mean   :3.24   Mean   :6.122  
-    ##  3rd Qu.:3.000   3rd Qu.:  90.00   3rd Qu.:4.00   3rd Qu.:7.000  
-    ##  Max.   :5.000   Max.   :4320.00   Max.   :7.00   Max.   :7.000  
-    ##  NA's   :9549    NA's   :10726     NA's   :8204   NA's   :8222   
-    ##     phonepnt         compnt         c19sppnt         c19mcpnt    
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 1.000   Min.   :1.000  
-    ##  1st Qu.:2.000   1st Qu.:3.000   1st Qu.: 3.000   1st Qu.:3.000  
-    ##  Median :3.000   Median :6.000   Median : 3.000   Median :3.000  
-    ##  Mean   :3.557   Mean   :5.144   Mean   : 3.531   Mean   :2.898  
-    ##  3rd Qu.:4.000   3rd Qu.:7.000   3rd Qu.: 3.000   3rd Qu.:3.000  
-    ##  Max.   :7.000   Max.   :7.000   Max.   :55.000   Max.   :5.000  
-    ##  NA's   :8226    NA's   :8238    NA's   :8278     NA's   :8411   
-    ##     stfmjob          trdawrk         jbprtfp         pfmfdjba   
-    ##  Min.   : 0.000   Min.   :1.000   Min.   :1.000   Min.   :1.00  
-    ##  1st Qu.: 7.000   1st Qu.:3.000   1st Qu.:2.000   1st Qu.:1.00  
-    ##  Median : 8.000   Median :3.000   Median :3.000   Median :2.00  
-    ##  Mean   : 7.511   Mean   :3.007   Mean   :3.033   Mean   :2.27  
-    ##  3rd Qu.: 9.000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:3.00  
-    ##  Max.   :10.000   Max.   :5.000   Max.   :6.000   Max.   :5.00  
-    ##  NA's   :8149     NA's   :8120    NA's   :8167    NA's   :9203  
-    ##     dcsfwrka        wrkhome         c19whome        c19wplch    
-    ##  Min.   :1.000   Min.   :1.000   Min.   : 1.00   Min.   :1.000  
-    ##  1st Qu.:1.000   1st Qu.:3.000   1st Qu.: 3.00   1st Qu.:1.000  
-    ##  Median :2.000   Median :6.000   Median :55.00   Median :1.000  
-    ##  Mean   :1.765   Mean   :4.809   Mean   :29.52   Mean   :1.473  
-    ##  3rd Qu.:2.000   3rd Qu.:6.000   3rd Qu.:55.00   3rd Qu.:2.000  
-    ##  Max.   :3.000   Max.   :6.000   Max.   :55.00   Max.   :3.000  
-    ##  NA's   :8133    NA's   :8142    NA's   :8265    NA's   :15900  
+    ##  1st Qu.: 3.000   1st Qu.: 3.000   1st Qu.: 3.000   1st Qu.: 6.000  
+    ##  Median : 5.000   Median : 5.000   Median : 5.000   Median : 8.000  
+    ##  Mean   : 4.886   Mean   : 5.027   Mean   : 4.701   Mean   : 7.139  
+    ##  3rd Qu.: 7.000   3rd Qu.: 7.000   3rd Qu.: 6.000   3rd Qu.: 9.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :593      NA's   :545      NA's   :636      NA's   :46      
+    ##     sclmeet         inprdsc          sclact          crmvct     
+    ##  Min.   :1.000   Min.   :0.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:2.000   1st Qu.:2.000  
+    ##  Median :5.000   Median :2.000   Median :3.000   Median :2.000  
+    ##  Mean   :4.559   Mean   :2.328   Mean   :2.694   Mean   :1.898  
+    ##  3rd Qu.:6.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:2.000  
+    ##  Max.   :7.000   Max.   :6.000   Max.   :5.000   Max.   :2.000  
+    ##  NA's   :97      NA's   :392     NA's   :328     NA's   :82     
+    ##     aesfdrk          health         hlthhmp         atchctr      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 0.000  
+    ##  1st Qu.:1.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.: 7.000  
+    ##  Median :2.000   Median :2.000   Median :3.000   Median : 9.000  
+    ##  Mean   :1.938   Mean   :2.246   Mean   :2.644   Mean   : 8.127  
+    ##  3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:10.000  
+    ##  Max.   :4.000   Max.   :5.000   Max.   :3.000   Max.   :10.000  
+    ##  NA's   :187     NA's   :24      NA's   :71      NA's   :109     
+    ##     atcherp           rlgblg          rlgdnm         rlgdnafi     
+    ##  Min.   : 0.000   Min.   :1.000   Min.   :1.000   Min.   : 1.000  
+    ##  1st Qu.: 5.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 1.000  
+    ##  Median : 6.000   Median :1.000   Median :1.000   Median : 1.000  
+    ##  Mean   : 6.128   Mean   :1.429   Mean   :1.926   Mean   : 1.311  
+    ##  3rd Qu.: 8.000   3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.: 1.000  
+    ##  Max.   :10.000   Max.   :2.000   Max.   :8.000   Max.   :14.000  
+    ##  NA's   :249      NA's   :164     NA's   :7911    NA's   :17281   
+    ##     rlgdnhu         rlgdnlt         rlgdnbsk         rlgblge     
+    ##  Min.   :110.0   Min.   :1.000   Min.   : 1.000   Min.   :1.000  
+    ##  1st Qu.:110.0   1st Qu.:1.000   1st Qu.: 4.000   1st Qu.:2.000  
+    ##  Median :110.0   Median :1.000   Median : 9.000   Median :2.000  
+    ##  Mean   :152.1   Mean   :1.118   Mean   : 6.828   Mean   :1.876  
+    ##  3rd Qu.:120.0   3rd Qu.:1.000   3rd Qu.: 9.000   3rd Qu.:2.000  
+    ##  Max.   :998.0   Max.   :8.000   Max.   :14.000   Max.   :2.000  
+    ##  NA's   :16941   NA's   :16798   NA's   :17007    NA's   :10342  
+    ##     rlgdnme         rlgdeafi         rlgdehu         rlgdelt     
+    ##  Min.   :1.000   Min.   : 1.000   Min.   :110.0   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.: 1.000   1st Qu.:110.0   1st Qu.:1.000  
+    ##  Median :1.000   Median : 1.000   Median :110.0   Median :1.000  
+    ##  Mean   :1.611   Mean   : 1.354   Mean   :175.5   Mean   :1.193  
+    ##  3rd Qu.:2.000   3rd Qu.: 1.000   3rd Qu.:257.5   3rd Qu.:1.000  
+    ##  Max.   :8.000   Max.   :13.000   Max.   :998.0   Max.   :7.000  
+    ##  NA's   :17111   NA's   :17814    NA's   :18004   NA's   :17977  
+    ##     rlgdebsk         rlgdgr          rlgatnd           pray      
+    ##  Min.   :1.000   Min.   : 0.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:2.000   1st Qu.: 1.000   1st Qu.:5.000   1st Qu.:3.000  
+    ##  Median :9.000   Median : 5.000   Median :6.000   Median :6.000  
+    ##  Mean   :6.543   Mean   : 4.368   Mean   :5.606   Mean   :5.061  
+    ##  3rd Qu.:9.000   3rd Qu.: 7.000   3rd Qu.:7.000   3rd Qu.:7.000  
+    ##  Max.   :9.000   Max.   :10.000   Max.   :7.000   Max.   :7.000  
+    ##  NA's   :18014   NA's   :247      NA's   :155     NA's   :416    
+    ##     dscrgrp         dscrrce           dscrntn            dscrrlg        
+    ##  Min.   :1.000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
+    ##  1st Qu.:2.000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
+    ##  Median :2.000   Median :0.00000   Median :0.000000   Median :0.000000  
+    ##  Mean   :1.926   Mean   :0.01301   Mean   :0.006589   Mean   :0.007309  
+    ##  3rd Qu.:2.000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000  
+    ##  Max.   :2.000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
+    ##  NA's   :269                                                            
+    ##     dscrlng            dscretn            dscrage          dscrgnd        
+    ##  Min.   :0.000000   Min.   :0.000000   Min.   :0.0000   Min.   :0.000000  
+    ##  1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.0000   1st Qu.:0.000000  
+    ##  Median :0.000000   Median :0.000000   Median :0.0000   Median :0.000000  
+    ##  Mean   :0.006589   Mean   :0.008693   Mean   :0.0129   Mean   :0.009967  
+    ##  3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.0000   3rd Qu.:0.000000  
+    ##  Max.   :1.000000   Max.   :1.000000   Max.   :1.0000   Max.   :1.000000  
+    ##                                                                           
+    ##     dscrsex            dscrdsb           dscroth          dscrdk        
+    ##  Min.   :0.000000   Min.   :0.00000   Min.   :0.000   Min.   :0.000000  
+    ##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000   1st Qu.:0.000000  
+    ##  Median :0.000000   Median :0.00000   Median :0.000   Median :0.000000  
+    ##  Mean   :0.004983   Mean   :0.00825   Mean   :0.017   Mean   :0.001107  
+    ##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.000   3rd Qu.:0.000000  
+    ##  Max.   :1.000000   Max.   :1.00000   Max.   :1.000   Max.   :1.000000  
+    ##                                                                         
+    ##     dscrref             dscrnap          dscrna            ctzcntr     
+    ##  Min.   :0.0000000   Min.   :0.000   Min.   :0.000000   Min.   :1.000  
+    ##  1st Qu.:0.0000000   1st Qu.:1.000   1st Qu.:0.000000   1st Qu.:1.000  
+    ##  Median :0.0000000   Median :1.000   Median :0.000000   Median :1.000  
+    ##  Mean   :0.0006645   Mean   :0.924   Mean   :0.003212   Mean   :1.034  
+    ##  3rd Qu.:0.0000000   3rd Qu.:1.000   3rd Qu.:0.000000   3rd Qu.:1.000  
+    ##  Max.   :1.0000000   Max.   :1.000   Max.   :1.000000   Max.   :2.000  
+    ##                                                         NA's   :30     
+    ##     brncntr        cntbrthd            livecnta       lnghom1         
+    ##  Min.   :1.000   Length:18060       Min.   :1937    Length:18060      
+    ##  1st Qu.:1.000   Class :character   1st Qu.:1971    Class :character  
+    ##  Median :1.000   Mode  :character   Median :1985    Mode  :character  
+    ##  Mean   :1.055                      Mean   :1985                      
+    ##  3rd Qu.:1.000                      3rd Qu.:2001                      
+    ##  Max.   :2.000                      Max.   :2021                      
+    ##  NA's   :15                         NA's   :17084                     
+    ##    lnghom2             feethngr        facntr        fbrncntc        
+    ##  Length:18060       Min.   :1.00   Min.   :1.000   Length:18060      
+    ##  Class :character   1st Qu.:1.00   1st Qu.:1.000   Class :character  
+    ##  Mode  :character   Median :1.00   Median :1.000   Mode  :character  
+    ##                     Mean   :1.08   Mean   :1.097                     
+    ##                     3rd Qu.:1.00   3rd Qu.:1.000                     
+    ##                     Max.   :2.00   Max.   :2.000                     
+    ##                     NA's   :141    NA's   :114                       
+    ##      mocntr        mbrncntc            ccnthum         ccrdprs      
+    ##  Min.   :1.000   Length:18060       Min.   : 1.00   Min.   : 0.000  
+    ##  1st Qu.:1.000   Class :character   1st Qu.: 3.00   1st Qu.: 4.000  
+    ##  Median :1.000   Mode  :character   Median : 3.00   Median : 6.000  
+    ##  Mean   :1.086                      Mean   : 4.02   Mean   : 5.714  
+    ##  3rd Qu.:1.000                      3rd Qu.: 4.00   3rd Qu.: 8.000  
+    ##  Max.   :2.000                      Max.   :55.00   Max.   :10.000  
+    ##  NA's   :55                         NA's   :355     NA's   :594     
+    ##     wrclmch       admrclc         testic34         testic35     
+    ##  Min.   :1.0   Min.   :1.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.:3.0   1st Qu.:1.000   1st Qu.: 4.000   1st Qu.: 2.000  
+    ##  Median :3.0   Median :2.000   Median : 6.000   Median : 4.000  
+    ##  Mean   :3.2   Mean   :1.998   Mean   : 5.718   Mean   : 4.035  
+    ##  3rd Qu.:4.0   3rd Qu.:3.000   3rd Qu.: 7.000   3rd Qu.: 6.000  
+    ##  Max.   :5.0   Max.   :3.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :337   NA's   :197     NA's   :12294    NA's   :12268   
+    ##     testic36         testic37        testic38        testic39    
+    ##  Min.   : 0.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.: 3.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
+    ##  Median : 5.000   Median :3.000   Median :2.000   Median :2.000  
+    ##  Mean   : 4.798   Mean   :2.667   Mean   :2.176   Mean   :2.445  
+    ##  3rd Qu.: 6.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000  
+    ##  Max.   :10.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
+    ##  NA's   :12315    NA's   :12354   NA's   :12331   NA's   :12404  
+    ##     testic40        testic41        testic42        vteurmmb     
+    ##  Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   : 1.000  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:2.000   1st Qu.: 1.000  
+    ##  Median :4.000   Median :2.000   Median :3.000   Median : 1.000  
+    ##  Mean   :3.506   Mean   :2.426   Mean   :2.954   Mean   : 5.514  
+    ##  3rd Qu.:5.000   3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.: 1.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :65.000  
+    ##  NA's   :12346   NA's   :12324   NA's   :12377   NA's   :2326    
+    ##     vteubcmb        fairelc          dfprtal          medcrgv     
+    ##  Min.   : NA     Min.   : 0.000   Min.   : 0.000   Min.   : 0.00  
+    ##  1st Qu.: NA     1st Qu.: 8.000   1st Qu.: 7.000   1st Qu.: 7.00  
+    ##  Median : NA     Median :10.000   Median : 8.000   Median : 9.00  
+    ##  Mean   :NaN     Mean   : 8.916   Mean   : 8.039   Mean   : 8.39  
+    ##  3rd Qu.: NA     3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.00  
+    ##  Max.   : NA     Max.   :10.000   Max.   :10.000   Max.   :10.00  
+    ##  NA's   :18060   NA's   :258      NA's   :608      NA's   :323    
+    ##     rghmgpr          votedir          cttresa          gptpelc      
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 6.000   1st Qu.: 7.000   1st Qu.: 9.000   1st Qu.: 8.000  
+    ##  Median : 8.000   Median : 8.000   Median :10.000   Median : 9.000  
+    ##  Mean   : 7.784   Mean   : 8.065   Mean   : 9.057   Mean   : 8.407  
+    ##  3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :391      NA's   :489      NA's   :218      NA's   :490     
+    ##     gvctzpv          grdfinc           viepol          wpestop      
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 8.000   1st Qu.: 7.000   1st Qu.: 6.000   1st Qu.: 7.000  
+    ##  Median : 9.000   Median : 9.000   Median : 8.000   Median : 8.000  
+    ##  Mean   : 8.456   Mean   : 8.061   Mean   : 7.743   Mean   : 8.031  
+    ##  3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000   3rd Qu.:10.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :254      NA's   :345      NA's   :624      NA's   :460     
+    ##      keydec          fairelcc         dfprtalc         medcrgvc     
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 7.000   1st Qu.: 4.000   1st Qu.: 3.000   1st Qu.: 4.000  
+    ##  Median : 8.000   Median : 7.000   Median : 5.000   Median : 7.000  
+    ##  Mean   : 7.881   Mean   : 6.381   Mean   : 5.247   Mean   : 6.158  
+    ##  3rd Qu.:10.000   3rd Qu.: 9.000   3rd Qu.: 7.000   3rd Qu.: 9.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :626      NA's   :613      NA's   :867      NA's   :428     
+    ##     rghmgprc         votedirc         cttresac         gptpelcc     
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 5.000   1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 2.000  
+    ##  Median : 7.000   Median : 5.000   Median : 5.000   Median : 5.000  
+    ##  Mean   : 6.551   Mean   : 4.578   Mean   : 4.614   Mean   : 4.802  
+    ##  3rd Qu.: 8.000   3rd Qu.: 7.000   3rd Qu.: 7.000   3rd Qu.: 7.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :677      NA's   :715      NA's   :579      NA's   :898     
+    ##     gvctzpvc         grdfincc         viepolc          wpestopc     
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 2.000   1st Qu.: 2.000   1st Qu.: 1.000   1st Qu.: 2.000  
+    ##  Median : 4.000   Median : 4.000   Median : 3.000   Median : 4.000  
+    ##  Mean   : 4.005   Mean   : 4.082   Mean   : 3.633   Mean   : 4.247  
+    ##  3rd Qu.: 6.000   3rd Qu.: 6.000   3rd Qu.: 5.000   3rd Qu.: 6.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :323      NA's   :582      NA's   :671      NA's   :691     
+    ##     keydecc           chpldm         chpldmi          chpldmc      
+    ##  Min.   : 0.000   Min.   :1.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 4.000   1st Qu.:1.000   1st Qu.: 7.000   1st Qu.: 2.000  
+    ##  Median : 5.000   Median :1.000   Median : 8.000   Median : 4.000  
+    ##  Mean   : 5.406   Mean   :1.924   Mean   : 7.981   Mean   : 4.014  
+    ##  3rd Qu.: 8.000   3rd Qu.:2.000   3rd Qu.:10.000   3rd Qu.: 6.000  
+    ##  Max.   :10.000   Max.   :5.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :1093     NA's   :616     NA's   :6923     NA's   :3717    
+    ##     stpldmi          stpldmc           admit           showcv     impdema     
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   :1.000   Min.   :1   Min.   :1.000  
+    ##  1st Qu.: 6.000   1st Qu.: 5.000   1st Qu.:2.000   1st Qu.:1   1st Qu.:1.000  
+    ##  Median : 7.000   Median : 7.000   Median :3.000   Median :1   Median :3.000  
+    ##  Mean   : 6.968   Mean   : 6.194   Mean   :2.995   Mean   :1   Mean   :2.619  
+    ##  3rd Qu.: 8.000   3rd Qu.: 8.000   3rd Qu.:4.000   3rd Qu.:1   3rd Qu.:4.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :5.000   Max.   :1   Max.   :5.000  
+    ##  NA's   :15218    NA's   :15239                                NA's   :14509  
+    ##     impdemb         impdemc         impdemd         impdeme     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:1.000   1st Qu.:2.000  
+    ##  Median :3.000   Median :3.000   Median :3.000   Median :3.000  
+    ##  Mean   :2.987   Mean   :2.992   Mean   :2.862   Mean   :3.044  
+    ##  3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:5.000  
+    ##  Max.   :5.000   Max.   :5.000   Max.   :5.000   Max.   :5.000  
+    ##  NA's   :14517   NA's   :14625   NA's   :14536   NA's   :14535  
+    ##     implvdm          accalaw           hhmmb             gndr      
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 1.000   Min.   :1.000  
+    ##  1st Qu.: 7.000   1st Qu.: 0.000   1st Qu.: 2.000   1st Qu.:1.000  
+    ##  Median : 9.000   Median : 3.000   Median : 2.000   Median :2.000  
+    ##  Mean   : 8.385   Mean   : 3.549   Mean   : 2.494   Mean   :1.551  
+    ##  3rd Qu.:10.000   3rd Qu.: 6.000   3rd Qu.: 3.000   3rd Qu.:2.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :13.000   Max.   :2.000  
+    ##  NA's   :277      NA's   :755      NA's   :53                      
+    ##      gndr2           gndr3           gndr4           gndr5      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000  
+    ##  Median :1.000   Median :2.000   Median :2.000   Median :2.000  
+    ##  Mean   :1.463   Mean   :1.534   Mean   :1.507   Mean   :1.514  
+    ##  3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000  
+    ##  Max.   :2.000   Max.   :2.000   Max.   :2.000   Max.   :2.000  
+    ##  NA's   :4538    NA's   :10720   NA's   :14105   NA's   :16720  
+    ##      gndr6           gndr7           gndr8           gndr9      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000  
+    ##  Median :1.000   Median :2.000   Median :2.000   Median :1.000  
+    ##  Mean   :1.472   Mean   :1.543   Mean   :1.509   Mean   :1.414  
+    ##  3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000  
+    ##  Max.   :2.000   Max.   :2.000   Max.   :2.000   Max.   :2.000  
+    ##  NA's   :17615   NA's   :17920   NA's   :18003   NA's   :18031  
+    ##      gndr10          gndr11          gndr12          gndr13          yrbrn     
+    ##  Min.   :1.00    Min.   :1.0     Min.   :1       Min.   : NA     Min.   :1931  
+    ##  1st Qu.:1.00    1st Qu.:2.0     1st Qu.:1       1st Qu.: NA     1st Qu.:1955  
+    ##  Median :2.00    Median :2.0     Median :1       Median : NA     Median :1969  
+    ##  Mean   :1.65    Mean   :1.8     Mean   :1       Mean   :NaN     Mean   :1970  
+    ##  3rd Qu.:2.00    3rd Qu.:2.0     3rd Qu.:1       3rd Qu.: NA     3rd Qu.:1985  
+    ##  Max.   :2.00    Max.   :2.0     Max.   :1       Max.   : NA     Max.   :2006  
+    ##  NA's   :18040   NA's   :18055   NA's   :18059   NA's   :18060   NA's   :120   
+    ##       agea           yrbrn2         yrbrn3          yrbrn4          yrbrn5     
+    ##  Min.   :15.00   Min.   :1931   Min.   :1931    Min.   :1931    Min.   :1933   
+    ##  1st Qu.:36.00   1st Qu.:1957   1st Qu.:1977    1st Qu.:1998    1st Qu.:2001   
+    ##  Median :51.00   Median :1970   Median :2000    Median :2006    Median :2009   
+    ##  Mean   :50.89   Mean   :1969   Mean   :1994    Mean   :2003    Mean   :2005   
+    ##  3rd Qu.:66.00   3rd Qu.:1981   3rd Qu.:2009    3rd Qu.:2013    3rd Qu.:2015   
+    ##  Max.   :90.00   Max.   :2021   Max.   :2021    Max.   :2021    Max.   :2021   
+    ##  NA's   :120     NA's   :4822   NA's   :10924   NA's   :14218   NA's   :16773  
+    ##      yrbrn6          yrbrn7          yrbrn8          yrbrn9     
+    ##  Min.   :1931    Min.   :1935    Min.   :1954    Min.   :1951   
+    ##  1st Qu.:2003    1st Qu.:2003    1st Qu.:2002    1st Qu.:2002   
+    ##  Median :2010    Median :2011    Median :2010    Median :2012   
+    ##  Mean   :2007    Mean   :2005    Mean   :2007    Mean   :2008   
+    ##  3rd Qu.:2016    3rd Qu.:2016    3rd Qu.:2015    3rd Qu.:2017   
+    ##  Max.   :2021    Max.   :2021    Max.   :2020    Max.   :2020   
+    ##  NA's   :17635   NA's   :17927   NA's   :18007   NA's   :18034  
+    ##     yrbrn10         yrbrn11         yrbrn12         yrbrn13     
+    ##  Min.   :1986    Min.   :1990    Min.   :2018    Min.   : NA    
+    ##  1st Qu.:2002    1st Qu.:2004    1st Qu.:2018    1st Qu.: NA    
+    ##  Median :2012    Median :2015    Median :2018    Median : NA    
+    ##  Mean   :2009    Mean   :2010    Mean   :2018    Mean   :NaN    
+    ##  3rd Qu.:2018    3rd Qu.:2019    3rd Qu.:2018    3rd Qu.: NA    
+    ##  Max.   :2020    Max.   :2021    Max.   :2018    Max.   : NA    
+    ##  NA's   :18041   NA's   :18055   NA's   :18059   NA's   :18060  
+    ##     rshipa2         rshipa3         rshipa4         rshipa5     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000  
+    ##  Median :1.000   Median :2.000   Median :2.000   Median :2.000  
+    ##  Mean   :1.568   Mean   :2.391   Mean   :2.636   Mean   :2.992  
+    ##  3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.:4.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##  NA's   :4602    NA's   :10776   NA's   :14135   NA's   :16741  
+    ##     rshipa6         rshipa7         rshipa8         rshipa9     
+    ##  Min.   :1.000   Min.   :2.000   Min.   :1.000   Min.   :2.000  
+    ##  1st Qu.:2.000   1st Qu.:2.000   1st Qu.:2.000   1st Qu.:4.000  
+    ##  Median :3.000   Median :4.000   Median :4.000   Median :4.500  
+    ##  Mean   :3.304   Mean   :3.743   Mean   :3.907   Mean   :4.107  
+    ##  3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:5.000   3rd Qu.:5.000  
+    ##  Max.   :6.000   Max.   :6.000   Max.   :6.000   Max.   :6.000  
+    ##  NA's   :17623   NA's   :17924   NA's   :18006   NA's   :18032  
+    ##     rshipa10        rshipa11        rshipa12        rshipa13    
+    ##  Min.   :1.00    Min.   :2.0     Min.   :5       Min.   : NA    
+    ##  1st Qu.:4.00    1st Qu.:2.0     1st Qu.:5       1st Qu.: NA    
+    ##  Median :5.00    Median :4.0     Median :5       Median : NA    
+    ##  Mean   :4.25    Mean   :3.4     Mean   :5       Mean   :NaN    
+    ##  3rd Qu.:5.00    3rd Qu.:4.0     3rd Qu.:5       3rd Qu.: NA    
+    ##  Max.   :5.00    Max.   :5.0     Max.   :5       Max.   : NA    
+    ##  NA's   :18040   NA's   :18055   NA's   :18059   NA's   :18060  
+    ##     acchome           accwrk          accmove           accoth      
+    ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+    ##  1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+    ##  Median :1.0000   Median :0.0000   Median :1.0000   Median :0.0000  
+    ##  Mean   :0.8405   Mean   :0.4396   Mean   :0.5055   Mean   :0.4404  
+    ##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+    ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+    ##                                                                     
+    ##     accnone          accref             accdk              accna         
+    ##  Min.   :0.000   Min.   :0.000000   Min.   :0.000000   Min.   :0.000000  
+    ##  1st Qu.:0.000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.000000  
+    ##  Median :0.000   Median :0.000000   Median :0.000000   Median :0.000000  
+    ##  Mean   :0.123   Mean   :0.002049   Mean   :0.003654   Mean   :0.001495  
+    ##  3rd Qu.:0.000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.000000  
+    ##  Max.   :1.000   Max.   :1.000000   Max.   :1.000000   Max.   :1.000000  
+    ##                                                                          
+    ##     fampref         famadvs          fampdf         mcclose      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 0.000  
+    ##  1st Qu.:1.000   1st Qu.:2.000   1st Qu.:1.000   1st Qu.: 5.000  
+    ##  Median :3.000   Median :3.000   Median :3.000   Median : 7.000  
+    ##  Mean   :2.965   Mean   :3.024   Mean   :3.051   Mean   : 6.588  
+    ##  3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.: 9.000  
+    ##  Max.   :5.000   Max.   :5.000   Max.   :5.000   Max.   :10.000  
+    ##  NA's   :239     NA's   :173     NA's   :183     NA's   :730     
+    ##     mcinter          mccoord           mcpriv          mcmsinf      
+    ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+    ##  1st Qu.: 4.000   1st Qu.: 7.000   1st Qu.: 5.000   1st Qu.: 5.000  
+    ##  Median : 6.000   Median : 8.000   Median : 6.000   Median : 7.000  
+    ##  Mean   : 5.795   Mean   : 7.671   Mean   : 6.018   Mean   : 6.777  
+    ##  3rd Qu.: 8.000   3rd Qu.: 9.000   3rd Qu.: 8.000   3rd Qu.: 9.000  
+    ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
+    ##  NA's   :1063     NA's   :802      NA's   :846      NA's   :951     
+    ##     chldo12          gndro12a        gndro12b         ageo12     
+    ##  Min.   : 0.000   Min.   :1.00    Min.   :1.000   Min.   :12.00  
+    ##  1st Qu.: 0.000   1st Qu.:1.00    1st Qu.:1.000   1st Qu.:22.00  
+    ##  Median : 1.000   Median :1.00    Median :1.000   Median :33.00  
+    ##  Mean   : 1.129   Mean   :1.46    Mean   :1.473   Mean   :33.53  
+    ##  3rd Qu.: 2.000   3rd Qu.:2.00    3rd Qu.:2.000   3rd Qu.:44.00  
+    ##  Max.   :35.000   Max.   :2.00    Max.   :2.000   Max.   :90.00  
+    ##  NA's   :303      NA's   :11260   NA's   :14745   NA's   :8152   
+    ##     hhlio12         closeo12        ttmino12         speako12    
+    ##  Min.   :1.000   Min.   :1.000   Min.   :   0.0   Min.   :1.000  
+    ##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:  15.0   1st Qu.:1.000  
+    ##  Median :2.000   Median :2.000   Median :  40.0   Median :3.000  
+    ##  Mean   :1.679   Mean   :1.853   Mean   : 150.8   Mean   :3.066  
+    ##  3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.: 120.0   3rd Qu.:4.000  
+    ##  Max.   :2.000   Max.   :5.000   Max.   :4800.0   Max.   :7.000  
+    ##  NA's   :7912    NA's   :9143    NA's   :11463    NA's   :7926   
+    ##     scrno12         phoneo12         como12         c19spo12     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 1.000  
+    ##  1st Qu.:5.000   1st Qu.:2.000   1st Qu.:3.000   1st Qu.: 3.000  
+    ##  Median :7.000   Median :3.000   Median :5.000   Median : 3.000  
+    ##  Mean   :5.848   Mean   :3.309   Mean   :4.745   Mean   : 3.593  
+    ##  3rd Qu.:7.000   3rd Qu.:4.000   3rd Qu.:7.000   3rd Qu.: 3.000  
+    ##  Max.   :7.000   Max.   :7.000   Max.   :7.000   Max.   :55.000  
+    ##  NA's   :7945    NA's   :7940    NA's   :7939    NA's   :7994    
+    ##     c19mco12         livpnt         pntmofa          agepnt      
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 32.00  
+    ##  1st Qu.:3.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.: 56.00  
+    ##  Median :3.000   Median :2.000   Median :1.000   Median : 66.00  
+    ##  Mean   :2.906   Mean   :2.558   Mean   :1.416   Mean   : 65.69  
+    ##  3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.:2.000   3rd Qu.: 75.00  
+    ##  Max.   :5.000   Max.   :4.000   Max.   :2.000   Max.   :101.00  
+    ##  NA's   :8161    NA's   :208     NA's   :11774   NA's   :8436    
+    ##     hhlipnt         closepnt        ttminpnt          speakpnt   
+    ##  Min.   :1.000   Min.   :1.000   Min.   :   0.00   Min.   :1.00  
+    ##  1st Qu.:2.000   1st Qu.:1.000   1st Qu.:  15.00   1st Qu.:2.00  
+    ##  Median :2.000   Median :2.000   Median :  30.00   Median :3.00  
+    ##  Mean   :1.762   Mean   :2.099   Mean   :  95.51   Mean   :3.24  
+    ##  3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.:  90.00   3rd Qu.:4.00  
+    ##  Max.   :2.000   Max.   :5.000   Max.   :4320.00   Max.   :7.00  
+    ##  NA's   :8195    NA's   :9549    NA's   :10726     NA's   :8204  
+    ##     scrnpnt         phonepnt         compnt         c19sppnt     
+    ##  Min.   :1.000   Min.   :1.000   Min.   :1.000   Min.   : 1.000  
+    ##  1st Qu.:6.000   1st Qu.:2.000   1st Qu.:3.000   1st Qu.: 3.000  
+    ##  Median :7.000   Median :3.000   Median :6.000   Median : 3.000  
+    ##  Mean   :6.122   Mean   :3.557   Mean   :5.144   Mean   : 3.531  
+    ##  3rd Qu.:7.000   3rd Qu.:4.000   3rd Qu.:7.000   3rd Qu.: 3.000  
+    ##  Max.   :7.000   Max.   :7.000   Max.   :7.000   Max.   :55.000  
+    ##  NA's   :8222    NA's   :8226    NA's   :8238    NA's   :8278    
+    ##     c19mcpnt        stfmjob          trdawrk         jbprtfp     
+    ##  Min.   :1.000   Min.   : 0.000   Min.   :1.000   Min.   :1.000  
+    ##  1st Qu.:3.000   1st Qu.: 7.000   1st Qu.:3.000   1st Qu.:2.000  
+    ##  Median :3.000   Median : 8.000   Median :3.000   Median :3.000  
+    ##  Mean   :2.897   Mean   : 7.511   Mean   :3.007   Mean   :3.033  
+    ##  3rd Qu.:3.000   3rd Qu.: 9.000   3rd Qu.:4.000   3rd Qu.:4.000  
+    ##  Max.   :5.000   Max.   :10.000   Max.   :5.000   Max.   :6.000  
+    ##  NA's   :8411    NA's   :8149     NA's   :8120    NA's   :8167   
+    ##     pfmfdjba       dcsfwrka        wrkhome         c19whome        c19wplch    
+    ##  Min.   :1.00   Min.   :1.000   Min.   :1.000   Min.   : 1.00   Min.   :1.000  
+    ##  1st Qu.:1.00   1st Qu.:1.000   1st Qu.:3.000   1st Qu.: 3.00   1st Qu.:1.000  
+    ##  Median :2.00   Median :2.000   Median :6.000   Median :55.00   Median :1.000  
+    ##  Mean   :2.27   Mean   :1.765   Mean   :4.809   Mean   :29.52   Mean   :1.473  
+    ##  3rd Qu.:3.00   3rd Qu.:2.000   3rd Qu.:6.000   3rd Qu.:55.00   3rd Qu.:2.000  
+    ##  Max.   :5.00   Max.   :3.000   Max.   :6.000   Max.   :55.00   Max.   :3.000  
+    ##  NA's   :9203   NA's   :8133    NA's   :8142    NA's   :8265    NA's   :15900  
     ##     wrklong         wrkresp         c19whacc        mansupp     
     ##  Min.   : 1.00   Min.   :1.000   Min.   : 1.00   Min.   : 0.00  
     ##  1st Qu.: 3.00   1st Qu.:3.000   1st Qu.: 3.00   1st Qu.: 6.00  
     ##  Median : 5.00   Median :5.000   Median : 5.00   Median : 8.00  
-    ##  Mean   :13.21   Mean   :4.153   Mean   :27.79   Mean   :14.52  
+    ##  Mean   :13.21   Mean   :4.152   Mean   :27.79   Mean   :14.52  
     ##  3rd Qu.: 6.00   3rd Qu.:6.000   3rd Qu.:55.00   3rd Qu.:10.00  
     ##  Max.   :55.00   Max.   :6.000   Max.   :55.00   Max.   :55.00  
     ##  NA's   :8360    NA's   :10147   NA's   :10132   NA's   :8292   
@@ -1809,7 +1807,7 @@ Let’s have a first look at our data:
     ##  Min.   :1.000   Min.   :1.00   Min.   : 1.000   Min.   : 1.000  
     ##  1st Qu.:3.000   1st Qu.:3.00   1st Qu.: 3.000   1st Qu.: 3.000  
     ##  Median :4.000   Median :4.00   Median : 3.000   Median : 3.000  
-    ##  Mean   :4.065   Mean   :4.53   Mean   : 4.083   Mean   : 7.559  
+    ##  Mean   :4.066   Mean   :4.53   Mean   : 4.082   Mean   : 7.559  
     ##  3rd Qu.:6.000   3rd Qu.:7.00   3rd Qu.: 3.000   3rd Qu.: 3.000  
     ##  Max.   :7.000   Max.   :7.00   Max.   :55.000   Max.   :55.000  
     ##  NA's   :9445    NA's   :9444   NA's   :9495     NA's   :9490    
@@ -1889,7 +1887,7 @@ Let’s have a first look at our data:
     ##  Min.   : 0.000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
     ##  1st Qu.: 2.000   1st Qu.: 5.000   1st Qu.: 3.000   1st Qu.: 5.000  
     ##  Median : 4.000   Median : 7.000   Median : 5.000   Median : 7.000  
-    ##  Mean   : 3.851   Mean   : 6.756   Mean   : 5.017   Mean   : 6.248  
+    ##  Mean   : 3.851   Mean   : 6.755   Mean   : 5.017   Mean   : 6.248  
     ##  3rd Qu.: 5.000   3rd Qu.: 9.000   3rd Qu.: 7.000   3rd Qu.: 9.000  
     ##  Max.   :10.000   Max.   :10.000   Max.   :10.000   Max.   :10.000  
     ##  NA's   :10228    NA's   :10284    NA's   :2245     NA's   :2536    
@@ -1953,7 +1951,7 @@ Let’s have a first look at our data:
     ##  Min.   :0.000000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
     ##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
     ##  Median :0.000000   Median :0.00000   Median :0.000000   Median :0.000000  
-    ##  Mean   :0.004042   Mean   :0.00371   Mean   :0.001273   Mean   :0.003931  
+    ##  Mean   :0.004042   Mean   :0.00371   Mean   :0.001274   Mean   :0.003931  
     ##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000  
     ##  Max.   :1.000000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
     ##                                                                            
@@ -1965,78 +1963,78 @@ Let’s have a first look at our data:
     ##  3rd Qu.:0.000000   3rd Qu.:0.0000000   3rd Qu.:0.00000   3rd Qu.:1.0000  
     ##  Max.   :1.000000   Max.   :1.0000000   Max.   :1.00000   Max.   :1.0000  
     ##                                                                           
-    ##     vdtprere    vdtpdkre           vdtpnare       
-    ##  Min.   :0   Min.   :0.00e+00   Min.   :0.000000  
-    ##  1st Qu.:0   1st Qu.:0.00e+00   1st Qu.:0.000000  
-    ##  Median :0   Median :0.00e+00   Median :0.000000  
-    ##  Mean   :0   Mean   :5.54e-05   Mean   :0.001218  
-    ##  3rd Qu.:0   3rd Qu.:0.00e+00   3rd Qu.:0.000000  
-    ##  Max.   :0   Max.   :1.00e+00   Max.   :1.000000  
-    ##                                                   
-    ##      inwds                            ainws                       
-    ##  Min.   :2020-09-18 10:18:44.00   Min.   :2020-09-18 10:20:04.00  
-    ##  1st Qu.:2021-07-18 17:45:35.25   1st Qu.:2021-07-18 17:53:00.00  
-    ##  Median :2021-08-18 15:08:21.00   Median :2021-08-18 15:53:26.00  
-    ##  Mean   :2021-08-15 20:06:36.00   Mean   :2021-08-15 21:56:47.91  
-    ##  3rd Qu.:2021-09-25 23:28:36.25   3rd Qu.:2021-09-26 10:07:25.50  
-    ##  Max.   :2022-01-13 11:02:25.00   Max.   :2022-01-13 11:03:35.00  
-    ##                                   NA's   :1                       
-    ##      ainwe                            binwe                       
-    ##  Min.   :2020-09-18 10:25:21.00   Min.   :2020-09-18 10:35:57.00  
-    ##  1st Qu.:2021-07-18 17:54:00.00   1st Qu.:2021-07-18 18:13:58.50  
-    ##  Median :2021-08-18 15:37:24.00   Median :2021-08-18 16:23:41.00  
-    ##  Mean   :2021-08-15 23:53:38.34   Mean   :2021-08-16 01:16:27.64  
-    ##  3rd Qu.:2021-09-26 10:45:38.00   3rd Qu.:2021-09-26 11:37:26.25  
-    ##  Max.   :2022-01-13 11:05:18.00   Max.   :2022-01-13 11:14:24.00  
-    ##  NA's   :23                       NA's   :2                       
-    ##      cinwe                            dinwe                       
-    ##  Min.   :2020-09-18 10:44:27.00   Min.   :2020-09-18 10:51:22.00  
-    ##  1st Qu.:2021-07-18 18:28:00.00   1st Qu.:2021-07-17 17:19:04.50  
-    ##  Median :2021-08-18 16:25:00.00   Median :2021-08-15 09:29:30.00  
-    ##  Mean   :2021-08-16 01:15:20.55   Mean   :2021-08-14 07:13:19.07  
-    ##  3rd Qu.:2021-09-26 11:32:28.00   3rd Qu.:2021-09-23 09:52:07.50  
-    ##  Max.   :2022-01-13 11:20:10.00   Max.   :2022-01-13 11:27:50.00  
-    ##  NA's   :7                        NA's   :830                     
-    ##      finwe                            ginwe                       
-    ##  Min.   :2020-09-18 11:01:21.00   Min.   :2020-09-18 11:07:19.00  
-    ##  1st Qu.:2021-07-17 13:39:10.00   1st Qu.:2021-07-17 17:15:27.50  
-    ##  Median :2021-08-14 11:39:00.00   Median :2021-08-15 13:26:22.00  
-    ##  Mean   :2021-08-13 17:28:32.46   Mean   :2021-08-14 00:46:46.97  
-    ##  3rd Qu.:2021-09-22 14:03:13.00   3rd Qu.:2021-09-23 10:53:51.75  
-    ##  Max.   :2022-01-13 11:36:14.00   Max.   :2022-01-13 11:46:02.00  
-    ##  NA's   :943                      NA's   :1188                    
-    ##      hinwe                            iinwe                       
-    ##  Min.   :2020-09-18 11:11:36.00   Min.   :2020-09-18 11:12:25.00  
-    ##  1st Qu.:2021-07-18 20:44:00.00   1st Qu.:2021-07-18 10:55:46.00  
-    ##  Median :2021-08-18 18:08:06.00   Median :2021-08-16 19:45:00.00  
-    ##  Mean   :2021-08-16 06:39:15.91   Mean   :2021-08-14 12:56:08.73  
-    ##  3rd Qu.:2021-09-26 12:02:27.00   3rd Qu.:2021-09-23 20:33:46.00  
-    ##  Max.   :2022-01-13 11:49:38.00   Max.   :2022-01-17 18:42:13.00  
-    ##  NA's   :35                       NA's   :1035                    
-    ##      kinwe                            vinwe                       
-    ##  Min.   :2021-05-05 10:40:51.00   Min.   :2021-01-01 09:00:17.00  
-    ##  1st Qu.:2021-07-16 15:31:44.75   1st Qu.:2021-07-19 15:46:02.25  
-    ##  Median :2021-08-08 14:58:30.50   Median :2021-08-14 17:23:41.50  
-    ##  Mean   :2021-08-16 03:17:41.25   Mean   :2021-08-23 12:05:11.23  
-    ##  3rd Qu.:2021-09-08 19:00:55.50   3rd Qu.:2021-09-20 13:12:45.00  
-    ##  Max.   :2021-12-31 13:09:00.00   Max.   :2021-12-31 20:44:20.00  
-    ##  NA's   :4236                     NA's   :2636                    
-    ##      inwde                            jinws                       
-    ##  Min.   :2020-09-18 11:21:51.00   Min.   :2020-09-18 11:21:51.00  
-    ##  1st Qu.:2021-07-18 20:51:00.00   1st Qu.:2021-07-18 14:02:07.00  
-    ##  Median :2021-08-18 19:02:56.50   Median :2021-08-17 08:16:57.00  
-    ##  Mean   :2021-08-16 05:42:38.50   Mean   :2021-08-14 23:57:56.72  
-    ##  3rd Qu.:2021-09-26 13:26:13.50   3rd Qu.:2021-09-23 19:12:45.00  
-    ##  Max.   :2022-01-17 14:44:55.00   Max.   :2022-01-18 15:48:46.00  
-    ##  NA's   :6                        NA's   :383                     
-    ##      jinwe                            inwtm          domain         
-    ##  Min.   :2020-09-18 11:22:51.00   Min.   :  5.0   Length:18060      
-    ##  1st Qu.:2021-07-18 14:51:41.00   1st Qu.: 40.0   Class :character  
-    ##  Median :2021-08-17 10:20:32.00   Median : 49.0   Mode  :character  
-    ##  Mean   :2021-08-15 00:39:28.56   Mean   : 52.3                     
-    ##  3rd Qu.:2021-09-23 20:34:49.00   3rd Qu.: 60.0                     
-    ##  Max.   :2022-01-18 15:52:36.00   Max.   :759.0                     
-    ##  NA's   :393                      NA's   :242                       
+    ##     vdtprere    vdtpdkre            vdtpnare       
+    ##  Min.   :0   Min.   :0.000e+00   Min.   :0.000000  
+    ##  1st Qu.:0   1st Qu.:0.000e+00   1st Qu.:0.000000  
+    ##  Median :0   Median :0.000e+00   Median :0.000000  
+    ##  Mean   :0   Mean   :5.537e-05   Mean   :0.001218  
+    ##  3rd Qu.:0   3rd Qu.:0.000e+00   3rd Qu.:0.000000  
+    ##  Max.   :0   Max.   :1.000e+00   Max.   :1.000000  
+    ##                                                    
+    ##      inwds                         ainws                    
+    ##  Min.   :2020-09-18 10:18:44   Min.   :2020-09-18 10:20:04  
+    ##  1st Qu.:2021-07-18 17:45:35   1st Qu.:2021-07-18 17:53:00  
+    ##  Median :2021-08-18 15:08:21   Median :2021-08-18 15:53:26  
+    ##  Mean   :2021-08-15 20:06:36   Mean   :2021-08-15 21:56:47  
+    ##  3rd Qu.:2021-09-25 23:28:36   3rd Qu.:2021-09-26 10:07:25  
+    ##  Max.   :2022-01-13 11:02:25   Max.   :2022-01-13 11:03:35  
+    ##                                NA's   :1                    
+    ##      ainwe                         binwe                    
+    ##  Min.   :2020-09-18 10:25:21   Min.   :2020-09-18 10:35:57  
+    ##  1st Qu.:2021-07-18 17:54:00   1st Qu.:2021-07-18 18:13:58  
+    ##  Median :2021-08-18 15:37:24   Median :2021-08-18 16:23:41  
+    ##  Mean   :2021-08-15 23:53:38   Mean   :2021-08-16 01:16:27  
+    ##  3rd Qu.:2021-09-26 10:45:38   3rd Qu.:2021-09-26 11:37:26  
+    ##  Max.   :2022-01-13 11:05:18   Max.   :2022-01-13 11:14:24  
+    ##  NA's   :23                    NA's   :2                    
+    ##      cinwe                         dinwe                    
+    ##  Min.   :2020-09-18 10:44:27   Min.   :2020-09-18 10:51:22  
+    ##  1st Qu.:2021-07-18 18:28:00   1st Qu.:2021-07-17 17:19:04  
+    ##  Median :2021-08-18 16:25:00   Median :2021-08-15 09:29:30  
+    ##  Mean   :2021-08-16 01:15:20   Mean   :2021-08-14 07:13:19  
+    ##  3rd Qu.:2021-09-26 11:32:28   3rd Qu.:2021-09-23 09:52:07  
+    ##  Max.   :2022-01-13 11:20:10   Max.   :2022-01-13 11:27:50  
+    ##  NA's   :7                     NA's   :830                  
+    ##      finwe                         ginwe                    
+    ##  Min.   :2020-09-18 11:01:21   Min.   :2020-09-18 11:07:19  
+    ##  1st Qu.:2021-07-17 13:39:10   1st Qu.:2021-07-17 17:15:27  
+    ##  Median :2021-08-14 11:39:00   Median :2021-08-15 13:26:22  
+    ##  Mean   :2021-08-13 17:28:32   Mean   :2021-08-14 00:46:46  
+    ##  3rd Qu.:2021-09-22 14:03:13   3rd Qu.:2021-09-23 10:53:51  
+    ##  Max.   :2022-01-13 11:36:14   Max.   :2022-01-13 11:46:02  
+    ##  NA's   :943                   NA's   :1188                 
+    ##      hinwe                         iinwe                    
+    ##  Min.   :2020-09-18 11:11:36   Min.   :2020-09-18 11:12:25  
+    ##  1st Qu.:2021-07-18 20:44:00   1st Qu.:2021-07-18 10:55:46  
+    ##  Median :2021-08-18 18:08:06   Median :2021-08-16 19:45:00  
+    ##  Mean   :2021-08-16 06:39:15   Mean   :2021-08-14 12:56:08  
+    ##  3rd Qu.:2021-09-26 12:02:27   3rd Qu.:2021-09-23 20:33:46  
+    ##  Max.   :2022-01-13 11:49:38   Max.   :2022-01-17 18:42:13  
+    ##  NA's   :35                    NA's   :1035                 
+    ##      kinwe                         vinwe                    
+    ##  Min.   :2021-05-05 10:40:51   Min.   :2021-01-01 09:00:17  
+    ##  1st Qu.:2021-07-16 15:31:44   1st Qu.:2021-07-19 15:46:02  
+    ##  Median :2021-08-08 14:58:30   Median :2021-08-14 17:23:41  
+    ##  Mean   :2021-08-16 03:17:41   Mean   :2021-08-23 12:05:11  
+    ##  3rd Qu.:2021-09-08 19:00:55   3rd Qu.:2021-09-20 13:12:45  
+    ##  Max.   :2021-12-31 13:09:00   Max.   :2021-12-31 20:44:20  
+    ##  NA's   :4236                  NA's   :2636                 
+    ##      inwde                         jinws                    
+    ##  Min.   :2020-09-18 11:21:51   Min.   :2020-09-18 11:21:51  
+    ##  1st Qu.:2021-07-18 20:51:00   1st Qu.:2021-07-18 14:02:07  
+    ##  Median :2021-08-18 19:02:56   Median :2021-08-17 08:16:57  
+    ##  Mean   :2021-08-16 05:42:38   Mean   :2021-08-14 23:57:56  
+    ##  3rd Qu.:2021-09-26 13:26:13   3rd Qu.:2021-09-23 19:12:45  
+    ##  Max.   :2022-01-17 14:44:55   Max.   :2022-01-18 15:48:46  
+    ##  NA's   :6                     NA's   :383                  
+    ##      jinwe                         inwtm          domain         
+    ##  Min.   :2020-09-18 11:22:51   Min.   :  5.0   Length:18060      
+    ##  1st Qu.:2021-07-18 14:51:41   1st Qu.: 40.0   Class :character  
+    ##  Median :2021-08-17 10:20:32   Median : 49.0   Mode  :character  
+    ##  Mean   :2021-08-15 00:39:28   Mean   : 52.3                     
+    ##  3rd Qu.:2021-09-23 20:34:49   3rd Qu.: 60.0                     
+    ##  Max.   :2022-01-18 15:52:36   Max.   :759.0                     
+    ##  NA's   :393                   NA's   :242                       
     ##      prob              stratum            psu          rshpsts     
     ##  Length:18060       Min.   :   1.0   Min.   :   1   Min.   : 1.00  
     ##  Class :character   1st Qu.: 119.0   1st Qu.: 886   1st Qu.: 1.00  
@@ -2093,14 +2091,14 @@ Let’s have a first look at our data:
     ##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000  
     ##  Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.00000  
     ##                                                                         
-    ##       rtrd           cmsrv           hswrk             dngoth       
-    ##  Min.   :0.000   Min.   :0e+00   Min.   :0.00000   Min.   :0.00000  
-    ##  1st Qu.:0.000   1st Qu.:0e+00   1st Qu.:0.00000   1st Qu.:0.00000  
-    ##  Median :0.000   Median :0e+00   Median :0.00000   Median :0.00000  
-    ##  Mean   :0.297   Mean   :9e-04   Mean   :0.07785   Mean   :0.01124  
-    ##  3rd Qu.:1.000   3rd Qu.:0e+00   3rd Qu.:0.00000   3rd Qu.:0.00000  
-    ##  Max.   :1.000   Max.   :1e+00   Max.   :1.00000   Max.   :1.00000  
-    ##                  NA's   :1592                                       
+    ##       rtrd           cmsrv             hswrk             dngoth       
+    ##  Min.   :0.000   Min.   :0.00000   Min.   :0.00000   Min.   :0.00000  
+    ##  1st Qu.:0.000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.00000  
+    ##  Median :0.000   Median :0.00000   Median :0.00000   Median :0.00000  
+    ##  Mean   :0.297   Mean   :0.00091   Mean   :0.07785   Mean   :0.01124  
+    ##  3rd Qu.:1.000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+    ##  Max.   :1.000   Max.   :1.00000   Max.   :1.00000   Max.   :1.00000  
+    ##                  NA's   :1592                                         
     ##      dngref             dngdk               dngna            mainact     
     ##  Min.   :0.000000   Min.   :0.0000000   Min.   :0.00000   Min.   : 1.00  
     ##  1st Qu.:0.000000   1st Qu.:0.0000000   1st Qu.:0.00000   1st Qu.:66.00  
@@ -2181,14 +2179,14 @@ Let’s have a first look at our data:
     ##  3rd Qu.:6666    3rd Qu.:1.0000   3rd Qu.:0.000000   3rd Qu.:0.00000  
     ##  Max.   :8888    Max.   :1.0000   Max.   :1.000000   Max.   :1.00000  
     ##  NA's   :16642                                                        
-    ##     uemplip             dsbldp             rtrdp            cmsrvp     
-    ##  Min.   :0.000000   Min.   :0.000000   Min.   :0.0000   Min.   :0e+00  
-    ##  1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.0000   1st Qu.:0e+00  
-    ##  Median :0.000000   Median :0.000000   Median :0.0000   Median :0e+00  
-    ##  Mean   :0.007032   Mean   :0.008472   Mean   :0.1506   Mean   :2e-04  
-    ##  3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.0000   3rd Qu.:0e+00  
-    ##  Max.   :1.000000   Max.   :1.000000   Max.   :1.0000   Max.   :1e+00  
-    ##                                                         NA's   :1592   
+    ##     uemplip             dsbldp             rtrdp            cmsrvp       
+    ##  Min.   :0.000000   Min.   :0.000000   Min.   :0.0000   Min.   :0.00000  
+    ##  1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.0000   1st Qu.:0.00000  
+    ##  Median :0.000000   Median :0.000000   Median :0.0000   Median :0.00000  
+    ##  Mean   :0.007032   Mean   :0.008472   Mean   :0.1506   Mean   :0.00018  
+    ##  3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.0000   3rd Qu.:0.00000  
+    ##  Max.   :1.000000   Max.   :1.000000   Max.   :1.0000   Max.   :1.00000  
+    ##                                                         NA's   :1592     
     ##      hswrkp           dngothp             dngdkp             dngnapp      
     ##  Min.   :0.00000   Min.   :0.000000   Min.   :0.0000000   Min.   :0.0000  
     ##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.0000000   1st Qu.:0.0000  
@@ -2419,6 +2417,7 @@ descr(dat2$agea)
     ##       SE.Skewness       0.02
     ##          Kurtosis      -0.93
     ##           N.Valid   17940.00
+    ##                 N   18060.00
     ##         Pct.Valid      99.34
 
 This function provides a lot of useful information. The N.valid is the
@@ -2444,9 +2443,9 @@ descr(dat2$agea, transpose = T)
     ## 
     ##  
     ## 
-    ##              Skewness   SE.Skewness   Kurtosis    N.Valid   Pct.Valid
-    ## ---------- ---------- ------------- ---------- ---------- -----------
-    ##       agea      -0.07          0.02      -0.93   17940.00       99.34
+    ##              Skewness   SE.Skewness   Kurtosis    N.Valid          N   Pct.Valid
+    ## ---------- ---------- ------------- ---------- ---------- ---------- -----------
+    ##       agea      -0.07          0.02      -0.93   17940.00   18060.00       99.34
 
 You can also get the descriptive statistics of a continuous variable by
 group:
@@ -2457,22 +2456,31 @@ desc <- stby(data = dat2[,c("agea")],
      FUN = descr, 
      stats = "common", 
      transpose = TRUE)
+```
+
+    ## Error in `match.call()`:
+    ## ! ... used in a situation where it does not exist
+
+    ## Warning in parse_call(mc = match.call(), var_name = (ncol(xx) == 1), var_label
+    ## = (ncol(xx) == : metadata extraction terminated unexpectedly; inspect results
+    ## carefully
+    ## Warning in parse_call(mc = match.call(), var_name = (ncol(xx) == 1), var_label
+    ## = (ncol(xx) == : metadata extraction terminated unexpectedly; inspect results
+    ## carefully
+
+``` r
 desc
 ```
 
     ## Descriptive Statistics  
-    ## value  
-    ## N: 8100  
+    ##  by gndr  
+    ## Data Frame: dat2  
+    ## N: 18060  
     ## 
-    ##                Mean   Std.Dev     Min   Median     Max   N.Valid   Pct.Valid
-    ## ----------- ------- --------- ------- -------- ------- --------- -----------
-    ##       value   49.78     18.23   15.00    50.00   90.00   8042.00       99.28
-    ## 
-    ## N: 9960  
-    ## 
-    ##                Mean   Std.Dev     Min   Median     Max   N.Valid   Pct.Valid
-    ## ----------- ------- --------- ------- -------- ------- --------- -----------
-    ##       value   51.78     18.58   15.00    52.00   90.00   9898.00       99.38
+    ##    Mean   Std.Dev     Min   Median     Max   N.Valid         N   Pct.Valid
+    ## ------- --------- ------- -------- ------- --------- --------- -----------
+    ##   49.78     18.23   15.00    50.00   90.00   8042.00   8100.00       99.28
+    ##   51.78     18.58   15.00    52.00   90.00   9898.00   9960.00       99.38
 
 *Missing values*
 

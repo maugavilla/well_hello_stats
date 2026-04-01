@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 execute:
   cache: true
@@ -88,7 +89,7 @@ This dataset we then reshape into a long format (```dat_lq_long```) and use this
 dat_lq_agg <- aggregate(dat_lq[,-c(1,2)], by = list(dat_lq$continent), mean)       
 dat_lq_agg
 
-dat_lq_long <- melt(dat_lq_agg, id = "Group.1", value.name = "value", variable.name = "dimension")
+dat_lq_long <- reshape2::melt(dat_lq_agg, id = "Group.1", value.name = "value", variable.name = "dimension")
 head(dat_lq_long)
 
 ggplot(data = dat_lq_long, aes(x = dimension, y =value, fill = dimension)) +

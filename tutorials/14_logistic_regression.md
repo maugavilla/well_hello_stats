@@ -1,44 +1,67 @@
 # Logistic Regression
 Mauricio Garnier-Villarreal
-2026-03-02
+2026-03-31
 
-- [Introduction](#introduction)
-- [LM vs GLM](#lm-vs-glm)
-- [Logistic Regression](#logistic-regression)
-  - [Interpreting Coefficients in Logistic
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> LM vs GLM](#lm-vs-glm)
+- [<span class="toc-section-number">3</span> Logistic
+  Regression](#logistic-regression)
+  - [<span class="toc-section-number">3.1</span> Interpreting
+    Coefficients in Logistic
     Regression](#interpreting-coefficients-in-logistic-regression)
-- [R Setup](#r-setup)
-- [Data Import and Preparation](#data-import-and-preparation)
-  - [Recode Variables](#recode-variables)
-- [Descriptive statistics](#descriptive-statistics)
-  - [Outcome Frequencies](#outcome-frequencies)
-  - [Scatter Plot of Outcome vs. Age](#scatter-plot-of-outcome-vs-age)
-  - [Descriptive Statistics for
-    Predictors](#descriptive-statistics-for-predictors)
-- [Logistic Regression Model](#logistic-regression-model)
-  - [Extracting Coefficients](#extracting-coefficients)
-  - [Nicely Formatted Tables with
-    `parameters`](#nicely-formatted-tables-with-parameters)
-  - [Overall Effect of Categorical
-    Predictors](#overall-effect-of-categorical-predictors)
-  - [Predicted Probabilities](#predicted-probabilities)
-    - [Predicted Probability for a Specific
+- [<span class="toc-section-number">4</span> R Setup](#r-setup)
+- [<span class="toc-section-number">5</span> Data Import and
+  Preparation](#data-import-and-preparation)
+  - [<span class="toc-section-number">5.1</span> Recode
+    Variables](#recode-variables)
+- [<span class="toc-section-number">6</span> Descriptive
+  statistics](#descriptive-statistics)
+  - [<span class="toc-section-number">6.1</span> Outcome
+    Frequencies](#outcome-frequencies)
+  - [<span class="toc-section-number">6.2</span> Scatter Plot of Outcome
+    vs. Age](#scatter-plot-of-outcome-vs-age)
+  - [<span class="toc-section-number">6.3</span> Descriptive Statistics
+    for Predictors](#descriptive-statistics-for-predictors)
+- [<span class="toc-section-number">7</span> Logistic Regression
+  Model](#logistic-regression-model)
+  - [<span class="toc-section-number">7.1</span> Extracting
+    Coefficients](#extracting-coefficients)
+  - [<span class="toc-section-number">7.2</span> Nicely Formatted Tables
+    with `parameters`](#nicely-formatted-tables-with-parameters)
+  - [<span class="toc-section-number">7.3</span> Overall Effect of
+    Categorical Predictors](#overall-effect-of-categorical-predictors)
+  - [<span class="toc-section-number">7.4</span> Predicted
+    Probabilities](#predicted-probabilities)
+    - [<span class="toc-section-number">7.4.1</span> Predicted
+      Probability for a Specific
       Profile](#predicted-probability-for-a-specific-profile)
-  - [Conditional Plots](#conditional-plots)
-  - [Marginal Effects (Average Slope in
+  - [<span class="toc-section-number">7.5</span> Conditional
+    Plots](#conditional-plots)
+  - [<span class="toc-section-number">7.6</span> Marginal Effects
+    (Average Slope in
     Probability)](#marginal-effects-average-slope-in-probability)
-  - [Differences in Probabilities Between
+  - [<span class="toc-section-number">7.7</span> Differences in
+    Probabilities Between
     Groups](#differences-in-probabilities-between-groups)
-  - [Effect Size Transformations](#effect-size-transformations)
-  - [Pseudo R‑Squared Measures](#pseudo-rsquared-measures)
-  - [Model Comparison](#model-comparison)
-    - [Likelihood Ratio Test (LRT)](#likelihood-ratio-test-lrt)
-    - [Information Criteria (AIC, BIC)](#information-criteria-aic-bic)
-      - [Confidence Intervals for IC
+  - [<span class="toc-section-number">7.8</span> Effect Size
+    Transformations](#effect-size-transformations)
+  - [<span class="toc-section-number">7.9</span> Pseudo R‑Squared
+    Measures](#pseudo-rsquared-measures)
+  - [<span class="toc-section-number">7.10</span> Model
+    Comparison](#model-comparison)
+    - [<span class="toc-section-number">7.10.1</span> Likelihood Ratio
+      Test (LRT)](#likelihood-ratio-test-lrt)
+    - [<span class="toc-section-number">7.10.2</span> Information
+      Criteria (AIC, BIC)](#information-criteria-aic-bic)
+      - [<span class="toc-section-number">7.10.2.1</span> Confidence
+        Intervals for IC
         Differences](#confidence-intervals-for-ic-differences)
-  - [Confusion Matrix](#confusion-matrix)
-  - [Conclusion](#conclusion)
-- [References](#references)
+  - [<span class="toc-section-number">7.11</span> Confusion
+    Matrix](#confusion-matrix)
+  - [<span class="toc-section-number">7.12</span>
+    Conclusion](#conclusion)
+- [<span class="toc-section-number">8</span> References](#references)
 
 # Introduction
 

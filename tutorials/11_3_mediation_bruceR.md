@@ -1,30 +1,32 @@
 Mediation analysis with bruceR
 ================
 Mauricio Garnier-Villarreal
-29 January, 2026
+01 April, 2026
 
-- [What is mediation analysis?](#what-is-mediation-analysis)
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Prepare the data set](#prepare-the-data-set)
-    - [Create composite scores](#create-composite-scores)
-    - [Select variables for analysis](#select-variables-for-analysis)
-- [Mediation analysis steps](#mediation-analysis-steps)
-- [Mediation analysis](#mediation-analysis)
-  - [Mediation analysis with bruceR](#mediation-analysis-with-brucer)
-    - [Total effect](#total-effect)
-    - [Indirect effect](#indirect-effect)
-      - [Inference for the indirect
-        effect](#inference-for-the-indirect-effect)
-        - [Bootstrap NHST](#bootstrap-nhst)
-      - [Direct effect](#direct-effect)
-    - [Final recommendations](#final-recommendations)
-  - [Effect sizes](#effect-sizes)
-  - [Visualizations](#visualizations)
-  - [Interpretation](#interpretation)
-- [References](#references)
+- [1 What is mediation analysis?](#1-what-is-mediation-analysis)
+- [2 Setup the R session](#2-setup-the-r-session)
+- [3 Import the data set](#3-import-the-data-set)
+  - [3.1 Prepare the data set](#31-prepare-the-data-set)
+    - [3.1.1 Create composite scores](#311-create-composite-scores)
+    - [3.1.2 Select variables for
+      analysis](#312-select-variables-for-analysis)
+- [4 Mediation analysis steps](#4-mediation-analysis-steps)
+- [5 Mediation analysis](#5-mediation-analysis)
+  - [5.1 Mediation analysis with
+    bruceR](#51-mediation-analysis-with-brucer)
+    - [5.1.1 Total effect](#511-total-effect)
+    - [5.1.2 Indirect effect](#512-indirect-effect)
+      - [5.1.2.1 Inference for the indirect
+        effect](#5121-inference-for-the-indirect-effect)
+        - [5.1.2.1.1 Bootstrap NHST](#51211-bootstrap-nhst)
+      - [5.1.2.2 Direct effect](#5122-direct-effect)
+    - [5.1.3 Final recommendations](#513-final-recommendations)
+  - [5.2 Effect sizes](#52-effect-sizes)
+  - [5.3 Visualizations](#53-visualizations)
+  - [5.4 Interpretation](#54-interpretation)
+- [6 References](#6-references)
 
-# What is mediation analysis?
+# 1 What is mediation analysis?
 
 With mediation analysis, we are trying to find out whether the effect or
 association between an independent and a dependent variable is due to an
@@ -39,7 +41,7 @@ this example, *Lack of confidence in the government* is therefore our
 
 ![](images/Path_diagram_example.png)
 
-# Setup the R session
+# 2 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -65,7 +67,7 @@ library(tidyr)
 library(patchwork)
 ```
 
-# Import the data set
+# 3 Import the data set
 
 We now import the WVS data set in `.sav` format.
 
@@ -79,7 +81,7 @@ dim(dat)
 We are calling the data set **dat** and asking to see the dimension of
 it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 3.1 Prepare the data set
 
 In cases with large data sets like this it is easy to loose track of all
 548 variables. We therefore might want to select a subset of variables
@@ -133,7 +135,7 @@ The variables we will use here are:
 - Q112-Q120: Corruption Perception Index
 - Q65-Q73: Lack of Confidence in the government
 
-### Create composite scores
+### 3.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -173,7 +175,7 @@ designated as factors. Categorical variables should therefore not be
 designated as factor variables when you are working with the PROCESS
 macro. In our data set this is not the case, so we can proceed.
 
-### Select variables for analysis
+### 3.1.2 Select variables for analysis
 
 Now, we will again create a new data set (**dat2**) that only contains
 the variables we want to work with:
@@ -201,7 +203,7 @@ The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `drop_na()` function we are
 excluding all cases with some missing values.
 
-# Mediation analysis steps
+# 4 Mediation analysis steps
 
 Mediation analysis can be split into a few steps
 
@@ -212,7 +214,7 @@ Mediation analysis can be split into a few steps
 - Use either *bootstraps* or *Monte-Carlo* to make an inference about
   the mediation/indirect effect
 
-# Mediation analysis
+# 5 Mediation analysis
 
 Mediation analysis involves several regressions in the sense that we
 have multiple outcomes. Here we have all predictor(s) and mediator(s)
@@ -263,7 +265,7 @@ defined as the product of $a$ and $b$ parameters from the previous
 regressions $ab$, which is equal to $c-c'$ (in the case of linear
 regression).
 
-## Mediation analysis with bruceR
+## 5.1 Mediation analysis with bruceR
 
 The general code for a simple moderation model using the PROCESS
 function. In the command, the inputs for `data`, `y`, `x`, and `meds`
@@ -456,7 +458,7 @@ med1_std <- PROCESS(data = dat2,
     ## Please see the help page for details: help(PROCESS)
     ## Ignore this note if you have already set a seed. :)
 
-### Total effect
+### 5.1.1 Total effect
 
 Lets first look at the total effect model. The output is given in the
 model summary for model (1), where *Perception of corruption* is the
@@ -469,7 +471,7 @@ effect as the standardized slope is $\beta = -0.102$ (given under the
 explained by *Secular values* ($R^2 = .01$, given as *R-sq* under the
 subheading *Model Summary*).
 
-### Indirect effect
+### 5.1.2 Indirect effect
 
 The output for the indirect effect is given all the way at the bottom of
 the output, in the last table with the indirect, direct and total
@@ -487,7 +489,7 @@ confidence in the government*. And as *Secular values* increases by one
 standard deviation, *Perception of corruption* increases by 0.133 units,
 through the effect on *Lack of confidence in the government*.
 
-#### Inference for the indirect effect
+#### 5.1.2.1 Inference for the indirect effect
 
 There are several ways to do inference about the statistical
 significance of the indirect effect. Below, we outline three options for
@@ -522,7 +524,7 @@ covariance, and calculating the respective new parameters of interest
 empirical parameter distribution, from which we will calculate
 confidence intervals to make inferences.
 
-##### Bootstrap NHST
+##### 5.1.2.1.1 Bootstrap NHST
 
 By default, the PROCESS function provides bootstrapped confidence
 intervals. This is what we have already done above: The estimate for the
@@ -530,12 +532,12 @@ indirect effect is
 $ab = 0.628, 95\% CI = [0.611, 0.645], \beta = 0.133$. We recommend to
 use the Bootstrap method for inferences, with `nsim = 1000` or higher
 
-#### Direct effect
+#### 5.1.2.2 Direct effect
 
 We always get output for the direct effect as well, which is estimated
 to be $c` = -1.111, 95\% CI = [-1.145, -1.078], \beta = -0.236$.
 
-### Final recommendations
+### 5.1.3 Final recommendations
 
 As we discussed, there are several ways to test for the indirect
 effects. You should not consider the indirect effect to follow a normal
@@ -547,7 +549,7 @@ assumptions, because it uses functions of the parameters, while the
 Bootstrap assumption is that your sample is large enough to be
 representative of the population of interest.
 
-## Effect sizes
+## 5.2 Effect sizes
 
 The PROCESS function provides effect size measure for the overall model,
 such as the $R^2$, and can use the standardize coefficients as a measure
@@ -574,7 +576,7 @@ eta_squared(Anova(med1$model.y, type=2), partial=F)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
-## Visualizations
+## 5.3 Visualizations
 
 We can also generate plots for the different parameters of interest,
 $c$, $c'$, $a$, and $b$. The direct effects plots can help us describe
@@ -627,7 +629,7 @@ functionality from the `patchwork` package
 
 ![](11_3_mediation_bruceR_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-## Interpretation
+## 5.4 Interpretation
 
 For the final interpretation, we will use the **Sobel test** for the
 direct effects, and the **Bootstrap** for the indirect effect.
@@ -650,7 +652,7 @@ With these pattern of results, we see that as SV increases LCG
 increases, and as LCG increases PC increases. While the direct effect of
 SV on PC presents a negative effect.
 
-# References
+# 6 References
 
 Hayes, Andrew F. (2022). Introduction to mediation, moderation, and
 conditional process analysis: A regression-based approach (Third

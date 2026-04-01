@@ -6,6 +6,7 @@ output:
   github_document:
     toc: yes
     toc_depth: 5
+    number_sections: true
 editor_options:
   chunk_output_type: inline
 ---
@@ -398,7 +399,7 @@ write.csv(dat_new, file = "test_data2.csv")
 
 Each R sessions is connected to a particular folder on your computer, your working directory. We can check where we are by using the function getwd() which stands for "get the current working directory". This resulting path is where the data will be stored.
 
-```{r working directory, echo=FALSE}
+```{r working directory, echo=FALSE, eval = FALSE}
 
 # Ask R in which directory are we working
 getwd()

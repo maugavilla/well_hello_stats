@@ -2,50 +2,37 @@ Moderation analysis using the PROCESS macro
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+01 April, 2026
 
--   <a href="#what-is-moderation-analysis"
-    id="toc-what-is-moderation-analysis">What is moderation analysis?</a>
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#installing-the-process-macro"
-    id="toc-installing-the-process-macro">Installing the PROCESS macro</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#prepare-the-data-set" id="toc-prepare-the-data-set">Prepare
-        the data set</a>
-        -   <a href="#create-composite-scores"
-            id="toc-create-composite-scores">Create composite scores</a>
-        -   <a href="#recoding-sex-variable" id="toc-recoding-sex-variable">Recoding
-            sex variable</a>
-        -   <a href="#select-variables-for-analysis"
-            id="toc-select-variables-for-analysis">Select variables for analysis</a>
--   <a href="#moderation-analysis-steps"
-    id="toc-moderation-analysis-steps">Moderation analysis steps</a>
--   <a href="#categorical-moderator"
-    id="toc-categorical-moderator">Categorical moderator</a>
-    -   <a href="#main-effects" id="toc-main-effects">Main effects</a>
-        -   <a href="#interpretation" id="toc-interpretation">Interpretation</a>
-    -   <a href="#interaction-model" id="toc-interaction-model">Interaction
-        model</a>
-        -   <a href="#effect-size" id="toc-effect-size">Effect size</a>
-        -   <a href="#probing" id="toc-probing">Probing</a>
-        -   <a href="#interpretation-1" id="toc-interpretation-1">Interpretation</a>
--   <a href="#continuous-moderator" id="toc-continuous-moderator">Continuous
-    moderator</a>
-    -   <a href="#main-effects-1" id="toc-main-effects-1">Main effects</a>
-        -   <a href="#interpretation-2" id="toc-interpretation-2">Interpretation</a>
-    -   <a href="#interaction-model-1" id="toc-interaction-model-1">Interaction
-        model</a>
-        -   <a href="#effect-size-1" id="toc-effect-size-1">Effect size</a>
-        -   <a href="#probing-1" id="toc-probing-1">Probing</a>
-        -   <a href="#interpretation-3" id="toc-interpretation-3">Interpretation</a>
-    -   <a href="#visualizing-interactions"
-        id="toc-visualizing-interactions">Visualizing interactions</a>
--   <a href="#process-models" id="toc-process-models">PROCESS models</a>
--   <a href="#references" id="toc-references">References</a>
+- [1 What is moderation analysis?](#1-what-is-moderation-analysis)
+- [2 Setup the R session](#2-setup-the-r-session)
+- [3 Installing the PROCESS macro](#3-installing-the-process-macro)
+- [4 Import the data set](#4-import-the-data-set)
+  - [4.1 Prepare the data set](#41-prepare-the-data-set)
+    - [4.1.1 Create composite scores](#411-create-composite-scores)
+    - [4.1.2 Recoding sex variable](#412-recoding-sex-variable)
+    - [4.1.3 Select variables for
+      analysis](#413-select-variables-for-analysis)
+- [5 Moderation analysis steps](#5-moderation-analysis-steps)
+- [6 Categorical moderator](#6-categorical-moderator)
+  - [6.1 Main effects](#61-main-effects)
+    - [6.1.1 Interpretation](#611-interpretation)
+  - [6.2 Interaction model](#62-interaction-model)
+    - [6.2.1 Effect size](#621-effect-size)
+    - [6.2.2 Probing](#622-probing)
+    - [6.2.3 Interpretation](#623-interpretation)
+- [7 Continuous moderator](#7-continuous-moderator)
+  - [7.1 Main effects](#71-main-effects)
+    - [7.1.1 Interpretation](#711-interpretation)
+  - [7.2 Interaction model](#72-interaction-model)
+    - [7.2.1 Effect size](#721-effect-size)
+    - [7.2.2 Probing](#722-probing)
+    - [7.2.3 Interpretation](#723-interpretation)
+  - [7.3 Visualizing interactions](#73-visualizing-interactions)
+- [8 PROCESS models](#8-process-models)
+- [9 References](#9-references)
 
-# What is moderation analysis?
+# 1 What is moderation analysis?
 
 With moderation analysis, we are trying to find out whether the effect
 or association between two variables depends on another variable. Let’s
@@ -56,7 +43,7 @@ or the *Secular Values* of individuals. The latter two variables are
 called *moderators* of the association between *Lack of confidence in
 the government* and *Perception of corruption*.
 
-# Setup the R session
+# 2 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -74,7 +61,7 @@ that we will be using
 library(rio)
 ```
 
-# Installing the PROCESS macro
+# 3 Installing the PROCESS macro
 
 In this tutorial, we will be showing you how to do moderation analysis
 using the **PROCESS** macro. To use the process macro, you first need to
@@ -88,7 +75,7 @@ script rather than an r package, and its usage is therefore a bit
 different from what you are used to. Andrew Hayes, the author of the
 PROCESS macro writes:
 
-*“PROCESS for R is a program file or “script” (process.R) that when
+*“PROCESS for R is a program file or”script” (process.R) that when
 executed defined a function called process in the existing workspace.
 Once the process script is executed (without changing the file
 whatsoever), then the process function is available for use and
@@ -128,7 +115,7 @@ source("process.R")
     ## Workshop schedule at http://haskayne.ucalgary.ca/CCRAM
     ## 
 
-# Import the data set
+# 4 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -142,19 +129,19 @@ dim(dat)
 We are calling our data set **dat** and asking to see the dimension of
 it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 4.1 Prepare the data set
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with, since it is not easy to keep an
 overview of 548 variables. We first identify the variables that we want
 to work with. The variables we will use here are:
 
--   Q260: sex, 1 = Male, 2 = Female
--   Q262: age in years
--   Y001: post-materialism index
--   SACSECVAL: secular values
--   Q112-Q120: Corruption Perception Index
--   Q65-Q73: Lack of Confidence in the government
+- Q260: sex, 1 = Male, 2 = Female
+- Q262: age in years
+- Y001: post-materialism index
+- SACSECVAL: secular values
+- Q112-Q120: Corruption Perception Index
+- Q65-Q73: Lack of Confidence in the government
 
 We first create the vector **vars** containing the variable names of the
 variables that we want to keep. Next, we create a new data set **dat2**
@@ -190,7 +177,7 @@ head(dat2)
     ## 5   2   3   2
     ## 6   2   2   2
 
-### Create composite scores
+### 4.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -231,7 +218,7 @@ analysis should therefore not be designated as factor variables when you
 are working with the PROCESS macro. In our data set this is not the
 case, so we can proceed.
 
-### Recoding sex variable
+### 4.1.2 Recoding sex variable
 
 We recode the variable “Sex” (Q260) with values 1 and 2 to having the
 values 0 and 1. The value 0 now means *male*, and 1 means *female*. When
@@ -259,7 +246,7 @@ head(dat2)
     ## 5   2   3   2 2.777778  2.25      0
     ## 6   2   2   2 2.555556  1.75      1
 
-### Select variables for analysis
+### 4.1.3 Select variables for analysis
 
 Now, we will select only the variables of interest in a separate data
 set, excluding the individual items of the mean scores.
@@ -287,20 +274,20 @@ The new **dat2** data set only include the 5 continuous variables of
 interest, and 1 binary variable. With the `na.omit()` function we are
 excluding all cases with some missing values.
 
-# Moderation analysis steps
+# 5 Moderation analysis steps
 
 Moderation is split into multiple steps, (a)
 
--   Estimate the *main effects* model that includes only the predictors
-    as a *normal* multiple regression.
--   Estimate the *interaction* model that now also includes the
-    interactions between predictors.
--   Compare the models: the *p-value* test the Null hypothesis of the
-    two predictors being independent, and the change in $R^2$ represents
-    the effect size magnitude of the interaction
--   Probe the interaction: estimate the simple slopes, the slope for the
-    focal predictor at fixed values of the moderator predictor.
--   Plot the simple slopes
+- Estimate the *main effects* model that includes only the predictors as
+  a *normal* multiple regression.
+- Estimate the *interaction* model that now also includes the
+  interactions between predictors.
+- Compare the models: the *p-value* test the Null hypothesis of the two
+  predictors being independent, and the change in $R^2$ represents the
+  effect size magnitude of the interaction
+- Probe the interaction: estimate the simple slopes, the slope for the
+  focal predictor at fixed values of the moderator predictor.
+- Plot the simple slopes
 
 The first three steps test the Null Hypothesis of the interaction (with
 the respective effect size), while the last two steps seek to explain
@@ -310,13 +297,13 @@ these conditional relations.
 We will see how to implement these steps for the two common scenarios
 with a categorical or a continuous moderator.
 
-# Categorical moderator
+# 6 Categorical moderator
 
 For the categorical predictor model, we will have *Lack of confidence in
 the government* as the focal predictor of *Perception of corruption*,
 and *Sex* as the categorical moderator.
 
-## Main effects
+## 6.1 Main effects
 
 The main effects model presents both the effects of each predictor on
 the outcome.
@@ -346,22 +333,22 @@ summary(main_cat)
     ## Multiple R-squared:  0.1081, Adjusted R-squared:  0.1081 
     ## F-statistic:  4341 on 2 and 71630 DF,  p-value: < 2.2e-16
 
-### Interpretation
+### 6.1.1 Interpretation
 
--   We reject the null hypothesis of both predictors being equally good
-    predictors as the mean model, $F(2, 71630) = 4341, p < .001$.
--   Both predictors explained 11% of the variance in the outcome
-    ($R^2 = 0.108$).
--   The average outcome score for *Male* with 0 *Lack of confidence in
-    the government* is 2.55 ($b_0 = 2.55, SE = 0.01, p < .001$)
--   As *Lack of confidence in the government* increase by 1 unit,
-    *Perception of corruption* increases by 0.36
-    ($b_1 = 0.36, SE = 0.004, p < .001$), holding *Sex* constant.
--   As *Sex* changes, *Perception of corruption* decreases by 0.023 for
-    *Female* ($b_2 = -0.023, SE = 0.006, p < .001$), holding *Lack of
-    confidence in the government* constant.
+- We reject the null hypothesis of both predictors being equally good
+  predictors as the mean model, $F(2, 71630) = 4341, p < .001$.
+- Both predictors explained 11% of the variance in the outcome
+  ($R^2 = 0.108$).
+- The average outcome score for *Male* with 0 *Lack of confidence in the
+  government* is 2.55 ($b_0 = 2.55, SE = 0.01, p < .001$)
+- As *Lack of confidence in the government* increase by 1 unit,
+  *Perception of corruption* increases by 0.36
+  ($b_1 = 0.36, SE = 0.004, p < .001$), holding *Sex* constant.
+- As *Sex* changes, *Perception of corruption* decreases by 0.023 for
+  *Female* ($b_2 = -0.023, SE = 0.006, p < .001$), holding *Lack of
+  confidence in the government* constant.
 
-## Interaction model
+## 6.2 Interaction model
 
 The code for a simple moderation model using the PROCESS macro is
 `process (data = my_data_frame, y = "dependent_variable", x = "independent_variable", w ="moderator_variable", model = 1)`.
@@ -430,7 +417,7 @@ this term tests the Null Hypothesis that the 2 predictors are
 independent. In our example, the coefficient for the interaction term is
 -0.008 and the *p-value* is 0.313.
 
-### Effect size
+### 6.2.1 Effect size
 
 To assess the effect size of the interaction, we can look at this as the
 change in $R^2$ when the interaction is added. The output is shown under
@@ -438,7 +425,7 @@ the header *Test(s) of highest order unconditional interaction(s):*, and
 we can see that the change in the explained variance is 0
 ($\Delta R^2 = 0.000$), given by *R2-chng*.
 
-### Probing
+### 6.2.2 Probing
 
 Probing the interaction means to estimate the dependent focal
 regressions at specific levels of the moderator. When using the
@@ -462,30 +449,30 @@ The difference in the slopes for women rather than men is -0.008
 (0.3733 - 0.3653), which is exactly the slope for the interaction term
 `Int_1`.
 
-### Interpretation
+### 6.2.3 Interpretation
 
--   We fail fail to reject the null hypothesis of the 2 predictors being
-    independent ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
--   The slope between *lack of confidence in the government* and
-    *Perception of corruption* for female participants is 0.008 points
-    lower than the slope for male participants
-    ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
--   For *Male* participants, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.373
-    ($b_{1M} = 0.373, SE = 0.006, p < .001$).
--   For *Female* participants, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.365
-    ($b_{1F} = 0.365, SE = 0.006, p < .001$).
--   The addition of the interaction does not improve the model’s
-    predictive accuracy ($\Delta R^2 = 0.000$).
+- We fail fail to reject the null hypothesis of the 2 predictors being
+  independent ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
+- The slope between *lack of confidence in the government* and
+  *Perception of corruption* for female participants is 0.008 points
+  lower than the slope for male participants
+  ($b_{*} = -0.008, SE = 0.008, p = 0.313$).
+- For *Male* participants, the slope between *lack of confidence in the
+  government* and *Perception of corruption* is 0.373
+  ($b_{1M} = 0.373, SE = 0.006, p < .001$).
+- For *Female* participants, the slope between *lack of confidence in
+  the government* and *Perception of corruption* is 0.365
+  ($b_{1F} = 0.365, SE = 0.006, p < .001$).
+- The addition of the interaction does not improve the model’s
+  predictive accuracy ($\Delta R^2 = 0.000$).
 
-# Continuous moderator
+# 7 Continuous moderator
 
 For the continuous predictor model, we have *Lack of confidence in the
 government* as the focal predictor of *Perception of corruption*, and
 *Secular values* as the continuous moderator.
 
-## Main effects
+## 7.1 Main effects
 
 The main effects model presents both the effects of each predictor on
 the outcome. With a continuous predictor, the main effects model is just
@@ -516,25 +503,24 @@ summary(main_cont)
     ## Multiple R-squared:  0.1574, Adjusted R-squared:  0.1574 
     ## F-statistic:  6691 on 2 and 71630 DF,  p-value: < 2.2e-16
 
-### Interpretation
+### 7.1.1 Interpretation
 
--   We reject the null hypothesis of both predictors being equally good
-    predictors as the mean model (a model including only the intercept
-    but no predictors), $F(2, 71630) = 6691, p < .001$.
--   Both predictors explained 16% of the variance in the outcome
-    ($R^2 = 0.157$).
--   The average outcome score for *Perception of corruption*, when both
-    predictors are equal to 0 is 2.73
-    ($b_0 = 2.73, SE = 0.01, p < .001$)
--   As *Lack of confidence in the government* increase by 1 unit,
-    *Perception of corruption* increases by 0.46 points
-    ($b_1 = 0.46, SE = 0.004, p < .001$), holding *Secular Values*
-    constant.
--   As *Secular Value* increases by 1 unit, *Perception of corruption*
-    decreases by -1.11 points ($b_2 = -1.11, SE = 0.017, p < .001$),
-    holding *Lack of confidence in the government* constant.
+- We reject the null hypothesis of both predictors being equally good
+  predictors as the mean model (a model including only the intercept but
+  no predictors), $F(2, 71630) = 6691, p < .001$.
+- Both predictors explained 16% of the variance in the outcome
+  ($R^2 = 0.157$).
+- The average outcome score for *Perception of corruption*, when both
+  predictors are equal to 0 is 2.73 ($b_0 = 2.73, SE = 0.01, p < .001$)
+- As *Lack of confidence in the government* increase by 1 unit,
+  *Perception of corruption* increases by 0.46 points
+  ($b_1 = 0.46, SE = 0.004, p < .001$), holding *Secular Values*
+  constant.
+- As *Secular Value* increases by 1 unit, *Perception of corruption*
+  decreases by -1.11 points ($b_2 = -1.11, SE = 0.017, p < .001$),
+  holding *Lack of confidence in the government* constant.
 
-## Interaction model
+## 7.2 Interaction model
 
 The interaction model is an extension of the main effects model, that
 includes an interaction term between *Lack of confidence in the
@@ -618,7 +604,7 @@ In the output, we see that the interaction term `Int_1`, and the
 *p-value* for this term testing the Null Hypothesis that the 2
 predictors are independent.
 
-### Effect size
+### 7.2.1 Effect size
 
 To assess the effect size of the interaction, we can look at this as the
 change in $R^2$ when the interaction is added. The output is shown under
@@ -626,7 +612,7 @@ the header *Test(s) of highest order unconditional interaction(s):*, and
 we can see that the change in the explained variance is
 $\Delta R^2 = 0.0015$, as given by *R2-chng*.
 
-### Probing
+### 7.2.2 Probing
 
 If we go back to the coefficient for the interaction term, you can see
 that it is -0.243. This coefficient tells the change in the slope is
@@ -731,27 +717,27 @@ We can now see that the slope of interest changes from 0.54 to 0.32 from
 the lowest and highest values. And for every one of them we reject the
 null hypothesis of each simple slope being equal to 0
 
-### Interpretation
+### 7.2.3 Interpretation
 
--   We reject the null hypothesis of the 2 predictors being independent
-    ($b_{*} = -0.243, SE = 0.021, p < .001$).
--   As the moderator *Secular Values* increase by 1 unit, the focal
-    regression (`Corrup ~ LCGov`) decreases by 0.243 points
-    ($b_{*} = -0.243, SE = 0.021, p < .001$)
--   For low *Secular Values*, the slope between *lack of confidence in
-    the government* and *Perception of corruption* is 0.495
-    ($b_{LSV} = 0.495, SE = 0.005, p < .001$)
--   For average *Secular Values* it is 0.453
-    ($b_{MSV} = 0.453, SE = 0.004, p < .001$)
--   For high *Secular Values* it is 0.410
-    ($b_{HSV} = 0.410, SE = 0.006, p < .001$).
--   In the general trend we see that the focal slope goes from 0.54 at
-    the minimum observed *Secular Values* to 0.32 at the maximum
-    observed *Secular values* score.
--   The addition of the interaction increases the model’s predictive
-    accuracy by 0.15% ($\Delta R^2 = 0.0015$).
+- We reject the null hypothesis of the 2 predictors being independent
+  ($b_{*} = -0.243, SE = 0.021, p < .001$).
+- As the moderator *Secular Values* increase by 1 unit, the focal
+  regression (`Corrup ~ LCGov`) decreases by 0.243 points
+  ($b_{*} = -0.243, SE = 0.021, p < .001$)
+- For low *Secular Values*, the slope between *lack of confidence in the
+  government* and *Perception of corruption* is 0.495
+  ($b_{LSV} = 0.495, SE = 0.005, p < .001$)
+- For average *Secular Values* it is 0.453
+  ($b_{MSV} = 0.453, SE = 0.004, p < .001$)
+- For high *Secular Values* it is 0.410
+  ($b_{HSV} = 0.410, SE = 0.006, p < .001$).
+- In the general trend we see that the focal slope goes from 0.54 at the
+  minimum observed *Secular Values* to 0.32 at the maximum observed
+  *Secular values* score.
+- The addition of the interaction increases the model’s predictive
+  accuracy by 0.15% ($\Delta R^2 = 0.0015$).
 
-## Visualizing interactions
+## 7.3 Visualizing interactions
 
 Unfortunately, the PROCESS macro is not very useful for plotting an
 interaction. To generate plots of interactions, you can instead use the
@@ -760,7 +746,7 @@ want to stick with the process macro, you can request the data necessary
 to generate a plot from the PROCESS macro using the `plot = 2` option,
 but you then have to create a graph manually.
 
-# PROCESS models
+# 8 PROCESS models
 
 When working with the PROCESS macro, the argument `model` specifies the
 type of model. Such as moderation, mediation, serial, parallel,
@@ -769,7 +755,7 @@ example. The other numbered models in PROCESS are available in Appendix
 A of *Introduction to Mediation, Moderation, and Conditional Process
 Analysis* (Hayes, 2022)
 
-# References
+# 9 References
 
 Hayes, Andrew F. (2022). Introduction to mediation, moderation, and
 conditional process analysis: A regression-based approach (Third

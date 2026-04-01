@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 ---
 
@@ -52,6 +53,7 @@ library(rio)
 library(sjlabelled)
 library(summarytools)
 library(ggplot2)
+library(tidySEM)
 ```
 
 If you want to load the helper functions directly from this GitHub repository, you can do it with this URL

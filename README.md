@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-17 March, 2026
+01 April, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -288,18 +288,22 @@ following a course.
 
 ## Multilevel Models
 
-- [Multilevel regression: intro and random
+- [Intro and random
   effects](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_MLM1.md):
   setting up R session, import data set, how to handle nested data, MLM,
   random effects, visualization, model comparison, effect sizes.
   Packages: lme4, lmerTest, rio, parameters, ggplot2, dplyr, r2mlm,
   tidyr, car, performance, marginaleffects
-- [Multilevel regression:
-  centering](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_1_MLM_centering.md):
+- [Centering](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_1_MLM_centering.md):
   setting up R session, import data set, grand mean centering, group
   mean centering, separating contextual effects, effect sizes. Packages:
   lme4, lmerTest, rio, parameters, performance, r2mlm, dplyr, ggplot2,
   tidyr
+- [Interactions](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_2_MLM_interactions.md):
+  setting up R session, import data set, level-1 interactions, level-2
+  interactions, cross-level interactions, 3-way interactions, effect
+  size, probing and plotting. Packages: lme4, lmerTest, rio, parameters,
+  performance, r2mlm, dplyr, ggplot2, tidyr, marginaleffects, sjPlot
 
 ## Mixture models
 

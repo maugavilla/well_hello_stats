@@ -2,46 +2,34 @@ Mediation analysis using the PROCESS macro
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+01 April, 2026
 
--   <a href="#what-is-mediation-analysis"
-    id="toc-what-is-mediation-analysis">What is mediation analysis?</a>
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#installing-the-process-macro"
-    id="toc-installing-the-process-macro">Installing the PROCESS macro</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#prepare-the-data-set" id="toc-prepare-the-data-set">Prepare
-        the data set</a>
-        -   <a href="#create-composite-scores"
-            id="toc-create-composite-scores">Create composite scores</a>
-        -   <a href="#select-variables-for-analysis"
-            id="toc-select-variables-for-analysis">Select variables for analysis</a>
--   <a href="#mediation-analysis-steps"
-    id="toc-mediation-analysis-steps">Mediation analysis steps</a>
--   <a href="#mediation-analysis" id="toc-mediation-analysis">Mediation
-    analysis</a>
-    -   <a href="#mediation-analysis-with-the-process-macro"
-        id="toc-mediation-analysis-with-the-process-macro">Mediation analysis
-        with the PROCESS macro</a>
-        -   <a href="#total-effect" id="toc-total-effect">Total effect</a>
-        -   <a href="#indirect-effect" id="toc-indirect-effect">Indirect effect</a>
-            -   <a href="#inference-for-the-indirect-effect"
-                id="toc-inference-for-the-indirect-effect">Inference for the indirect
-                effect</a>
-                -   <a href="#bootstrap-nhst" id="toc-bootstrap-nhst">Bootstrap NHST</a>
-                -   <a href="#monte-carlo-nhst" id="toc-monte-carlo-nhst">Monte-Carlo
-                    NHST</a>
-                -   <a href="#sobel-nhst" id="toc-sobel-nhst">Sobel NHST</a>
-            -   <a href="#direct-effect" id="toc-direct-effect">Direct effect</a>
-        -   <a href="#final-recommendations" id="toc-final-recommendations">Final
-            recommendations</a>
-    -   <a href="#interpretation" id="toc-interpretation">Interpretation</a>
--   <a href="#process-models" id="toc-process-models">PROCESS models</a>
--   <a href="#references" id="toc-references">References</a>
+- [1 What is mediation analysis?](#1-what-is-mediation-analysis)
+- [2 Setup the R session](#2-setup-the-r-session)
+- [3 Installing the PROCESS macro](#3-installing-the-process-macro)
+- [4 Import the data set](#4-import-the-data-set)
+  - [4.1 Prepare the data set](#41-prepare-the-data-set)
+    - [4.1.1 Create composite scores](#411-create-composite-scores)
+    - [4.1.2 Select variables for
+      analysis](#412-select-variables-for-analysis)
+- [5 Mediation analysis steps](#5-mediation-analysis-steps)
+- [6 Mediation analysis](#6-mediation-analysis)
+  - [6.1 Mediation analysis with the PROCESS
+    macro](#61-mediation-analysis-with-the-process-macro)
+    - [6.1.1 Total effect](#611-total-effect)
+    - [6.1.2 Indirect effect](#612-indirect-effect)
+      - [6.1.2.1 Inference for the indirect
+        effect](#6121-inference-for-the-indirect-effect)
+        - [6.1.2.1.1 Bootstrap NHST](#61211-bootstrap-nhst)
+        - [6.1.2.1.2 Monte-Carlo NHST](#61212-monte-carlo-nhst)
+        - [6.1.2.1.3 Sobel NHST](#61213-sobel-nhst)
+      - [6.1.2.2 Direct effect](#6122-direct-effect)
+    - [6.1.3 Final recommendations](#613-final-recommendations)
+  - [6.2 Interpretation](#62-interpretation)
+- [7 PROCESS models](#7-process-models)
+- [8 References](#8-references)
 
-# What is mediation analysis?
+# 1 What is mediation analysis?
 
 With mediation analysis, we are trying to find out whether the effect or
 association between an independent and a dependent variable is due to an
@@ -56,7 +44,7 @@ this example, *Lack of confidence in the government* is therefore our
 
 ![](images/Path_diagram_example.png)
 
-# Setup the R session
+# 2 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -75,12 +63,12 @@ import the data.
 library(rio)
 ```
 
-# Installing the PROCESS macro
+# 3 Installing the PROCESS macro
 
 In this tutorial, we will be showing you how to do mediation analysis
 using the **PROCESS** macro. If you already know how to work with the
 PROCESS macro in R you can skip the rest of this section and go to
-[Import the data set](#import-the-data-set). Just don’t forget to run
+[Import the data set](#4-import-the-data-set). Just don’t forget to run
 the PROCESS script once. If you have not worked with the PROCESS macro
 in R before, follow the steps below.
 
@@ -94,7 +82,7 @@ script rather than an r package, and its usage is therefore a bit
 different from what you are used to. Andrew Hayes, the author of the
 PROCESS macro writes:
 
-*“PROCESS for R is a program file or “script” (process.R) that when
+*“PROCESS for R is a program file or”script” (process.R) that when
 executed defined a function called process in the existing workspace.
 Once the process script is executed (without changing the file
 whatsoever), then the process function is available for use and
@@ -134,7 +122,7 @@ source("process.R")
     ## Workshop schedule at http://haskayne.ucalgary.ca/CCRAM
     ## 
 
-# Import the data set
+# 4 Import the data set
 
 We now import the WVS data set in `.sav` format.
 
@@ -148,7 +136,7 @@ dim(dat)
 We are calling the data set **dat** and asking to see the dimension of
 it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 4.1 Prepare the data set
 
 In cases with large data sets like this it is easy to loose track of all
 548 variables. We therefore might want to select a subset of variables
@@ -196,13 +184,13 @@ head(dat2)
 
 The variables we will use here are:
 
--   Q262: age in years
--   Y001: post-materialism index
--   SACSECVAL: secular values
--   Q112-Q120: Corruption Perception Index
--   Q65-Q73: Lack of Confidence in the government
+- Q262: age in years
+- Y001: post-materialism index
+- SACSECVAL: secular values
+- Q112-Q120: Corruption Perception Index
+- Q65-Q73: Lack of Confidence in the government
 
-### Create composite scores
+### 4.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -242,7 +230,7 @@ designated as factors. Categorical variables should therefore not be
 designated as factor variables when you are working with the PROCESS
 macro. In our data set this is not the case, so we can proceed.
 
-### Select variables for analysis
+### 4.1.2 Select variables for analysis
 
 Now, we will again create a new data set (**dat2**) that only contains
 the variables we want to work with:
@@ -270,18 +258,18 @@ The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `na.omit()` function we are
 excluding all cases with some missing values.
 
-# Mediation analysis steps
+# 5 Mediation analysis steps
 
 Mediation analysis can be split into a few steps
 
--   Estimate the *total effect* model, that includes only the outcome
-    and main predictor variables
--   Estimate the *mediation* model, including the 2 regressions that are
-    involved (will explain this next)
--   Use either *bootstraps* or *Monte-Carlo* to make an inference about
-    the mediation/indirect effect
+- Estimate the *total effect* model, that includes only the outcome and
+  main predictor variables
+- Estimate the *mediation* model, including the 2 regressions that are
+  involved (will explain this next)
+- Use either *bootstraps* or *Monte-Carlo* to make an inference about
+  the mediation/indirect effect
 
-# Mediation analysis
+# 6 Mediation analysis
 
 Mediation analysis involves several regressions in the sense that we
 have multiple outcomes. Here we have all predictor(s) and mediator(s)
@@ -292,9 +280,9 @@ In the simple mediation model with one independent variable (X), one
 dependent variable (Y), and one mediator variable (M), we have the
 following paths (see the figure below):
 
--   the *direct effect* of X on Y, denoted c’
--   the *direct effect* of X on M, denoted a
--   the *direct effect* of M on Y, denoted b
+- the *direct effect* of X on Y, denoted c’
+- the *direct effect* of X on M, denoted a
+- the *direct effect* of M on Y, denoted b
 
 In addition, we have the *total effect*, denoted c, which is the overall
 effect of X on Y. The total effect includes the direct effect and the
@@ -332,7 +320,7 @@ defined as the product of $a$ and $b$ parameters from the previous
 regressions $ab$, which is equal to $c-c'$ (in the case of linear
 regression).
 
-## Mediation analysis with the PROCESS macro
+## 6.1 Mediation analysis with the PROCESS macro
 
 The general code for a simple moderation model using the PROCESS macro
 is
@@ -453,7 +441,7 @@ model where *Perception of corruption* is the outcome variable, and one
 model where *Lack of confidence in the government* is the outcome
 variable.
 
-### Total effect
+### 6.1.1 Total effect
 
 Lets first look at the total effect model. The output is given under the
 heading *TOTAL EFFECT MODEL*. Here we see that the *total* effect of
@@ -464,7 +452,7 @@ effect as the standardized slope is $\beta = -0.102$ (given under the
 explained by *Secular values* ($R^2 = .01$, given as *R-sq* under the
 subheading *Model Summary*).
 
-### Indirect effect
+### 6.1.2 Indirect effect
 
 The output for the indirect effect is given all the way at the bottom of
 the output of the PROCESS macro under the heading *TOTAL, DIRECT, AND
@@ -482,7 +470,7 @@ confidence in the government*. And as *Secular values* increases by one
 standard deviation, *Perception of corruption* increases by 0.133 units,
 through the effect on *Lack of confidence in the government*.
 
-#### Inference for the indirect effect
+#### 6.1.2.1 Inference for the indirect effect
 
 There are several ways to do inference about the statistical
 significance of the indirect effect. Below, we outline three options for
@@ -517,14 +505,14 @@ covariance, and calculating the respective new parameters of interest
 empirical parameter distribution, from which we will calculate
 confidence intervals to make inferences.
 
-##### Bootstrap NHST
+##### 6.1.2.1.1 Bootstrap NHST
 
 By default, the PROCESS macro provides bootstrapped confidence
 intervals. This is what we have already done above: The estimate for the
 indirect effect is
 $ab = 0.628, 95\% CI = [0.611, 0.645], \beta = 0.133$.
 
-##### Monte-Carlo NHST
+##### 6.1.2.1.2 Monte-Carlo NHST
 
 To use Monte-Carlo NHST, we simply add `mc = 5000` to the PROCESS
 command:
@@ -636,7 +624,7 @@ empirical distribution. So we would again reject the null hypothesis
 that *Lack of confidence in the government* does not have a mediating
 effect between *Secular values* and *Perception of Corruption*.
 
-##### Sobel NHST
+##### 6.1.2.1.3 Sobel NHST
 
 Although not recommended, you can request the Sobel NHST by specifying
 `normal = 1` and `boot = 0` in the PROCESS macro command.
@@ -748,12 +736,12 @@ $ab = 0.628, SE = 0.009, p < .001, \beta = 0.133$.
 Notice that the main difference is that now we are making the inference
 based on the *p-value* instead of confidence interval.
 
-#### Direct effect
+#### 6.1.2.2 Direct effect
 
 We always get output for the direct effect as well, which is estimated
 to be $c` = -1.111, 95\% CI = [-1.145, -1.078], \beta = -0.236$.
 
-### Final recommendations
+### 6.1.3 Final recommendations
 
 As we discussed, there are several ways to test for the indirect
 effects. You should not consider the indirect effect to follow a normal
@@ -765,7 +753,7 @@ assumptions, because it uses functions of the parameters, while the
 Bootstrap assumption is that your sample is large enough to be
 representative of the population of interest.
 
-## Interpretation
+## 6.2 Interpretation
 
 For the final interpretation, we will use the **Sobel test** for the
 direct effects, and the **Monte-Carlo** for the indirect effect
@@ -788,7 +776,7 @@ With these pattern of results, we see that as SV increases LCG
 increases, and as LCG increases PC increases. While the direct effect of
 SV on PC presents a negative effect.
 
-# PROCESS models
+# 7 PROCESS models
 
 When working with the PROCESS macro, the argument `model` specifies the
 type of model. Such as moderation, mediation, serial, parallel,
@@ -797,7 +785,7 @@ example. The other numbered models in PROCESS are available in Appendix
 A of *Introduction to Mediation, Moderation, and Conditional Process
 Analysis* (Hayes, 2022)
 
-# References
+# 8 References
 
 Hayes, Andrew F. (2022). Introduction to mediation, moderation, and
 conditional process analysis: A regression-based approach (Third

@@ -2,28 +2,29 @@ Reliability analysis
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-11 February, 2024
+01 April, 2026
 
-- [What is reliability analysis?](#what-is-reliability-analysis)
-- [Preparation](#preparation)
-  - [Setup the R session](#setup-the-r-session)
-  - [Import the data set](#import-the-data-set)
-    - [Select variables of interest](#select-variables-of-interest)
-    - [Data preparation](#data-preparation)
-- [Reliability analysis](#reliability-analysis)
-  - [Cronbach’s alpha](#cronbachs-alpha)
-    - [Interpreting the output](#interpreting-the-output)
-    - [Mix of positively and negatively scored
-      items](#mix-of-positively-and-negatively-scored-items)
-    - [Squared multiple correlation
-      (SMC)](#squared-multiple-correlation-smc)
-  - [McDonald’s omega](#mcdonalds-omega)
-    - [Interpreting the output](#interpreting-the-output-1)
-    - [Mix of positively and negatively scored
-      items](#mix-of-positively-and-negatively-scored-items-1)
-- [References](#references)
+- [1 What is reliability analysis?](#1-what-is-reliability-analysis)
+- [2 Preparation](#2-preparation)
+  - [2.1 Setup the R session](#21-setup-the-r-session)
+  - [2.2 Import the data set](#22-import-the-data-set)
+    - [2.2.1 Select variables of
+      interest](#221-select-variables-of-interest)
+    - [2.2.2 Data preparation](#222-data-preparation)
+- [3 Reliability analysis](#3-reliability-analysis)
+  - [3.1 Cronbach’s alpha](#31-cronbachs-alpha)
+    - [3.1.1 Interpreting the output](#311-interpreting-the-output)
+    - [3.1.2 Mix of positively and negatively scored
+      items](#312-mix-of-positively-and-negatively-scored-items)
+    - [3.1.3 Squared multiple correlation
+      (SMC)](#313-squared-multiple-correlation-smc)
+  - [3.2 McDonald’s omega](#32-mcdonalds-omega)
+    - [3.2.1 Interpreting the output](#321-interpreting-the-output)
+    - [3.2.2 Mix of positively and negatively scored
+      items](#322-mix-of-positively-and-negatively-scored-items)
+- [4 References](#4-references)
 
-# What is reliability analysis?
+# 1 What is reliability analysis?
 
 In many areas of the social sciences, variables of interest are not
 directly observable. These (latent) variables are therefore measured
@@ -41,9 +42,9 @@ scale validity).” (McNeish, 2018, p. 413). In this tutorial, we will
 look at two measures of reliability: *Cronbach’s alpha* $\alpha$ and
 *McDonald’s omega total* $\omega_t$.
 
-# Preparation
+# 2 Preparation
 
-## Setup the R session
+## 2.1 Setup the R session
 
 Starting a new session, we should first set our working directory. Here,
 we set it to the the folder that contains the [World Values Survey
@@ -79,7 +80,7 @@ library(car)
     ## 
     ##     logit
 
-## Import the data set
+## 2.2 Import the data set
 
 We import the WVS data set.
 
@@ -94,7 +95,7 @@ We name the data set **dat** and ask **R** to show us its dimensions
 using `dim()`. We see that the data set has 84638 rows (in this case
 respondents), and 563 columns (in this case variables).
 
-### Select variables of interest
+### 2.2.1 Select variables of interest
 
 With a large data set like the WVS, we usually want to select only a
 subset of variables that we need for our analysis. This makes the data
@@ -142,7 +143,7 @@ head(dat2)
     ## 5  NA   2   2   3   2
     ## 6  NA   1   2   2   2
 
-### Data preparation
+### 2.2.2 Data preparation
 
 Let’s first have a look at the items that make up the scale of
 confidence in the government. Using `attributes()`, we can see that the
@@ -306,7 +307,7 @@ reverse_coded <- c("Q65_r", "Q69_r", "Q71_r", "Q72_r", "Q73_r")
 dat3 <- dat2[, reverse_coded] 
 ```
 
-# Reliability analysis
+# 3 Reliability analysis
 
 Now that our data is well prepared, getting the reliability estimates is
 actually super easy. We look at Cronbach’s alpha and McDonald’s omega
@@ -316,7 +317,7 @@ approximates reliability when *tau-equivalence* assumption is met.
 McDonald’s omega is an improved measure of reliability based on the
 congeneric measurement model (Cho & Kim, 2015)
 
-## Cronbach’s alpha
+## 3.1 Cronbach’s alpha
 
 To get Cronbach’s alpha, we simply use the `alpha()` function from the
 `psych` package, and give it the name of the data set that contains the
@@ -325,6 +326,9 @@ reverse coded items (`dat3`).
 ``` r
 alpha(dat3)               # note that ggplot2 also has a function called `alpha`. If you also have the ggplot2 package loaded, you have to specify which of these you want to use. To use the alpha function from the `psych` package you can type `psych::alpha()`
 ```
+
+    ## Warning in response.frequencies(x, max = max): response.frequency has been
+    ## deprecated and replaced with responseFrequecy.  Please fix your call
 
     ## 
     ## Reliability analysis   
@@ -362,7 +366,7 @@ alpha(dat3)               # note that ggplot2 also has a function called `alpha`
     ## Q72_r 0.31 0.39 0.23 0.07 0.03
     ## Q73_r 0.26 0.35 0.29 0.10 0.03
 
-### Interpreting the output
+### 3.1.1 Interpreting the output
 
 The main thing we are looking for in the output of the alpha function is
 *alpha_raw*, which is the value for Cronbach’s alpha.
@@ -393,7 +397,7 @@ remaining 4 items than the remaining items Q71 (confidence in the
 government), Q72 (confidence in political parties), and Q73 (confidence
 in the parliament).
 
-### Mix of positively and negatively scored items
+### 3.1.2 Mix of positively and negatively scored items
 
 If you have a mix of positively and negatively scored items in your data
 (e.g., if you forgot to reverse code some items of the scale), you can
@@ -408,6 +412,9 @@ forgot_reverse <- c("Q65", "Q69", "Q71_r", "Q72_r", "Q73_r")
 dat4 <- dat2[, forgot_reverse] 
 alpha(dat4)
 ```
+
+    ## Warning in response.frequencies(x, max = max): response.frequency has been
+    ## deprecated and replaced with responseFrequecy.  Please fix your call
 
     ## Warning in alpha(dat4): Some items were negatively correlated with the first principal component and probably 
     ## should be reversed.  
@@ -464,6 +471,9 @@ option to get around this problem, so let’s try that:
 alpha(dat4, check.keys = TRUE)
 ```
 
+    ## Warning in response.frequencies(x, max = max): response.frequency has been
+    ## deprecated and replaced with responseFrequecy.  Please fix your call
+
     ## Warning in alpha(dat4, check.keys = TRUE): Some items were negatively correlated with the first principal component and were automatically reversed.
     ##  This is indicated by a negative sign for the variable name.
 
@@ -471,8 +481,8 @@ alpha(dat4, check.keys = TRUE)
     ## Reliability analysis   
     ## Call: alpha(x = dat4, check.keys = TRUE)
     ## 
-    ##   raw_alpha std.alpha G6(smc) average_r  S/N     ase mean   sd median_r
-    ##       0.83      0.11    0.52     0.024 0.12 0.00099  2.4 0.74    -0.32
+    ##   raw_alpha std.alpha G6(smc) average_r S/N     ase mean   sd median_r
+    ##       0.83      0.83    0.82      0.49 4.8 0.00099  2.4 0.74     0.46
     ## 
     ##     95% confidence boundaries 
     ##          lower alpha upper
@@ -480,20 +490,20 @@ alpha(dat4, check.keys = TRUE)
     ## Duhachek  0.83  0.83  0.83
     ## 
     ##  Reliability if an item is dropped:
-    ##       raw_alpha std.alpha G6(smc) average_r   S/N alpha se var.r med.r
-    ## Q65-       0.84      0.37    0.65     0.127  0.58  0.00093  0.40  0.12
-    ## Q69-       0.81      0.47    0.66     0.184  0.90  0.00112  0.32  0.18
-    ## Q71_r      0.77     -0.22    0.33    -0.047 -0.18  0.00140  0.27 -0.32
-    ## Q72_r      0.78     -0.37    0.25    -0.073 -0.27  0.00131  0.27 -0.35
-    ## Q73_r      0.76     -0.37    0.21    -0.072 -0.27  0.00140  0.25 -0.33
+    ##       raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+    ## Q65-       0.84      0.84    0.82      0.57 5.4  0.00093 0.020  0.57
+    ## Q69-       0.81      0.81    0.80      0.52 4.3  0.00112 0.042  0.51
+    ## Q71_r      0.77      0.77    0.76      0.45 3.3  0.00140 0.024  0.43
+    ## Q72_r      0.78      0.78    0.76      0.47 3.5  0.00131 0.018  0.46
+    ## Q73_r      0.76      0.76    0.73      0.45 3.2  0.00140 0.015  0.44
     ## 
     ##  Item statistics 
     ##           n raw.r std.r r.cor r.drop mean   sd
-    ## Q65-  73362  0.64 0.204 -0.16   0.45  2.9 0.92
-    ## Q69-  74827  0.73 0.057 -0.30   0.57  2.7 0.94
-    ## Q71_r 74235  0.84 0.649  0.64   0.72  2.4 0.99
-    ## Q72_r 74317  0.81 0.716  0.74   0.68  2.1 0.90
-    ## Q73_r 74277  0.84 0.713  0.77   0.73  2.2 0.95
+    ## Q65-  73362  0.64  0.64  0.49   0.45  2.9 0.92
+    ## Q69-  74827  0.73  0.73  0.62   0.57  2.7 0.94
+    ## Q71_r 74235  0.84  0.83  0.79   0.72  2.4 0.99
+    ## Q72_r 74317  0.81  0.81  0.77   0.68  2.1 0.90
+    ## Q73_r 74277  0.84  0.84  0.82   0.73  2.2 0.95
     ## 
     ## Non missing response frequency for each item
     ##          1    2    3    4 miss
@@ -526,7 +536,7 @@ where all items are reverse coded by hand. We no longer get the warning,
 and get the same correct result of $\alpha = 0.83$ and remaining output
 as before.
 
-### Squared multiple correlation (SMC)
+### 3.1.3 Squared multiple correlation (SMC)
 
 The `smc()` function gives us the squared multiple correlation (think
 $R^2$) for each of the items with all other items.
@@ -542,7 +552,7 @@ Here, we can see that the SCM for items Q65_r and Q69_r are low in
 comparison to the SCM of the remaining three items. This is in line with
 the results for the corrected item-total correlation from above.
 
-## McDonald’s omega
+## 3.2 McDonald’s omega
 
 The `omega()` function from the `psych` package gives use McDonald’s
 omega total $\omega_t$. We provide the name of the data set `dat3` to
@@ -568,18 +578,18 @@ omega(dat3)
     ## Omega Total            0.88 
     ## 
     ## Schmid Leiman Factor loadings greater than  0.2 
-    ##          g   F1*   F2*   F3*   h2   u2   p2
-    ## Q65_r 0.52        0.41       0.44 0.56 0.61
-    ## Q69_r 0.64        0.37       0.56 0.44 0.73
-    ## Q71_r 0.66  0.45             0.65 0.35 0.67
-    ## Q72_r 0.61  0.54             0.67 0.33 0.56
-    ## Q73_r 0.66  0.62             0.83 0.17 0.54
+    ##          g   F1*   F2*   F3*   h2   h2   u2   p2  com
+    ## Q65_r 0.52        0.41       0.44 0.44 0.56 0.61 1.95
+    ## Q69_r 0.64        0.37       0.56 0.56 0.44 0.73 1.70
+    ## Q71_r 0.66  0.45             0.65 0.65 0.35 0.67 1.83
+    ## Q72_r 0.61  0.54             0.67 0.67 0.33 0.56 1.98
+    ## Q73_r 0.66  0.62             0.83 0.83 0.17 0.54 2.01
     ## 
     ## With Sums of squares  of:
-    ##    g  F1*  F2*  F3* 
-    ## 1.94 0.87 0.31 0.03 
+    ##    g  F1*  F2*  F3*   h2 
+    ## 1.94 0.87 0.31 0.03 2.07 
     ## 
-    ## general/max  2.22   max/min =   27.3
+    ## general/max  0.94   max/min =   64.6
     ## mean percent general =  0.62    with sd =  0.08 and cv of  0.13 
     ## Explained Common Variance of the general factor =  0.61 
     ## 
@@ -591,10 +601,10 @@ omega(dat3)
     ## Compare this with the adequacy of just a general factor and no group factors
     ## The degrees of freedom for just the general factor are 5  and the fit is  0.52 
     ## The number of observations was  76897  with Chi Square =  39864.87  with prob <  0
-    ## The root mean square of the residuals is  0.16 
-    ## The df corrected root mean square of the residuals is  0.23 
+    ## The root mean square of the residuals is  0.12 
+    ## The df corrected root mean square of the residuals is  0.16 
     ## 
-    ## RMSEA index =  0.322  and the 10 % confidence intervals are  0.319 0.325
+    ## RMSEA index =  0.322  and the 90 % confidence intervals are  0.319 0.325
     ## BIC =  39808.62 
     ## 
     ## Measures of factor score adequacy             
@@ -609,7 +619,7 @@ omega(dat3)
     ## Omega general for total scores and subscales  0.65 0.52 0.46  NA
     ## Omega group for total scores and subscales    0.21 0.36 0.21  NA
 
-### Interpreting the output
+### 3.2.1 Interpreting the output
 
 The omega function provides quite a lot of output. First, we get
 actually get a visual representation of the model that the function fits
@@ -626,7 +636,7 @@ For the moment, we are not insterested in the remaining output, but you
 can get a helpful and detailed description of the output of the
 `omega()` function by typing typing `?omega` in the console.
 
-### Mix of positively and negatively scored items
+### 3.2.2 Mix of positively and negatively scored items
 
 For the `omega()` fuction, you can also provide a mix of positively and
 negatively scored items, and you will get the same reliability estimate
@@ -637,7 +647,7 @@ printing a warning. Items that were automatically reverse coded are
 indicated by a small minus sign after their name under the heading
 *Schmid Leiman Factor loadings greater than 0.2*.
 
-# References
+# 4 References
 
 Chan C, Chan GC, Leeper TJ, Becker J (2021). rio: A Swiss-army knife for
 data file I/O. R package version 0.5.29.

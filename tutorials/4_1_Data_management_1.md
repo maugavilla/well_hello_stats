@@ -2,25 +2,25 @@ Data management 1
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-12 February, 2024
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Select variables of interest](#select-variables-of-interest)
-- [Recode items](#recode-items)
-  - [Reverse code](#reverse-code)
-  - [Reverse code missing value
-    codes](#reverse-code-missing-value-codes)
-  - [Dummy code](#dummy-code)
-- [Create composite scores](#create-composite-scores)
-  - [Sum score](#sum-score)
-  - [Mean score](#mean-score)
-- [Variable calculations](#variable-calculations)
-  - [Equation calculations](#equation-calculations)
-  - [Scale](#scale)
-- [Selecting subsets](#selecting-subsets)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Select variables of interest](#21-select-variables-of-interest)
+- [3 Recode items](#3-recode-items)
+  - [3.1 Reverse code](#31-reverse-code)
+  - [3.2 Reverse code missing value
+    codes](#32-reverse-code-missing-value-codes)
+  - [3.3 Dummy code](#33-dummy-code)
+- [4 Create composite scores](#4-create-composite-scores)
+  - [4.1 Sum score](#41-sum-score)
+  - [4.2 Mean score](#42-mean-score)
+- [5 Variable calculations](#5-variable-calculations)
+  - [5.1 Equation calculations](#51-equation-calculations)
+  - [5.2 Scale](#52-scale)
+- [6 Selecting subsets](#6-selecting-subsets)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start up we always need to setup our session. For this wee need
 to set our working directory, in this case I am doing that for the
@@ -52,7 +52,7 @@ library(psych)
     ## 
     ##     logit
 
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -68,7 +68,7 @@ of it. We see that the data set has 76897 subjects, and 548 columns. If
 you have downaloaded a different version of the WVS these number might
 differ.
 
-## Select variables of interest
+## 2.1 Select variables of interest
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -108,9 +108,9 @@ correctly by looking at the the dimension of the data **dim(dat2)** and
 looking at the first 6 rows of it **head(dat2)**. These are quick checks
 that we have done this correctly.
 
-# Recode items
+# 3 Recode items
 
-## Reverse code
+## 3.1 Reverse code
 
 There are cases where you need to switch the direction of some items.
 For example, we want to create a scale score for **Confidence in the
@@ -312,7 +312,7 @@ colnames(dat2)
     ##  [1] "Q65"   "Q69"   "Q71"   "Q72"   "Q73"   "Q275"  "Q260"  "Q262"  "Q65_r"
     ## [10] "Q69_r" "Q71_r" "Q72_r" "Q73_r"
 
-## Reverse code missing value codes
+## 3.2 Reverse code missing value codes
 
 From the attributes we have seen that there were missing value codes,
 even when those had been correctly set as `NA` when importing the data
@@ -354,7 +354,7 @@ values and making them equal to `=NA`.
 dat2$Q65_r <- recode(dat2$Q65, "1=4; 2=3; 3=2; 4=1; -5=NA; -4=NA; -2=NA; -1=NA")
 ```
 
-## Dummy code
+## 3.3 Dummy code
 
 Another issue could be to have a categorical variable, and you need to
 create multiple dummy code variables. Changing a single categorical
@@ -482,13 +482,13 @@ table(dat2$Q275, dat2$X7)
 table(dat2$Q275, dat2$X8)
 ```
 
-# Create composite scores
+# 4 Create composite scores
 
 We create composite scores when we need to combine multiple items into 1
 *total* score. The most common case is when we need to create a scale
 score, like the **Confidence in the government** one.
 
-## Sum score
+## 4.1 Sum score
 
 We will see here to ways to create the composite scores. The first, and
 I think the most common one is to sum up all the items. We can do this
@@ -511,7 +511,7 @@ other argument we are using the `na.rm=T`, this specifies that when
 missing values are present to ignore them and sum as many values as each
 subject has. Functionally treating the missing as a 0.
 
-## Mean score
+## 4.2 Mean score
 
 The another method we will see is to get the average across items
 instead of the sum. This is very similar as before, we just switch to
@@ -536,12 +536,12 @@ because with the sum the missing values either create a missing sum or
 counts the missing value as 0, while when the mean ignores it it will
 estimate the mean across all the answered items, not affecting the mean.
 
-# Variable calculations
+# 5 Variable calculations
 
 Creating composite variables are a way of doing calculations with
 variables. But we can do any calculation that we consider necessary.
 
-## Equation calculations
+## 5.1 Equation calculations
 
 For example, we can table the mean composite score and subtract any
 value of interest we want, could be 2 as it is the median range of
@@ -594,7 +594,7 @@ head(dat2)
     ## 5  0  0  0  0  0     11    2.75           0.75  0.05612245
     ## 6  0  0  0  0  0     13    3.25           1.25  0.06372549
 
-## Scale
+## 5.2 Scale
 
 Another common variable calculation is to scale a variable. This means
 to change mean and/or standard deviation of the variable. You might up
@@ -657,7 +657,7 @@ head(dat2)
 By setting both arguments `T`, we have standardized the mean composite
 score of **Confidence in the government**.
 
-# Selecting subsets
+# 6 Selecting subsets
 
 In many cases you would want to work a subset of subjects in the data
 set. So lets see a few ways to do these selections. We will use the
@@ -689,7 +689,7 @@ to 6 will be selected. Note that these are 2 equal signs, not one.
 Here we present to logical operators you can use in R.
 
 | Operator | Description          |
-|----------|----------------------|
+|:---------|:---------------------|
 | ==       | exactly equal        |
 | \<       | lower than           |
 | \<=      | lower than or equal  |

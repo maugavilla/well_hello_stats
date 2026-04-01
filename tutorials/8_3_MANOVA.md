@@ -1,16 +1,21 @@
 # Multivariate Analysis of Variance (MANOVA)
 Santiago Gómez-Echeverry & Mauricio Garnier-Villarreal
-2024-01-31
+2026-03-31
 
-- [Introduction](#introduction)
-- [Set up the R Session](#set-up-the-r-session)
-- [Import the Dataset](#import-the-dataset)
-- [Perform Multivariate Analysis of
-  Variance](#perform-multivariate-analysis-of-variance)
-  - [Effect size](#effect-size)
-  - [Homogeneity of Variances](#homogeneity-of-variances)
-  - [HE Plots](#he-plots)
-  - [LDA](#lda)
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> Set up the R
+  Session](#set-up-the-r-session)
+- [<span class="toc-section-number">3</span> Import the
+  Dataset](#import-the-dataset)
+- [<span class="toc-section-number">4</span> Perform Multivariate
+  Analysis of Variance](#perform-multivariate-analysis-of-variance)
+  - [<span class="toc-section-number">4.1</span> Effect
+    size](#effect-size)
+  - [<span class="toc-section-number">4.2</span> Homogeneity of
+    Variances](#homogeneity-of-variances)
+  - [<span class="toc-section-number">4.3</span> HE Plots](#he-plots)
+  - [<span class="toc-section-number">4.4</span> LDA](#lda)
 
 # Introduction
 
@@ -197,7 +202,7 @@ dat_lq_agg
     3 Western Europe 81.38000 75.07600  83.32800
 
 ``` r
-dat_lq_long <- melt(dat_lq_agg, id = "Group.1", value.name = "value", variable.name = "dimension")
+dat_lq_long <- reshape2::melt(dat_lq_agg, id = "Group.1", value.name = "value", variable.name = "dimension")
 head(dat_lq_long)
 ```
 
@@ -468,10 +473,10 @@ boxM(dat_lq[,c('life', 'vote', 'education')], dat_lq$continent)
 ```
 
 
-        Box's M-test for Homogeneity of Covariance Matrices
+     Box's M-test for Homogeneity of Covariance Matrices 
 
-    data:  dat_lq[, c("life", "vote", "education")]
-    Chi-Sq (approx.) = 127.93, df = 12, p-value < 2.2e-16
+    data:  dat_lq[, c("life", "vote", "education")] by dat_lq$continent 
+    Chi-Sq (approx.) = 127.9346, df = 12, p-value = < 2.2e-16
 
 As you see, from the function `boxM` we get the chi-squared, the degrees
 of freedom and the p-value. With these results

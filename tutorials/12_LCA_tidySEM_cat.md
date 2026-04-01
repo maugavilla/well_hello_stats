@@ -1,28 +1,26 @@
-LCA with tidySEM (categorical indicators)
-================
+# LCA with tidySEM (categorical indicators)
 Mauricio Garnier-Villarreal
-08 December, 2022
+2026-03-31
 
-- <a href="#latent-class-analysis-lca"
-  id="toc-latent-class-analysis-lca">Latent Class Analysis (LCA)</a>
-  - <a href="#person-centered-vs-variable-centered"
-    id="toc-person-centered-vs-variable-centered">Person-centered vs
-    Variable-centered</a>
-  - <a href="#terminology" id="toc-terminology">Terminology</a>
-- <a href="#tidysem" id="toc-tidysem"><code>tidySEM</code></a>
-- <a href="#dichotomous-indicator-example"
-  id="toc-dichotomous-indicator-example">Dichotomous indicator example</a>
-  - <a href="#tidysem-1" id="toc-tidysem-1"><code>tidySEM</code></a>
-  - <a href="#class-enumeration" id="toc-class-enumeration">Class
-    enumeration</a>
-    - <a href="#model-fit-indices" id="toc-model-fit-indices">Model Fit
-      Indices</a>
-    - <a href="#classification-diagnostics"
-      id="toc-classification-diagnostics">Classification Diagnostics</a>
-    - <a href="#interpreting-the-final-class-solution"
-      id="toc-interpreting-the-final-class-solution">Interpreting the Final
-      Class Solution</a>
-- <a href="#references" id="toc-references">References</a>
+- [<span class="toc-section-number">1</span> Latent Class Analysis
+  (LCA)](#latent-class-analysis-lca)
+  - [<span class="toc-section-number">1.1</span> Person-centered vs
+    Variable-centered](#person-centered-vs-variable-centered)
+  - [<span class="toc-section-number">1.2</span>
+    Terminology](#terminology)
+- [<span class="toc-section-number">2</span> `tidySEM`](#tidysem)
+- [<span class="toc-section-number">3</span> Dichotomous indicator
+  example](#dichotomous-indicator-example)
+  - [<span class="toc-section-number">3.1</span> `tidySEM`](#tidysem-1)
+  - [<span class="toc-section-number">3.2</span> Class
+    enumeration](#class-enumeration)
+    - [<span class="toc-section-number">3.2.1</span> Model Fit
+      Indices](#model-fit-indices)
+    - [<span class="toc-section-number">3.2.2</span> Classification
+      Diagnostics](#classification-diagnostics)
+    - [<span class="toc-section-number">3.2.3</span> Interpreting the
+      Final Class Solution](#interpreting-the-final-class-solution)
+- [<span class="toc-section-number">4</span> References](#references)
 
 # Latent Class Analysis (LCA)
 
@@ -420,12 +418,12 @@ indices, for example for the 2 class model
 table_fit(res[[2]])
 ```
 
-      Minus2LogLikelihood    n Parameters observedStatistics    df TLI RMSEA
-    1            7333.744 1156         11              11570 11559   1     0
-      RMSEASquared RMSEANull modelName      AIC      BIC   saBIC   Entropy
-    1            0      0.05      mix2 7355.744 7411.324 7337.62 0.4729969
-       prob_min  prob_max     n_min     n_max        LL
-    1 0.7744613 0.8799195 0.3814879 0.6185121 -3666.872
+      Minus2LogLikelihood    n Parameters observedStatistics   df RMSEASquared
+    1            7333.744 1156         11               5780 5769            0
+      RMSEANull modelName      AIC      BIC    saBIC Classes   Entropy  prob_min
+    1      0.05      mix2 7355.744 7411.324 7376.384       2 0.4729977 0.7744623
+       prob_max     n_min     n_max        LL
+    1 0.8799193 0.3814879 0.6185121 -3666.872
 
 But we can use the same function to calculate these indices for all
 models in the list we are creating a data with the number of states and
@@ -436,34 +434,20 @@ fit_ind <- table_fit(res)
 fit_ind
 ```
 
-      Name Minus2LogLikelihood    n Parameters observedStatistics    df
-    1    1            7534.508 1156          5               5785  5780
-    2    2            7333.744 1156         11              11570 11559
-    3    3            7262.230 1156         17              17355 17338
-    4    4            7246.168 1156         23              23140 23117
-    5    5            7240.577 1156         29              28925 28896
-    6    6            7239.131 1156         35              34710 34675
-      saturatedDoF independenceDoF saturatedParameters independenceParameters
-    1         5765            5775                  20                     10
-    2           NA              NA                  NA                     NA
-    3           NA              NA                  NA                     NA
-    4           NA              NA                  NA                     NA
-    5           NA              NA                  NA                     NA
-    6           NA              NA                  NA                     NA
-      ChiDoF satDoF indDoF RMSEANull modelName      AIC      BIC    saBIC   Entropy
-    1     15   5765   5775      0.05      mix1 7544.508 7569.772 7538.385 1.0000000
-    2     NA     NA     NA      0.05      mix2 7355.744 7411.324 7337.620 0.4729969
-    3     NA     NA     NA      0.05      mix3 7296.230 7382.127 7266.107 0.5892915
-    4     NA     NA     NA      0.05      mix4 7292.168 7408.380 7250.044 0.5841009
-    5     NA     NA     NA      0.05      mix5 7298.577 7445.106 7244.453 0.6421219
-    6     NA     NA     NA      0.05      mix6 7309.131 7485.977 7243.008 0.7129370
-       prob_min  prob_max      n_min     n_max        LL TLI RMSEA RMSEASquared
-    1 1.0000000 1.0000000 1.00000000 1.0000000 -3767.254  NA    NA           NA
-    2 0.7744613 0.8799195 0.38148789 0.6185121 -3666.872   1     0            0
-    3 0.7549166 0.9014420 0.23010381 0.3875433 -3631.115   1     0            0
-    4 0.6009185 0.9107875 0.16089965 0.4160900 -3623.084   1     0            0
-    5 0.5974707 0.9014084 0.09688581 0.4247405 -3620.288   1     0            0
-    6 0.4994726 1.0000000 0.02076125 0.2448097 -3619.566   1     0            0
+      Name Classes        LL    n Parameters      AIC      BIC    saBIC   Entropy
+    1    1       1 -3767.254 1156          5 7544.508 7569.772 7553.890 1.0000000
+    2    2       2 -3666.872 1156         11 7355.744 7411.324 7376.384 0.4729977
+    3    3       3 -3631.115 1156         17 7296.230 7382.127 7328.129 0.5892915
+    4    4       4 -3622.427 1156         23 7290.854 7407.066 7334.011 0.6551484
+    5    5       5 -3620.137 1156         29 7298.274 7444.803 7352.690 0.6248132
+    6    6       6 -3619.855 1156         35 7309.710 7486.555 7375.384 0.6626452
+       prob_min  prob_max     n_min     n_max  np_ratio np_local
+    1 1.0000000 1.0000000 1.0000000 1.0000000 231.20000    231.2
+    2 0.7744623 0.8799193 0.3814879 0.6185121 105.09091     88.2
+    3 0.7549163 0.9014420 0.2301038 0.3875433  68.00000     53.2
+    4 0.6821744 0.9341997 0.1349481 0.4403114  50.26087     31.2
+    5 0.4135415 0.9311763 0.1107266 0.2820069  39.86207     25.6
+    6 0.0000000 0.8862032 0.0000000 0.3564014  33.02857      0.0
 
 Looking at AIC and BIC, we see that the model improves (smaller) as the
 number of classes increases between 1 and 3, and from 4 and above the
@@ -483,7 +467,7 @@ ggplot(elbow_plot, aes(x = Name, y = Value, group = IC))+
   theme_minimal()
 ```
 
-![](12_LCA_tidySEM_cat_files/figure-gfm/unnamed-chunk-11-1.png)
+![](12_LCA_tidySEM_cat_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 Here we see that a meaningful decrease from 1 to 2 for all indices, them
 from 2 to 3 it decreases stepper for AIC. For this we would choose the 3
@@ -533,9 +517,9 @@ cl_diag$sum.posterior
 ```
 
        class    count proportion
-    1 class1 214.8439  0.1858511
-    2 class2 506.2240  0.4379100
-    3 class3 434.9321  0.3762389
+    1 class1 214.8437  0.1858510
+    2 class2 434.9317  0.3762385
+    3 class3 506.2246  0.4379105
 
 `$sum.mostlikely` is a summary table of the most likely class membership
 based on the highest posterior class probability. From this table, we
@@ -556,8 +540,8 @@ cl_diag$sum.mostlikely
 
        class count proportion
     1 class1   266  0.2301038
-    2 class2   442  0.3823529
-    3 class3   448  0.3875433
+    2 class2   448  0.3875433
+    3 class3   442  0.3823529
 
 `$mostlikely.class` is a table with rows representing the class the
 person was assigned to, and the columns indicating the average posterior
@@ -580,10 +564,10 @@ that class solution.
 cl_diag$mostlikely.class
 ```
 
-               [,1]         [,2]       [,3]
-    [1,] 0.90144198 1.276971e-09 0.09855801
-    [2,] 0.10428496 7.549166e-01 0.14079839
-    [3,] 0.04492459 1.375918e-01 0.81748365
+              assigned.1 assigned.2   assigned.3
+    avgprob.1 0.90144203 0.09855797 7.737613e-13
+    avgprob.2 0.04492458 0.81748390 1.375915e-01
+    avgprob.3 0.10428514 0.14079854 7.549163e-01
 
 `$avg.mostlikely` contains the average posterior probabilities for each
 class, for the subset of observations with most likely class of 1:k,
@@ -593,10 +577,10 @@ where k is the number of classes.
 cl_diag$avg.mostlikely
 ```
 
-               class1    class2     class3
-    [1,] 7.280801e-01 0.1984645 0.07345545
-    [2,] 6.207000e-10 0.8646084 0.13539157
-    [3,] 4.726470e-02 0.1590972 0.79363815
+               meanprob.class1 meanprob.class2 meanprob.class3
+    assigned.1    7.280797e-01      0.07345538       0.1984650
+    assigned.2    4.726465e-02      0.79363790       0.1590974
+    assigned.3    3.761036e-13      0.13539125       0.8646088
 
 `AvePP` is presented as diagonal of `$avg.mostlikely`, the average
 posterior class probability (mean) for the subjects classified in the
@@ -606,7 +590,7 @@ respective class.
 diag(cl_diag$avg.mostlikely)
 ```
 
-    [1] 0.7280801 0.8646084 0.7936381
+    [1] 0.7280797 0.7936379 0.8646088
 
 `$individual` is the individual posterior probability matrix, with
 dimensions n (number of cases in the data) x k (number of classes).
@@ -619,13 +603,13 @@ up analyses.
 head(cl_diag$individual)
 ```
 
-               class1    class2     class3 predicted
-    [1,] 1.141239e-08 0.3339986 0.66600136         3
-    [2,] 1.141239e-08 0.3339986 0.66600136         3
-    [3,] 1.141239e-08 0.3339986 0.66600136         3
-    [4,] 1.222529e-08 0.9024075 0.09759252         2
-    [5,] 1.222529e-08 0.9024075 0.09759252         2
-    [6,] 1.222529e-08 0.9024075 0.09759252         2
+               class1     class2    class3 predicted
+    [1,] 3.314440e-31 0.66600100 0.3339990         2
+    [2,] 3.314440e-31 0.66600100 0.3339990         2
+    [3,] 3.314440e-31 0.66600100 0.3339990         2
+    [4,] 3.550522e-31 0.09759218 0.9024078         3
+    [5,] 3.550522e-31 0.09759218 0.9024078         3
+    [6,] 3.550522e-31 0.09759218 0.9024078         3
 
 Entropy is a summary measure of posterior class probabilities across
 classes and individuals. It ranges from 0 (model classification no
@@ -643,12 +627,12 @@ can be obtained using `get_fits()`.
 table_fit(res[[3]])
 ```
 
-      Minus2LogLikelihood    n Parameters observedStatistics    df TLI RMSEA
-    1             7262.23 1156         17              17355 17338   1     0
-      RMSEASquared RMSEANull modelName     AIC      BIC    saBIC   Entropy
-    1            0      0.05      mix3 7296.23 7382.127 7266.107 0.5892915
-       prob_min prob_max     n_min     n_max        LL
-    1 0.7549166 0.901442 0.2301038 0.3875433 -3631.115
+      Minus2LogLikelihood    n Parameters observedStatistics   df RMSEASquared
+    1             7262.23 1156         17               5780 5763            0
+      RMSEANull modelName     AIC      BIC    saBIC Classes   Entropy  prob_min
+    1      0.05      mix3 7296.23 7382.127 7328.129       3 0.5892915 0.7549163
+      prob_max     n_min     n_max        LL
+    1 0.901442 0.2301038 0.3875433 -3631.115
 
 ### Interpreting the Final Class Solution
 
@@ -660,36 +644,36 @@ table_prob(res[[3]])
 ```
 
        Variable Category  Probability  group
-    1  SYS_RESP        1 4.230451e-01 class1
-    2  SYS_RESP        2 5.769549e-01 class1
+    1  SYS_RESP        1 4.230449e-01 class1
+    2  SYS_RESP        2 5.769551e-01 class1
     3  IDEO_LEV        1 6.564699e-01 class1
     4  IDEO_LEV        2 3.435301e-01 class1
-    5   REP_POT        1 2.197948e-16 class1
+    5   REP_POT        1 9.569861e-13 class1
     6   REP_POT        2 1.000000e+00 class1
-    7  PROT_APP        1 2.325413e-09 class1
+    7  PROT_APP        1 6.753595e-32 class1
     8  PROT_APP        2 1.000000e+00 class1
-    9  CONV_PAR        1 2.697291e-01 class1
-    10 CONV_PAR        2 7.302709e-01 class1
-    11 SYS_RESP        1 2.790109e-01 class2
-    12 SYS_RESP        2 7.209891e-01 class2
-    13 IDEO_LEV        1 5.824491e-01 class2
-    14 IDEO_LEV        2 4.175509e-01 class2
-    15  REP_POT        1 8.186234e-01 class2
-    16  REP_POT        2 1.813766e-01 class2
-    17 PROT_APP        1 4.194693e-01 class2
-    18 PROT_APP        2 5.805307e-01 class2
-    19 CONV_PAR        1 1.277367e-01 class2
-    20 CONV_PAR        2 8.722633e-01 class2
-    21 SYS_RESP        1 6.894624e-01 class3
-    22 SYS_RESP        2 3.105376e-01 class3
-    23 IDEO_LEV        1 9.659248e-01 class3
-    24 IDEO_LEV        2 3.407522e-02 class3
-    25  REP_POT        1 7.555045e-01 class3
-    26  REP_POT        2 2.444955e-01 class3
-    27 PROT_APP        1 6.268900e-01 class3
-    28 PROT_APP        2 3.731100e-01 class3
-    29 CONV_PAR        1 7.297392e-01 class3
-    30 CONV_PAR        2 2.702608e-01 class3
+    9  CONV_PAR        1 2.697289e-01 class1
+    10 CONV_PAR        2 7.302711e-01 class1
+    11 SYS_RESP        1 6.894626e-01 class2
+    12 SYS_RESP        2 3.105374e-01 class2
+    13 IDEO_LEV        1 9.659247e-01 class2
+    14 IDEO_LEV        2 3.407529e-02 class2
+    15  REP_POT        1 7.555045e-01 class2
+    16  REP_POT        2 2.444955e-01 class2
+    17 PROT_APP        1 6.268898e-01 class2
+    18 PROT_APP        2 3.731102e-01 class2
+    19 CONV_PAR        1 7.297395e-01 class2
+    20 CONV_PAR        2 2.702605e-01 class2
+    21 SYS_RESP        1 2.790111e-01 class3
+    22 SYS_RESP        2 7.209889e-01 class3
+    23 IDEO_LEV        1 5.824492e-01 class3
+    24 IDEO_LEV        2 4.175508e-01 class3
+    25  REP_POT        1 8.186232e-01 class3
+    26  REP_POT        2 1.813768e-01 class3
+    27 PROT_APP        1 4.194694e-01 class3
+    28 PROT_APP        2 5.805306e-01 class3
+    29 CONV_PAR        1 1.277366e-01 class3
+    30 CONV_PAR        2 8.722634e-01 class3
 
 Remember we have the mixture probabilities from the classification
 diagnostics. We see that each class has between 18% and 44% of the
@@ -700,9 +684,9 @@ cl_diag$sum.posterior
 ```
 
        class    count proportion
-    1 class1 214.8439  0.1858511
-    2 class2 506.2240  0.4379100
-    3 class3 434.9321  0.3762389
+    1 class1 214.8437  0.1858510
+    2 class2 434.9317  0.3762385
+    3 class3 506.2246  0.4379105
 
 We can also plot these response probabilities across classes, by
 providing our chosen model to the `plot_prob()` function from `tidySEM`.
@@ -711,7 +695,7 @@ providing our chosen model to the `plot_prob()` function from `tidySEM`.
 plot_prob(res[[3]])
 ```
 
-![](12_LCA_tidySEM_cat_files/figure-gfm/unnamed-chunk-22-1.png)
+![](12_LCA_tidySEM_cat_files/figure-commonmark/unnamed-chunk-22-1.png)
 
 With this information we would *name* each class and describe the
 theoretical interpretation of what they mean and what characterize each

@@ -2,37 +2,31 @@ Importing data sets
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+01 April, 2026
 
--   <a href="#intoduction-to-data-formats"
-    id="toc-intoduction-to-data-formats">Intoduction to data formats</a>
--   <a href="#base-r" id="toc-base-r">Base R</a>
-    -   <a href="#text-files" id="toc-text-files">Text files</a>
--   <a href="#foreign-package" id="toc-foreign-package"><code>foreign</code>
-    package</a>
-    -   <a href="#spss" id="toc-spss">SPSS</a>
-    -   <a href="#stata" id="toc-stata">Stata</a>
--   <a href="#haven-package" id="toc-haven-package"><code>haven</code>
-    package</a>
-    -   <a href="#spss-1" id="toc-spss-1">SPSS</a>
-    -   <a href="#stata-1" id="toc-stata-1">Stata</a>
-    -   <a href="#sas" id="toc-sas">SAS</a>
--   <a href="#rio-package" id="toc-rio-package"><code>rio</code> package</a>
-    -   <a href="#text-files-1" id="toc-text-files-1">Text files</a>
-    -   <a href="#spss-2" id="toc-spss-2">SPSS</a>
-    -   <a href="#sas-1" id="toc-sas-1">SAS</a>
-    -   <a href="#stata-2" id="toc-stata-2">Stata</a>
--   <a href="#additional-information"
-    id="toc-additional-information">Additional information</a>
-    -   <a href="#need-more-detail-about-the-functions"
-        id="toc-need-more-detail-about-the-functions">Need more detail about the
-        functions</a>
-    -   <a href="#file-path" id="toc-file-path">File path</a>
-    -   <a href="#choosefile" id="toc-choosefile"><code>choose.file()</code></a>
-    -   <a href="#general-recommendations"
-        id="toc-general-recommendations">General recommendations</a>
+- [1 Intoduction to data formats](#1-intoduction-to-data-formats)
+- [2 Base R](#2-base-r)
+  - [2.1 Text files](#21-text-files)
+- [3 `foreign` package](#3-foreign-package)
+  - [3.1 SPSS](#31-spss)
+  - [3.2 Stata](#32-stata)
+- [4 `haven` package](#4-haven-package)
+  - [4.1 SPSS](#41-spss)
+  - [4.2 Stata](#42-stata)
+  - [4.3 SAS](#43-sas)
+- [5 `rio` package](#5-rio-package)
+  - [5.1 Text files](#51-text-files)
+  - [5.2 SPSS](#52-spss)
+  - [5.3 SAS](#53-sas)
+  - [5.4 Stata](#54-stata)
+- [6 Additional information](#6-additional-information)
+  - [6.1 Need more detail about the
+    functions](#61-need-more-detail-about-the-functions)
+  - [6.2 File path](#62-file-path)
+  - [6.3 `choose.file()`](#63-choosefile)
+  - [6.4 General recommendations](#64-general-recommendations)
 
-# Intoduction to data formats
+# 1 Intoduction to data formats
 
 In this tutorial, we will cover several ways to import data sets in R.
 An **advantage** of programs like R is that **you can do the same thing
@@ -83,14 +77,14 @@ simply download it from the [WVS
 website](https://www.worldvaluessurvey.org/). Tutorial 3.1 shows you how
 to do this.
 
-# Base R
+# 2 Base R
 
 *Base R* can only import files in text format. With *Base R* we mean the
 basic functionality of the **R** programming language. For these
 approaches, you do not need to install and load (`library()`) external
 packages.
 
-## Text files
+## 2.1 Text files
 
 There are two functions to import text files in *Base R*. The first one
 is a general function that can import a variety of text formats:
@@ -161,7 +155,7 @@ is(dat)
 Then we see that `dim()` and `is()` function give us the same results as
 before
 
-# `foreign` package
+# 3 `foreign` package
 
 We saw that with the base R functions we can only import text files. In
 many scenarios, however, you will have the data sets in another format
@@ -176,18 +170,13 @@ load the package.
 library(foreign)
 ```
 
-## SPSS
+## 3.1 SPSS
 
 Let’s start with one of the most commonly used ones, the `.sav` format
 used by `SPSS`. For this we will use the `read.spss()` function.
 
 ``` r
 dat <- read.spss("WVS_Cross-National_Wave_7_sav_v2_0.sav", to.data.frame = TRUE, use.value.labels = FALSE)
-```
-
-    ## re-encoding from UTF-8
-
-``` r
 dim(dat)
 ```
 
@@ -231,16 +220,16 @@ attributes(dat$Q60)
 
     ## $value.labels
     ##    Do not trust at all Do not trust very much         Trust somewhat 
-    ##                    "4"                    "3"                    "2" 
+    ##                      4                      3                      2 
     ##       Trust completely 
-    ##                    "1"
+    ##                      1
 
 In this case, we ask for the attributes of the variable `Q60`, which
 shows for example the variable label *Trust: People you know
 personally*, the values the variable takes, and corresponding value
 labels that were specified in SPSS.
 
-## Stata
+## 3.2 Stata
 
 Lets see the differences for importing an Stata file.
 
@@ -274,7 +263,7 @@ A differences when importing the SPSS data, we see that the imported
 data.frame does not keep the value labels attributes for the likert
 items.
 
-# `haven` package
+# 4 `haven` package
 
 For the following example we will use the `haven` package. `haven` is
 part of the `tidyverse`, which is a collection of R packages designed
@@ -285,7 +274,7 @@ and we can then import the different file types.
 library(haven)
 ```
 
-## SPSS
+## 4.1 SPSS
 
 ``` r
 dat <- read_sav("WVS_Cross-National_Wave_7_sav_v2_0.sav")
@@ -342,7 +331,7 @@ attributes(dat$Q60)
 When we look at the saved attributes, we see that haven saves more
 attributes information for item `Q60`, even presenting the item label.
 
-## Stata
+## 4.2 Stata
 
 Now we will see how to import an Stata file with the `haven` functions.
 We just need to switch to the `read_stata()` function.
@@ -398,7 +387,7 @@ attributes(dat$Q60)
 As with the SPSS file, `haven` keeps plenty of information for each item
 in the respective attributes.
 
-## SAS
+## 4.3 SAS
 
 With a SAS data file, we use the same format but with the respective
 function `read_sas()`. The same as the other `haven` functions, we
@@ -428,7 +417,7 @@ attributes(dat$Q60)
     ## $label
     ## [1] "Trust: People you know personally"
 
-# `rio` package
+# 5 `rio` package
 
 This package is designed to make data importing, exporting as user
 friendly as possible, deciding which functions is best to import
@@ -454,7 +443,7 @@ install_formats()
 `rio` does not include all these formats to keep the package light by
 default.
 
-## Text files
+## 5.1 Text files
 
 Now, lets see how to import the text file, we will use the swiss-knife
 import function. This function doesn’t actually imports the file, it
@@ -489,7 +478,7 @@ attributes(dat$Q60)
 
     ## NULL
 
-## SPSS
+## 5.2 SPSS
 
 As the `import()` function does the decisions for us, we just need to
 give it the new file names, and it will pick the respective package.
@@ -539,7 +528,7 @@ attributes(dat$Q60)
     ##                        Do not trust at all 
     ##                                          4
 
-## SAS
+## 5.3 SAS
 
 Again, we just need to give the new file name to the `import()` function
 and it will pick the respective package for the import of files in the
@@ -568,7 +557,7 @@ attributes(dat$Q60)
     ## $label
     ## [1] "Trust: People you know personally"
 
-## Stata
+## 5.4 Stata
 
 Finally, the same goes for the Stata files in the `.dta` format. Simply
 use the `import()` function which will choose the right package and
@@ -618,13 +607,13 @@ attributes(dat$Q60)
     ##                        Do not trust at all 
     ##                                          4
 
-# Additional information
+# 6 Additional information
 
 In the previous examples, we have use defaults that work well for
 general use cases. Here we present a few uses and cases you might ran
 into
 
-## Need more detail about the functions
+## 6.1 Need more detail about the functions
 
 So far in our examples we used the defaults or minimal number of
 arguments for each function. You might run into a case that requires to
@@ -637,7 +626,7 @@ other arguments on how to modify how it works
 ?import
 ```
 
-## File path
+## 6.2 File path
 
 In the previous examples we assumed that the data file you want to
 import was in the working directory. If that is not the case, you can
@@ -653,7 +642,7 @@ is(dat)
 Here is important to make sure the slash is this direction /, some
 operating system tend to change the direction on the file manager.
 
-## `choose.file()`
+## 6.3 `choose.file()`
 
 So far we have used the import functions with the full file name (or
 path), but some people don’t like this or are too use to browsing for a
@@ -674,16 +663,16 @@ add the file name, or some identifier for the imported file. This is so
 we can keep track of which data set was imported for the future and
 reproducibility.
 
-## General recommendations
+## 6.4 General recommendations
 
 Finally, after seeing all of these different ways to do the same thing,
 what are the final takeaways? Our recommendations for general practice,
 which should work in most scenarios, are:
 
--   Use the `import()` function from the `rio` package, this works well
-    for most common data types, and it is user friendly.
--   Save the data sets in the working directory folder, for facility to
-    have all files for a respective analysis in a single place.
--   Specify the full file name in the functions reading in the data.
-    This would give us more tractability of the data analysis process
-    and ease to reproduce it.
+- Use the `import()` function from the `rio` package, this works well
+  for most common data types, and it is user friendly.
+- Save the data sets in the working directory folder, for facility to
+  have all files for a respective analysis in a single place.
+- Specify the full file name in the functions reading in the data. This
+  would give us more tractability of the data analysis process and ease
+  to reproduce it.

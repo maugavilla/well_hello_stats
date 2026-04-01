@@ -6,6 +6,7 @@ output:
   github_document:
     toc: yes
     toc_depth: 5
+    number_sections: true
 editor_options:
   chunk_output_type: inline
   markdown: 

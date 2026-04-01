@@ -1,25 +1,41 @@
 # Mediation with path
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-2025-08-28
+2026-03-31
 
-- [What is mediation analysis?](#what-is-mediation-analysis)
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Prepare the data set](#prepare-the-data-set)
-    - [Create composite scores](#create-composite-scores)
-    - [Select variables for analysis](#select-variables-for-analysis)
-- [Mediation analysis steps](#mediation-analysis-steps)
-- [Mediation analysis](#mediation-analysis)
-  - [Path analysis](#path-analysis)
-    - [Total effect](#total-effect)
-    - [Indirect effect](#indirect-effect)
-      - [Sobel NHST](#sobel-nhst)
-      - [Bootstrap NHST](#bootstrap-nhst)
-      - [Monte-Carlo NHST](#monte-carlo-nhst)
-    - [Final recommendations](#final-recommendations)
-  - [Interpretation](#interpretation)
-- [References](#references)
+- [<span class="toc-section-number">1</span> What is mediation
+  analysis?](#what-is-mediation-analysis)
+- [<span class="toc-section-number">2</span> Setup the R
+  session](#setup-the-r-session)
+- [<span class="toc-section-number">3</span> Import the data
+  set](#import-the-data-set)
+  - [<span class="toc-section-number">3.1</span> Prepare the data
+    set](#prepare-the-data-set)
+    - [<span class="toc-section-number">3.1.1</span> Create composite
+      scores](#create-composite-scores)
+    - [<span class="toc-section-number">3.1.2</span> Select variables
+      for analysis](#select-variables-for-analysis)
+- [<span class="toc-section-number">4</span> Mediation analysis
+  steps](#mediation-analysis-steps)
+- [<span class="toc-section-number">5</span> Mediation
+  analysis](#mediation-analysis)
+  - [<span class="toc-section-number">5.1</span> Path
+    analysis](#path-analysis)
+    - [<span class="toc-section-number">5.1.1</span> Total
+      effect](#total-effect)
+    - [<span class="toc-section-number">5.1.2</span> Indirect
+      effect](#indirect-effect)
+      - [<span class="toc-section-number">5.1.2.1</span> Sobel
+        NHST](#sobel-nhst)
+      - [<span class="toc-section-number">5.1.2.2</span> Bootstrap
+        NHST](#bootstrap-nhst)
+      - [<span class="toc-section-number">5.1.2.3</span> Monte-Carlo
+        NHST](#monte-carlo-nhst)
+    - [<span class="toc-section-number">5.1.3</span> Final
+      recommendations](#final-recommendations)
+  - [<span class="toc-section-number">5.2</span>
+    Interpretation](#interpretation)
+- [<span class="toc-section-number">6</span> References](#references)
 
 # What is mediation analysis?
 
@@ -285,7 +301,7 @@ the $R^2$ to see the proportion of explained variance.
 summary(tot_fit, standardized=T, rsquare=T)
 ```
 
-    lavaan 0.6-19 ended normally after 1 iteration
+    lavaan 0.6-21 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -387,7 +403,7 @@ the total effect model.
 summary(ind_fit, standardized=T, rsquare=T)
 ```
 
-    lavaan 0.6-19 ended normally after 1 iteration
+    lavaan 0.6-21 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -501,7 +517,7 @@ ind_fit_boot <- sem(ind_mod, data = dat2, meanstructure=T,
 ```
 
     Warning: lavaan->lav_model_nvcov_bootstrap():  
-       19 bootstrap runs failed or did not converge.
+       24 bootstrap runs failed or did not converge.
 
 We can look at the standard output from the summary function, but here
 we can only ask for the default type of interval.
@@ -510,7 +526,7 @@ we can only ask for the default type of interval.
 summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 ```
 
-    lavaan 0.6-19 ended normally after 1 iteration
+    lavaan 0.6-21 ended normally after 1 iteration
 
       Estimator                                         ML
       Optimization method                           NLMINB
@@ -527,15 +543,15 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
       Standard errors                            Bootstrap
       Number of requested bootstrap draws             2000
-      Number of successful bootstrap draws            1981
+      Number of successful bootstrap draws            1976
 
     Regressions:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
       Corrup ~                                                              
-        SACSECVAL (cp)   -1.111    0.020  -56.606    0.000   -1.151   -1.074
-        LCGov      (b)    0.456    0.005   90.386    0.000    0.446    0.466
+        SACSECVAL (cp)   -1.111    0.019  -57.700    0.000   -1.150   -1.073
+        LCGov      (b)    0.456    0.005   93.721    0.000    0.446    0.466
       LCGov ~                                                               
-        SACSECVAL  (a)    1.377    0.014   95.931    0.000    1.348    1.406
+        SACSECVAL  (a)    1.377    0.015   93.960    0.000    1.348    1.406
        Std.lv  Std.all
                       
        -1.111   -0.236
@@ -545,16 +561,16 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Intercepts:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            2.725    0.012  229.248    0.000    2.701    2.748
-       .LCGov             2.047    0.006  341.379    0.000    2.035    2.059
+       .Corrup            2.725    0.012  235.760    0.000    2.703    2.749
+       .LCGov             2.047    0.006  341.719    0.000    2.036    2.059
        Std.lv  Std.all
         2.725    3.305
         2.047    2.791
 
     Variances:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-       .Corrup            0.573    0.006  101.537    0.000    0.562    0.584
-       .LCGov             0.480    0.002  211.702    0.000    0.476    0.485
+       .Corrup            0.573    0.006  100.537    0.000    0.562    0.584
+       .LCGov             0.480    0.002  209.675    0.000    0.476    0.485
        Std.lv  Std.all
         0.573    0.843
         0.480    0.892
@@ -566,8 +582,8 @@ summary(ind_fit_boot, standardized=T, rsquare=T, ci=T)
 
     Defined Parameters:
                        Estimate  Std.Err  z-value  P(>|z|) ci.lower ci.upper
-        ab                0.628    0.009   72.442    0.000    0.611    0.645
-        tot              -0.483    0.019  -25.278    0.000   -0.520   -0.448
+        ab                0.628    0.009   71.303    0.000    0.610    0.645
+        tot              -0.483    0.019  -25.240    0.000   -0.520   -0.445
        Std.lv  Std.all
         0.628    0.133
        -0.483   -0.102
@@ -580,16 +596,16 @@ parameters(ind_fit_boot, ci.method="bcai")
 
     Link                    | Coefficient |       SE |         95% CI |      z |      p
     -----------------------------------------------------------------------------------
-    Corrup ~ SACSECVAL (cp) |       -1.11 |     0.02 | [-1.15, -1.07] | -56.61 | < .001
-    Corrup ~ LCGov (b)      |        0.46 | 5.05e-03 | [ 0.45,  0.47] |  90.39 | < .001
-    LCGov ~ SACSECVAL (a)   |        1.38 |     0.01 | [ 1.35,  1.41] |  95.93 | < .001
+    Corrup ~ SACSECVAL (cp) |       -1.11 |     0.02 | [-1.15, -1.07] | -57.70 | < .001
+    Corrup ~ LCGov (b)      |        0.46 | 4.87e-03 | [ 0.45,  0.47] |  93.72 | < .001
+    LCGov ~ SACSECVAL (a)   |        1.38 |     0.01 | [ 1.35,  1.41] |  93.96 | < .001
 
     # Defined
 
     To    | Coefficient |       SE |         95% CI |      z |      p
     -----------------------------------------------------------------
-    (ab)  |        0.63 | 8.67e-03 | [ 0.61,  0.65] |  72.44 | < .001
-    (tot) |       -0.48 |     0.02 | [-0.52, -0.45] | -25.28 | < .001
+    (ab)  |        0.63 | 8.81e-03 | [ 0.61,  0.64] |  71.30 | < .001
+    (tot) |       -0.48 |     0.02 | [-0.52, -0.45] | -25.24 | < .001
 
 ``` r
 lavInspect(ind_fit_boot, "rsquare")
@@ -611,17 +627,17 @@ parameterestimates(ind_fit_boot, boot.ci.type="bca.simple",
 ```
 
              lhs op       rhs label    est    se ci.lower ci.upper std.lv std.all
-    1     Corrup  ~ SACSECVAL    cp -1.111 0.020   -1.151   -1.073 -1.111  -0.236
+    1     Corrup  ~ SACSECVAL    cp -1.111 0.019   -1.148   -1.072 -1.111  -0.236
     2     Corrup  ~     LCGov     b  0.456 0.005    0.446    0.466  0.456   0.406
-    3      LCGov  ~ SACSECVAL     a  1.377 0.014    1.348    1.406  1.377   0.328
+    3      LCGov  ~ SACSECVAL     a  1.377 0.015    1.348    1.405  1.377   0.328
     4     Corrup ~~    Corrup        0.573 0.006    0.562    0.584  0.573   0.843
     5      LCGov ~~     LCGov        0.480 0.002    0.476    0.485  0.480   0.892
     6  SACSECVAL ~~ SACSECVAL        0.031 0.000    0.031    0.031  0.031   1.000
-    7     Corrup ~1                  2.725 0.012    2.700    2.748  2.725   3.305
-    8      LCGov ~1                  2.047 0.006    2.035    2.059  2.047   2.791
+    7     Corrup ~1                  2.725 0.012    2.701    2.748  2.725   3.305
+    8      LCGov ~1                  2.047 0.006    2.036    2.059  2.047   2.791
     9  SACSECVAL ~1                  0.361 0.000    0.361    0.361  0.361   2.064
-    10        ab :=       a*b    ab  0.628 0.009    0.611    0.645  0.628   0.133
-    11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.520   -0.447 -0.483  -0.102
+    10        ab :=       a*b    ab  0.628 0.009    0.610    0.645  0.628   0.133
+    11       tot :=  (a*b)+cp   tot -0.483 0.019   -0.519   -0.443 -0.483  -0.102
        std.nox
     1   -1.348
     2    0.406
@@ -666,8 +682,8 @@ monteCarloCI(ind_fit, level=0.95)
 ```
 
            est ci.lower ci.upper
-    ab   0.628    0.611    0.646
-    tot -0.483   -0.518   -0.448
+    ab   0.628    0.611    0.645
+    tot -0.483   -0.517   -0.449
 
 Here we find that $ab = 0.628, 95\% CI = [0.611, 0.646], \beta = 0.133$.
 We reject the null hypothesis of *Lack of confidence in the government*

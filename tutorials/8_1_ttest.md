@@ -2,31 +2,22 @@ Difference in Means: t-tests
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+01 April, 2026
 
--   <a href="#setup-the-r-session" id="toc-setup-the-r-session">Setup the R
-    session</a>
--   <a href="#import-the-data-set" id="toc-import-the-data-set">Import the
-    data set</a>
-    -   <a href="#currating-the-data" id="toc-currating-the-data">Currating the
-        data</a>
-        -   <a href="#transform-categorical-variables-to-binary"
-            id="toc-transform-categorical-variables-to-binary">Transform categorical
-            variables to binary</a>
--   <a href="#difference-in-means" id="toc-difference-in-means">Difference
-    in Means</a>
--   <a href="#one-sample-t-tests" id="toc-one-sample-t-tests">One Sample
-    t-tests</a>
--   <a href="#two-sample-t-tests" id="toc-two-sample-t-tests">Two Sample
-    t-tests</a>
--   <a href="#paired-sample-t-test" id="toc-paired-sample-t-test">Paired
-    sample t-test</a>
--   <a href="#effect-sizes" id="toc-effect-sizes">Effect Sizes</a>
--   <a href="#graphing-your-results" id="toc-graphing-your-results">Graphing
-    your results</a>
--   <a href="#references" id="toc-references">References</a>
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Currating the data](#21-currating-the-data)
+    - [2.1.1 Transform categorical variables to
+      binary](#211-transform-categorical-variables-to-binary)
+- [3 Difference in Means](#3-difference-in-means)
+- [4 One Sample t-tests](#4-one-sample-t-tests)
+- [5 Two Sample t-tests](#5-two-sample-t-tests)
+- [6 Paired sample t-test](#6-paired-sample-t-test)
+- [7 Effect Sizes](#7-effect-sizes)
+- [8 Graphing your results](#8-graphing-your-results)
+- [9 References](#9-references)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -50,7 +41,7 @@ library(effectsize)
 library(rio)
 ```
 
-# Import the data set
+# 2 Import the data set
 
 We will now import the `.sav` WVS data set
 
@@ -64,7 +55,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it, we see the full data set has 76897 rows, and 548 columns.
 
-## Currating the data
+## 2.1 Currating the data
 
 Since this is a large data set, we will reduce the observations and
 variables to those we will use in this tutorial.
@@ -99,7 +90,7 @@ summary(dat$corrupt)
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
     ##   1.000   1.800   2.000   2.041   2.200   4.000     227
 
-### Transform categorical variables to binary
+### 2.1.1 Transform categorical variables to binary
 
 When we want to use categorical variables as predictors, it is
 recommended to transformed them as `factor` type in `R`, or as binary.
@@ -124,7 +115,7 @@ head(dat)
     ## 19428             DEU    2    3    3    3    3    3     3.0 Female
     ## 19429             DEU    1    1    2    2    1    2     1.6   Male
 
-# Difference in Means
+# 3 Difference in Means
 
 The **mean** is one of the most commonly used measures of central
 tendency for describing data (together with the median and mode). When
@@ -149,7 +140,7 @@ post-test, an individual’s pre-test score is matched with their
 post-test score) or if there is a clear pairing in the data (e.g. older
 siblings in group A could be matched with younger sibling in group B.)
 
-# One Sample t-tests
+# 4 One Sample t-tests
 
 As stated before, a one sample t-test asks if the mean of a group is
 different from some theoretical mean. Let’s say that we believe that the
@@ -201,7 +192,7 @@ t.test(dat$corrupt, mu=2, alternative="greater")
     ## mean of x 
     ##  2.040738
 
-# Two Sample t-tests
+# 5 Two Sample t-tests
 
 Two-sample t-test will likely be the most frequent t-test that you see
 in research or use in your own work. A two-sample t-test asks if the
@@ -272,7 +263,7 @@ t.test(dat$corrupt ~ dat$Sex, var.equal=T)
 The default in **R** is `var.qual=F`, we recommned to use is as your
 default.
 
-# Paired sample t-test
+# 6 Paired sample t-test
 
 The final t-test we will consider is a paired sample t-test. This is
 perhaps the most complex form of t-test, but it is useful when you are
@@ -316,21 +307,21 @@ statement. Paired sample t-tests do not assume equality of variance, so
 we do not need to include any variance parameter.
 
 ``` r
-pair.sample <- t.test(datp$corrupt ~ datp$time, paired = TRUE)
+pair.sample <- t.test(datp$corrupt, datp$time, paired = TRUE)
 pair.sample
 ```
 
     ## 
     ##  Paired t-test
     ## 
-    ## data:  datp$corrupt by datp$time
-    ## t = 0.52476, df = 649, p-value = 0.5999
-    ## alternative hypothesis: true difference in means is not equal to 0
+    ## data:  datp$corrupt and datp$time
+    ## t = 30.101, df = 1299, p-value < 2.2e-16
+    ## alternative hypothesis: true mean difference is not equal to 0
     ## 95 percent confidence interval:
-    ##  -0.03205994  0.05544456
+    ##  0.5053821 0.5758487
     ## sample estimates:
-    ## mean of the differences 
-    ##              0.01169231
+    ## mean difference 
+    ##       0.5406154
 
 Again, **R** provides the same kind of details as in our previous two
 examples. The first row of data shows us that `p-value = 0.5999`,
@@ -346,22 +337,22 @@ to see what happens if your data is not properly ordered.
 
 ``` r
 dat.1<- datp[order(datp$corrupt),]
-t.test(dat.1$corrupt ~ dat.1$time, paired = TRUE)
+t.test(dat.1$corrupt, dat.1$time, paired = TRUE)
 ```
 
     ## 
     ##  Paired t-test
     ## 
-    ## data:  dat.1$corrupt by dat.1$time
-    ## t = 4.9111, df = 649, p-value = 1.148e-06
-    ## alternative hypothesis: true difference in means is not equal to 0
+    ## data:  dat.1$corrupt and dat.1$time
+    ## t = 30.101, df = 1299, p-value < 2.2e-16
+    ## alternative hypothesis: true mean difference is not equal to 0
     ## 95 percent confidence interval:
-    ##  0.007017302 0.016367313
+    ##  0.5053821 0.5758487
     ## sample estimates:
-    ## mean of the differences 
-    ##              0.01169231
+    ## mean difference 
+    ##       0.5406154
 
-# Effect Sizes
+# 7 Effect Sizes
 
 Let’s reconsider our two sample t-test results.
 
@@ -402,6 +393,8 @@ function. Just adding the argument `pooled_sd=T`
 cohens_d(corrupt~Sex, data=dat, pooled_sd = T)
 ```
 
+    ## Warning: Missing values detected. NAs dropped.
+
     ## Cohen's d |         95% CI
     ## --------------------------
     ## -0.11     | [-0.22,  0.00]
@@ -417,7 +410,7 @@ generally considered small (Cohen, 1992).
 For more details about the interpretation of the Cohen’s d, please see
 [https://rpsychologist.com/cohend/](https://rpsychologist.com/cohend/l)
 
-# Graphing your results
+# 8 Graphing your results
 
 It is often helpful to readers to not only read the results of your
 analysis, but to have visual to go along with it. The package `ggpubr`
@@ -446,7 +439,8 @@ plot <-
 plot
 ```
 
-    ## Warning: Removed 227 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 227 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
 ![](8_1_ttest_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
@@ -464,11 +458,12 @@ plot <- plot +
 plot
 ```
 
-    ## Warning: Removed 227 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 227 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
 
 ![](8_1_ttest_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
-# References
+# 9 References
 
 Cohen, J. (1992). A Power Primer. Psychological Bulletin, 112(1),
 155–159.

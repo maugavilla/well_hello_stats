@@ -6,6 +6,7 @@ output:
   github_document:
     toc: yes
     toc_depth: 5
+    number_sections: true
 editor_options:
   chunk_output_type: inline
 ---
@@ -182,7 +183,7 @@ Our two groups are time, and we need to tell **R** that the sample is paired wit
 Paired sample t-tests do not assume equality of variance, so we do not need to include any variance parameter.
 
 ```{r}
-pair.sample <- t.test(datp$corrupt ~ datp$time, paired = TRUE)
+pair.sample <- t.test(datp$corrupt, datp$time, paired = TRUE)
 pair.sample
 ```
 
@@ -196,7 +197,7 @@ Use the code below to see what happens if your data is not properly ordered.
 
 ```{r}
 dat.1<- datp[order(datp$corrupt),]
-t.test(dat.1$corrupt ~ dat.1$time, paired = TRUE)
+t.test(dat.1$corrupt, dat.1$time, paired = TRUE)
 ```
 
 # Effect Sizes

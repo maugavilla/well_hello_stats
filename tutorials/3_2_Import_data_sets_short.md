@@ -2,23 +2,23 @@ Importing data sets – short version
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-08 February, 2024
+01 April, 2026
 
-- [Introduction](#introduction)
-- [Intoduction to data formats](#intoduction-to-data-formats)
-- [The `rio` package](#the-rio-package)
-  - [Importing text files](#importing-text-files)
-  - [Importing SPSS files](#importing-spss-files)
-  - [Importing SAS files](#importing-sas-files)
-  - [Importing Stata files](#importing-stata-files)
-- [Additional information](#additional-information)
-  - [Need more detail about the
-    functions](#need-more-detail-about-the-functions)
-  - [File paths](#file-paths)
-  - [`choose.file()`](#choosefile)
-  - [General recommendations](#general-recommendations)
+- [1 Introduction](#1-introduction)
+- [2 Intoduction to data formats](#2-intoduction-to-data-formats)
+- [3 The `rio` package](#3-the-rio-package)
+  - [3.1 Importing text files](#31-importing-text-files)
+  - [3.2 Importing SPSS files](#32-importing-spss-files)
+  - [3.3 Importing SAS files](#33-importing-sas-files)
+  - [3.4 Importing Stata files](#34-importing-stata-files)
+- [4 Additional information](#4-additional-information)
+  - [4.1 Need more detail about the
+    functions](#41-need-more-detail-about-the-functions)
+  - [4.2 File paths](#42-file-paths)
+  - [4.3 `choose.file()`](#43-choosefile)
+  - [4.4 General recommendations](#44-general-recommendations)
 
-# Introduction
+# 1 Introduction
 
 In this short version of the *importing data sets tutorial*, we focus on
 the the `import()` function from the `rio` package. A major advantage of
@@ -26,7 +26,7 @@ the `import()` function is that it works with many file types. Because
 of this simplicity, we will use `import()` throughout the remaining
 tutorials.
 
-# Intoduction to data formats
+# 2 Intoduction to data formats
 
 A common characteristic across the different methods is that all the
 data sets are located in the folder that is **set as working
@@ -68,7 +68,7 @@ website](https://www.worldvaluessurvey.org/). Tutorial 3.1 shows you how
 to do this. Here we will work with the *Wave 7 cross sectional* data set
 in text, SPSS, SAS, and Stata data formats.
 
-# The `rio` package
+# 3 The `rio` package
 
 The `rio` package is designed to make data importing, exporting as user
 friendly as possible. It will automatically decide which functions is
@@ -102,7 +102,7 @@ format with
 ?import
 ```
 
-## Importing text files
+## 3.1 Importing text files
 
 To import text files, we simply need to give the file name in quotes to
 the `import()` function, and specify possible missing value codes. In
@@ -144,7 +144,7 @@ attributes(dat$Q60)
 
     ## NULL
 
-## Importing SPSS files
+## 3.2 Importing SPSS files
 
 As the `import()` function does the decisions how to import data for us,
 we simply need to provide it with the new file name to import data in
@@ -214,7 +214,7 @@ the variable label *Trust: People you know personally*, the values the
 variable takes, and corresponding value labels that are specified in the
 `.sav` file created in SPSS.
 
-## Importing SAS files
+## 3.3 Importing SAS files
 
 For SAS files in the `.sas7bdat` format, the `import()` function will
 also pick the right package for the import of files.
@@ -242,7 +242,7 @@ attributes(dat$Q60)
     ## $label
     ## [1] "Trust: People you know personally"
 
-## Importing Stata files
+## 3.4 Importing Stata files
 
 Finally, the same goes for the Stata files in the `.dta` format. Simply
 use the `import()` function which will choose the right package and
@@ -292,13 +292,13 @@ attributes(dat$Q60)
     ##                        Do not trust at all 
     ##                                          4
 
-# Additional information
+# 4 Additional information
 
 In the previous examples, we have use defaults that work well for
 general use cases. Here we present a few uses and cases you might ran
 into
 
-## Need more detail about the functions
+## 4.1 Need more detail about the functions
 
 So far in our examples we used the defaults or minimal number of
 arguments for each function. You might run into a case that requires to
@@ -311,7 +311,7 @@ other arguments on how to modify how it works
 ?import
 ```
 
-## File paths
+## 4.2 File paths
 
 In the previous examples we assumed that the data file you want to
 import was in the working directory. If that is not the case, you can
@@ -327,7 +327,7 @@ is(dat)
 Here is important to make sure the slash is this direction /, some
 operating system tend to change the direction on the file manager.
 
-## `choose.file()`
+## 4.3 `choose.file()`
 
 So far we have used the import functions with the full file name (or
 path), but some people don’t like this or are too use to browsing for a
@@ -348,7 +348,7 @@ add the file name, or some identifier for the imported file. This is so
 we can keep track of which data set was imported for the future and
 reproducibility.
 
-## General recommendations
+## 4.4 General recommendations
 
 Some recommendations for general practice are:
 

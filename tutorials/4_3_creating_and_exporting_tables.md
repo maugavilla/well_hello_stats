@@ -1,49 +1,44 @@
-Creating and Exporting Tables in APA Format (7th Edition)
-================
+# Creating and Exporting Tables in APA Format (7th Edition)
 R Helpdesk (Denise J. Roth) FSW VU Amsterdam
-5/22/23
+2026-03-31
 
-- <a href="#introduction" id="toc-introduction">Introduction</a>
-- <a href="#set-up-the-r-session" id="toc-set-up-the-r-session">Set Up the
-  R session</a>
-- <a href="#import-the-dataset" id="toc-import-the-dataset">Import the
-  dataset</a>
-  - <a href="#prepare-the-dataset" id="toc-prepare-the-dataset">Prepare the
-    dataset</a>
-- <a href="#example-simple-linear-regression"
-  id="toc-example-simple-linear-regression">Example: Simple Linear
-  Regression</a>
-  - <a href="#creating-a-nice_table" id="toc-creating-a-nice_table">Creating
-    a <code>nice_table</code></a>
-  - <a href="#exporting-the-table-to-word"
-    id="toc-exporting-the-table-to-word">Exporting the Table to Word</a>
-- <a href="#integration-with-rempsyc-functions"
-  id="toc-integration-with-rempsyc-functions">Integration with
-  <code>rempsyc</code> functions</a>
-  - <a href="#linear-regression-with-nice_lm"
-    id="toc-linear-regression-with-nice_lm">Linear Regression with
-    <code>nice_lm</code></a>
-  - <a href="#t-test-with-nice_t_test"
-    id="toc-t-test-with-nice_t_test">T-test with
-    <code>nice_t_test</code></a>
-- <a href="#correlation-tables-with-apatables"
-  id="toc-correlation-tables-with-apatables">Correlation Tables with
-  <code>apaTables</code></a>
-  - <a href="#import-the-dataset-1" id="toc-import-the-dataset-1">Import the
-    dataset</a>
-  - <a href="#prepare-the-data" id="toc-prepare-the-data">Prepare the
-    data</a>
-  - <a href="#creating-correlation-table"
-    id="toc-creating-correlation-table">Creating Correlation Table</a>
-- <a href="#anova-tables-with-apatables"
-  id="toc-anova-tables-with-apatables">ANOVA tables with
-  <code>apaTables</code></a>
-  - <a href="#creating-an-example-dataset"
-    id="toc-creating-an-example-dataset">Creating an example dataset</a>
-  - <a href="#run-model-and-create-exportable-anova-table"
-    id="toc-run-model-and-create-exportable-anova-table">Run model and
-    create exportable ANOVA table</a>
-  - <a href="#further-options" id="toc-further-options">Further options</a>
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> Set Up the R
+  session](#set-up-the-r-session)
+- [<span class="toc-section-number">3</span> Import the
+  dataset](#import-the-dataset)
+  - [<span class="toc-section-number">3.1</span> Prepare the
+    dataset](#prepare-the-dataset)
+- [<span class="toc-section-number">4</span> Example: Simple Linear
+  Regression](#example-simple-linear-regression)
+  - [<span class="toc-section-number">4.1</span> Creating a
+    `nice_table`](#creating-a-nice_table)
+  - [<span class="toc-section-number">4.2</span> Exporting the Table to
+    Word](#exporting-the-table-to-word)
+- [<span class="toc-section-number">5</span> Integration with `rempsyc`
+  functions](#integration-with-rempsyc-functions)
+  - [<span class="toc-section-number">5.1</span> Linear Regression with
+    `nice_lm`](#linear-regression-with-nice_lm)
+  - [<span class="toc-section-number">5.2</span> T-test with
+    `nice_t_test`](#t-test-with-nice_t_test)
+- [<span class="toc-section-number">6</span> Correlation Tables with
+  `apaTables`](#correlation-tables-with-apatables)
+  - [<span class="toc-section-number">6.1</span> Import the
+    dataset](#import-the-dataset-1)
+  - [<span class="toc-section-number">6.2</span> Prepare the
+    data](#prepare-the-data)
+  - [<span class="toc-section-number">6.3</span> Creating Correlation
+    Table](#creating-correlation-table)
+- [<span class="toc-section-number">7</span> ANOVA tables with
+  `apaTables`](#anova-tables-with-apatables)
+  - [<span class="toc-section-number">7.1</span> Creating an example
+    dataset](#creating-an-example-dataset)
+  - [<span class="toc-section-number">7.2</span> Run model and create
+    exportable ANOVA
+    table](#run-model-and-create-exportable-anova-table)
+  - [<span class="toc-section-number">7.3</span> Further
+    options](#further-options)
 
 # Introduction
 
@@ -94,10 +89,22 @@ these packages, however.
 library(dplyr)
 library(tidyr)
 library(rempsyc)
+```
+
+    Warning: package 'rempsyc' was built under R version 4.5.3
+
+``` r
 library(flextable)
+```
+
+    Warning: package 'flextable' was built under R version 4.5.3
+
+``` r
 library(rio)
 library(apaTables)
 ```
+
+    Warning: package 'apaTables' was built under R version 4.5.3
 
 # Import the dataset
 
@@ -338,13 +345,23 @@ t_table <- nice_t_test(data = mydata,
                        response = "AI_Utility",
                        group = "Sex",
                        warning = FALSE)
+```
+
+    Using independent samples t-test. 
+     
+
+    Using Welch t-test (base R's default; cf. https://doi.org/10.5334/irsp.82).
+    For the Student t-test, use `var.equal = TRUE`. 
+     
+
+``` r
 t_table
 ```
 
       Dependent Variable         t       df         p         d   CI_lower
     1         AI_Utility 0.7521476 50.37715 0.4554623 0.1795454 -0.2520583
        CI_upper
-    1 0.6101455
+    1 0.6101454
 
 Then we can pass those results to the `nice_table` function
 

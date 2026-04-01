@@ -1,48 +1,52 @@
-Exploratory Factor Analysis
-================
+# Exploratory Factor Analysis
 Mauricio Garnier-Villarreal
-1/12/23
+2026-03-31
 
-- <a href="#introduction" id="toc-introduction">Introduction</a>
-  - <a href="#test-theory" id="toc-test-theory">Test theory</a>
-- <a href="#measurement-model" id="toc-measurement-model">Measurement
-  model</a>
-  - <a href="#exploratory-factor-analysis-efa"
-    id="toc-exploratory-factor-analysis-efa">Exploratory Factor Analysis
-    (EFA)</a>
-    - <a href="#cross-validation"
-      id="toc-cross-validation">Cross-validation</a>
-    - <a href="#illustrations" id="toc-illustrations">Illustrations</a>
-- <a href="#preparation" id="toc-preparation">Preparation</a>
-  - <a href="#getting-some-data" id="toc-getting-some-data">Getting some
-    data</a>
-  - <a href="#descriptive-statistics"
-    id="toc-descriptive-statistics">Descriptive statistics</a>
-  - <a href="#split-data-for-cross-validation"
-    id="toc-split-data-for-cross-validation">Split data for
-    cross-validation</a>
-- <a href="#exploratory-factor-analysis"
-  id="toc-exploratory-factor-analysis">Exploratory Factor Analysis</a>
-  - <a href="#lavaan" id="toc-lavaan"><code>lavaan</code></a>
-  - <a href="#estimating-the-model" id="toc-estimating-the-model">Estimating
-    the model</a>
-  - <a href="#rotation" id="toc-rotation">Rotation</a>
-  - <a href="#factor-enumeration" id="toc-factor-enumeration">Factor
-    enumeration</a>
-    - <a href="#statistical-criteria"
-      id="toc-statistical-criteria">Statistical criteria</a>
-      - <a href="#exact-fit" id="toc-exact-fit">Exact fit</a>
-      - <a href="#approximate-fit" id="toc-approximate-fit">Approximate fit</a>
-      - <a href="#information-criteria"
-        id="toc-information-criteria">Information Criteria</a>
-      - <a href="#extracting-fit-indices"
-        id="toc-extracting-fit-indices">Extracting fit indices</a>
-      - <a href="#elbow-plots" id="toc-elbow-plots">Elbow plots</a>
-      - <a href="#solution" id="toc-solution">Solution</a>
-- <a href="#cross-validation-cfa"
-  id="toc-cross-validation-cfa">Cross-validation CFA</a>
-- <a href="#r-session" id="toc-r-session">R session</a>
-- <a href="#references" id="toc-references">References</a>
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+  - [<span class="toc-section-number">1.1</span> Test
+    theory](#test-theory)
+- [<span class="toc-section-number">2</span> Measurement
+  model](#measurement-model)
+  - [<span class="toc-section-number">2.1</span> Exploratory Factor
+    Analysis (EFA)](#exploratory-factor-analysis-efa)
+    - [<span class="toc-section-number">2.1.1</span>
+      Cross-validation](#cross-validation)
+    - [<span class="toc-section-number">2.1.2</span>
+      Illustrations](#illustrations)
+- [<span class="toc-section-number">3</span> Preparation](#preparation)
+  - [<span class="toc-section-number">3.1</span> Getting some
+    data](#getting-some-data)
+  - [<span class="toc-section-number">3.2</span> Descriptive
+    statistics](#descriptive-statistics)
+  - [<span class="toc-section-number">3.3</span> Split data for
+    cross-validation](#split-data-for-cross-validation)
+- [<span class="toc-section-number">4</span> Exploratory Factor
+  Analysis](#exploratory-factor-analysis)
+  - [<span class="toc-section-number">4.1</span> `lavaan`](#lavaan)
+  - [<span class="toc-section-number">4.2</span> Estimating the
+    model](#estimating-the-model)
+  - [<span class="toc-section-number">4.3</span> Rotation](#rotation)
+  - [<span class="toc-section-number">4.4</span> Factor
+    enumeration](#factor-enumeration)
+    - [<span class="toc-section-number">4.4.1</span> Statistical
+      criteria](#statistical-criteria)
+      - [<span class="toc-section-number">4.4.1.1</span> Exact
+        fit](#exact-fit)
+      - [<span class="toc-section-number">4.4.1.2</span> Approximate
+        fit](#approximate-fit)
+      - [<span class="toc-section-number">4.4.1.3</span> Information
+        Criteria](#information-criteria)
+      - [<span class="toc-section-number">4.4.1.4</span> Extracting fit
+        indices](#extracting-fit-indices)
+      - [<span class="toc-section-number">4.4.1.5</span> Elbow
+        plots](#elbow-plots)
+      - [<span class="toc-section-number">4.4.1.6</span>
+        Solution](#solution)
+- [<span class="toc-section-number">5</span> Cross-validation
+  CFA](#cross-validation-cfa)
+- [<span class="toc-section-number">6</span> R session](#r-session)
+- [<span class="toc-section-number">7</span> References](#references)
 
 # Introduction
 
@@ -79,12 +83,12 @@ need to differentiate the following concepts:
 
 *Table 1: Important concepts in test theory*
 
-| Name                | Definition                                                                                                                                                                 |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Latent variables    | Not directly observable concepts - later also called ‘factors’ - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns…)        |
-| Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators)                           |
-| True score          | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
-| Measurement error   | Share of the measurement variance that is not linked to the latent variable (includes item-specific variance, systematic errors, and random errors)                        |
+| Name | Definition |
+|----|----|
+| Latent variables | Not directly observable concepts - later also called ‘factors’ - that we are interested in estimating (e.g., emotions, attitudes, personality, literacy, concerns…) |
+| Manifest indicators | Measureable aspects that should be influenced by the latent variable (e.g., items in a questionnaire, but we can also think of other indicators) |
+| True score | The share of the variance in the measurement of a manifest indicator that is directly linked to the latent variable; what we want to estimate to the best of our abilities |
+| Measurement error | Share of the measurement variance that is not linked to the latent variable (includes item-specific variance, systematic errors, and random errors) |
 
 <br>
 
@@ -706,7 +710,7 @@ round(fit_ind, 4)
 ```
 
        nfac npar     chisq  df pvalue    cfi    tli   srmr  rmsea      aic      bic
-    1     1   75 6021.4810 275  0e+00 0.3970 0.3422 0.1147 0.1223 117842.5 118235.6
+    1     1   74 6021.4810 275  0e+00 0.3970 0.3422 0.1147 0.1223 117842.5 118235.6
     2     2   99 3533.4440 251  0e+00 0.6556 0.5883 0.0788 0.0968 115402.4 115921.4
     3     3  122 2444.0905 228  0e+00 0.7675 0.6940 0.0600 0.0834 114359.1 114998.6
     4     4  144 1572.6015 206  0e+00 0.8566 0.7912 0.0411 0.0689 113531.6 114286.5
@@ -841,11 +845,12 @@ shows the correlations between factors
 summary(fit.efa[[6]], nd = 3L, cutoff = 0.3, dot.cutoff = 0.05)
 ```
 
-    lavaan 0.6.13 ended normally after 164 iterations
+    lavaan 0.6-21 ended normally after 165 iterations
 
       Estimator                                         ML
       Optimization method                           NLMINB
-      Number of model parameters                       185
+      Number of model parameters                       215
+      Row rank of the constraints matrix                55
 
       Rotation method                       GEOMIN OBLIQUE
       Geomin epsilon                                 0.001
@@ -1052,9 +1057,9 @@ lavTestLRT(fit.cfa, fit.cfa2)
 
     Chi-Squared Difference Test
 
-              Df    AIC    BIC  Chisq Chisq diff  RMSEA Df diff Pr(>Chisq)    
-    fit.cfa2 247 113776 114316 1768.9                                         
-    fit.cfa  260 114803 115275 2821.9       1053 0.2388      13  < 2.2e-16 ***
+              Df    AIC    BIC  Chisq Chisq diff Df diff Pr(>Chisq)    
+    fit.cfa2 247 113776 114316 1768.9                                  
+    fit.cfa  260 114803 115275 2821.9       1053      13  < 2.2e-16 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1064,48 +1069,49 @@ lavTestLRT(fit.cfa, fit.cfa2)
 sessionInfo()
 ```
 
-    R version 4.1.3 (2022-03-10)
-    Platform: x86_64-w64-mingw32/x64 (64-bit)
-    Running under: Windows 10 x64 (build 19045)
+    R version 4.5.2 (2025-10-31 ucrt)
+    Platform: x86_64-w64-mingw32/x64
+    Running under: Windows 11 x64 (build 26100)
 
     Matrix products: default
+      LAPACK version 3.12.1
 
     locale:
-    [1] LC_COLLATE=English_United Kingdom.1252 
-    [2] LC_CTYPE=English_United Kingdom.1252   
-    [3] LC_MONETARY=English_United Kingdom.1252
-    [4] LC_NUMERIC=C                           
-    [5] LC_TIME=English_United Kingdom.1252    
+    [1] LC_COLLATE=English_Netherlands.utf8  LC_CTYPE=English_Netherlands.utf8   
+    [3] LC_MONETARY=English_Netherlands.utf8 LC_NUMERIC=C                        
+    [5] LC_TIME=English_Netherlands.utf8    
+
+    time zone: Europe/Amsterdam
+    tzcode source: internal
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-    [1] patchwork_1.1.2 ggplot2_3.4.0   tidyr_1.2.1     car_3.1-1      
-    [5] carData_3.0-5   semTools_0.5-6  lavaan_0.6-13   psych_2.2.9    
+    [1] patchwork_1.3.2 ggplot2_4.0.2   tidyr_1.3.2     car_3.1-5      
+    [5] carData_3.0-6   semTools_0.5-8  lavaan_0.6-21   psych_2.6.1    
 
     loaded via a namespace (and not attached):
-     [1] mvtnorm_1.1-3       lattice_0.20-45     zoo_1.8-11         
-     [4] assertthat_0.2.1    digest_0.6.31       utf8_1.2.2         
-     [7] R6_2.5.1            stats4_4.1.3        evaluate_0.19      
-    [10] coda_0.19-4         pillar_1.8.1        rlang_1.0.6        
-    [13] multcomp_1.4-20     rstudioapi_0.14     Matrix_1.5-3       
-    [16] pbivnorm_0.6.0      rmarkdown_2.19      labeling_0.4.2     
-    [19] splines_4.1.3       stringr_1.5.0       munsell_0.5.0      
-    [22] numDeriv_2016.8-1.1 compiler_4.1.3      xfun_0.36          
-    [25] pkgconfig_2.0.3     mnormt_2.1.1        htmltools_0.5.4    
-    [28] tidyselect_1.2.0    tibble_3.1.8        codetools_0.2-18   
-    [31] fansi_1.0.3         dplyr_1.0.10        withr_2.5.0        
-    [34] MASS_7.3-58.1       grid_4.1.3          nlme_3.1-161       
-    [37] jsonlite_1.8.4      xtable_1.8-4        gtable_0.3.1       
-    [40] lifecycle_1.0.3     DBI_1.1.3           magrittr_2.0.3     
-    [43] scales_1.2.1        estimability_1.4.1  cli_3.6.0          
-    [46] stringi_1.7.12      farver_2.1.1        ellipsis_0.3.2     
-    [49] generics_0.1.3      vctrs_0.5.1         sandwich_3.0-2     
-    [52] TH.data_1.1-1       tools_4.1.3         glue_1.6.2         
-    [55] purrr_1.0.1         emmeans_1.8.3       abind_1.4-5        
-    [58] parallel_4.1.3      fastmap_1.1.0       survival_3.5-0     
-    [61] yaml_2.3.6          colorspace_2.0-3    knitr_1.41         
+     [1] sandwich_3.1-1      generics_0.1.4      lattice_0.22-9     
+     [4] digest_0.6.39       magrittr_2.0.4      RColorBrewer_1.1-3 
+     [7] evaluate_1.0.5      grid_4.5.2          estimability_1.5.1 
+    [10] mvtnorm_1.3-6       fastmap_1.2.0       jsonlite_2.0.0     
+    [13] Matrix_1.7-4        Formula_1.2-5       survival_3.8-6     
+    [16] multcomp_1.4-30     purrr_1.2.1         scales_1.4.0       
+    [19] TH.data_1.1-5       pbivnorm_0.6.0      numDeriv_2016.8-1.1
+    [22] codetools_0.2-20    abind_1.4-8         mnormt_2.1.2       
+    [25] cli_3.6.5           rlang_1.1.7         splines_4.5.2      
+    [28] withr_3.0.2         yaml_2.3.12         otel_0.2.0         
+    [31] tools_4.5.2         parallel_4.5.2      coda_0.19-4.1      
+    [34] dplyr_1.2.0         vctrs_0.7.1         R6_2.6.1           
+    [37] stats4_4.5.2        zoo_1.8-15          lifecycle_1.0.5    
+    [40] emmeans_2.0.2       MASS_7.3-65         pkgconfig_2.0.3    
+    [43] gtable_0.3.6        pillar_1.11.1       glue_1.8.0         
+    [46] xfun_0.56           tibble_3.3.1        tidyselect_1.2.1   
+    [49] rstudioapi_0.18.0   knitr_1.51          farver_2.1.2       
+    [52] xtable_1.8-8        htmltools_0.5.9     nlme_3.1-168       
+    [55] labeling_0.4.3      rmarkdown_2.30      compiler_4.5.2     
+    [58] S7_0.2.1            quadprog_1.5-8     
 
 # References
 

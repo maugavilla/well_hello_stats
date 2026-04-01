@@ -2,38 +2,39 @@ Moderation with lm()
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-27 August, 2025
+01 April, 2026
 
-- [What is moderation analysis?](#what-is-moderation-analysis)
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Prepare the data set](#prepare-the-data-set)
-    - [Create composite scores](#create-composite-scores)
-    - [Transform categorical variables to
-      `factor()`](#transform-categorical-variables-to-factor)
-    - [Set variables for analysis](#set-variables-for-analysis)
-- [Moderation analysis steps](#moderation-analysis-steps)
-- [Categorical moderator](#categorical-moderator)
-  - [Main effects](#main-effects)
-    - [Interpretation](#interpretation)
-  - [Interaction model](#interaction-model)
-    - [Compare models](#compare-models)
-    - [Effect size](#effect-size)
-    - [Probing](#probing)
-    - [Plotting](#plotting)
-    - [Interpretation](#interpretation-1)
-- [Continuous moderator](#continuous-moderator)
-  - [Main effects](#main-effects-1)
-    - [Interpretation](#interpretation-2)
-  - [Interaction model](#interaction-model-1)
-    - [Compare models](#compare-models-1)
-    - [Effect size](#effect-size-1)
-    - [Probing](#probing-1)
-    - [Plotting](#plotting-1)
-    - [Interpretation](#interpretation-3)
-- [References](#references)
+- [1 What is moderation analysis?](#1-what-is-moderation-analysis)
+- [2 Setup the R session](#2-setup-the-r-session)
+- [3 Import the data set](#3-import-the-data-set)
+  - [3.1 Prepare the data set](#31-prepare-the-data-set)
+    - [3.1.1 Create composite scores](#311-create-composite-scores)
+    - [3.1.2 Transform categorical variables to
+      `factor()`](#312-transform-categorical-variables-to-factor)
+    - [3.1.3 Set variables for
+      analysis](#313-set-variables-for-analysis)
+- [4 Moderation analysis steps](#4-moderation-analysis-steps)
+- [5 Categorical moderator](#5-categorical-moderator)
+  - [5.1 Main effects](#51-main-effects)
+    - [5.1.1 Interpretation](#511-interpretation)
+  - [5.2 Interaction model](#52-interaction-model)
+    - [5.2.1 Compare models](#521-compare-models)
+    - [5.2.2 Effect size](#522-effect-size)
+    - [5.2.3 Probing](#523-probing)
+    - [5.2.4 Plotting](#524-plotting)
+    - [5.2.5 Interpretation](#525-interpretation)
+- [6 Continuous moderator](#6-continuous-moderator)
+  - [6.1 Main effects](#61-main-effects)
+    - [6.1.1 Interpretation](#611-interpretation)
+  - [6.2 Interaction model](#62-interaction-model)
+    - [6.2.1 Compare models](#621-compare-models)
+    - [6.2.2 Effect size](#622-effect-size)
+    - [6.2.3 Probing](#623-probing)
+    - [6.2.4 Plotting](#624-plotting)
+    - [6.2.5 Interpretation](#625-interpretation)
+- [7 References](#7-references)
 
-# What is moderation analysis?
+# 1 What is moderation analysis?
 
 With moderation analysis, we are trying to find out whether the effect
 or association between two variables depends on another variable. Let’s
@@ -44,7 +45,7 @@ or the *Secular Values* of individuals. The latter two variables are
 called *moderators* of the association between *Lack of confidence in
 the government* and *Perception of corruption*.
 
-# Setup the R session
+# 2 Setup the R session
 
 When we start working in R, we always need to setup our session. For
 this we need to set our working directory, in this case I am doing that
@@ -67,7 +68,7 @@ library(parameters)
 library(car)
 ```
 
-# Import the data set
+# 3 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -81,7 +82,7 @@ dim(dat)
 Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns.
 
-## Prepare the data set
+## 3.1 Prepare the data set
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -137,7 +138,7 @@ The variables we will use here are:
 - Q112-Q120: Corruption Perception Index
 - Q65-Q73: Lack of Confidence in the government
 
-### Create composite scores
+### 3.1.1 Create composite scores
 
 We will be using the composite scores for *Corruption Perception Index*
 and *Lack of Confidence in the government* instead of their single
@@ -169,7 +170,7 @@ With the `rowmeans()` we compute the mean across the specified
 variables, for each subject. Remember to include the `na.rm=T` argument,
 so the missing values are properly ignored.
 
-### Transform categorical variables to `factor()`
+### 3.1.2 Transform categorical variables to `factor()`
 
 when we want to use categorical variables as predictors, it is
 recommended to transformed them as `factor` type in `R`. In this case we
@@ -184,7 +185,7 @@ dat2$Sex <- factor(dat2$Q260,
                        labels = c("Male","Female") )
 ```
 
-### Set variables for analysis
+### 3.1.3 Set variables for analysis
 
 Now, we will select only the variables of interest in a separate data
 set.
@@ -212,7 +213,7 @@ The new `dat2` data set only include the 6 continuous variables of
 interest, and 1 binary variable. With the `na.omit()` function we are
 excluding all cases with some missing values.
 
-# Moderation analysis steps
+# 4 Moderation analysis steps
 
 Moderation is split into multiple steps, (a)
 
@@ -235,13 +236,13 @@ these conditional relations.
 We will see how to implement these steps for two common interaction
 scenarios, with categorical and continuous moderators
 
-# Categorical moderator
+# 5 Categorical moderator
 
 For the categorical predictor model, we will have *Lack of confidence in
 the government* as the focal predictor, and *Sex* as the categorical
 moderator. Having them predict the *Perception of corruption*
 
-## Main effects
+## 5.1 Main effects
 
 The main effects model presents both the effects of each predictor on
 the outcome. When the moderator is categorical, we strongly recommend to
@@ -287,7 +288,7 @@ parameters(main_cat)
     ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
     ##   using a Wald t-distribution approximation.
 
-### Interpretation
+### 5.1.1 Interpretation
 
 - We reject the null hypothesis of both predictors being equally good
   predictors as the mean model, $F(2, 71630) = 4341, p < .001$.
@@ -302,7 +303,7 @@ parameters(main_cat)
   *Female* ($b_2 = -0.023, SE = 0.006, p < .001$), holding *Lack of
   confidence in the government* constant.
 
-## Interaction model
+## 5.2 Interaction model
 
 The interaction model is an extension from the main effects, we can add
 the interaction between predictors as a new term in the formula as
@@ -353,7 +354,7 @@ We see the interaction term `LCGov:SexFemale` (`LCGov × Sex [Female]`).
 The *p-value* for this terms tests of the Null Hypothesis of the 2
 predictors being independent.
 
-### Compare models
+### 5.2.1 Compare models
 
 When comparing models, the first step is to test the equivalence. For
 this we can do it as well with the `anova()` method. Notice, that when
@@ -375,7 +376,7 @@ anova(main_cat,int_cat)
 In this case, we would fail to reject the null hypothesis of the 2
 predictors being independent.
 
-### Effect size
+### 5.2.2 Effect size
 
 The next way to compare the models relates to the effect size of the
 interaction, we can look at this as the change in $R^2$ when the
@@ -410,7 +411,7 @@ eta_squared(Anova(int_cat,type=2), partial = F)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
-### Probing
+### 5.2.3 Probing
 
 Probing the interaction means to estimate the dependent focal
 regressions at specific levels of the moderator. To see and test the
@@ -460,7 +461,7 @@ interpretation when the moderator is categorical.
 parameters(int_cat)
 ```
 
-### Plotting
+### 5.2.4 Plotting
 
 A last part is to plot the interactions, here we will show how to plot
 the interactions with the `marginaleffects` package
@@ -483,7 +484,7 @@ Notice that when the moderator is a `factor()` type variable,
 `plot_predictions` will automatically plot the focal regression for all
 categories, and set the respective labels.
 
-### Interpretation
+### 5.2.5 Interpretation
 
 - We fail fail to reject the null hypothesis of the interaction and main
   effects model being equally good at predicting the outcome. Or, fail
@@ -502,13 +503,13 @@ categories, and set the respective labels.
   accuracy by 0.0013% ($\eta^2 = 0.000013$).
 - In the plots, we see that both groups slopes are close to each other.
 
-# Continuous moderator
+# 6 Continuous moderator
 
 For the continuous predictor model, we will have *Lack of confidence in
 the government* as the focal predictor, and *Secular Values* as the
 continuous moderator. Having them predict the *Perception of corruption*
 
-## Main effects
+## 6.1 Main effects
 
 The main effects model presents both the effects of each predictor on
 the outcome. With a continuous predictor, the main effects model is just
@@ -553,7 +554,7 @@ parameters(main_cont)
     ## Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
     ##   using a Wald t-distribution approximation.
 
-### Interpretation
+### 6.1.1 Interpretation
 
 - We reject the null hypothesis of both predictors being equally good
   predictors as the mean model, $F(2, 71630) = 6691, p < .001$.
@@ -569,7 +570,7 @@ parameters(main_cont)
   decreases by -1.11 points ($b_2 = -1.11, SE = 0.017, p < .001$),
   holding *Lack of confidence in the government* constant.
 
-## Interaction model
+## 6.2 Interaction model
 
 The interaction model is an extension from the main effects, we can add
 the interaction between predictors as a new term in the formula as
@@ -621,7 +622,7 @@ We see the interaction term `LCGov:SACSECVAL` (`LCGov × SACSECVAL`). The
 *p-value* for this terms tests of the Null Hypothesis of the 2
 predictors being independent.
 
-### Compare models
+### 6.2.1 Compare models
 
 When comparing models, the first step is to test the equivalence. For
 this we can do it as well with the `anova()` method. Notice, that when
@@ -645,7 +646,7 @@ anova(main_cont,int_cont)
 In this case, we would reject the null hypothesis of the 2 predictors
 being independent.
 
-### Effect size
+### 6.2.2 Effect size
 
 The next way to compare the models relates to the effect size of the
 interaction, we can look at this as the change in $R^2$ when the
@@ -678,7 +679,7 @@ eta_squared(Anova(int_cont, type=2), partial = F)
     ## 
     ## - One-sided CIs: upper bound fixed at [1.00].
 
-### Probing
+### 6.2.3 Probing
 
 Probing the interaction means to estimate the dependent focal
 regressions at specific levels of the moderator. To see and test the
@@ -807,7 +808,7 @@ Here we see that the slope of interest changes from 0.54 to 0.32 from
 the lowest and highest values. And for every one of them we reject the
 null hypothesis of each simple slope being equal to 0
 
-### Plotting
+### 6.2.4 Plotting
 
 The only new argument we need to add is `newdata`, where we define which
 values of the moderator do we wish to plot, and all observed values for
@@ -837,7 +838,7 @@ plot_predictions(int_cont,
 
 ![](10_1_moderation_lm_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
-### Interpretation
+### 6.2.5 Interpretation
 
 - We reject the null hypothesis of the interaction and main effects
   model being equally good at predicting the outcome. Or, reject the
@@ -861,7 +862,7 @@ plot_predictions(int_cont,
 - In the plots, we see the decrease of the slopes across a range of
   possible moderator values.
 
-# References
+# 7 References
 
 Hayes, Andrew F. (2022). Introduction to mediation, moderation, and
 conditional process analysis: A regression-based approach (Third

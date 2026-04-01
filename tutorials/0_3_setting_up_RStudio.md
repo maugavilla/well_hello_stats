@@ -2,18 +2,17 @@ Setting up RStudio
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-01 September, 2022
+01 April, 2026
 
--   <a href="#rstudio-panes" id="toc-rstudio-panes">RStudio panes</a>
-    -   <a href="#syntax-use" id="toc-syntax-use">Syntax use</a>
-    -   <a href="#change-apperance" id="toc-change-apperance">Change
-        apperance</a>
+- [1 RStudio panes](#1-rstudio-panes)
+  - [1.1 Syntax use](#11-syntax-use)
+  - [1.2 Change apperance](#12-change-apperance)
 
 We recommend to work with **R** in an editor, there are several options,
 and we will use **RStudio**. So in this tutorial we will take a look at
 **RStudio** and how to use it.
 
-# RStudio panes
+# 1 RStudio panes
 
 This editor is organized in *panes*, these are the 4 mayor spaces and
 how we interact with **R**. We you open it it will look like this, I
@@ -21,7 +20,7 @@ have (poorly) label the panes with numbers.
 
 ![](images/Inkedscreen25.jpg)
 
-## Syntax use
+## 1.1 Syntax use
 
 **Pane 1** is the syntax, where we will be writing code and *send* it to
 run. **Pane 2** has several uses as you can see in tabs, the one that is
@@ -38,7 +37,7 @@ From this we can see that the 2 panes we will use the most are **1** and
 panes sizes can be adjusted I recommend to adjust the layout of these
 panes so we can have panes 1 and 3 next to each other.
 
-## Change apperance
+## 1.2 Change apperance
 
 In general we can adjust how we want to interact and the aesthetic of
 **RStudio**. For this we will go to the top tabs: *Tools \> Global

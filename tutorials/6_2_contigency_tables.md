@@ -1,17 +1,25 @@
 # Contingency tables
 Mauricio Garnier-Villarreal
-2024-02-23
+2026-03-31
 
-- [Introduction](#introduction)
-- [Set up the R Session](#set-up-the-r-session)
-- [Import the Dataset](#import-the-dataset)
-  - [Data prepration](#data-prepration)
-- [Contingency tables](#contingency-tables)
-  - [Marginal probabilities](#marginal-probabilities)
-  - [$\chi^2$ contingency test](#chi2-contingency-test)
-  - [Effect size](#effect-size)
-  - [Plots](#plots)
-- [References](#references)
+- [<span class="toc-section-number">1</span>
+  Introduction](#introduction)
+- [<span class="toc-section-number">2</span> Set up the R
+  Session](#set-up-the-r-session)
+- [<span class="toc-section-number">3</span> Import the
+  Dataset](#import-the-dataset)
+  - [<span class="toc-section-number">3.1</span> Data
+    prepration](#data-prepration)
+- [<span class="toc-section-number">4</span> Contingency
+  tables](#contingency-tables)
+  - [<span class="toc-section-number">4.1</span> Marginal
+    probabilities](#marginal-probabilities)
+  - [<span class="toc-section-number">4.2</span> $\chi^2$ contingency
+    test](#chi2-contingency-test)
+  - [<span class="toc-section-number">4.3</span> Effect
+    size](#effect-size)
+  - [<span class="toc-section-number">4.4</span> Plots](#plots)
+- [<span class="toc-section-number">5</span> References](#references)
 
 # Introduction
 

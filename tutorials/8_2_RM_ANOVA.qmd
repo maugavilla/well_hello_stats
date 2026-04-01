@@ -5,6 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
 toc: true
 toc-depth: 5
+number-sections: true
 code-copy: true
 ---
 
@@ -70,8 +71,8 @@ Then we will recode the labels of the couple variable, so that it explicitly men
 
 ```{r, warning=FALSE}
 d$Condition_Couple <- car::recode(d$Condition_Couple, 
-                                  "0='Beyonce & Jay-Z';
-                                  1= 'Shakira & Piqué' ")
+                                  "0 = 'Beyonce & Jay-Z';
+                                  1 = 'Shakira & Pique' ")
 ```
 
 
@@ -171,14 +172,17 @@ avg_predictions(model, by = c("Cleb_Congruence"))
 
 Once we have established an overall model effect, we would be interested in testing specific comparisons, such as **Where do we see specific mean differences?**. We will do the post-hoc tests with the ```marginalleffects``` package, this will tell you how the values of the outcome predicted by the model change when we manipulate the predictors (and their pairwise combinations)
 
-For this function, we provide the RM-ANOVA object (```model```), the group variable we want to estimate (```list(Cleb_Congruence = "pairwise")```) as well as specifying that we are requesting the pairwise comparisons. Additionally, we are equating the ```fdr``` false discovery rate $p$-value correction, asking for the tests and CI to be presented for the 95% confidence level. We are specifying the degrees of freedom so the function uses the $t-test$ instead of the $z-test$, we get these from the handy function ```insight::get_df()``` which requires the RN-ANOVA object
+For this function, we provide the RM-ANOVA object (```model```), the group variable we want to estimate (```list(Cleb_Congruence = "pairwise")```) as well as specifying that we are requesting the pairwise comparisons. . We are specifying the degrees of freedom so the function uses the $t-test$ instead of the $z-test$, we get these from the handy function ```insight::get_df()``` which requires the RN-ANOVA object. Additionally, we are requesting the ```fdr``` false discovery rate $p$-value correction in th `hypotheses` function with the `multcomp` argument, asking for the tests and CI to be presented for the 95% confidence level
+
 ```{r, eval=TRUE, warning=FALSE}
 acmp <- avg_comparisons(model,
                        variables = list(Cleb_Congruence = "pairwise"), 
-                       p_adjust = "fdr", conf_level = 0.95,
+                       conf_level = 0.95,
                        df = insight::get_df(model))
 
 acmp
+
+hypotheses(acmp, multcomp = "fdr")
 ```
 
 From these post-host, we can interpret that we reject the null hypothesis of equal means over conditions for the comparisons with an adjusted $p-value < .05$, as the most commonly use $\alpha$ level. 
@@ -319,10 +323,12 @@ First, we can estimate the pairwise comparisons (ignoring the interactions)by in
 ```{r}
 acmp_1 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise", Condition_Couple = "pairwise"),
-                          p_adjust = "fdr", conf_level = 0.95,
+                          conf_level = 0.95,
                           df = insight::get_df(model2))
 
 acmp_1
+
+hypotheses(acmp_1, multcomp = "fdr")
 ```
 
 From ```summary(acmp_1)``` we will have the estimated mean difference for each pair comparison, and we can reject the null hypothesis for comparisons where the adjusted $p -value < .05$
@@ -332,11 +338,13 @@ If we want to estimate the interacting post-hoc, across between and within condi
 ```{r}
 acmp_2 <- avg_comparisons(model2,
                           variables = list(Cleb_Congruence = "pairwise"), 
-                          p_adjust = "fdr", conf_level = 0.95, 
+                          conf_level = 0.95, 
                           by = "Condition_Couple",
                           df = insight::get_df(model2))
 
 acmp_2
+
+hypotheses(acmp_2, multcomp = "fdr")
 ```
 
 This turns into larger post-hoc results, so be careful in its reading and interpretation

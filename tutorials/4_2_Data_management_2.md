@@ -2,15 +2,15 @@ Data management 2: variable types, and factors
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-08 February, 2024
+01 April, 2026
 
-- [Setup the R session](#setup-the-r-session)
-- [Import the data set](#import-the-data-set)
-  - [Select variables of interest](#select-variables-of-interest)
-- [Variable types](#variable-types)
-- [`factor`](#factor)
+- [1 Setup the R session](#1-setup-the-r-session)
+- [2 Import the data set](#2-import-the-data-set)
+  - [2.1 Select variables of interest](#21-select-variables-of-interest)
+- [3 Variable types](#3-variable-types)
+- [4 `factor`](#4-factor)
 
-# Setup the R session
+# 1 Setup the R session
 
 When we start up we always need to setup our session. For this wee need
 to set our working directory, in this case I am doing that for the
@@ -28,7 +28,7 @@ be using
 library(rio)
 ```
 
-# Import the data set
+# 2 Import the data set
 
 Here we will be importing the `.sav` WVS data set
 
@@ -43,7 +43,7 @@ Here we are calling our data set **dat** and asking to see the dimension
 of it. We see that the data set has 76897 subjects, and 548 columns. If
 you downloaded a different version of the WVS, these number might differ
 
-## Select variables of interest
+## 2.1 Select variables of interest
 
 In cases with large data sets like this we might want to select a subset
 of variables that we want to work with. Since it is not easy to see 548
@@ -83,7 +83,7 @@ correctly by looking at the the dimension of the data **dim(dat2)** and
 looking at the first 6 rows of it **head(dat2)**. These are quick checks
 that we have done this correctly.
 
-# Variable types
+# 3 Variable types
 
 When working with data, need to be clear on what type of data is
 provided by each variable. From these selected items, we will look at 3
@@ -241,7 +241,7 @@ Clearly, depending of the type of variable is the type of information
 that we should ask R to give us. R doesn’t know what the numbers mean
 for us.
 
-# `factor`
+# 4 `factor`
 
 As we said, R doesn’t know what the numbers in the data are. But you can
 tell it, for example you can tell it that a variable is categorical by

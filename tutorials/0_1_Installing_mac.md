@@ -2,11 +2,11 @@ Installing R and RStudio on Mac
 ================
 Mauricio Garnier-Villarreal, Joris M. Schröder & Joseph Charles Van
 Matre
-28 January, 2026
+01 April, 2026
 
-- [Let’s install R!](#lets-install-r)
-- [Let’s install RStudio!](#lets-install-rstudio)
-- [XQuartz](#xquartz)
+- [1 Let’s install R!](#1-lets-install-r)
+- [2 Let’s install RStudio!](#2-lets-install-rstudio)
+- [3 XQuartz](#3-xquartz)
 
 When learning new programs, we need to start from the beginning. And in
 this case it means to see the steps to install the programs we will be
@@ -18,7 +18,7 @@ we will be using and
 [RStudio](https://posit.co/download/rstudio-desktop/) is an interface
 that makes R easier and more convenient to use.
 
-# Let’s install R!
+# 1 Let’s install R!
 
 Firs we need to go R project site <https://www.r-project.org/>. From the
 home page we need to look for the **CRAN** link under **Download** on
@@ -92,7 +92,7 @@ as the chassis of the car so it is easier to handle it.
 
 ![](images/screen6_mac.png)
 
-# Let’s install RStudio!
+# 2 Let’s install RStudio!
 
 First we need to go RStudio site
 <https://posit.co/download/rstudio-desktop/>. From there select the
@@ -123,7 +123,7 @@ We will look into how to work with it in the next tutorials.
 
 ![](images/screen24.png)
 
-# XQuartz
+# 3 XQuartz
 
 Once you have installed R and RStudio, in Mac OS we also need to install
 [xquartz](https://www.xquartz.org/). This will be necessary for some
