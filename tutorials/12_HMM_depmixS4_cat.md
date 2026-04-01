@@ -1,27 +1,43 @@
 # HMM with depmixS4 (categorical indicators)
 Mauricio Garnier-Villarreal
-2024-01-30
+2026-04-01
 
-- [Hidden Markov Models (HMM)](#hidden-markov-models-hmm)
-  - [Markov assumption](#markov-assumption)
-  - [Measurement model](#measurement-model)
-  - [Structural model](#structural-model)
-- [`depmixS4`](#depmixs4)
-- [Dichotomous indicator example](#dichotomous-indicator-example)
-  - [`depmixS4` syntax](#depmixs4-syntax)
-    - [Time variant HMM](#time-variant-hmm)
-  - [Class enumeration](#class-enumeration)
-    - [Model Fit Indices](#model-fit-indices)
-  - [Time varying HMM](#time-varying-hmm)
-    - [Classification Diagnostics](#classification-diagnostics)
-    - [Conditional transition
-      matrices](#conditional-transition-matrices)
-    - [Plotting HMM](#plotting-hmm)
-      - [Index plot](#index-plot)
-      - [Density plot](#density-plot)
-      - [Transition probabilities](#transition-probabilities)
-  - [Adding predictors](#adding-predictors)
-- [References](#references)
+- [<span class="toc-section-number">1</span> Hidden Markov Models
+  (HMM)](#hidden-markov-models-hmm)
+  - [<span class="toc-section-number">1.1</span> Markov
+    assumption](#markov-assumption)
+  - [<span class="toc-section-number">1.2</span> Measurement
+    model](#measurement-model)
+  - [<span class="toc-section-number">1.3</span> Structural
+    model](#structural-model)
+- [<span class="toc-section-number">2</span> `depmixS4`](#depmixs4)
+- [<span class="toc-section-number">3</span> Dichotomous indicator
+  example](#dichotomous-indicator-example)
+  - [<span class="toc-section-number">3.1</span> `depmixS4`
+    syntax](#depmixs4-syntax)
+    - [<span class="toc-section-number">3.1.1</span> Time variant
+      HMM](#time-variant-hmm)
+  - [<span class="toc-section-number">3.2</span> Class
+    enumeration](#class-enumeration)
+    - [<span class="toc-section-number">3.2.1</span> Model Fit
+      Indices](#model-fit-indices)
+  - [<span class="toc-section-number">3.3</span> Time varying
+    HMM](#time-varying-hmm)
+    - [<span class="toc-section-number">3.3.1</span> Classification
+      Diagnostics](#classification-diagnostics)
+    - [<span class="toc-section-number">3.3.2</span> Conditional
+      transition matrices](#conditional-transition-matrices)
+    - [<span class="toc-section-number">3.3.3</span> Plotting
+      HMM](#plotting-hmm)
+      - [<span class="toc-section-number">3.3.3.1</span> Index
+        plot](#index-plot)
+      - [<span class="toc-section-number">3.3.3.2</span> Density
+        plot](#density-plot)
+      - [<span class="toc-section-number">3.3.3.3</span> Transition
+        probabilities](#transition-probabilities)
+  - [<span class="toc-section-number">3.4</span> Adding
+    predictors](#adding-predictors)
+- [<span class="toc-section-number">4</span> References](#references)
 
 # Hidden Markov Models (HMM)
 
@@ -662,46 +678,82 @@ for(i in 1:length(n_states)){
 ```
 
     [1] 1
+
     converged at iteration 1 with logLik: -21653.93 
+
     converged at iteration 1 with logLik: -21653.93 
+
     converged at iteration 1 with logLik: -21653.93 
+
     converged at iteration 1 with logLik: -21653.93 
+
     converged at iteration 1 with logLik: -21653.93 
+
     converged at iteration 1 with logLik: -21653.93 
     [1] 2
+
     converged at iteration 65 with logLik: -16481.7 
+
     converged at iteration 65 with logLik: -16481.7 
+
     converged at iteration 65 with logLik: -16481.7 
+
     converged at iteration 72 with logLik: -16481.7 
+
     converged at iteration 66 with logLik: -16481.7 
+
     converged at iteration 1 with logLik: -16481.7 
     [1] 3
+
     converged at iteration 172 with logLik: -14693 
+
     converged at iteration 155 with logLik: -14693 
+
     converged at iteration 181 with logLik: -14693 
+
     converged at iteration 172 with logLik: -14693 
+
     converged at iteration 184 with logLik: -14693 
+
     converged at iteration 1 with logLik: -14693 
     [1] 4
+
     converged at iteration 246 with logLik: -14409.77 
+
     converged at iteration 329 with logLik: -14409.72 
+
     converged at iteration 449 with logLik: -14267.35 
+
     converged at iteration 392 with logLik: -14409.71 
+
     converged at iteration 425 with logLik: -14409.71 
+
     converged at iteration 1 with logLik: -14267.35 
     [1] 5
+
     converged at iteration 503 with logLik: -13980.16 
+
     converged at iteration 280 with logLik: -13980.16 
+
     converged at iteration 328 with logLik: -13980.16 
+
     converged at iteration 412 with logLik: -13980.16 
+
     converged at iteration 469 with logLik: -13980.16 
+
     converged at iteration 1 with logLik: -13980.16 
     [1] 6
+
     converged at iteration 1000 with logLik: -13924.24 
+
     converged at iteration 897 with logLik: -13924.24 
+
     converged at iteration 1040 with logLik: -13924.24 
+
     converged at iteration 817 with logLik: -13895.15 
+
     converged at iteration 759 with logLik: -13894.99 
+
     converged at iteration 1 with logLik: -13894.99 
 
 See, that we first create a vector with the number of states we want to
@@ -726,8 +778,11 @@ hmm_res[[5]]
 ```
 
     Convergence info: Log likelihood converged to within tol. (relative change) 
+
     'log Lik.' -13980.16 (df=39)
+
     AIC:  28038.32 
+
     BIC:  28331.7 
 
 ### Model Fit Indices
@@ -982,10 +1037,15 @@ hmm4c_tv_fit <- multistart(hmm4c_tv, nstart=5, initIters=50000)
 ```
 
     converged at iteration 291 with logLik: -13813.96 
+
     converged at iteration 352 with logLik: -13836.46 
+
     converged at iteration 176 with logLik: -13802.46 
+
     converged at iteration 285 with logLik: -13813.97 
+
     converged at iteration 254 with logLik: -13802.69 
+
     converged at iteration 4 with logLik: -13802.44 
 
 We can see the overall model here
@@ -1259,7 +1319,7 @@ pred_trans <- lapply(hmm4c_tv_fit@transition, predict)
 is(pred_trans)
 ```
 
-    [1] "list"         "vector"       "MxListOrNull" "MxCharOrList"
+    [1] "list"   "vector"
 
 ``` r
 length(pred_trans)
