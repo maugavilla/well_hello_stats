@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-01 April, 2026
+05 October, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -304,6 +304,12 @@ following a course.
   interactions, cross-level interactions, 3-way interactions, effect
   size, probing and plotting. Packages: lme4, lmerTest, rio, parameters,
   performance, r2mlm, dplyr, ggplot2, tidyr, marginaleffects, sjPlot
+  effect sizes. Packages: lme4, lmerTest, rio, parameters, performance,
+  r2mlm, dplyr, ggplot2, tidyr
+- [Longitudinal
+  1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_3_MLM_longitudinal.md):
+  Packages: lme4, lmerTest, rio, parameters, performance, r2mlm,
+  ggplot2, tidyr, marginaleffects
 
 ## Mixture models
 
