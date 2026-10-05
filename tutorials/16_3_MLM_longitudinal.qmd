@@ -392,6 +392,39 @@ Interpretation:
 - **Random slope variance** ($\tau_{11}$): variability in rates of change.
 - **Intercept–slope correlation** ($\rho_{01} = 0.47$): persons who start higher tend to increase more (or, with a negative correlation, those who start higher change more slowly).
 
+
+### Expanded interpretation: `m1c` (full growth model)
+
+**Fixed effects (the average trajectory).**
+
+| Parameter | Estimate | SE | 95% CI | t(3695) | p |
+|---|---|---|---|---|---|
+| Intercept ($\gamma_{00}$) | 36.26 | 0.12 | [36.03, 36.49] | 313.72 | < .001 |
+| GRADE_C ($\gamma_{10}$) | -0.52 | 0.03 | [-0.58, -0.47] | -18.30 | < .001 |
+
+- **Intercept ($\gamma_{00} = 36.26$).** This is the predicted closeness with dad at Grade 1 (`GRADE_C = 0`), averaged over all persons. The very small standard error (0.12) and narrow 95% CI [36.03, 36.49] indicate that the average starting level is estimated precisely. On the observed range of `CLOSEDAD` (13–40), 36.26 sits toward the upper end, so on average children report fairly high closeness with their fathers at the start of the study.
+- **Time slope ($\gamma_{10} = -0.52$).** This is the average change in closeness with dad per additional grade. The negative sign means closeness declines, on average, by about half a point per grade. Across the full 5-grade span (Grade 1 → Grade 6) the model predicts a total decline of $-0.52 \times 5 = -2.60$ points — roughly 7% of the starting level, or about 1 residual SD (2.60 / 2.53 = 1.03). The effect is highly significant ($t = -18.30$, $p < .001$) and the CI excludes zero comfortably.
+
+**Random effects (between-person heterogeneity).**
+
+| Parameter | Estimate (SD) | Implied variance |
+|---|---|---|
+| SD (Intercept: id) | 2.58 | 6.66 |
+| SD (GRADE_C: id) | 0.39 | 0.15 |
+| Cor (Intercept ~ GRADE_C: id) | 0.47 | cov $= 0.47 \times 2.58 \times 0.39 = 0.47$ |
+| SD (Residual) | 2.53 | 6.40 |
+
+- **Random intercept variance ($\tau_{00} = 2.58^2 = 6.66$).** Children differ substantially in where they start. Assuming approximate normality, about 95% of children have Grade 1 closeness within $\pm 1.96 \times 2.58 = \pm 5.06$ points of the average, i.e., roughly between 31.2 and 41.3.
+- **Random slope variance ($\tau_{11} = 0.39^2 = 0.15$).** The rate of change also differs across children. The implied 95% range of slopes is $-0.52 \pm 1.96 \times 0.39 = [-1.28, 0.24]$. This is substantively important: although the *average* trajectory declines, some children decline far more steeply (slopes near −1.3) while others are essentially flat or even slightly increasing (slopes near +0.2). A single "average decline" does not describe every child.
+- **Intercept–slope correlation ($\rho_{01} = 0.47$).** Because the average slope is negative, a positive correlation means that children who start *higher* decline *more slowly* (slopes closer to zero), while children who start *lower* decline *more steeply*. The trajectories therefore **fan out** over time: initial differences between children widen as they move through the grades.
+- **Residual variance ($\sigma^2 = 2.53^2 = 6.40$).** After accounting for each child's own intercept and slope, individual observations still deviate from that child's line by about 2.53 points. This is the within-person, occasion-specific variation (measurement error plus short-term fluctuation).
+
+**Variance partitioning at Grade 1.** Using only the intercept and residual variances, the between-person share at Grade 1 is $6.66 / (6.66 + 6.40) = 0.51$ — about 51% of the variance in Grade 1 closeness is between children and 49% is within children. This is close to the ICC of 0.56 from the null model and confirms that a substantial share of the variation is between persons, which is exactly what the random effects capture.
+
+**Substantive summary.** The full model says three things at once: (1) on average, closeness with dad declines over the elementary grades; (2) children differ both in starting level and in how quickly they change, so the decline is not uniform; and (3) starting level and rate of change are positively related, so higher-starting children decline more slowly. This is a far richer picture than the single average slope from the OLS model.
+
+
+
 ### Model Comparison
 
 We can test whether the random slope is needed using a likelihood ratio test. Nested models with the same fixed effects are compared with `anova()`:
@@ -557,6 +590,38 @@ m1d <- lmer(CONFLMOM ~ 1 + GRADE_C + SEX_cat + (1 + GRADE_C | id),
 parameters(m1d, ci_method = "profile")
 ```
 
+### Expanded interpretation: `m1d` (conflict with mom, sex as a predictor of the intercept)
+
+This model uses `CONFLMOM` (conflict with mom) as the outcome and adds `SEX_cat` as a time-invariant (level-2) predictor of the intercept only, keeping the random intercept and random slope for time.
+
+| Parameter | Estimate | SE | 95% CI | t(5094) | p |
+|---|---|---|---|---|---|
+| Intercept ($\gamma_{00}$) | 15.09 | 0.23 | [14.63, 15.54] | 65.03 | < .001 |
+| GRADE_C ($\gamma_{10}$) | 0.29 | 0.03 | [0.22, 0.35] | 8.83 | < .001 |
+| SEX_cat [girls] ($\gamma_{01}$) | 0.38 | 0.31 | [-0.23, 0.99] | 1.23 | 0.220 |
+
+**Fixed effects.**
+- **Intercept ($\gamma_{00} = 15.09$).** With `SEX_cat` in the model, the intercept is the predicted conflict at Grade 1 for the **reference group**. Because the factor levels are ordered alphabetically (`boys`, `girls`), the reference is **boys** — which is why the coefficient row is labelled `[girls]`. So boys are predicted to have a conflict score of about 15.1 at Grade 1.
+- **Time slope ($\gamma_{10} = 0.29$).** This is the average change in conflict per grade, assumed equal for boys and girls in this main-effects model. Note the direction is **positive**: unlike closeness, conflict with mom *increases* over the grades, by about 0.29 points per grade, or $0.29 \times 5 = 1.45$ points across the study. The effect is highly significant.
+- **Sex effect ($\gamma_{01} = 0.38$).** This is the difference in Grade 1 conflict between girls and boys (girls − boys). Girls are predicted to score about 0.38 points higher, but the effect is not significant ($p = 0.220$) and the 95% CI [-0.23, 0.99] is wide and includes zero. There is no evidence of a sex difference in *initial* conflict with mom.
+
+**Random effects.**
+
+| Parameter | Estimate (SD) |
+|---|---|
+| SD (Intercept: id) | 5.03 |
+| SD (GRADE_C: id) | 0.60 |
+| Cor (Intercept ~ GRADE_C: id) | -0.20 |
+| SD (Residual) | 3.22 |
+
+- **Random intercept ($5.03^2 = 25.3$).** Children differ enormously in Grade 1 conflict: 95% fall roughly $15.09 \pm 1.96 \times 5.03 = [5.2, 25.0]$. This between-person variance is much larger than for closeness with dad, reflecting that conflict is a more variable construct.
+- **Random slope ($0.60^2 = 0.36$).** The rate of change in conflict also varies widely, with 95% of slopes roughly $0.29 \pm 1.96 \times 0.60 = [-0.89, 1.47]$. Some children's conflict is decreasing while others' is increasing steeply.
+- **Intercept–slope correlation ($\rho_{01} = -0.20$).** A weak negative correlation: children who start with higher conflict tend to increase slightly less over time. Because the mean slope is positive, this implies mild convergence rather than fanning out.
+- **Residual SD ($3.22^2 = 10.4$).** Considerable occasion-to-occasion variation remains within children.
+
+**Substantive summary.** Conflict with mom behaves quite differently from closeness with dad: it *increases* over the elementary grades, and there are large between-person differences in both level and change. The main-effects model finds no overall sex difference in initial conflict; whether the *rate of change* differs by sex is tested in the interaction model (`m1f`), whose simple slopes are reported next.
+
+
 Finally, we add the **time × sex interaction**, which lets sex predict the **slope** as well:
 
 ```{r}
@@ -581,6 +646,23 @@ First, we compute the simple slopes of time (`GRADE_C`) at each level of the mod
 ```{r}
 avg_slopes(m1f, variables = "GRADE_C", by = "SEX_cat")
 ```
+
+
+### Expanded interpretation: `avg_slopes()` for the time × sex interaction (`m1f`)
+
+The interaction model (`m1f`) adds `GRADE_C:SEX_cat`, allowing the rate of change in conflict to differ for boys and girls. `avg_slopes()` translates the interaction back into the simple slope of time for each group:
+
+| Sex | Simple slope of time | SE | 95% CI |
+|---|---|---|---|
+| boys | 0.224 | 0.046 | [0.134, 0.314] |
+| girls | 0.351 | 0.046 | [0.261, 0.441] |
+
+- **Both simple slopes are positive and significant.** Conflict with mom increases over the grades for boys ($0.224$, $p < .001$) and for girls ($0.351$, $p < .001$). For boys the increase is about 0.22 points per grade ($\approx 1.1$ points over five grades); for girls it is about 0.35 points per grade ($\approx 1.8$ points over five grades).
+- **The difference between the slopes is the interaction term.** Girls' slope minus boys' slope is $0.351 - 0.224 = 0.127$, which matches the interaction coefficient in `m1f` (0.12). So the interaction says: relative to boys, girls' conflict increases by an *additional* 0.13 points per grade.
+- **But the difference is only marginal.** In the parameter table of `m1f` the interaction had $p = 0.055$ (95% CI [0.00, 0.25]). The `avg_slopes()` output reports the two simple slopes but does not test their difference directly; the marginal $p$-value of the interaction term is the relevant test, and it sits just above the conventional .05 threshold. The honest conclusion is that there is a *trend* toward girls showing a steeper increase in conflict than boys, but the evidence is not conclusive.
+- **Reporting tip.** Reporting simple slopes for both groups is good practice because it shows the *magnitude and direction* of the effect in each group, not just whether the interaction is significant. Even a non-significant interaction is better described as "the slope was X for one group and Y for the other" than left as a single interaction coefficient.
+- **Why the main-effects and interaction models differ.** In `m1d` (no interaction) both groups were forced to share the single slope of 0.29. Once the interaction is allowed, that shared slope splits into 0.22 for boys and 0.35 for girls. This illustrates how adding an interaction reinterprets the "main effect" of time: it becomes the slope for the reference group rather than a single slope for everyone.
+
 
 This gives the rate of change in conflict separately for girls and boys, along with standard errors and confidence intervals. We can then plot the two trajectories:
 
@@ -622,6 +704,36 @@ m1hc <- lmer(CLOSEDAD ~ 1 + GRADE_C + CLOSEMOM_C + (1 + GRADE_C | id),
              data = simchild, REML = FALSE)
 parameters(m1hc, ci_method = "profile")
 ```
+
+### Expanded interpretation: `m1hc` (closeness with dad controlling for closeness with mom)
+
+This model adds a **time-varying covariate**, `CLOSEMOM_C` (closeness with mom, centered at its grand mean of 36.97), to the full growth model. Because it is centered, the intercept is now interpretable at the average level of mom-closeness.
+
+| Parameter | Estimate | SE | 95% CI | t(3655) | p |
+|---|---|---|---|---|---|
+| Intercept ($\gamma_{00}$) | 36.09 | 0.12 | [35.86, 36.32] | 307.87 | < .001 |
+| GRADE_C ($\gamma_{10}$) | -0.46 | 0.03 | [-0.52, -0.41] | -15.63 | < .001 |
+| CLOSEMOM_C ($\gamma_{20}$) | 0.17 | 0.02 | [0.13, 0.22] | 7.60 | < .001 |
+
+**Fixed effects.**
+- **Intercept ($\gamma_{00} = 36.09$).** The predicted closeness with dad at Grade 1 for a child at the *average* level of closeness with mom. Centering `CLOSEMOM` makes this value meaningful; uncentered, the intercept would be the predicted dad-closeness when mom-closeness is zero, which lies outside the observed range.
+- **Time slope ($\gamma_{10} = -0.46$).** After controlling for closeness with mom, the average decline in dad-closeness is 0.46 points per grade. Compare this with the unconditional estimate in `m1c` (−0.52): the decline is slightly shallower once mom-closeness is held constant, but the downward trend is unchanged.
+- **CLOSEMOM_C effect ($\gamma_{20} = 0.17$).** This is a **within-person** effect: for a given child, when their closeness with mom is one point above their own average, their closeness with dad is expected to be 0.17 points higher, controlling for the passage of time. The effect is small but highly significant ($t = 7.60$, $p < .001$). Substantively, closeness with mom and dad move together *within* a child over time — on occasions when a child feels closer to mom, they also tend to feel closer to dad.
+
+**Random effects.**
+
+| Parameter | Estimate (SD) | Compare to `m1c` |
+|---|---|---|
+| SD (Intercept: id) | 2.50 | 2.58 |
+| SD (GRADE_C: id) | 0.38 | 0.39 |
+| Cor (Intercept ~ GRADE_C: id) | 0.47 | 0.47 |
+| SD (Residual) | 2.53 | 2.53 |
+
+- The random effects are almost identical to the unconditional model. In particular, the residual SD is unchanged at 2.53, meaning `CLOSEMOM_C` explains very little of the *occasion-level* residual variation in `CLOSEDAD`. This is an important (and sometimes counterintuitive) lesson: a significant within-person predictor does not necessarily reduce residual variance much when its effect is small relative to the total within-person variation. Note also that the number of observations drops (df from 3695 to 3655) because `CLOSEMOM` has some missing values, so the two models are fit to slightly different samples.
+- **Practical implication.** If the goal were to explain within-person variation in dad-closeness, we would look for stronger time-varying predictors. The value of `CLOSEMOM_C` here is mainly as a statistical control that sharpens the estimate of the time trend and guards against confounding the trajectory with concurrent family dynamics.
+
+**Substantive summary.** The time trend in dad-closeness is robust to controlling for mom-closeness, and there is a small but reliable within-person association between the two. This is a good example of a **time-varying covariate** doing two jobs at once: controlling for a competing process and testing a within-person hypothesis.
+
 
 We can combine the time-varying covariate with a time-invariant predictor, and also test whether the time-varying covariate interacts with time:
 
@@ -714,6 +826,15 @@ r2(m1c)
 
 The marginal $R^2$ represents the variance explained by the fixed effects (the average trajectory), and the conditional $R^2$ includes the random effects (individual variability around that trajectory). The difference between them is the variance attributable to between-person differences in intercepts and slopes.
 
+### Expanded interpretation: `r2(m1c)`
+
+
+- **Marginal $R^2 = 0.046$.** The *fixed* effects — here, only the average time slope — explain about 4.6% of the total variance in closeness with dad. This is small, and it is exactly what we should expect in a growth model whose only fixed predictor is time: the average downward trend accounts for very little of the total variation, because most of the variation is between children (different intercepts) and around each child's own line.
+- **Conditional $R^2 = 0.645$.** Once we also include the *random* effects (random intercepts and slopes), the model explains 64.5% of the total variance. The difference between the two, $0.645 - 0.046 = 0.599$, is the share attributable to between-person differences in level and change.
+- **How to report it.** Because the two measures answer different questions, report both: the marginal $R^2$ describes how much the *average trajectory* explains, and the conditional $R^2$ describes how much the *full multilevel model* explains. A common mistake is to report only the conditional $R^2$, which overstates the role of the predictors; here the honest reading is that the substantive action is in the random effects, not the fixed time effect.
+- **A low marginal $R^2$ is not a problem here.** In cross-sectional MLM, a low marginal $R^2$ often signals weak predictors. In growth models it frequently just reflects that time is a weak *fixed* predictor of a highly variable outcome, while the individual trajectories are the real story. Adding predictors of the intercept and slope (e.g., `SEX_cat`, `CLOSEMOM_C`) would raise the marginal $R^2$.
+
+
 ### Level-Specific Pseudo-R²
 
 We can also compute the level-specific pseudo-$R^2$ measures (Raudenbush & Bryk, 2002) by comparing the null model to the fitted model:
@@ -739,6 +860,35 @@ r2mlm(m1c, bargraph = FALSE)
 ```
 
 In a growth model, the $v$ component captures the variance due to **random slopes** (individual differences in change), and the $m$ component captures the variance due to **random intercepts** (individual differences in starting level). These are the two most substantively interesting components in longitudinal models.
+
+### Expanded interpretation: `r2mlm(m1c)`
+
+
+The `r2mlm()` decomposition (Rights & Sterba, 2019) splits the total variance into four non-overlapping sources. The four `$Decompositions` values sum to 1.00:
+
+| Source | Proportion | Meaning |
+|---|---|---|
+| `fixed` | 0.046 | Variance explained by the fixed time trend |
+| `slope variation` | 0.025 | Variance due to individual differences in *rate of change* (random slopes) |
+| `mean variation` | 0.574 | Variance due to individual differences in *starting level* (random intercepts) |
+| `sigma2` | 0.355 | Unexplained within-person residual variance |
+
+Check: $0.046 + 0.025 + 0.574 + 0.355 = 1.00$.
+
+**Reading each component.**
+- **`fixed` (0.046).** Same as the marginal $R^2$: the average trajectory explains 4.6% of total variance.
+- **`slope variation` (0.025).** Only about 2.5% of the total variance is attributable to children changing at different rates. This is the component unique to the random-slope part of the model, and it is small — the average rate of change plus individual intercepts do most of the work. Nonetheless it is non-zero and, as the likelihood-ratio test showed, statistically necessary.
+- **`mean variation` (0.574).** By far the largest component. Nearly 58% of the total variance is explained simply by the fact that children differ in their *starting level*. This is the signature of a growth model: between-person differences in level dominate.
+- **`sigma2` (0.355).** About 35.5% of the total variance is unexplained within-person variation — the occasion-to-occasion fluctuation around each child's own trajectory. This is the part of the variance that additional time-varying covariates (e.g., `CLOSEMOM_C`) would try to explain.
+
+**Reading the `$R2s` table.**
+- **`f` (0.046)** = variance explained by fixed effects = marginal $R^2$.
+- **`v` (0.025)** = variance explained by random slope variation.
+- **`m` (0.574)** = variance explained by random intercept variation.
+- **`fv` (0.071)** = fixed + random slopes. Adding the random slopes to the fixed effects raises the explained variance from 4.6% to 7.1%.
+- **`fvm` (0.645)** = fixed + random slopes + random intercepts = the **conditional $R^2$**, and it matches `r2()` exactly (0.645). This is a useful consistency check: the two packages agree.
+
+**Substantive summary.** The decomposition makes the structure of the growth model explicit. The overwhelming majority of the explainable variance is between-person variation in *level* (`m` = 0.574); a small amount comes from the fixed time trend (`f` = 0.046) and from individual differences in *change* (`v` = 0.025); and the rest is within-person residual noise (`sigma2` = 0.355). When reporting a growth model, this decomposition is more informative than a single $R^2$ because it shows *where* the explained variance comes from — and it highlights that, in these data, level differences between children matter far more than differences in their rates of change.
 
 ## Visualizing Trajectories
 
