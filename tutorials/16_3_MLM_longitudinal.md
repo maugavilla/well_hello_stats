@@ -1,6 +1,6 @@
-# Multilevel Regression: centering
+# Multilevel Regression: Longitudinal Data Analysis 1
 Mauricio Garnier-Villarreal
-2026-10-05
+2026-10-14
 
 - [<span class="toc-section-number">1</span> Introduction to
   Longitudinal Data

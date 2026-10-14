@@ -1,5 +1,5 @@
 ---
-title: "Multilevel Regression: centering"
+title: "Multilevel Regression: Longitudinal Data Analysis 1"
 author: "Mauricio Garnier-Villarreal"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 format: gfm
