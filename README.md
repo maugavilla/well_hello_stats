@@ -120,7 +120,7 @@ consider that useRs should first be comfortable with the base R
 commands, and if desired can transition to use of the tidyverse as an
 extension of R instead of the default use.
 
-The tutorials `.Rmd` and `.md` files are found in the *tutorials*
+The tutorials `.Rmd`/`.qmd` and `.md` files are found in the *tutorials*
 folder. And the following section links to the respective `.md` files in
 an structure format, so that you can navigate the tutorials from this
 page.
