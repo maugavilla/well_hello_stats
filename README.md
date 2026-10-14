@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-05 October, 2026
+14 October, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -220,7 +220,7 @@ following a course.
   format, run repeated measures anova and mixed design RM-ANOVA, effect
   size, post-hoc pairwise and planned comparisons, plot effects.
   Packages: rio, dplyr, reshape2, marginaleffect, afex, sjlabelled,
-  effectsize.  
+  effectsize.\
 - [MANOVA](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/8_3_MANOVA.md):
   introduction to MANOVA, setting up R session, import data set, MANOVA,
   effect sizes, homogeneity of variances, HE plots, LDA.
@@ -235,7 +235,7 @@ following a course.
   what is moderation, setting up R session, import data set, moderation
   analysis steps, categorical and continuous moderator, main effects,
   interaction models, effect size, probbing, plotting, interpretation.
-  Packages: rio, effectsize, visreg, reghelper.  
+  Packages: rio, effectsize, visreg, reghelper.\
 - [Moderation with
   bruceR](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/10_3_moderation_bruceR.md):
   what is moderation, setting up R session, import data set, moderation
@@ -307,9 +307,16 @@ following a course.
   effect sizes. Packages: lme4, lmerTest, rio, parameters, performance,
   r2mlm, dplyr, ggplot2, tidyr
 - [Longitudinal
-  1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_3_MLM_longitudinal.md):
-  Packages: lme4, lmerTest, rio, parameters, performance, r2mlm,
-  ggplot2, tidyr, marginaleffects
+  1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_3_MLM_longitudinal.md):growth
+  curve models, adding predictors, centering, effect size measures,
+  visualizing trajectories. Packages: lme4, lmerTest, rio, parameters,
+  performance, r2mlm, ggplot2, tidyr, marginaleffects
+- [Longitudinal
+  2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_4_MLM_longitudinal2.md):
+  nonlinear growth models, polynomials, adding predictors, splines,
+  effect size measures, visualizing trajectories. Packages: lme4,
+  lmerTest, rio, parameters, performance, r2mlm, ggplot2, tidyr,
+  marginaleffects
 
 ## Mixture models
 
