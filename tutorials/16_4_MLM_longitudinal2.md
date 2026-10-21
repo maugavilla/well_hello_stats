@@ -1,6 +1,6 @@
 # Multilevel Regression: nonlinear longitudinal models
 Mauricio Garnier-Villarreal
-2026-10-14
+2026-10-21
 
 - [<span class="toc-section-number">1</span> Introduction to Nonlinear
   Growth Models](#introduction-to-nonlinear-growth-models)

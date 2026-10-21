@@ -13,19 +13,6 @@ execute:
   eval: true
 ---
 
----
-title: "Multilevel Regression: nonlinear longitudinal models"
-author: "Mauricio Garnier-Villarreal"
-date: "2026-10-14"
-format:
-  gfm:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-execute:
-  warning: false
-  message: false
----
 
 ## Introduction to Nonlinear Growth Models
 
