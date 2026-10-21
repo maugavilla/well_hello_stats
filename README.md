@@ -1,7 +1,7 @@
 Well Hello Stats
 ================
 Mauricio Garnier-Villarreal
-14 October, 2026
+21 October, 2026
 
 - [Welcome](#welcome)
 - [What is R and why should you learn
@@ -317,6 +317,11 @@ following a course.
   effect size measures, visualizing trajectories. Packages: lme4,
   lmerTest, rio, parameters, performance, r2mlm, ggplot2, tidyr,
   marginaleffects
+- [MAIHDA](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_5_MLM_MAIHDA.md):
+  intersectionality model (Intersectional Multilevel Analysis of
+  Individual Heterogeneity and Discriminatory Accuracy), effect size
+  measures, visualizations. Packages: lme4, lmerTest, rio, parameters,
+  performance, r2mlm, ggplot2, tidyr, marginaleffects, merTools.
 
 ## Mixture models
 

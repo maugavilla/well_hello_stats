@@ -114,6 +114,7 @@ Here you will find links for the respective tutorials, and a short description. 
 effect sizes. Packages: lme4, lmerTest, rio, parameters, performance, r2mlm, dplyr, ggplot2, tidyr
 -   [Longitudinal 1](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_3_MLM_longitudinal.md):growth curve models, adding predictors, centering, effect size measures, visualizing trajectories. Packages: lme4, lmerTest, rio, parameters, performance, r2mlm, ggplot2, tidyr, marginaleffects
 -   [Longitudinal 2](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_4_MLM_longitudinal2.md): nonlinear growth models, polynomials, adding predictors, splines, effect size measures, visualizing trajectories. Packages: lme4, lmerTest, rio, parameters, performance, r2mlm, ggplot2, tidyr, marginaleffects
+-   [MAIHDA](https://github.com/maugavilla/well_hello_stats/blob/main/tutorials/16_5_MLM_MAIHDA.md): intersectionality model (Intersectional Multilevel Analysis of Individual Heterogeneity and Discriminatory Accuracy), effect size measures, visualizations. Packages: lme4, lmerTest, rio, parameters, performance, r2mlm, ggplot2, tidyr, marginaleffects, merTools. 
 
 ## Mixture models
 
