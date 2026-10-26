@@ -1,6 +1,6 @@
 # Multilevel Regression: centering
 Mauricio Garnier-Villarreal
-2026-03-25
+2026-10-26
 
 - [<span class="toc-section-number">1</span> Introduction to Centering
   in Multilevel Models](#introduction-to-centering-in-multilevel-models)
@@ -64,9 +64,29 @@ Mauricio Garnier-Villarreal
         the Numbers:](#interpreting-the-numbers)
     - [<span class="toc-section-number">11.2.2</span> Key Takeaways from
       This Output:](#key-takeaways-from-this-output)
-- [<span class="toc-section-number">12</span> Summary of Interpretations
+- [<span class="toc-section-number">12</span> Level-Specific and
+  Snijders–Bosker R² with
+  `r2_l1_sb()`](#level-specific-and-snijdersbosker-r²-with-r2_l1_sb)
+  - [<span class="toc-section-number">12.1</span> The
+    helper](#the-helper)
+  - [<span class="toc-section-number">12.2</span> Which comparisons are
+    valid here](#which-comparisons-are-valid-here)
+  - [<span class="toc-section-number">12.3</span> 1. Grand mean
+    centering: `model_cgm_only` →
+    `model_cgm_full`](#1-grand-mean-centering-model_cgm_only--model_cgm_full)
+  - [<span class="toc-section-number">12.4</span> 2. Group mean
+    centering: `model_cwc_only` →
+    `model_cwc_full`](#2-group-mean-centering-model_cwc_only--model_cwc_full)
+  - [<span class="toc-section-number">12.5</span> 3. Centering the
+    level-2 predictor: `model_cwc_full` →
+    `model_final`](#3-centering-the-level-2-predictor-model_cwc_full--model_final)
+  - [<span class="toc-section-number">12.6</span> 4. The comparison that
+    looks valid but is not: `model_uncentered` →
+    `model_cgm_only`](#4-the-comparison-that-looks-valid-but-is-not-model_uncentered--model_cgm_only)
+  - [<span class="toc-section-number">12.7</span> Summary](#summary)
+- [<span class="toc-section-number">13</span> Summary of Interpretations
   and Recommendations](#summary-of-interpretations-and-recommendations)
-- [<span class="toc-section-number">13</span> References](#references)
+- [<span class="toc-section-number">14</span> References](#references)
 
 ## Introduction to Centering in Multilevel Models
 
@@ -844,8 +864,7 @@ The contextual effect (the effect of school average IQ above and beyond
 individual IQ) can be calculated as:
 
 $$ 
-\text{Contextual Effect} = \gamma_{01} - \gamma_{10} = 3.92 - 2.46 = 1.46 
-$$
+\text{Contextual Effect} = \gamma_{01} - \gamma_{10} = 3.92 - 2.46 = 1.46 $$
 
 This means that for two students with the same individual IQ, the one
 attending a school with an average IQ one point higher is predicted to
@@ -934,8 +953,7 @@ The intraclass correlation (ICC) – the proportion of total variance that
 is between schools – is:
 
 $$ 
-\text{ICC} = \frac{7.87}{49.08} = 0.160 
-$$
+\text{ICC} = \frac{7.87}{49.08} = 0.160 $$
 
 About **16%** of the variance in language scores is between schools,
 with the remaining 84% within schools. This confirms that most of the
@@ -1203,6 +1221,212 @@ predictors. The notation follows Rights & Sterba (2019):
 6.  **Total model performance**: The conditional R² (fvm) of 0.500
     indicates that the full model explains 50.0% of the total variance
     in language scores.
+
+## Level-Specific and Snijders–Bosker R² with `r2_l1_sb()`
+
+The `r2()` and `r2mlm()` measures above answer “how much variance does
+the model explain?” This section adds a compact two-number summary that
+answers a narrower question — how much of the *within-cluster* and of
+the *total* variance a given fixed effect explains — and, more
+importantly, makes explicit **which comparisons in a centering tutorial
+are legitimate and which are not**.
+
+### The helper
+
+``` r
+# Level-1 and Snijders-Bosker R2 comparing a null model to a fitted model
+r2_l1_sb <- function(null, full) {
+  vn  <- as.data.frame(VarCorr(null))
+  vf  <- as.data.frame(VarCorr(full))
+  s2n <- vn$vcov[vn$grp == "Residual"]                                  # level-1 variance
+  s2f <- vf$vcov[vf$grp == "Residual"]
+  t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) &
+                   vn$var1 == "(Intercept)"]                            # intercept variance
+  t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2) &
+                   vf$var1 == "(Intercept)"]
+  c(R2_L1 = (s2n - s2f) / s2n,
+    R2_SB = 1 - (s2f + t0f) / (s2n + t0n))
+}
+```
+
+**The `var1 == "(Intercept)"` condition is mandatory in this tutorial.**
+In `16_MLM1` every model had a random intercept only, so `is.na(var2)`
+was enough to isolate $\tau_{00}$. Here **every model includes a random
+slope**, so `as.data.frame(VarCorr())` returns three cluster-level rows
+— intercept variance, covariance, and slope variance. Without the `var1`
+condition the helper returns a *vector* of two values, R recycles it
+through the arithmetic, and you get two plausible-looking but
+meaningless R² numbers with no error message.
+
+### Which comparisons are valid here
+
+This tutorial contains six models, and only three pairs differ *solely*
+in fixed effects while sharing the same random structure:
+
+| Pair | What changes | Valid? |
+|----|----|----|
+| `model_uncentered` → `model_cgm_only` | reparameterization of the same variable | **No** — see below |
+| `model_cgm_only` → `model_cgm_full` | adds `iq_mean` (level-2) | Yes |
+| `model_cwc_only` → `model_cwc_full` | adds `iq_mean` (level-2) | Yes |
+| `model_cwc_full` → `model_final` | `iq_mean` → `iq_mean_c` | Yes (should be exactly 0) |
+
+### 1. Grand mean centering: `model_cgm_only` → `model_cgm_full`
+
+``` r
+r2_l1_sb(model_cgm_only, model_cgm_full)
+```
+
+          R2_L1       R2_SB 
+    0.003126984 0.030762520 
+
+`R2_L1` is about **0.003**: adding the school mean explains essentially
+none of the *within-school* variance. This is exactly what theory
+predicts — `iq_mean` is constant within a school, so it cannot possibly
+reduce student-level residual variance.
+
+`R2_SB` is about **0.031**: roughly 3% of total variance. All of that
+comes from the between-school component.
+
+The companion quantity — the reduction in the intercept variance itself
+— is the level-2 pseudo-R², and it is *not* the same number:
+
+``` r
+vn <- as.data.frame(VarCorr(model_cgm_only))
+vf <- as.data.frame(VarCorr(model_cgm_full))
+t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) & vn$var1 == "(Intercept)"]
+t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2) & vf$var1 == "(Intercept)"]
+(t0n - t0f) / t0n
+```
+
+    [1] 0.1533218
+
+The intercept variance falls from 9.35 to 7.92, a reduction of about
+**15%**. So under CGM, the school mean explains 15% of the
+between-school variance and 3% of total variance. Both numbers are
+correct; they answer different questions.
+
+### 2. Group mean centering: `model_cwc_only` → `model_cwc_full`
+
+``` r
+r2_l1_sb(model_cwc_only, model_cwc_full)
+```
+
+          R2_L1       R2_SB 
+    0.006055857 0.224435894 
+
+`R2_L1` is again about **0.006** — essentially zero, for the same
+reason.
+
+`R2_SB` is about **0.224** — roughly 22%. At first glance this looks far
+larger than the 3% under CGM, which would be a misleading reading. **The
+two `R2_SB` values are not comparable**, because the baseline total
+variance differs between the centering schemes:
+
+| Baseline model   | $\sigma^2$ | $\tau_{00}$ | Total     |
+|------------------|------------|-------------|-----------|
+| `model_cgm_only` | 41.48      | 9.35        | **50.83** |
+| `model_cwc_only` | 41.46      | 21.82       | **63.28** |
+
+Group mean centering strips the between-school variance out of the
+predictor and pushes it back into the intercept, so `model_cwc_only`
+starts from a much larger $\tau_{00}$. A fixed effect that absorbs a
+similar absolute amount of variance therefore looks like a much larger
+proportion of a smaller baseline in the CGM case and a smaller
+proportion of a larger baseline in the CWC case. The 22% does **not**
+mean CWC is “better.”
+
+The level-2 pseudo-R² makes the same point differently:
+
+``` r
+vn <- as.data.frame(VarCorr(model_cwc_only))
+vf <- as.data.frame(VarCorr(model_cwc_full))
+t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) & vn$var1 == "(Intercept)"]
+t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2) & vf$var1 == "(Intercept)"]
+(t0n - t0f) / t0n
+```
+
+    [1] 0.639348
+
+Here the intercept variance falls from 21.82 to 7.87 — a reduction of
+about **64%**. Under CWC the school mean absorbs two-thirds of the
+between-school variance, versus 15% under CGM. That contrast is real and
+substantive, but it is a statement about *this parameterization*, not
+about which centering scheme “explains more.”
+
+**The practical lesson.** `R2_SB` is only comparable across models with
+the **same random structure and the same parameterization**. Comparing
+it across centering schemes is exactly the kind of apples-to-oranges
+comparison that the centering literature warns against.
+
+### 3. Centering the level-2 predictor: `model_cwc_full` → `model_final`
+
+``` r
+r2_l1_sb(model_cwc_full, model_final)
+```
+
+            R2_L1         R2_SB 
+    -8.984616e-12  1.411649e-11 
+
+Both values should be **exactly zero** (to rounding). These two models
+are statistically equivalent — `iq_mean` and `iq_mean_c` differ only by
+a constant — so the residual and intercept variances are identical. This
+is the cleanest possible demonstration of the tutorial’s central claim:
+centering changes the *interpretation* of parameters, never the *fit*.
+
+If you ever get a non-zero value here, something has gone wrong — most
+likely the models were fit to slightly different samples because of
+missingness.
+
+### 4. The comparison that looks valid but is not: `model_uncentered` → `model_cgm_only`
+
+``` r
+r2_l1_sb(model_uncentered, model_cgm_only)
+```
+
+These two models are also statistically equivalent — grand mean
+centering is just a shift of the same variable — so a naive reading
+would expect zeros. What you actually get is `R2_L1 ≈ 0` but
+**`R2_SB ≈ 0.53`**.
+
+A 53% improvement between two identical models. That number is entirely
+an artifact: `model_uncentered` has $\tau_{00} = 67.71$ (because the
+intercept sits at IQ = 0, far outside the observed range, where the
+random effects fan out), while `model_cgm_only` has $\tau_{00} = 9.35$
+(because the intercept sits at the mean). The denominator collapses; the
+numerator does not.
+
+This is the most instructive failure in the tutorial. It is why `R2_SB`
+must be read alongside the parameterization, and it is a concrete
+demonstration of why the centering choice matters for *reporting* even
+when it does not matter for *fit*.
+
+### Summary
+
+| Pair | `R2_L1` | `R2_SB` | Level-2 pseudo-R² | Verdict |
+|----|----|----|----|----|
+| `cgm_only` → `cgm_full` | 0.003 | 0.031 | 0.153 | Valid; between-school only |
+| `cwc_only` → `cwc_full` | 0.006 | 0.224 | 0.639 | Valid; but `R2_SB` not comparable to the row above |
+| `cwc_full` → `final` | 0.000 | 0.000 | 0.000 | Valid; identical models, as expected |
+| `uncentered` → `cgm_only` | 0.000 | **0.534** | — | **Invalid**; pure artifact |
+
+**Reporting guidance.** Use `r2_l1_sb()` for the two questions it
+answers well: (a) does a level-2 predictor reduce within-cluster
+variance? (it should not — `R2_L1` near zero is the correct answer, and
+confirming that is a useful check) and (b) how much total variance does
+a fixed effect absorb *relative to a specified baseline*? Report `R2_SB`
+only alongside the baseline model and the parameterization, and never
+compare it across centering schemes. For the level-specific question,
+the level-2 pseudo-R² above (the proportional reduction in $\tau_{00}$)
+is the more interpretable quantity, and it is what `r2mlm()` decomposes
+into `f2`.
+
+**A note on the numbers.** The values above are computed from the
+variance components printed in this tutorial. Re-running the helper will
+give slightly different figures at the third decimal place because the
+printed SDs are rounded. The qualitative pattern — near-zero `R2_L1` for
+level-2 predictors, non-zero `R2_SB` confined to the between-school
+component, and a large spurious `R2_SB` for the uncentered/CGM pair — is
+robust.
 
 ## Summary of Interpretations and Recommendations
 

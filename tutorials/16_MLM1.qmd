@@ -63,6 +63,7 @@ SB <- drop_na(SB)  # remove missing for simplicity
 head(SB)
 ```
 
+
 ### Disaggregation
 
 Analyze all level-1 data as if no clustering exists. This ignores the grouping, leading to underestimated standard errors.
@@ -350,55 +351,150 @@ BIC(m0, m1, m2, m3)
 
 Traditional $R^2$ is not directly applicable in MLM because variance is partitioned across levels. Several pseudo-$R^2$ measures have been proposed.
 
+### Effect-size helper: `r2_l1_sb()`
+
+Several effect-size measures in this tutorial need the same two variance components from every model: the level-1 residual variance $\sigma^2$ and the level-2 intercept variance $\tau_{00}$. Extracting them repeatedly with `dplyr::filter()` / `pull()` is verbose and easy to get wrong, so we define a small base-R helper once and reuse it.
+
+```{r r2helper}
+# Level-1 and Snijders-Bosker R2 comparing a null model to a fitted model
+r2_l1_sb <- function(null, full) {
+  vn  <- as.data.frame(VarCorr(null))
+  vf  <- as.data.frame(VarCorr(full))
+  s2n <- vn$vcov[vn$grp == "Residual"]                       # level-1 variance, null
+  s2f <- vf$vcov[vf$grp == "Residual"]                       # level-1 variance, full
+  t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2)]      # intercept variance, null
+  t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2)]      # intercept variance, full
+  c(R2_L1 = (s2n - s2f) / s2n,
+    R2_SB = 1 - (s2f + t0f) / (s2n + t0n))
+}
+```
+
+#### What `as.data.frame(VarCorr())` returns
+
+Understanding the filter requires knowing the shape of the object. `VarCorr()` prints the variance components, but `as.data.frame()` turns them into a tidy table with one row per **variance or covariance parameter**:
+
+| `grp` | `var1` | `var2` | `vcov` | meaning |
+|---|---|---|---|---|
+| `schoolnr` | `(Intercept)` | `NA` | 19.43 | intercept variance $\tau_{00}$ |
+| `Residual` | `(Intercept)` | `NA` | 64.57 | residual variance $\sigma^2$ |
+
+#### Why the `is.na(var2)` condition is necessary
+
+The condition has two parts, and the second one is the one that matters:
+
+- `grp != "Residual"` removes the residual row, leaving the cluster-level parameters.
+- `is.na(var2)` keeps only rows where `var2` is missing — that is, **variance** rows rather than **covariance** rows.
+
+For the null model above the second condition changes nothing, because there is only one cluster-level row. The problem appears as soon as a model has a **random slope**. In that case `VarCorr()` contains three cluster-level rows:
+
+| `grp` | `var1` | `var2` | `vcov` | meaning |
+|---|---|---|---|---|
+| `schoolnr` | `(Intercept)` | `NA` | 65.88 | intercept variance $\tau_{00}$ |
+| `schoolnr` | `iq_verb` | `(Intercept)` | −3.60 | covariance $\tau_{10}$ |
+| `schoolnr` | `iq_verb` | `NA` | 0.21 | slope variance $\tau_{11}$ |
+
+Now `grp != "Residual"` alone returns **three** values. The Snijders-Bosker formula needs one, so R recycles the vector and silently returns a vector of nonsensical R² values — no error, no warning, just wrong numbers. Adding `is.na(var2)` drops the covariance row. It is the difference between a result and a plausible-looking mistake.
+
+**A further refinement.** `is.na(var2)` keeps *both* variances above, so a random-slope model still returns two values ($\tau_{00}$ and $\tau_{11}$). To isolate the intercept variance specifically, add the row name:
+
+```{r r2helper-strict}
+#| eval: false
+t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) & vn$var1 == "(Intercept)"]
+```
+
+Every model compared in this tutorial (`m0`, `m1`, `m3`) has a random intercept only, so `is.na(var2)` is sufficient here. Use the `var1 == "(Intercept)"` form whenever a random slope is present — as in `m2` — or, better, use `r2mlm()` for models with random slopes, since the Snijders-Bosker denominator changes meaning once the slope is random.
+
+#### Using the helper
+
+The function returns a named vector with both measures:
+
+```{r r2helper-use}
+#| eval: false
+r2_l1_sb(m0, m1)
+```
+
+- `R2_L1` is the proportion of **within-school** variance explained, relative to the null model.
+- `R2_SB` is the proportion of **total** variance explained, relative to the null model.
+
+Both are defined precisely in the next two sections. The helper assumes the two models share the **same random-effects structure** and differ only in fixed effects; comparing models that add or remove a random slope is not valid with this function.
+
 ### Level-Specific Pseudo-R² (Raudenbush & Bryk, 2002)
 
 These measure the proportion of variance explained at each level relative to a baseline model (usually the null model).
 
 For level-1:
-$$ 
-R^2_1 = \frac{\sigma^2_{null} - \sigma^2_{full}}{\sigma^2_{null}} 
+
+$$
+R^2_1 = \frac{\sigma^2_{null} - \sigma^2_{full}}{\sigma^2_{null}}
 $$
 
 For level-2 (intercept):
-$$ 
-R^2_2 = \frac{\tau_{00,null} - \tau_{00,full}}{\tau_{00,null}} 
+
+$$
+R^2_2 = \frac{\tau_{00,null} - \tau_{00,full}}{\tau_{00,null}}
 $$
 
 For level-2 (slope):
-$$ 
-R^2_{slope} = \frac{\tau_{11,null} - \tau_{11,full}}{\tau_{11,null}} 
+
+$$
+R^2_{slope} = \frac{\tau_{11,null} - \tau_{11,full}}{\tau_{11,null}}
 $$
 
-We can compute these manually from our models.
+The first of these is the `R2_L1` element returned by `r2_l1_sb()`:
 
 ```{r pseudoR2}
-# Level-1 R² from m1 vs m0
-sigma2_null <- as.data.frame(VarCorr(m0)) %>% filter(grp == "Residual") %>% pull(vcov)
-sigma2_m1 <- as.data.frame(VarCorr(m1)) %>% filter(grp == "Residual") %>% pull(vcov)
-R2_1 <- (sigma2_null - sigma2_m1) / sigma2_null
-R2_1
+r2_l1_sb(m0, m1)[["R2_L1"]]
 ```
 
-The result 0.346 means that adding `iq_verb` explains about 34.6% of the within-school variance in language scores.
+The result 0.346 means that adding `iq_verb` explains about **34.6% of the within-school variance** in language scores. Note what this does *not* say: it says nothing about the between-school variance, and it is not a proportion of the total variance. A level-1 predictor can explain a large share of within-school variance while explaining very little overall, because the within-school component may be the smaller part of the total.
+
+The level-2 counterpart is obtained the same way, by comparing the intercept variance across models:
+
+```{r pseudoR2-L2}
+vn <- as.data.frame(VarCorr(m0))
+vf <- as.data.frame(VarCorr(m1))
+
+t0_null <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2)]
+t0_full <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2)]
+
+(R2_L2 <- (t0_null - t0_full) / t0_null)
+```
+
+Here the between-school variance falls from 19.43 to 9.50, so `iq_verb` explains about 51% of the between-school variance as well. This is the compositional effect: schools differ in average IQ, and part of what looked like a school difference is really a student-composition difference. A level-1 predictor can reduce level-2 variance whenever it is correlated with cluster means — which is precisely why centering matters, as covered in 16_1_MLM_centering.
 
 ### Snijders & Bosker's (1999) Overall R²
 
 Snijders and Bosker proposed a total $R^2$ based on the proportional reduction in prediction error. It is defined as:
 
-$$ 
-R^2_{SB} = 1 - \frac{\hat{\sigma}^2_{full} + \hat{\tau}_{00,full}}{\hat{\sigma}^2_{null} + \hat{\tau}_{00,null}} 
+$$
+R^2_{SB} = 1 - \frac{\hat{\sigma}^2_{full} + \hat{\tau}_{00,full}}{\hat{\sigma}^2_{null} + \hat{\tau}_{00,null}}
 $$
 
-This can be computed from the null and full models.
+This is the `R2_SB` element of the same helper call:
 
 ```{r SB}
-var_null <- sigma2_null + as.data.frame(VarCorr(m0)) %>% filter(grp == "schoolnr") %>% pull(vcov)
-var_full <- sigma2_m1 + as.data.frame(VarCorr(m1)) %>% filter(grp == "schoolnr") %>% pull(vcov)
-R2_SB <- 1 - var_full / var_null
-R2_SB
+r2_l1_sb(m0, m1)[["R2_SB"]]
 ```
 
-This value of 0.384 indicates that the model explains 38.4% of the total variance (both within and between) compared to the null model.
+The value 0.384 indicates that the model explains **38.4% of the total variance** (both within and between) compared to the null model. Equivalently, the total prediction variance falls from $64.57 + 19.43 = 84.00$ to $42.23 + 9.50 = 51.72$.
+
+Both measures at once:
+
+```{r SB-both}
+r2_l1_sb(m0, m1)
+```
+
+**How to read the pair.** The two numbers answer different questions and should be reported together:
+
+| Measure | Denominator | Value | Reading |
+|---|---|---|---|
+| `R2_L1` | $\sigma^2_{null}$ = 64.57 | 0.346 | 34.6% of the **within-school** variance is explained |
+| `R2_SB` | $\sigma^2_{null} + \tau_{00,null}$ = 84.00 | 0.384 | 38.4% of the **total** variance is explained |
+
+`R2_SB` is the larger of the two because the model also reduces the between-school variance. Neither is the same as the marginal $R^2$ from `performance::r2()` (0.367 for `m3`), which uses a different denominator and includes all fixed predictors; the three measures will not agree exactly, and they are not meant to.
+
+**A caution on comparability.** `R2_SB` is only meaningful when the null and full models share the same random-effects structure. Comparing `m0` with `m2` — which adds a random slope — gives a number that looks like an R² but is not comparable to anything else, because $\tau_{00}$ is now defined conditional on a random slope and the denominator means something different. For models that differ in random structure, use the `r2mlm()` decomposition in the next section, which handles the partition properly.
+
 
 ### Conditional and marginal R²
 

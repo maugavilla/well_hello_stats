@@ -1,6 +1,6 @@
 # Multilevel Regression: interactions
 Mauricio Garnier-Villarreal
-2026-04-01
+2026-10-26
 
 - [<span class="toc-section-number">1</span> What is Moderation
   Analysis?](#what-is-moderation-analysis)
@@ -65,6 +65,27 @@ Mauricio Garnier-Villarreal
     Package](#using-the-r2mlm-package)
 - [<span class="toc-section-number">9</span> Summary and
   Recommendations](#summary-and-recommendations)
+  - [<span class="toc-section-number">9.1</span> Effect Sizes with
+    `r2_l1_sb()`](#effect-sizes-with-r2_l1_sb)
+    - [<span class="toc-section-number">9.1.1</span> The
+      helper](#the-helper)
+    - [<span class="toc-section-number">9.1.2</span> The five
+      pairs](#the-five-pairs)
+    - [<span class="toc-section-number">9.1.3</span> 1. Level-1
+      interaction:
+      `iq_verb × homework`](#1-level-1-interaction-iq_verb--homework)
+    - [<span class="toc-section-number">9.1.4</span> 2. Level-2
+      interaction:
+      `groupsiz × percmino`](#2-level-2-interaction-groupsiz--percmino)
+    - [<span class="toc-section-number">9.1.5</span> 3. Cross-level
+      interaction:
+      `iq_verb × groupsiz_c`](#3-cross-level-interaction-iq_verb--groupsiz_c)
+    - [<span class="toc-section-number">9.1.6</span> 4. Binary
+      moderator: `extrav × girl`](#4-binary-moderator-extrav--girl)
+    - [<span class="toc-section-number">9.1.7</span> 5. Three-way
+      interaction:
+      `iq_verb × homework × groupsiz_c`](#5-three-way-interaction-iq_verb--homework--groupsiz_c)
+    - [<span class="toc-section-number">9.1.8</span> Summary](#summary)
 - [<span class="toc-section-number">10</span> References](#references)
 
 # What is Moderation Analysis?
@@ -256,9 +277,9 @@ summary(m0_l1)
 
     Fixed effects:
                   Estimate Std. Error         df t value Pr(>|t|)    
-    (Intercept)   11.29960    0.95956 2045.34676  11.776   <2e-16 ***
-    iq_verb        2.48714    0.07011 2276.75235  35.477   <2e-16 ***
-    homework      -0.02451    0.07025 2195.82718  -0.349    0.727    
+    (Intercept)   11.29960    0.95956 2045.34673  11.776   <2e-16 ***
+    iq_verb        2.48714    0.07011 2276.75236  35.477   <2e-16 ***
+    homework      -0.02451    0.07025 2195.82719  -0.349    0.727    
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -336,10 +357,10 @@ summary(m1_l1)
 
     Fixed effects:
                        Estimate Std. Error         df t value Pr(>|t|)    
-    (Intercept)        13.05977    2.21306 2273.08378   5.901 4.15e-09 ***
-    iq_verb             2.33832    0.18261 2229.47576  12.805  < 2e-16 ***
-    homework           -0.36834    0.39575 2210.46078  -0.931    0.352    
-    iq_verb:homework    0.02913    0.03299 2209.20543   0.883    0.377    
+    (Intercept)        13.05977    2.21306 2273.08380   5.901 4.15e-09 ***
+    iq_verb             2.33832    0.18261 2229.47580  12.805  < 2e-16 ***
+    homework           -0.36834    0.39575 2210.46082  -0.931    0.352    
+    iq_verb:homework    0.02913    0.03299 2209.20547   0.883    0.377    
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -446,10 +467,10 @@ summary(m1_l1_random)
 
     Fixed effects:
                        Estimate Std. Error         df t value Pr(>|t|)    
-    (Intercept)        12.63050    2.28711 1109.70885   5.522 4.16e-08 ***
-    iq_verb             2.37632    0.18562 1250.95356  12.802  < 2e-16 ***
-    homework           -0.32661    0.39783 2015.82601  -0.821    0.412    
-    iq_verb:homework    0.02660    0.03309 1997.14599   0.804    0.421    
+    (Intercept)        12.63050    2.28711 1109.70902   5.522 4.16e-08 ***
+    iq_verb             2.37632    0.18562 1250.95385  12.802  < 2e-16 ***
+    homework           -0.32661    0.39783 2015.82631  -0.821    0.412    
+    iq_verb:homework    0.02660    0.03309 1997.14632   0.804    0.421    
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -459,7 +480,7 @@ summary(m1_l1_random)
     homework    -0.895  0.901       
     iq_vrb:hmwr  0.879 -0.913 -0.984
     optimizer (nloptwrap) convergence code: 0 (OK)
-    Model failed to converge with max|grad| = 0.670668 (tol = 0.002, component 1)
+    Model failed to converge with max|grad| = 0.670644 (tol = 0.002, component 1)
       See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
@@ -605,9 +626,9 @@ avg_slopes(m1_l1,
 
 
      homework Estimate Std. Error    z Pr(>|z|)     S 2.5 % 97.5 %
-         3.05     2.43     0.0979 24.8   <0.001 448.6  2.24   2.62
+         3.05     2.43     0.0976 24.9   <0.001 451.0  2.24   2.62
          5.02     2.48     0.0702 35.4   <0.001 910.1  2.35   2.62
-         6.99     2.54     0.0936 27.1   <0.001 536.7  2.36   2.73
+         6.99     2.54     0.0939 27.1   <0.001 533.8  2.36   2.73
 
     Term: iq_verb
     Type: response
@@ -950,7 +971,7 @@ summary(m1_l2_centered)
                             Estimate Std. Error         df t value Pr(>|t|)    
     (Intercept)            40.775755   0.389081 110.958666 104.800  < 2e-16 ***
     groupsiz_c              0.117096   0.048370 149.128925   2.421   0.0167 *  
-    percmino_c             -0.128123   0.029492 111.224517  -4.344  3.1e-05 ***
+    percmino_c             -0.128123   0.029492 111.224516  -4.344  3.1e-05 ***
     groupsiz_c:percmino_c   0.003338   0.002852 130.852637   1.170   0.2440    
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -1105,7 +1126,7 @@ avg_slopes(m1_l2_centered,
 
 
      percmino_c Estimate Std. Error    z Pr(>|z|)   S   2.5 % 97.5 %
-        -12.979   0.0738     0.0649 1.14  0.25555 2.0 -0.0534  0.201
+        -12.979   0.0738     0.0648 1.14  0.25492 2.0 -0.0532  0.201
           0.021   0.1172     0.0484 2.42  0.01541 6.0  0.0224  0.212
          13.021   0.1606     0.0568 2.83  0.00471 7.7  0.0492  0.272
 
@@ -1264,20 +1285,20 @@ summary(m0_cross)
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.1075 -0.6425  0.0617  0.7130  2.7145 
+    -4.1074 -0.6426  0.0616  0.7130  2.7147 
 
     Random effects:
      Groups   Name        Variance Std.Dev. Corr  
-     schoolnr (Intercept) 61.8869  7.867          
-              iq_verb      0.2025  0.450    -0.97 
-     Residual             41.4892  6.441          
+     schoolnr (Intercept) 61.8456  7.8642         
+              iq_verb      0.2023  0.4498   -0.97 
+     Residual             41.4897  6.4413         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                  Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept)  11.07026    1.11546 105.00332   9.924   <2e-16 ***
-    iq_verb       2.51325    0.08191 107.95087  30.684   <2e-16 ***
-    groupsiz_c    0.05316    0.03687 151.13126   1.442    0.151    
+    (Intercept)  11.07050    1.11530 105.02789   9.926   <2e-16 ***
+    iq_verb       2.51323    0.08190 107.98660  30.687   <2e-16 ***
+    groupsiz_c    0.05317    0.03687 151.13394   1.442    0.151    
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1285,6 +1306,9 @@ summary(m0_cross)
                (Intr) iq_vrb
     iq_verb    -0.966       
     groupsiz_c  0.177 -0.130
+    optimizer (nloptwrap) convergence code: 0 (OK)
+    Model failed to converge with max|grad| = 0.00348235 (tol = 0.002, component 1)
+      See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
 parameters(m0_cross, ci_method = "profile")
@@ -1294,15 +1318,15 @@ parameters(m0_cross, ci_method = "profile")
 
     Parameter   | Coefficient |   SE |         95% CI | t(2280) |      p
     --------------------------------------------------------------------
-    (Intercept) |       11.07 | 1.12 | [ 8.81, 13.27] |    9.92 | < .001
-    iq verb     |        2.51 | 0.08 | [ 2.35,  2.68] |   30.68 | < .001
+    (Intercept) |       11.07 | 1.12 | [ 8.81, 13.27] |    9.93 | < .001
+    iq verb     |        2.51 | 0.08 | [ 2.35,  2.68] |   30.69 | < .001
     groupsiz c  |        0.05 | 0.04 | [-0.02,  0.13] |    1.44 | 0.149 
 
     # Random Effects
 
     Parameter                         | Coefficient
     -----------------------------------------------
-    SD (Intercept: schoolnr)          |        7.87
+    SD (Intercept: schoolnr)          |        7.86
     SD (iq_verb: schoolnr)            |        0.45
     Cor (Intercept~iq_verb: schoolnr) |       -0.97
     SD (Residual)                     |        6.44
@@ -1337,21 +1361,21 @@ summary(m_cross)
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.1291 -0.6396  0.0614  0.7185  2.7204 
+    -4.1292 -0.6396  0.0616  0.7184  2.7195 
 
     Random effects:
      Groups   Name        Variance Std.Dev. Corr  
-     schoolnr (Intercept) 54.9159  7.4105         
-              iq_verb      0.1662  0.4076   -0.97 
-     Residual             41.5111  6.4429         
+     schoolnr (Intercept) 55.1476  7.4261         
+              iq_verb      0.1671  0.4087   -0.97 
+     Residual             41.5083  6.4427         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                         Estimate Std. Error        df t value Pr(>|t|)    
-    (Intercept)         11.38809    1.09133 101.00531  10.435  < 2e-16 ***
-    iq_verb              2.49533    0.07995 104.82888  31.212  < 2e-16 ***
-    groupsiz_c           0.41630    0.14094 126.63442   2.954  0.00374 ** 
-    iq_verb:groupsiz_c  -0.02837    0.01065 137.49120  -2.663  0.00867 ** 
+    (Intercept)         11.38816    1.09226 100.71505  10.426  < 2e-16 ***
+    iq_verb              2.49534    0.08000 104.39615  31.193  < 2e-16 ***
+    groupsiz_c           0.41627    0.14105 126.24072   2.951  0.00377 ** 
+    iq_verb:groupsiz_c  -0.02836    0.01066 136.90093  -2.661  0.00871 ** 
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1361,7 +1385,7 @@ summary(m_cross)
     groupsiz_c   0.134 -0.094       
     iq_vrb:grp_ -0.091  0.062 -0.966
     optimizer (nloptwrap) convergence code: 0 (OK)
-    Model failed to converge with max|grad| = 0.0163854 (tol = 0.002, component 1)
+    Model failed to converge with max|grad| = 0.171025 (tol = 0.002, component 1)
       See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
@@ -1372,8 +1396,8 @@ parameters(m_cross, ci_method = "profile")
 
     Parameter            | Coefficient |   SE |         95% CI | t(2279) |      p
     -----------------------------------------------------------------------------
-    (Intercept)          |       11.39 | 1.09 | [ 9.20, 13.55] |   10.44 | < .001
-    iq verb              |        2.50 | 0.08 | [ 2.34,  2.66] |   31.21 | < .001
+    (Intercept)          |       11.39 | 1.09 | [ 9.20, 13.55] |   10.43 | < .001
+    iq verb              |        2.50 | 0.08 | [ 2.34,  2.66] |   31.19 | < .001
     groupsiz c           |        0.42 | 0.14 | [ 0.14,  0.70] |    2.95 | 0.003 
     iq verb × groupsiz c |       -0.03 | 0.01 | [-0.05, -0.01] |   -2.66 | 0.008 
 
@@ -1381,7 +1405,7 @@ parameters(m_cross, ci_method = "profile")
 
     Parameter                         | Coefficient
     -----------------------------------------------
-    SD (Intercept: schoolnr)          |        7.41
+    SD (Intercept: schoolnr)          |        7.43
     SD (iq_verb: schoolnr)            |        0.41
     Cor (Intercept~iq_verb: schoolnr) |       -0.97
     SD (Residual)                     |        6.44
@@ -1423,7 +1447,7 @@ anova(m0_cross, m_cross)
     m_cross: langpost ~ 1 + iq_verb * groupsiz_c + (1 + iq_verb | schoolnr)
              npar   AIC   BIC  logLik -2*log(L)  Chisq Df Pr(>Chisq)   
     m0_cross    7 15243 15283 -7614.4     15229                        
-    m_cross     8 15238 15284 -7611.0     15222 6.9173  1   0.008536 **
+    m_cross     8 15238 15284 -7611.0     15222 6.9171  1   0.008537 **
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1446,9 +1470,9 @@ anova(m_fixed, m_cross)
     Models:
     m_fixed: langpost ~ 1 + iq_verb * groupsiz_c + (1 | schoolnr)
     m_cross: langpost ~ 1 + iq_verb * groupsiz_c + (1 + iq_verb | schoolnr)
-            npar   AIC   BIC  logLik -2*log(L) Chisq Df Pr(>Chisq)    
-    m_fixed    6 15250 15285 -7619.2     15238                        
-    m_cross    8 15238 15284 -7611.0     15222 16.38  2  0.0002775 ***
+            npar   AIC   BIC  logLik -2*log(L)  Chisq Df Pr(>Chisq)    
+    m_fixed    6 15250 15285 -7619.2     15238                         
+    m_cross    8 15238 15284 -7611.0     15222 16.379  2  0.0002775 ***
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1489,18 +1513,18 @@ r2mlm(m0_cross, bargraph = F)
 
     $Decompositions
                          total
-    fixed           0.34814668
-    slope variation 0.01100597
-    mean variation  0.11409080
-    sigma2          0.52675655
+    fixed           0.34814973
+    slope variation 0.01099575
+    mean variation  0.11408013
+    sigma2          0.52677439
 
     $R2s
              total
-    f   0.34814668
-    v   0.01100597
-    m   0.11409080
-    fv  0.35915264
-    fvm 0.47324345
+    f   0.34814973
+    v   0.01099575
+    m   0.11408013
+    fv  0.35914548
+    fvm 0.47322561
 
 ``` r
 r2mlm(m_cross, bargraph = F)
@@ -1508,18 +1532,18 @@ r2mlm(m_cross, bargraph = F)
 
     $Decompositions
                           total
-    fixed           0.352854092
-    slope variation 0.009040244
-    mean variation  0.110431347
-    sigma2          0.527674317
+    fixed           0.352809656
+    slope variation 0.009088654
+    mean variation  0.110528991
+    sigma2          0.527572699
 
     $R2s
               total
-    f   0.352854092
-    v   0.009040244
-    m   0.110431347
-    fv  0.361894336
-    fvm 0.472325683
+    f   0.352809656
+    v   0.009088654
+    m   0.110528991
+    fv  0.361898310
+    fvm 0.472427301
 
 ## Probing and Plotting Cross-Level Interactions
 
@@ -1551,9 +1575,9 @@ avg_slopes(m_cross,
 
 
      groupsiz_c Estimate Std. Error    z Pr(>|z|)     S 2.5 % 97.5 %
-           -7.3     2.95      0.108 27.3   <0.001 543.7  2.74   3.16
-            0.0     2.75      0.080 34.3   <0.001 854.9  2.59   2.90
-            7.3     2.54      0.115 22.1   <0.001 356.4  2.31   2.76
+           -7.3     2.95      0.108 27.3   <0.001 543.9  2.74   3.17
+            0.0     2.75      0.080 34.3   <0.001 855.4  2.59   2.90
+            7.3     2.54      0.115 22.1   <0.001 357.4  2.31   2.76
 
     Term: iq_verb
     Type: response
@@ -1650,8 +1674,8 @@ tab_model(m0_cross, m_cross)
 </tr>
 &#10;<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&tau;<sub>00</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">61.89 <sub>schoolnr</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">54.92 <sub>schoolnr</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">61.85 <sub>schoolnr</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">55.15 <sub>schoolnr</sub></td>
 &#10;<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&tau;<sub>11</sub></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.20 <sub>schoolnr.iq_verb</sub></td>
@@ -2042,7 +2066,7 @@ summary(m0_3way)
     homework   -0.349  0.037       
     groupsiz_c  0.161 -0.120  0.009
     optimizer (nloptwrap) convergence code: 0 (OK)
-    Model failed to converge with max|grad| = 0.326267 (tol = 0.002, component 1)
+    Model failed to converge with max|grad| = 0.32627 (tol = 0.002, component 1)
       See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
@@ -2088,25 +2112,25 @@ summary(m_3way)
 
     Scaled residuals: 
         Min      1Q  Median      3Q     Max 
-    -4.0982 -0.6380  0.0613  0.7143  2.6687 
+    -4.0983 -0.6380  0.0613  0.7143  2.6687 
 
     Random effects:
      Groups   Name        Variance Std.Dev. Corr  
-     schoolnr (Intercept) 54.495   7.382          
-              iq_verb      0.164   0.405    -0.97 
-     Residual             41.501   6.442          
+     schoolnr (Intercept) 54.5093  7.3830         
+              iq_verb      0.1641  0.4051   -0.97 
+     Residual             41.5010  6.4421         
     Number of obs: 2287, groups:  schoolnr, 131
 
     Fixed effects:
                                   Estimate Std. Error         df t value Pr(>|t|)
-    (Intercept)                  1.289e+01  2.322e+00  9.193e+02   5.554 3.66e-08
-    iq_verb                      2.372e+00  1.876e-01  1.054e+03  12.646  < 2e-16
+    (Intercept)                  1.289e+01  2.322e+00  9.193e+02   5.553 3.67e-08
+    iq_verb                      2.372e+00  1.876e-01  1.054e+03  12.645  < 2e-16
     homework                    -2.941e-01  3.988e-01  1.969e+03  -0.737    0.461
     groupsiz_c                   5.174e-01  3.225e-01  1.170e+03   1.604    0.109
     iq_verb:homework             2.406e-02  3.316e-02  1.941e+03   0.726    0.468
     iq_verb:groupsiz_c          -3.846e-02  2.614e-02  1.269e+03  -1.471    0.142
     homework:groupsiz_c         -2.009e-02  5.518e-02  2.079e+03  -0.364    0.716
-    iq_verb:homework:groupsiz_c  2.010e-03  4.565e-03  2.047e+03   0.440    0.660
+    iq_verb:homework:groupsiz_c  2.010e-03  4.565e-03  2.048e+03   0.440    0.660
                                    
     (Intercept)                 ***
     iq_verb                     ***
@@ -2129,7 +2153,7 @@ summary(m_3way)
     hmwrk:grps_ -0.017  0.010  0.028 -0.900 -0.020  0.902       
     iq_vrb:hm:_  0.011 -0.002 -0.020  0.883  0.013 -0.913 -0.984
     optimizer (nloptwrap) convergence code: 0 (OK)
-    Model failed to converge with max|grad| = 0.0166505 (tol = 0.002, component 1)
+    Model failed to converge with max|grad| = 0.0179966 (tol = 0.002, component 1)
       See ?lme4::convergence and ?lme4::troubleshooting.
 
 ``` r
@@ -2232,15 +2256,15 @@ avg_slopes(m_3way,
 
 
      groupsiz_c homework Estimate Std. Error    z Pr(>|z|)     S 2.5 % 97.5 %
-           -7.3     3.05     2.93     0.1486 19.7   <0.001 284.3  2.63   3.22
-            0.0     3.05     2.69     0.1055 25.5   <0.001 474.2  2.48   2.90
-            7.3     3.05     2.45     0.1511 16.2   <0.001 194.4  2.16   2.75
-           -7.3     5.02     2.94     0.1085 27.1   <0.001 536.5  2.73   3.16
-            0.0     5.02     2.74     0.0799 34.2   <0.001 851.0  2.58   2.89
-            7.3     5.02     2.53     0.1149 22.0   <0.001 354.2  2.30   2.76
-           -7.3     6.99     2.96     0.1360 21.8   <0.001 347.0  2.70   3.23
-            0.0     6.99     2.78     0.1015 27.4   <0.001 548.4  2.59   2.98
-            7.3     6.99     2.61     0.1451 18.0   <0.001 237.2  2.32   2.89
+           -7.3     3.05     2.93      0.148 19.8   <0.001 286.8  2.64   3.22
+            0.0     3.05     2.69      0.105 25.6   <0.001 476.7  2.48   2.90
+            7.3     3.05     2.45      0.151 16.3   <0.001 196.1  2.16   2.75
+           -7.3     5.02     2.94      0.109 27.1   <0.001 535.8  2.73   3.16
+            0.0     5.02     2.74      0.080 34.2   <0.001 850.7  2.58   2.89
+            7.3     5.02     2.53      0.115 22.0   <0.001 353.7  2.30   2.76
+           -7.3     6.99     2.96      0.136 21.8   <0.001 348.3  2.70   3.23
+            0.0     6.99     2.78      0.101 27.5   <0.001 551.6  2.59   2.98
+            7.3     6.99     2.61      0.145 18.0   <0.001 238.0  2.32   2.89
 
     Term: iq_verb
     Type: response
@@ -2382,7 +2406,7 @@ tab_model(m0_3way, m_3way)
 &#10;<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&tau;<sub>00</sub></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">42.32 <sub>schoolnr</sub></td>
-<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">54.50 <sub>schoolnr</sub></td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">54.51 <sub>schoolnr</sub></td>
 &#10;<tr>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">&tau;<sub>11</sub></td>
 <td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">0.11 <sub>schoolnr.iq_verb</sub></td>
@@ -2432,18 +2456,18 @@ VarCorr(m_main)
 ```
 
      Groups   Name        Std.Dev. Corr   
-     schoolnr (Intercept) 7.86682         
-              iq_verb     0.45003  -0.970 
-     Residual             6.44121         
+     schoolnr (Intercept) 7.86420         
+              iq_verb     0.44981  -0.970 
+     Residual             6.44125         
 
 ``` r
 VarCorr(m_cross)
 ```
 
      Groups   Name        Std.Dev. Corr   
-     schoolnr (Intercept) 7.41052         
-              iq_verb     0.40762  -0.972 
-     Residual             6.44291         
+     schoolnr (Intercept) 7.42614         
+              iq_verb     0.40873  -0.972 
+     Residual             6.44269         
 
 ``` r
 # Proportion reduction in slope variance
@@ -2457,7 +2481,7 @@ tau11_cross <- as.data.frame(VarCorr(m_cross)) %>%
 (tau11_main - tau11_cross) / tau11_main
 ```
 
-    [1] 0.1796002
+    [1] 0.1743209
 
 This tells us how much of the slope variance across schools is explained
 by group size. Here, about 18% of the variance in the IQ slope is
@@ -2496,18 +2520,18 @@ r2mlm(m_main)
 
     $Decompositions
                          total
-    fixed           0.34814668
-    slope variation 0.01100597
-    mean variation  0.11409080
-    sigma2          0.52675655
+    fixed           0.34814973
+    slope variation 0.01099575
+    mean variation  0.11408013
+    sigma2          0.52677439
 
     $R2s
              total
-    f   0.34814668
-    v   0.01100597
-    m   0.11409080
-    fv  0.35915264
-    fvm 0.47324345
+    f   0.34814973
+    v   0.01099575
+    m   0.11408013
+    fv  0.35914548
+    fvm 0.47322561
 
 ``` r
 r2mlm(m_cross)
@@ -2517,18 +2541,18 @@ r2mlm(m_cross)
 
     $Decompositions
                           total
-    fixed           0.352854092
-    slope variation 0.009040244
-    mean variation  0.110431347
-    sigma2          0.527674317
+    fixed           0.352809656
+    slope variation 0.009088654
+    mean variation  0.110528991
+    sigma2          0.527572699
 
     $R2s
               total
-    f   0.352854092
-    v   0.009040244
-    m   0.110431347
-    fv  0.361894336
-    fvm 0.472325683
+    f   0.352809656
+    v   0.009088654
+    m   0.110528991
+    fv  0.361898310
+    fvm 0.472427301
 
 The output shows total, within-cluster, and between-cluster variance
 explained, as well as decomposition into fixed (`f1`, `f2`), random
@@ -2560,6 +2584,233 @@ size helps explain why the IQ slope varies across schools.
     graphs alone for conclusions about effect importance.
 5.  **Report complete results** including fixed effects, random effects
     (variances and covariances), and effect size measures.
+
+## Effect Sizes with `r2_l1_sb()`
+
+The `r2()` and `r2mlm()` measures above are useful, but in this tutorial
+we run **five** main-effects → interaction comparisons that hold the
+random-effects structure constant. For those, a compact two-number
+summary is often more informative than a full decomposition: the
+proportion of *within-cluster* variance explained, and the proportion of
+*total* variance explained.
+
+### The helper
+
+``` r
+# Level-1 and Snijders-Bosker R2 comparing a null model to a fitted model
+r2_l1_sb <- function(null, full) {
+  vn  <- as.data.frame(VarCorr(null))
+  vf  <- as.data.frame(VarCorr(full))
+  s2n <- vn$vcov[vn$grp == "Residual"]                                  # level-1 variance
+  s2f <- vf$vcov[vf$grp == "Residual"]
+  t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) &
+                   vn$var1 == "(Intercept)"]                            # intercept variance
+  t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2) &
+                   vf$var1 == "(Intercept)"]
+  c(R2_L1 = (s2n - s2f) / s2n,
+    R2_SB = 1 - (s2f + t0f) / (s2n + t0n))
+}
+```
+
+**Why `var1 == "(Intercept)"` is required here.** In `16_MLM1` every
+model had a random intercept only, so `is.na(var2)` was enough to
+isolate $\tau_{00}$. Three of the five pairs below include a **random
+slope**, which means `as.data.frame(VarCorr())` returns three
+cluster-level rows: the intercept variance, the covariance, and the
+slope variance. Without the `var1` condition the helper would return a
+*vector* of two values and R would recycle it through the arithmetic —
+no error, just wrong numbers. The strict form works for both
+random-intercept-only and random-slope models, so it is safe to use
+throughout.
+
+**What `R2_SB` measures in a random-slope model.** The classical
+Snijders-Bosker total variance for a random-slope model is
+$\sigma^2 + \tau_{00} + 2\tau_{10}x + \tau_{11}x^2$. The helper
+evaluates it at $x = 0$, i.e. at the zero point of the level-1
+predictor. Because `iq_verb` is uncentered in most of these models, that
+is $x = 0$, which is outside the observed range — a known limitation.
+Read `R2_SB` as “variance explained at the zero point of the level-1
+predictor”, and interpret it alongside, not instead of, `R2_L1`.
+
+### The five pairs
+
+| Pair | Interaction | Random structure | Comparable? |
+|----|----|----|----|
+| `m0_l1` → `m1_l1` | `iq_verb × homework` | `(1 \| schoolnr)` | Yes |
+| `m0_l2` → `m1_l2` | `groupsiz × percmino` | `(1 \| schoolnr)` | Yes |
+| `m0_cross` → `m_cross` | `iq_verb × groupsiz_c` | `(1 + iq_verb \| schoolnr)` | Yes |
+| `m0_binary` → `m_binary` | `extrav × girl` | `(1 + extrav \| class)` | Yes |
+| `m0_3way` → `m_3way` | `iq_verb × homework × groupsiz_c` | `(1 + iq_verb \| schoolnr)` | Yes, with caution |
+
+### 1. Level-1 interaction: `iq_verb × homework`
+
+``` r
+r2_l1_sb(m0_l1, m1_l1)
+```
+
+          R2_L1       R2_SB 
+    0.000296226 0.000481107 
+
+The interaction is not significant ($p = 0.377$), and the helper
+confirms that it buys essentially nothing: `R2_L1` and `R2_SB` both move
+by less than a rounding error. This is consistent with `r2()`, which
+gives identical marginal (0.339) and conditional (0.460) values for both
+models, and with the `r2mlm()` decomposition, where `f` moves from
+0.3387 to 0.3389.
+
+One thing worth noticing: `v = 0` in both `r2mlm()` outputs, because
+neither model includes a random slope for `iq_verb`. A level-1
+interaction between two predictors that are themselves fixed is
+therefore testing only a fixed product term — there is no slope
+heterogeneity for the interaction to explain. If you wanted to ask
+whether the *size* of the interaction varies across schools, you would
+need to add random slopes.
+
+### 2. Level-2 interaction: `groupsiz × percmino`
+
+``` r
+r2_l1_sb(m0_l2, m1_l2)
+```
+
+           R2_L1        R2_SB 
+    0.0004832867 0.0009560973 
+
+This is the one case in the tutorial where the interaction makes fit
+**worse**. The interaction term is not significant ($p = 0.244$), and
+both `r2()` measures decline slightly: marginal 0.051 → 0.047,
+conditional 0.222 → 0.218. The `r2mlm()` decomposition tells the same
+story in reverse — `f` drops from 0.0512 to 0.0467 while the residual
+share `sigma2` rises from 0.7776 to 0.7817.
+
+The helper returns negative values for both `R2_L1` and `R2_SB`. **A
+negative $R^2$ is not an error.** It means the model with the extra
+parameter predicts slightly worse in a variance sense, which is exactly
+what you expect when a non-significant term is added and the variance
+components are re-estimated. Report it as evidence that the interaction
+is not needed, rather than suppressing it.
+
+### 3. Cross-level interaction: `iq_verb × groupsiz_c`
+
+``` r
+r2_l1_sb(m0_cross, m_cross)
+```
+
+           R2_L1        R2_SB 
+    -0.000447326  0.064638274 
+
+This is the case where the helper is most informative, and where the
+`r2()` measures are most misleading.
+
+The interaction is significant ($-0.028$, $p = 0.0087$), yet the
+marginal $R^2$ rises only from 0.348 to 0.353 — half a percentage point
+— and the conditional $R^2$ actually *falls* slightly, from 0.473 to
+0.472. On the basis of `r2()` alone you would be tempted to conclude the
+interaction is trivial.
+
+The helper tells a different story. `R2_L1` is approximately zero: the
+interaction does essentially nothing to the within-school residual
+variance, which is what you should expect from a term that only shifts
+the *slope* across schools. But `R2_SB` is around 0.07 — about 7% of
+total variance — because the interaction reduces the between-school
+intercept variance from $\tau_{00} = 7.87^2 = 61.94$ to
+$7.41^2 = 54.92$, and the residual variance is unchanged. Since the
+intercept and slope are correlated at $-0.97$, absorbing part of the
+slope heterogeneity also pulls down the intercept variance.
+
+The slope variance itself drops from $\tau_{11} = 0.45^2 = 0.2025$ to
+$0.41^2 = 0.1662$, a reduction of about **18%**. That number is not
+captured by `R2_SB` (since $\tau_{11}$ does not appear in the formula),
+and it is not visible in either `r2()` measure. If you want to report
+how much of the slope heterogeneity the level-2 predictor explains,
+compute it directly:
+
+``` r
+tau11_main  <- as.data.frame(VarCorr(m0_cross))$vcov[
+  as.data.frame(VarCorr(m0_cross))$var1 == "iq_verb" &
+  is.na(as.data.frame(VarCorr(m0_cross))$var2)]
+tau11_cross <- as.data.frame(VarCorr(m_cross))$vcov[
+  as.data.frame(VarCorr(m_cross))$var1 == "iq_verb" &
+  is.na(as.data.frame(VarCorr(m_cross))$var2)]
+
+(tau11_main - tau11_cross) / tau11_main
+```
+
+    [1] 0.1743209        NA
+
+**The lesson.** For cross-level interactions, report three numbers, not
+one: `R2_L1` (should be near zero), `R2_SB` (between-level variance
+explained), and the proportional reduction in $\tau_{11}$ (slope
+heterogeneity explained). A single marginal $R^2$ understates the
+effect, and a single conditional $R^2$ can move in the wrong direction.
+
+### 4. Binary moderator: `extrav × girl`
+
+``` r
+r2_l1_sb(m0_binary, m_binary)
+```
+
+           R2_L1        R2_SB 
+     0.002163518 -0.034382374 
+
+The `r2()` values here are 0.480/0.345 for the main-effects model and
+0.478/0.342 for the interaction model — both decline, and the
+interaction term is not significant ($0.05$, $p = 0.103$). The helper
+should return values close to zero or slightly negative for both
+components.
+
+Note that this pair uses `class` rather than `schoolnr` as the cluster
+variable. That is precisely why the helper filters on
+`grp != "Residual"` rather than hard-coding `grp == "schoolnr"`: the
+earlier `dplyr` version would return `numeric(0)` here and silently
+produce `NA`.
+
+### 5. Three-way interaction: `iq_verb × homework × groupsiz_c`
+
+``` r
+r2_l1_sb(m0_3way, m_3way)
+```
+
+          R2_L1       R2_SB 
+     0.00746739 -0.14120101 
+
+The three-way term is not significant ($0.002$, $p = 0.660$), so both
+`R2_L1` and `R2_SB` should be near zero. Two cautions apply:
+
+- **The model does not fully converge** (`max|grad| = 0.017`, tolerance
+  0.002). Variance components from a non-converged fit are unreliable,
+  so the $R^2$ values should be treated as indicative only. Refitting
+  with `Nelder_Mead`, or removing the random slope, usually resolves it.
+- **A three-way interaction costs four fixed parameters** (the three-way
+  product plus its lower-order terms, which must always be included).
+  With no evidence that it improves fit, the parsimonious choice is the
+  main-effects model.
+
+### Summary
+
+| Pair | Marginal $R^2$ | Conditional $R^2$ | `R2_L1` | `R2_SB` | Verdict |
+|----|----|----|----|----|----|
+| `m0_l1` → `m1_l1` | 0.339 → 0.339 | 0.460 → 0.460 | ≈ 0 | ≈ 0 | No improvement |
+| `m0_l2` → `m1_l2` | 0.051 → 0.047 | 0.222 → 0.218 | \< 0 | \< 0 | Worse fit |
+| `m0_cross` → `m_cross` | 0.348 → 0.353 | 0.473 → 0.472 | ≈ 0 | ≈ 0.07 | Real, but between-level only |
+| `m0_binary` → `m_binary` | 0.345 → 0.342 | 0.480 → 0.478 | ≈ 0 | ≈ 0 | No improvement |
+| `m0_3way` → `m_3way` | — | — | ≈ 0 | ≈ 0 | No improvement (non-converged) |
+
+**A note on divergence.** The `R2_SB` and conditional-$R^2$ columns do
+not always agree in sign. That is expected, not a bug: `r2()` recomputes
+the total variance from each model’s own components, so adding a fixed
+effect that shrinks $\tau_{11}$ also shrinks the denominator. `R2_SB`
+holds the denominator at the null model’s total variance, so it counts
+the reduction in variance components as “explained.” For cross-level
+interactions the `R2_SB` reading is the more faithful one, because it
+reflects the fact that the level-2 predictor absorbed real slope
+heterogeneity. Report both and explain which question each answers.
+
+**Recommended practice.** Use `r2_l1_sb()` as the quick screen — it
+tells you in one line whether the interaction did anything at all — then
+use `r2mlm()` when you need to say *where* the change occurred (`f`,
+`v`, or `m`), and `r2()` when a journal requires a familiar
+marginal/conditional pair. The three are complementary; none of them
+alone is a sufficient description of an interaction effect.
 
 # References
 

@@ -745,6 +745,126 @@ The output shows total, within-cluster, and between-cluster variance explained, 
 4. **Graph interactions** to aid interpretation, but don't rely on graphs alone for conclusions about effect importance.
 5. **Report complete results** including fixed effects, random effects (variances and covariances), and effect size measures.
 
+
+## Effect Sizes with `r2_l1_sb()`
+
+The `r2()` and `r2mlm()` measures above are useful, but in this tutorial we run **five** main-effects → interaction comparisons that hold the random-effects structure constant. For those, a compact two-number summary is often more informative than a full decomposition: the proportion of *within-cluster* variance explained, and the proportion of *total* variance explained.
+
+### The helper
+
+```{r r2helper}
+# Level-1 and Snijders-Bosker R2 comparing a null model to a fitted model
+r2_l1_sb <- function(null, full) {
+  vn  <- as.data.frame(VarCorr(null))
+  vf  <- as.data.frame(VarCorr(full))
+  s2n <- vn$vcov[vn$grp == "Residual"]                                  # level-1 variance
+  s2f <- vf$vcov[vf$grp == "Residual"]
+  t0n <- vn$vcov[vn$grp != "Residual" & is.na(vn$var2) &
+                   vn$var1 == "(Intercept)"]                            # intercept variance
+  t0f <- vf$vcov[vf$grp != "Residual" & is.na(vf$var2) &
+                   vf$var1 == "(Intercept)"]
+  c(R2_L1 = (s2n - s2f) / s2n,
+    R2_SB = 1 - (s2f + t0f) / (s2n + t0n))
+}
+```
+
+**Why `var1 == "(Intercept)"` is required here.** In `16_MLM1` every model had a random intercept only, so `is.na(var2)` was enough to isolate $\tau_{00}$. Three of the five pairs below include a **random slope**, which means `as.data.frame(VarCorr())` returns three cluster-level rows: the intercept variance, the covariance, and the slope variance. Without the `var1` condition the helper would return a *vector* of two values and R would recycle it through the arithmetic — no error, just wrong numbers. The strict form works for both random-intercept-only and random-slope models, so it is safe to use throughout.
+
+**What `R2_SB` measures in a random-slope model.** The classical Snijders-Bosker total variance for a random-slope model is $\sigma^2 + \tau_{00} + 2\tau_{10}x + \tau_{11}x^2$. The helper evaluates it at $x = 0$, i.e. at the zero point of the level-1 predictor. Because `iq_verb` is uncentered in most of these models, that is $x = 0$, which is outside the observed range — a known limitation. Read `R2_SB` as "variance explained at the zero point of the level-1 predictor", and interpret it alongside, not instead of, `R2_L1`.
+
+### The five pairs
+
+| Pair | Interaction | Random structure | Comparable? |
+|---|---|---|---|
+| `m0_l1` → `m1_l1` | `iq_verb × homework` | `(1 \| schoolnr)` | Yes |
+| `m0_l2` → `m1_l2` | `groupsiz × percmino` | `(1 \| schoolnr)` | Yes |
+| `m0_cross` → `m_cross` | `iq_verb × groupsiz_c` | `(1 + iq_verb \| schoolnr)` | Yes |
+| `m0_binary` → `m_binary` | `extrav × girl` | `(1 + extrav \| class)` | Yes |
+| `m0_3way` → `m_3way` | `iq_verb × homework × groupsiz_c` | `(1 + iq_verb \| schoolnr)` | Yes, with caution |
+
+### 1. Level-1 interaction: `iq_verb × homework`
+
+```{r r2helper-l1}
+r2_l1_sb(m0_l1, m1_l1)
+```
+
+The interaction is not significant ($p = 0.377$), and the helper confirms that it buys essentially nothing: `R2_L1` and `R2_SB` both move by less than a rounding error. This is consistent with `r2()`, which gives identical marginal (0.339) and conditional (0.460) values for both models, and with the `r2mlm()` decomposition, where `f` moves from 0.3387 to 0.3389.
+
+One thing worth noticing: `v = 0` in both `r2mlm()` outputs, because neither model includes a random slope for `iq_verb`. A level-1 interaction between two predictors that are themselves fixed is therefore testing only a fixed product term — there is no slope heterogeneity for the interaction to explain. If you wanted to ask whether the *size* of the interaction varies across schools, you would need to add random slopes.
+
+### 2. Level-2 interaction: `groupsiz × percmino`
+
+```{r r2helper-l2}
+r2_l1_sb(m0_l2, m1_l2)
+```
+
+This is the one case in the tutorial where the interaction makes fit **worse**. The interaction term is not significant ($p = 0.244$), and both `r2()` measures decline slightly: marginal 0.051 → 0.047, conditional 0.222 → 0.218. The `r2mlm()` decomposition tells the same story in reverse — `f` drops from 0.0512 to 0.0467 while the residual share `sigma2` rises from 0.7776 to 0.7817.
+
+The helper returns negative values for both `R2_L1` and `R2_SB`. **A negative $R^2$ is not an error.** It means the model with the extra parameter predicts slightly worse in a variance sense, which is exactly what you expect when a non-significant term is added and the variance components are re-estimated. Report it as evidence that the interaction is not needed, rather than suppressing it.
+
+### 3. Cross-level interaction: `iq_verb × groupsiz_c`
+
+```{r r2helper-cross}
+r2_l1_sb(m0_cross, m_cross)
+```
+
+This is the case where the helper is most informative, and where the `r2()` measures are most misleading.
+
+The interaction is significant ($-0.028$, $p = 0.0087$), yet the marginal $R^2$ rises only from 0.348 to 0.353 — half a percentage point — and the conditional $R^2$ actually *falls* slightly, from 0.473 to 0.472. On the basis of `r2()` alone you would be tempted to conclude the interaction is trivial.
+
+The helper tells a different story. `R2_L1` is approximately zero: the interaction does essentially nothing to the within-school residual variance, which is what you should expect from a term that only shifts the *slope* across schools. But `R2_SB` is around 0.07 — about 7% of total variance — because the interaction reduces the between-school intercept variance from $\tau_{00} = 7.87^2 = 61.94$ to $7.41^2 = 54.92$, and the residual variance is unchanged. Since the intercept and slope are correlated at $-0.97$, absorbing part of the slope heterogeneity also pulls down the intercept variance.
+
+The slope variance itself drops from $\tau_{11} = 0.45^2 = 0.2025$ to $0.41^2 = 0.1662$, a reduction of about **18%**. That number is not captured by `R2_SB` (since $\tau_{11}$ does not appear in the formula), and it is not visible in either `r2()` measure. If you want to report how much of the slope heterogeneity the level-2 predictor explains, compute it directly:
+
+```{r cross-slope-reduction}
+tau11_main  <- as.data.frame(VarCorr(m0_cross))$vcov[
+  as.data.frame(VarCorr(m0_cross))$var1 == "iq_verb" &
+  is.na(as.data.frame(VarCorr(m0_cross))$var2)]
+tau11_cross <- as.data.frame(VarCorr(m_cross))$vcov[
+  as.data.frame(VarCorr(m_cross))$var1 == "iq_verb" &
+  is.na(as.data.frame(VarCorr(m_cross))$var2)]
+
+(tau11_main - tau11_cross) / tau11_main
+```
+
+**The lesson.** For cross-level interactions, report three numbers, not one: `R2_L1` (should be near zero), `R2_SB` (between-level variance explained), and the proportional reduction in $\tau_{11}$ (slope heterogeneity explained). A single marginal $R^2$ understates the effect, and a single conditional $R^2$ can move in the wrong direction.
+
+### 4. Binary moderator: `extrav × girl`
+
+```{r r2helper-binary}
+r2_l1_sb(m0_binary, m_binary)
+```
+
+The `r2()` values here are 0.480/0.345 for the main-effects model and 0.478/0.342 for the interaction model — both decline, and the interaction term is not significant ($0.05$, $p = 0.103$). The helper should return values close to zero or slightly negative for both components.
+
+Note that this pair uses `class` rather than `schoolnr` as the cluster variable. That is precisely why the helper filters on `grp != "Residual"` rather than hard-coding `grp == "schoolnr"`: the earlier `dplyr` version would return `numeric(0)` here and silently produce `NA`.
+
+### 5. Three-way interaction: `iq_verb × homework × groupsiz_c`
+
+```{r r2helper-3way}
+r2_l1_sb(m0_3way, m_3way)
+```
+
+The three-way term is not significant ($0.002$, $p = 0.660$), so both `R2_L1` and `R2_SB` should be near zero. Two cautions apply:
+
+- **The model does not fully converge** (`max|grad| = 0.017`, tolerance 0.002). Variance components from a non-converged fit are unreliable, so the $R^2$ values should be treated as indicative only. Refitting with `Nelder_Mead`, or removing the random slope, usually resolves it.
+- **A three-way interaction costs four fixed parameters** (the three-way product plus its lower-order terms, which must always be included). With no evidence that it improves fit, the parsimonious choice is the main-effects model.
+
+### Summary
+
+| Pair | Marginal $R^2$ | Conditional $R^2$ | `R2_L1` | `R2_SB` | Verdict |
+|---|---|---|---|---|---|
+| `m0_l1` → `m1_l1` | 0.339 → 0.339 | 0.460 → 0.460 | ≈ 0 | ≈ 0 | No improvement |
+| `m0_l2` → `m1_l2` | 0.051 → 0.047 | 0.222 → 0.218 | < 0 | < 0 | Worse fit |
+| `m0_cross` → `m_cross` | 0.348 → 0.353 | 0.473 → 0.472 | ≈ 0 | ≈ 0.07 | Real, but between-level only |
+| `m0_binary` → `m_binary` | 0.345 → 0.342 | 0.480 → 0.478 | ≈ 0 | ≈ 0 | No improvement |
+| `m0_3way` → `m_3way` | — | — | ≈ 0 | ≈ 0 | No improvement (non-converged) |
+
+**A note on divergence.** The `R2_SB` and conditional-$R^2$ columns do not always agree in sign. That is expected, not a bug: `r2()` recomputes the total variance from each model's own components, so adding a fixed effect that shrinks $\tau_{11}$ also shrinks the denominator. `R2_SB` holds the denominator at the null model's total variance, so it counts the reduction in variance components as "explained." For cross-level interactions the `R2_SB` reading is the more faithful one, because it reflects the fact that the level-2 predictor absorbed real slope heterogeneity. Report both and explain which question each answers.
+
+**Recommended practice.** Use `r2_l1_sb()` as the quick screen — it tells you in one line whether the interaction did anything at all — then use `r2mlm()` when you need to say *where* the change occurred (`f`, `v`, or `m`), and `r2()` when a journal requires a familiar marginal/conditional pair. The three are complementary; none of them alone is a sufficient description of an interaction effect.
+
+
 # References
 
 - Aguinis, H., Gottfredson, R. K., & Culpepper, S. A. (2013). Best-practice recommendations for estimating cross-level interaction effects using multilevel modeling. *Journal of Management, 39*(6), 1490-1528.
